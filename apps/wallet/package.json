@@ -1,0 +1,43 @@
+{
+  "name": "wallet",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mixer/postmessage-rpc": "^1.1.4",
+    "@noble/secp256k1": "^1.7.0",
+    "@orbs-network/ton-access": "^2.3.3",
+    "@passwordless-id/webauthn": "^1.6.1",
+    "@solana/web3.js": "^1.94.0",
+    "@tanstack/react-query": "^5.49.2",
+    "ahooks": "^3.8.0",
+    "borc": "^3.0.0",
+    "class-transformer": "^0.5.1",
+    "dayjs": "^1.11.11",
+    "ethers": "^6.13.1",
+    "qrcode": "^1.5.3",
+    "reflect-metadata": "^0.2.2",
+    "sdk": "*",
+    "tailwind-merge": "^2.3.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/qrcode": "^1.5.5",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "daisyui": "^4.12.10",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4"
+  }
+}

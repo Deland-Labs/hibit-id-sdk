@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+@layer components {
+  .btn:not(.btn-primary,.btn-secondary,.btn-ghost,.btn-link,.btn-old-primary) {
+    @apply bg-base-300 text-primary;
+  }
+  .btn-primary {
+    @apply text-base-content;
+  }
+  .btn-sm {
+    @apply h-10;
+  }
+  .btn-old-primary {
+    @apply bg-primary/20 border border-primary/50 text-base-content hover:bg-primary/10 hover:border-primary/40
+  }
+}

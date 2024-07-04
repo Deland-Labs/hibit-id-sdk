@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "public": false,
+  "github": {
+    "enabled": false
+  },
+  "outputDirectory": "apps/web/dist",
+  "installCommand": "echo",
+  "buildCommand": "echo",
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+}

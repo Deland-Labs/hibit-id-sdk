@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>slice</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#00BFAF" offset="0%"></stop>
+            <stop stop-color="#008C75" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="WEB" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="header_setttings_h5" transform="translate(-514.000000, -680.000000)">
+            <g id="group-3" transform="translate(490.000000, 328.000000)">
+                <g id="list-3" transform="translate(24.000000, 334.000000)">
+                    <g id="group" transform="translate(0.000000, 13.000000)">
+                        <g id="group-2" transform="translate(0.000000, 5.000000)">
+                            <circle id="oval" fill="url(#linearGradient-1)" cx="12" cy="12" r="12"></circle>
+                            <path d="M16.6272339,11.1824094 L12,4.2 L7.37276608,11.1824094 L12,9.23990825 L16.6272339,11.1824094 Z M12,16.0204196 L7.37276608,13.3687319 L12,19.8 L16.6272339,13.3687319 L12,16.0204196 Z M16.8,12.2322441 L12,10.2357164 L7.2,12.2322441 L12,14.8772663 L16.8,12.2322441 Z" id="shape" fill="#FFFFFF" fill-rule="nonzero"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

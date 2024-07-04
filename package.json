@@ -1,0 +1,52 @@
+{
+  "name": "@deland-labs/hibit-id",
+  "private": true,
+  "scripts": {
+    "dev:wallet": "turbo run dev --filter=wallet",
+    "build:wallet": "turbo run build --filter=wallet",
+    "preview:wallet": "turbo run preview --filter=wallet",
+    "dev:sdk": "turbo run dev --filter=sdk",
+    "build:sdk": "turbo run build --filter=sdk",
+    "prepare": "husky install"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "@tanstack/react-query": "^5.29.0",
+    "axios": "^1.6.8",
+    "bignumber.js": "^9.1.2",
+    "browser-unhandled-rejection": "^1.0.2",
+    "classnames": "^2.5.1",
+    "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.10",
+    "i18next": "^23.11.1",
+    "mobx": "^6.12.3",
+    "mobx-react": "^9.1.1",
+    "nanoid": "3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^14.1.0",
+    "react-router-dom": "^6.22.3",
+    "vconsole": "^3.15.1",
+    "web-utility": "^4.3.0"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/react": "^18.2.75",
+    "@types/react-dom": "^18.2.24",
+    "@vitejs/plugin-react-swc": "^3.6.0",
+    "dotenv": "^16.4.5",
+    "husky": "^8.0.1",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
+    "punycode": "^1.4.1",
+    "turbo": "^1.13.2",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.8",
+    "vite-bundle-analyzer": "^0.9.3",
+    "vite-plugin-node-polyfills": "^0.21.0",
+    "vite-plugin-svgr": "^4.2.0"
+  }
+}
