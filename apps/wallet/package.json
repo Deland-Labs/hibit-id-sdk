@@ -22,15 +22,18 @@
     "dayjs": "^1.11.11",
     "ethers": "^6.13.1",
     "qrcode": "^1.5.3",
+    "react-telegram-login": "^1.1.2",
     "reflect-metadata": "^0.2.2",
     "sdk": "*",
-    "tailwind-merge": "^2.3.0"
+    "tailwind-merge": "^2.3.0",
+    "tonweb": "^0.0.66"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/qrcode": "^1.5.5",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
+    "@vitejs/plugin-basic-ssl": "^1.1.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.12.10",

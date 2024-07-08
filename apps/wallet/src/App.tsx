@@ -3,6 +3,7 @@ import { observer } from 'mobx-react'
 import { Routes, Route, Navigate } from 'react-router-dom';
 import hibitIdSession from './stores/session';
 import { twMerge } from 'tailwind-merge'
+import { useIsDesktop } from './utils/hooks';
 
 const MainPage = lazy(() => import('./pages/main'));
 const LoginPage = lazy(() => import('./pages/login'));
@@ -11,8 +12,10 @@ const SendTokenPage = lazy(() => import('./pages/send-token'));
 const ReceiveTokenPage = lazy(() => import('./pages/receive-token'));
 
 const App: FC = observer(() => {
+  const isDesktop = useIsDesktop()
+
   return (
-    <main className={twMerge(hibitIdSession.isEx3Authenticated && 'h-full max-w-[576px] mx-auto bg-base-200 p-6')}>
+    <main className={twMerge((hibitIdSession.isEx3Authenticated || !isDesktop) && 'h-full max-w-[576px] mx-auto bg-base-200 p-6')}>
       <Suspense>
         <Routes>
           <Route path="/login" element={<LoginPage />} />

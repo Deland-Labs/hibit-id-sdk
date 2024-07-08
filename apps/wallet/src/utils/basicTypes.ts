@@ -275,6 +275,9 @@ export class ChainInfo {
   explorer!: string;
   rpcUrls!: string[];
   caseSensitiveAddress?: boolean;
+  getServerFormatAddress?: (address: string) => string | null
+  getTxLink?: (txId: string) => string
+  getAddressLink?: (address: string) => string
 }
 
 export class DecimalPlaces {
@@ -315,6 +318,7 @@ export class ChainAssetType {
   static ICRC1 = new ChainAssetType(new BigNumber(6));
   static BRC20 = new ChainAssetType(new BigNumber(7));
   static SPL = new ChainAssetType(new BigNumber(8));
+  static Jetton = new ChainAssetType(new BigNumber(10));
 
   static fromString(value: string): ChainAssetType | null {
     if (!value) {

@@ -2,6 +2,7 @@ import { SignaturesSchema } from "../basicEnums";
 import { ChainInfo, ChainId, Chain, ChainNetwork } from "../basicTypes";
 import { clusterApiUrl } from '@solana/web3.js';
 import { getHttpEndpoint } from "@orbs-network/ton-access";
+import TonWeb from 'tonweb'
 
 export const Ethereum: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmMainNet),
@@ -174,9 +175,36 @@ export const Ton: ChainInfo = {
   nativeAssetSymbol: 'TON',
   nativeAssetDecimals: 9,
   supportedSignaturesSchemas: [SignaturesSchema.Ed25519],
-  explorer: 'https://tonscan.org',
+  explorer: 'https://tonviewer.com',
   rpcUrls: [],
   caseSensitiveAddress: true,
+  getServerFormatAddress: (address: string): string | null => {
+    try {
+      return (new TonWeb.utils.Address(address)).toString(false, undefined, undefined, false)
+    } catch (e) {
+      return null
+    }
+  },
+  getTxLink: (txId: string) => {
+    if (!txId) {
+      return ''
+    }
+    let hexTxId = txId
+    try {
+      hexTxId = Buffer.from(txId, 'base64').toString('hex')
+    } catch (e) {
+      console.error(e)
+    }
+    return `https://tonviewer.com/transaction/${hexTxId}`
+  },
+  getAddressLink: (address: string) => {
+    try {
+      const bouncable = (new TonWeb.utils.Address(address)).toString(true, true, true, false)
+      return `https://tonviewer.com/${bouncable}`
+    } catch (e) {
+      return address
+    }
+  }
 };
 export const TonTestnet: ChainInfo = {
   chainId: new ChainId(Chain.Ton, ChainNetwork.TonTestNet),
@@ -186,9 +214,36 @@ export const TonTestnet: ChainInfo = {
   nativeAssetSymbol: 'TON',
   nativeAssetDecimals: 9,
   supportedSignaturesSchemas: [SignaturesSchema.Ed25519],
-  explorer: 'https://testnet.tonscan.org',
+  explorer: 'https://testnet.tonviewer.com',
   rpcUrls: [],
   caseSensitiveAddress: true,
+  getServerFormatAddress: (address: string): string | null => {
+    try {
+      return (new TonWeb.utils.Address(address)).toString(false, undefined, undefined, true)
+    } catch (e) {
+      return null
+    }
+  },
+  getTxLink: (txId: string) => {
+    if (!txId) {
+      return ''
+    }
+    let hexTxId = txId
+    try {
+      hexTxId = Buffer.from(txId, 'base64').toString('hex')
+    } catch (e) {
+      console.error(e)
+    }
+    return `https://testnet.tonviewer.com/transaction/${hexTxId}`
+  },
+  getAddressLink: (address: string) => {
+    try {
+      const bouncable = (new TonWeb.utils.Address(address)).toString(true, true, true, false)
+      return `https://testnet.tonviewer.com/${bouncable}`
+    } catch (e) {
+      return address
+    }
+  }
 };
 (async () => {
   const [tonMainEndpoint, tonTestEndpoint] = await Promise.all([
