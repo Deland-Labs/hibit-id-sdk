@@ -1,5 +1,5 @@
 import { InitDataParsed } from "@telegram-apps/sdk";
-import { AuthenticatorType, IAuthenticator, UserAuthInfo } from ".";
+import { AuthenticatorType, IAuthenticateProvider, UserAuthInfo } from "../types";
 import dayjs from "dayjs";
 
 declare global {
@@ -21,11 +21,11 @@ interface ResponseType {
 
 const BOT_ID = import.meta.env.VITE_TELEGRAM_BOT_ID
 
-export class TelegramAuthenticator implements IAuthenticator {
+export class TelegramAuthenticateProvider implements IAuthenticateProvider {
   public readonly type = AuthenticatorType.Telegram
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public authenticate: (launchParams: any) => Promise<UserAuthInfo> = async (launchParams: InitDataParsed | undefined) => {
+  public authenticate: (launchParams?: any) => Promise<UserAuthInfo> = async (launchParams?: InitDataParsed) => {
     if (launchParams) {
       return {
         id: launchParams.user?.id.toString() ?? '',

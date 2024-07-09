@@ -1,6 +1,6 @@
 import { RPC } from '@mixer/postmessage-rpc'
 import { ClientExposeRPCMethod, HibitIdExposeRPCMethod, PasskeyLoginResponse, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse } from 'sdk'
-import hibitIdSession from './session';
+import hibitIdSession from '../stores/session';
 
 class RPCManager {
   private _rpc: RPC | null = null

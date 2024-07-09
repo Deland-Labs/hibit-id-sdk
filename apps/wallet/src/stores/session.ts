@@ -1,27 +1,26 @@
 import { HDNodeWallet } from "ethers";
 import { makeAutoObservable } from "mobx";
-import { Ex3Account } from "../apis/types";
+import { HibitIdAuth } from "../utils/auth/types";
 
-export interface HibitIdAuth {
-  credentialId: string
-  phrase: string
-}
+const AUTH_STORE_KEY = 'hibitid-auth'
 
 export class HibitIdSession {
   public wallet: HDNodeWallet | null = null
   public auth: HibitIdAuth | null = null
-  public ex3Account: Ex3Account | null = null
 
   constructor() {
     makeAutoObservable(this)
+
+    // load auth from session
+    const authString = sessionStorage.getItem(AUTH_STORE_KEY)
+    if (authString) {
+      this.auth = JSON.parse(authString) as HibitIdAuth
+      this.wallet = HDNodeWallet.fromPhrase(this.auth.phrase)
+    }
   }
 
   get isConnected() {
     return !!this.wallet
-  }
-
-  get isEx3Authenticated() {
-    return !!this.ex3Account
   }
 
   get validAddress() {
@@ -31,10 +30,8 @@ export class HibitIdSession {
   public connect = (auth: HibitIdAuth) => {
     this.auth = auth
     this.wallet = HDNodeWallet.fromPhrase(auth.phrase)
-  }
-
-  public setEx3Account = (account: Ex3Account) => {
-     this.ex3Account = account
+    console.log('[session connected]', this.auth)
+    sessionStorage.setItem(AUTH_STORE_KEY, JSON.stringify(this.auth))
   }
 }
 
