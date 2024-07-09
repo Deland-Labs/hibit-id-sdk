@@ -927,6 +927,11 @@
   dependencies:
     "@tanstack/query-core" "5.49.1"
 
+"@telegram-apps/sdk@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.npmmirror.com/@telegram-apps/sdk/-/sdk-1.1.0.tgz#e707b7cef0c61f8a6f6dc289217d5ddc6688c39b"
+  integrity sha512-31Lfl8qlCzD2JXG1DKuFygHQEi7//lV8G3kQAZk0ZAjxoar3snstPjP3NDN2pa8/CyFyocLcKjndQyMLdo/u8A==
+
 "@types/babel__core@^7.20.5":
   version "7.20.5"
   resolved "https://registry.npmmirror.com/@types/babel__core/-/babel__core-7.20.5.tgz#3df15f27ba85319caa07ba08d0721889bb39c017"

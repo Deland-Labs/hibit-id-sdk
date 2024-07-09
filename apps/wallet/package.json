@@ -16,6 +16,7 @@
     "@passwordless-id/webauthn": "^1.6.1",
     "@solana/web3.js": "^1.94.0",
     "@tanstack/react-query": "^5.49.2",
+    "@telegram-apps/sdk": "^1.1.0",
     "ahooks": "^3.8.0",
     "borc": "^3.0.0",
     "class-transformer": "^0.5.1",

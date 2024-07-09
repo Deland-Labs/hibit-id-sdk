@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { useIsDesktop } from "../../utils/hooks";
 import LoginSteps from "./LoginSteps";
 import rpcManager from "../../stores/rpc";
