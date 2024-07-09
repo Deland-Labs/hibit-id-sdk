@@ -4,8 +4,7 @@ import LoginSteps from "./LoginSteps";
 import rpcManager from "../../stores/rpc";
 import Modal from "../../components/Modal";
 import SvgLogo from '../../assets/logo.svg?react';
-// @ts-ignore
-import TelegramLoginButton from 'react-telegram-login';
+import { TelegramAuthenticator } from "../../utils/authenticator/telegram";
 
 const LoginPage: FC = () => {
   const [state, setState] = useState<'none' | 'create' | 'login'>('none')
@@ -15,10 +14,6 @@ const LoginPage: FC = () => {
     ? 'Hibit ID'
     : 'Login via passkey'
 
-    const handleTelegramResponse = (response: any) => {
-      console.log(JSON.stringify(response))
-    }
-  
   const initialContent = useMemo(() => (
     <div className="h-full flex flex-col items-center py-4">
       <div className="flex-1 flex justify-center items-center">
@@ -27,8 +22,13 @@ const LoginPage: FC = () => {
         </div>
       </div>
       <div className="w-full flex-none flex flex-col gap-4 items-center">
-        <TelegramLoginButton dataOnauth={handleTelegramResponse} botName="RustinLocalTestBot" dataUserpic={false} />
-        <button className="btn btn-primary btn-sm btn-block" onClick={() => setState('login')}>
+        <button
+          className="btn btn-primary btn-sm btn-block"
+          onClick={() => {
+            new TelegramAuthenticator().authenticate(null)
+          }}
+          // onClick={() => setState('login')}
+        >
           Login
         </button>
         <button className="btn btn-sm btn-block" onClick={() => setState('create')}>

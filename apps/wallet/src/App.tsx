@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import hibitIdSession from './stores/session';
 import { twMerge } from 'tailwind-merge'
 import { useIsDesktop } from './utils/hooks';
+import PageLoading from './components/PageLoading';
 
 const MainPage = lazy(() => import('./pages/main'));
 const LoginPage = lazy(() => import('./pages/login'));
@@ -16,7 +17,7 @@ const App: FC = observer(() => {
 
   return (
     <main className={twMerge((hibitIdSession.isEx3Authenticated || !isDesktop) && 'h-full max-w-[576px] mx-auto bg-base-200 p-6')}>
-      <Suspense>
+      <Suspense fallback={<PageLoading />}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
 
