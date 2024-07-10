@@ -1,3 +1,3 @@
-import { PasskeyLoginResponse } from "sdk"
+import { ConnectResponse } from "sdk"
 
-export type Ex3Account = PasskeyLoginResponse
+export type Ex3Account = ConnectResponse

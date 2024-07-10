@@ -14,13 +14,9 @@ export class BridgePromise<T> {
   }
 }
 
-export interface PasskeyLoginResponse {
+export interface ConnectResponse {
   address: string
-  userKeyPair: {
-    publicKey: string;
-    privateKey: string;
-  }
-  userId: string
+  publicKey?: string
 }
 
 export interface SignMessageRequest {

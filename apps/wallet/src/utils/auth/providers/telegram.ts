@@ -41,7 +41,7 @@ export class TelegramAuthenticateProvider implements IAuthenticateProvider {
           if (!data) {
             console.log('ERROR: something went wrong');
           }
-          // Validate data here 
+          // TODO: Validate data here 
           console.log('[tg data]', data);
           resolve({
             id: data.id.toString(),

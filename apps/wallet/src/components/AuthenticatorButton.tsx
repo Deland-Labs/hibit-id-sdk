@@ -9,9 +9,10 @@ import { useNavigate } from "react-router-dom";
 
 export interface AuthenticatorButtonProps {
   type: AuthenticatorType
+  onSuccess?: () => void
 }
 
-const AuthenticatorButton: FC<AuthenticatorButtonProps> = observer(({ type }) => {
+const AuthenticatorButton: FC<AuthenticatorButtonProps> = observer(({ type, onSuccess }) => {
   const navigate = useNavigate()
   
   const icon = useMemo(() => {
@@ -28,7 +29,7 @@ const AuthenticatorButton: FC<AuthenticatorButtonProps> = observer(({ type }) =>
   const handleAuth = async () => {
     const auth = await authManager.login(type)
     hibitIdSession.connect(auth)
-    navigate('/')
+    onSuccess?.()
   }
 
   return (
