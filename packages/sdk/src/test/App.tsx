@@ -1,15 +1,16 @@
 import { FC, useEffect, useState } from "react";
-import { HibitWallet } from "../lib/wallet";
+import { HibitIdWallet } from "../lib/wallet";
+import { ConnectResponse } from "../lib";
 
 const App: FC = () => {
-  const [pw, setPw] = useState<HibitWallet | null>(null)
-  const [ex3Account, setEx3Account] = useState('')
+  const [wallet, setWallet] = useState<HibitIdWallet | null>(null)
+  const [account, setAccount] = useState<ConnectResponse | null>(null)
   const [connecting, setConnecting] = useState(false)
   const [sig, setSig] = useState('')
 
   useEffect(() => {
-    const pw = new HibitWallet('dev')
-    setPw(pw)
+    const wallet = new HibitIdWallet('dev')
+    setWallet(wallet)
   }, [])
 
   return (
@@ -17,20 +18,26 @@ const App: FC = () => {
       <div>
         <button className="btn btn-sm" onClick={async () => {
           setConnecting(true)
-          const account = await pw?.connect()
-          setEx3Account(JSON.stringify(account, null, 2))
+          const account = await wallet?.connect(() => {
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                resolve()
+              }, 2000)
+            })
+          })
+          setAccount(account ?? null)
           setConnecting(false)
         }}>
           {connecting ? 'loading...' : 'connect'}
         </button>
       </div>
       <div>
-        <p>ex3 account:</p>
-        <pre>{ex3Account}</pre>
+        <p>account:</p>
+        <pre>{JSON.stringify(account, null, 2)}</pre>
       </div>
       <div>
         <button className="btn btn-sm" onClick={async () => {
-          const sig = await pw?.signMessage('hello hibit')
+          const sig = await wallet?.signMessage('hello hibit')
           setSig(sig ?? '')
         }}
         >sign message</button>

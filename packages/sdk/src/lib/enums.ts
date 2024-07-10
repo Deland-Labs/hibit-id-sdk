@@ -1,8 +1,10 @@
 export enum ClientExposeRPCMethod {
   CLOSE = 'close',
-  PASSKEY_LOGIN = 'passkeyLogin',
 }
 
 export enum HibitIdExposeRPCMethod {
+  AUTHORIZE_DONE = 'authorizeDone',
+  CONNECT = 'connect',
+  DISCONNECT = 'disconnect',
   SIGN_MESSAGE = 'signMessage',
 }

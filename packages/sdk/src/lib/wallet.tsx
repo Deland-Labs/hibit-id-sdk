@@ -1,16 +1,15 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { PasskeyLoginResponse, BridgePromise, HibitEnv, SignMessageResponse } from './types';
+import { ConnectResponse, HibitEnv, SignMessageResponse } from './types';
 import { ClientExposeRPCMethod, HibitIdExposeRPCMethod } from './enums';
 
-export class HibitWallet {
+export class HibitIdWallet {
   private _env: HibitEnv = 'prod'
   private _connected = false
   private _rpc: RPC | null = null
   private _controller: HibitIdController | null = null
   private _iframe: HibitIdIframe | null = null
-  private _authorizePromise: BridgePromise<PasskeyLoginResponse> | null = null
 
   constructor(env: HibitEnv) {
     this._env = env
@@ -20,26 +19,39 @@ export class HibitWallet {
     return this._connected
   }
 
-  public connect = async () => {
-    this._iframe = new HibitIdIframe(this._env, 'login')
-    await this.establishRPC(this._iframe.iframe)
-    this._authorizePromise = new BridgePromise<PasskeyLoginResponse>()
-    const res = await this._authorizePromise.promise
-    this._iframe.hide()
-    this._connected = true
-    this._controller = new HibitIdController(this._iframe.toggle)
-    return res
+  public connect = async (onPostConnect?: (walletAccount: ConnectResponse) => Promise<void>) => {
+    try {
+      this._iframe = new HibitIdIframe(this._env, 'login')
+      await this.establishRPC(this._iframe.iframe)
+      const res = await this._rpc!.call<ConnectResponse>(HibitIdExposeRPCMethod.CONNECT, {})
+      if (!res) {
+        throw new Error('No response from wallet')
+      }
+      await onPostConnect?.(res)
+      this._iframe.hide()
+      this._connected = true
+      this._controller = new HibitIdController(this._iframe.toggle)
+      return res
+    } catch (e) {
+      throw new Error(`Connect failed: ${e instanceof Error ? e.message : e}`)
+    } finally {
+      await this._rpc?.call(HibitIdExposeRPCMethod.AUTHORIZE_DONE, {})
+    }
   }
 
   public signMessage = async (message: string) => {
-    // await this.showWallet()
-    const res = await this._rpc?.call<SignMessageResponse>(HibitIdExposeRPCMethod.SIGN_MESSAGE, {
-      message,
-    })
-    return res?.signature
+    try {
+      const res = await this._rpc?.call<SignMessageResponse>(HibitIdExposeRPCMethod.SIGN_MESSAGE, {
+        message,
+      })
+      return res?.signature
+    } catch (e) {
+      throw new Error(`Sign message failed: ${e instanceof Error ? e.message : e}`)
+    }
   }
 
   public disconnect = async () => {
+    await this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
     this._rpc?.destroy()
     this._rpc = null
     this._iframe?.destroy()
@@ -59,19 +71,14 @@ export class HibitWallet {
       // Optionally, allowlist the origin you want to talk to:
       // origin: 'example.com',
     });
-    rpc.expose(ClientExposeRPCMethod.CLOSE, this.rpcClose);
-    rpc.expose(ClientExposeRPCMethod.PASSKEY_LOGIN, this.rpcPasskeyLogin);
+    rpc.expose(ClientExposeRPCMethod.CLOSE, this.onRpcClose);
 
     await rpc.isReady
     this._rpc = rpc
   }
 
-  private rpcClose = () => {
+  private onRpcClose = () => {
     this._iframe?.hide()
     this._controller?.setOpen(false)
-  }
-
-  private rpcPasskeyLogin = async (response: PasskeyLoginResponse) => {
-    this._authorizePromise?.resolve(response)
   }
 }

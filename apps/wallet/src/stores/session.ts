@@ -4,6 +4,9 @@ import { ChainWallet } from "../utils/chain/chain-wallets/types";
 import { Chain, ChainInfo } from "../utils/basicTypes";
 import { EthereumSepolia } from "../utils/chain/chain-list";
 import { EthereumChainWallet } from "../utils/chain/chain-wallets/ethereum";
+import { RUNTIME_ENV } from "../utils/runtime";
+import { RuntimeEnv } from "../utils/basicEnums";
+import rpcManager from "./rpc";
 
 const AUTH_STORE_KEY = 'hibitid-auth'
 
@@ -41,14 +44,37 @@ export class HibitIdSession {
     sessionStorage.setItem(AUTH_STORE_KEY, JSON.stringify(this.auth))
   }
 
+  public disconnect = () => {
+    this.auth = null
+    this.wallet = null
+    sessionStorage.removeItem(AUTH_STORE_KEY)
+  }
+
   private initWallet = (auth: HibitIdAuth): ChainWallet => {
-    if (!auth?.phrase) {
-      throw new Error('Invalid auth')
+    try {
+      if (!auth?.phrase) {
+        throw new Error('Invalid auth')
+      }
+  
+      let wallet: ChainWallet | null = null
+      // TODO: add more chains
+      if (this.chainInfo.chainId.type.equals(Chain.Ethereum)) {
+        wallet = new EthereumChainWallet(this.chainInfo, auth.phrase)
+      }
+  
+      if (!wallet) {
+        throw new Error('Unsupported chain')
+      }
+      if (RUNTIME_ENV === RuntimeEnv.SDK) {
+        rpcManager.resolveConnect({ address: wallet.getAddress() })
+      }
+      return wallet
+    } catch (e) {
+      if (RUNTIME_ENV === RuntimeEnv.SDK) {
+        rpcManager.rejectConnect(e instanceof Error ? e.message : JSON.stringify(e))
+      }
+      throw e
     }
-    if (this.chainInfo.chainId.type.equals(Chain.Ethereum)) {
-      return new EthereumChainWallet(this.chainInfo, auth.phrase)
-    }
-    throw new Error('Unsupported chain')
   }
 }
 
