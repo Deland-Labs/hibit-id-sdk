@@ -1,6 +1,6 @@
 import { BlockNetwork } from '../basicEnums';
 import { Chain, ChainId } from '../basicTypes';
-import { Ethereum, EthereumSepolia } from './info-list';
+import { Ethereum, EthereumSepolia } from './chain-list';
 import { ChainInfo } from '../basicTypes';
 import { BLOCK_NETWORK } from '../env';
 
