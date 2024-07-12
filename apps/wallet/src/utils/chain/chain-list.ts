@@ -1,4 +1,4 @@
-import { SignaturesSchema } from "../basicEnums";
+import { WalletSignatureSchema } from "../basicEnums";
 import { ChainInfo, ChainId, Chain, ChainNetwork } from "../basicTypes";
 import { clusterApiUrl } from '@solana/web3.js';
 import { getHttpEndpoint } from "@orbs-network/ton-access";
@@ -11,7 +11,7 @@ export const Ethereum: ChainInfo = {
   icon: '/chain-icons/Ethereum.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://etherscan.io',
   rpcUrls: ['https://endpoints.omniatech.io/v1/eth/mainnet/public']
 };
@@ -22,7 +22,7 @@ export const EthereumSepolia: ChainInfo = {
   icon: '/chain-icons/Ethereum.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://sepolia.etherscan.io',
   rpcUrls: ['https://rpc-sepolia.rockx.com']
 };
@@ -34,7 +34,7 @@ export const EthereumBsc: ChainInfo = {
   icon: '/chain-icons/BNB.svg',
   nativeAssetSymbol: 'BNB',
   nativeAssetDecimals: 18,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://bscscan.com',
   rpcUrls: ['https://bsc-dataseed.binance.org']
 };
@@ -45,7 +45,7 @@ export const EthereumBscTestnet: ChainInfo = {
   icon: '/chain-icons/BNB.svg',
   nativeAssetSymbol: 'tBNB',
   nativeAssetDecimals: 18,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://testnet.bscscan.com',
   rpcUrls: ['https://bsc-testnet.publicnode.com']
 };
@@ -57,7 +57,7 @@ export const EthereumScroll: ChainInfo = {
   icon: '/chain-icons/Scroll.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://scroll.l2scan.co',
   rpcUrls: ['https://rpc.scroll.io']
 };
@@ -68,7 +68,7 @@ export const EthereumScrollSepolia: ChainInfo = {
   icon: '/chain-icons/Scroll.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://scroll-sepolia.l2scan.co',
   rpcUrls: ['https://sepolia-rpc.scroll.io']
 };
@@ -80,7 +80,7 @@ export const EthereumBase: ChainInfo = {
   icon: '/chain-icons/Base.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://basescan.org',
   rpcUrls: ['https://mainnet.base.org']
 };
@@ -91,7 +91,7 @@ export const EthereumBaseSepolia: ChainInfo = {
   icon: '/chain-icons/Base.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://sepolia.basescan.org',
   rpcUrls: ['https://sepolia.base.org']
 };
@@ -103,7 +103,7 @@ export const EthereumAvalanche: ChainInfo = {
   icon: '/chain-icons/Avalanche.svg',
   nativeAssetSymbol: 'AVAX',
   nativeAssetDecimals: 18,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://snowtrace.io',
   rpcUrls: ['https://api.avax.network/ext/bc/C/rpc']
 };
@@ -114,9 +114,32 @@ export const EthereumAvalancheFuji: ChainInfo = {
   icon: '/chain-icons/Avalanche.svg',
   nativeAssetSymbol: 'AVAX',
   nativeAssetDecimals: 18,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://subnets-test.avax.network/c-chain',
   rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc']
+};
+
+export const EthereumBitlayer: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmBitlayerNet),
+  name: 'Bitlayer',
+  fullName: 'Bitlayer Mainnet',
+  icon: '/chain-icons/Bitlayer.png',
+  nativeAssetSymbol: 'BTC',
+  nativeAssetDecimals: 18,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'https://btrscan.com',
+  rpcUrls: ['https://rpc.bitlayer.org']
+};
+export const EthereumBitlayerTestnet: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmBitlayerTestNet),
+  name: 'Bitlayer Testnet',
+  fullName: 'Bitlayer Testnet',
+  icon: '/chain-icons/Bitlayer.png',
+  nativeAssetSymbol: 'BTC',
+  nativeAssetDecimals: 18,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'https://testnet.btrscan.com',
+  rpcUrls: ['https://testnet-rpc.bitlayer.org']
 };
 
 export const Bitcoin: ChainInfo = {
@@ -126,9 +149,9 @@ export const Bitcoin: ChainInfo = {
   icon: '/chain-icons/Bitcoin.svg',
   nativeAssetSymbol: 'BTC',
   nativeAssetDecimals: 8,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.BtcEcdsa],
   explorer: 'https://blockstream.info',
-  rpcUrls: [],
+  rpcUrls: []
 };
 export const BitcoinTestnet: ChainInfo = {
   chainId: new ChainId(Chain.Bitcoin, ChainNetwork.BtcTestNet),
@@ -137,9 +160,9 @@ export const BitcoinTestnet: ChainInfo = {
   icon: '/chain-icons/Bitcoin.svg',
   nativeAssetSymbol: 'BTC',
   nativeAssetDecimals: 8,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.BtcEcdsa],
   explorer: 'https://blockstream.info/testnet',
-  rpcUrls: [],
+  rpcUrls: []
 };
 
 export const Solana: ChainInfo = {
@@ -149,10 +172,10 @@ export const Solana: ChainInfo = {
   icon: '/chain-icons/Solana.svg',
   nativeAssetSymbol: 'SOL',
   nativeAssetDecimals: 9,
-  supportedSignaturesSchemas: [SignaturesSchema.Ed25519],
+  supportedSignaturesSchemas: [WalletSignatureSchema.SolanaEddsa],
   explorer: 'https://explorer.solana.com',
   rpcUrls: [clusterApiUrl('mainnet-beta')],
-  caseSensitiveAddress: true,
+  caseSensitiveAddress: true
 };
 export const SolanaTestnet: ChainInfo = {
   chainId: new ChainId(Chain.Solana, ChainNetwork.SolanaTestNet),
@@ -161,87 +184,107 @@ export const SolanaTestnet: ChainInfo = {
   icon: '/chain-icons/Solana.svg',
   nativeAssetSymbol: 'SOL',
   nativeAssetDecimals: 9,
-  supportedSignaturesSchemas: [SignaturesSchema.Ed25519],
+  supportedSignaturesSchemas: [WalletSignatureSchema.SolanaEddsa],
   explorer: 'https://explorer.solana.com?cluster=testnet',
   rpcUrls: [clusterApiUrl('testnet')],
-  caseSensitiveAddress: true,
+  caseSensitiveAddress: true
 };
 
 export const Ton: ChainInfo = {
   chainId: new ChainId(Chain.Ton, ChainNetwork.TonMainNet),
   name: 'TON',
-  fullName: 'The Open Network',
+  fullName: 'The Open Mask',
   icon: '/chain-icons/Ton.svg',
   nativeAssetSymbol: 'TON',
   nativeAssetDecimals: 9,
-  supportedSignaturesSchemas: [SignaturesSchema.Ed25519],
+  supportedSignaturesSchemas: [WalletSignatureSchema.TonEddsaOpenMask],
   explorer: 'https://tonviewer.com',
   rpcUrls: [],
   caseSensitiveAddress: true,
   getServerFormatAddress: (address: string): string | null => {
     try {
-      return (new TonWeb.utils.Address(address)).toString(false, undefined, undefined, false)
+      return new TonWeb.utils.Address(address).toString(
+        false,
+        undefined,
+        undefined,
+        false
+      );
     } catch (e) {
-      return null
+      return null;
     }
   },
   getTxLink: (txId: string) => {
     if (!txId) {
-      return ''
+      return '';
     }
-    let hexTxId = txId
+    let hexTxId = txId;
     try {
-      hexTxId = Buffer.from(txId, 'base64').toString('hex')
+      hexTxId = Buffer.from(txId, 'base64').toString('hex');
     } catch (e) {
-      console.error(e)
+      console.error(e);
     }
-    return `https://tonviewer.com/transaction/${hexTxId}`
+    return `https://tonviewer.com/transaction/${hexTxId}`;
   },
   getAddressLink: (address: string) => {
     try {
-      const bouncable = (new TonWeb.utils.Address(address)).toString(true, true, true, false)
-      return `https://tonviewer.com/${bouncable}`
+      const bouncable = new TonWeb.utils.Address(address).toString(
+        true,
+        true,
+        true,
+        false
+      );
+      return `https://tonviewer.com/${bouncable}`;
     } catch (e) {
-      return address
+      return address;
     }
   }
 };
 export const TonTestnet: ChainInfo = {
   chainId: new ChainId(Chain.Ton, ChainNetwork.TonTestNet),
   name: 'TON Testnet',
-  fullName: 'The Open Network Testnet',
+  fullName: 'The Open Mask Testnet',
   icon: '/chain-icons/Ton.svg',
   nativeAssetSymbol: 'TON',
   nativeAssetDecimals: 9,
-  supportedSignaturesSchemas: [SignaturesSchema.Ed25519],
+  supportedSignaturesSchemas: [WalletSignatureSchema.TonEddsaOpenMask],
   explorer: 'https://testnet.tonviewer.com',
   rpcUrls: [],
   caseSensitiveAddress: true,
   getServerFormatAddress: (address: string): string | null => {
     try {
-      return (new TonWeb.utils.Address(address)).toString(false, undefined, undefined, true)
+      return new TonWeb.utils.Address(address).toString(
+        false,
+        undefined,
+        undefined,
+        true
+      );
     } catch (e) {
-      return null
+      return null;
     }
   },
   getTxLink: (txId: string) => {
     if (!txId) {
-      return ''
+      return '';
     }
-    let hexTxId = txId
+    let hexTxId = txId;
     try {
-      hexTxId = Buffer.from(txId, 'base64').toString('hex')
+      hexTxId = Buffer.from(txId, 'base64').toString('hex');
     } catch (e) {
-      console.error(e)
+      console.error(e);
     }
-    return `https://testnet.tonviewer.com/transaction/${hexTxId}`
+    return `https://testnet.tonviewer.com/transaction/${hexTxId}`;
   },
   getAddressLink: (address: string) => {
     try {
-      const bouncable = (new TonWeb.utils.Address(address)).toString(true, true, true, false)
-      return `https://testnet.tonviewer.com/${bouncable}`
+      const bouncable = new TonWeb.utils.Address(address).toString(
+        true,
+        true,
+        true,
+        false
+      );
+      return `https://testnet.tonviewer.com/${bouncable}`;
     } catch (e) {
-      return address
+      return address;
     }
   }
 };
@@ -249,10 +292,10 @@ export const TonTestnet: ChainInfo = {
   const [tonMainEndpoint, tonTestEndpoint] = await Promise.all([
     getHttpEndpoint(),
     getHttpEndpoint({ network: 'testnet' })
-  ])
-  Ton.rpcUrls.push(tonMainEndpoint)
-  TonTestnet.rpcUrls.push(tonTestEndpoint)
-})()
+  ]);
+  Ton.rpcUrls.push(tonMainEndpoint);
+  TonTestnet.rpcUrls.push(tonTestEndpoint);
+})();
 
 export const Tron: ChainInfo = {
   chainId: new ChainId(Chain.Tron, ChainNetwork.TronMainNet),
@@ -261,7 +304,7 @@ export const Tron: ChainInfo = {
   icon: '/chain-icons/Tron.svg',
   nativeAssetSymbol: 'TRX',
   nativeAssetDecimals: 6,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.TronEcdsa],
   explorer: 'https://tronscan.org',
   rpcUrls: ['https://rpc.trongrid.io'],
   caseSensitiveAddress: true,
@@ -273,7 +316,7 @@ export const TronShasta: ChainInfo = {
   icon: '/chain-icons/Tron.svg',
   nativeAssetSymbol: 'TRX',
   nativeAssetDecimals: 6,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.TronEcdsa],
   explorer: 'https://shasta.tronscan.org',
   rpcUrls: ['https://api.shasta.trongrid.io'],
   caseSensitiveAddress: true,
@@ -285,7 +328,7 @@ export const TronNile: ChainInfo = {
   icon: '/chain-icons/Tron.svg',
   nativeAssetSymbol: 'TRX',
   nativeAssetDecimals: 6,
-  supportedSignaturesSchemas: [SignaturesSchema.Secp256k1],
+  supportedSignaturesSchemas: [WalletSignatureSchema.TronEcdsa],
   explorer: 'https://nile.tronscan.org',
   rpcUrls: ['https://api.nileex.io'],
   caseSensitiveAddress: true,
