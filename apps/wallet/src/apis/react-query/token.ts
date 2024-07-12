@@ -47,6 +47,7 @@ export const useTokenBalanceQuery = (token: RootAssetInfo) => {
       }
       return await hibitIdSession.wallet?.balanceOf(hibitIdSession.wallet.getAddress(), token)
     },
-    refetchInterval: 10000,
+    // FIXME: stop refetch if hidden
+    // refetchInterval: 10000,
   })
 }

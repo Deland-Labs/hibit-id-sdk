@@ -1,3 +1,5 @@
+import { HibitIdAssetType, HibitIdChainId } from "./enums"
+
 export type HibitEnv = 'dev' | 'test' | 'prod'
 export type HibitIdPage = 'main' | 'login'
 
@@ -25,4 +27,28 @@ export interface SignMessageRequest {
 
 export interface SignMessageResponse {
   signature: string
+}
+
+export interface GetBalanceRequest {
+  assetType?: HibitIdAssetType
+  chainId?: HibitIdChainId
+  contractAddress?: string
+  decimalPlaces?: number
+}
+
+export interface GetBalanceResponse {
+  balance: string // in minimal unit (like wei for eth)
+}
+
+export interface TransferRequest {
+  toAddress: string
+  amount: string // in minimal unit (like wei for eth)
+  assetType?: HibitIdAssetType
+  chainId?: HibitIdChainId
+  contractAddress?: string
+  decimalPlaces?: number
+}
+
+export interface TransferResponse {
+  txHash: string
 }

@@ -1,7 +1,7 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { ConnectResponse, HibitEnv, SignMessageResponse } from './types';
+import { ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitEnv, SignMessageResponse, TransferRequest, TransferResponse } from './types';
 import { ClientExposeRPCMethod, HibitIdExposeRPCMethod } from './enums';
 
 export class HibitIdWallet {
@@ -39,14 +39,41 @@ export class HibitIdWallet {
     }
   }
 
+  public getAddress = async () => {
+    // TODO:
+  }
+
+  public getChainInfo = async () => {
+    // TODO:
+  }
+
   public signMessage = async (message: string) => {
     try {
       const res = await this._rpc?.call<SignMessageResponse>(HibitIdExposeRPCMethod.SIGN_MESSAGE, {
         message,
       })
-      return res?.signature
+      return res?.signature ?? null
     } catch (e) {
       throw new Error(`Sign message failed: ${e instanceof Error ? e.message : e}`)
+    }
+  }
+
+  public getBalance = async (option?: GetBalanceRequest) => {
+    const request: GetBalanceRequest = option || {}
+    try {
+      const res = await this._rpc?.call<GetBalanceResponse>(HibitIdExposeRPCMethod.GET_BALANCE, request)
+      return res?.balance ?? null
+    } catch (e) {
+      throw new Error(`Get balance failed: ${e instanceof Error ? e.message : e}`)
+    }
+  }
+
+  public transfer = async (option: TransferRequest) => {
+    try {
+      const res = await this._rpc?.call<TransferResponse>(HibitIdExposeRPCMethod.TRANSFER, option)
+      return res?.txHash ?? null
+    } catch (e) {
+      throw new Error(`Transfer failed: ${e instanceof Error ? e.message : e}`)
     }
   }
 
