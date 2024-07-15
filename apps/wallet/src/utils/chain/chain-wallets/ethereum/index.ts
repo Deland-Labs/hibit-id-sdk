@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { AssetInfo, ChainWallet } from "../types";
 import { isAddress, JsonRpcProvider, Contract, HDNodeWallet, parseEther } from "ethers";
-import { Chain, ChainAssetType, ChainInfo, ChainNetwork } from "../../../basicTypes";
+import { Chain, ChainAssetType, ChainInfo } from "../../../basicTypes";
 import { erc20Abi } from "./erc20";
 
 export class EthereumChainWallet extends ChainWallet {

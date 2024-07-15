@@ -1,5 +1,5 @@
 import { CONTROLLER_CONTAINER_ID, IFRAME_CONTAINER_ID } from "../constants"
-import { HibitEnv, HibitIdPage } from "../types"
+import { HibitEnv, HibitIdPage, UserAuthInfo } from "../types"
 import { getHibitIdUrl } from "../utils"
 import './index.css'
 
@@ -49,21 +49,25 @@ export class HibitIdController {
 export class HibitIdIframe {
   public iframe: HTMLIFrameElement
   private container: HTMLDivElement
-  private _visible = true
+  private _visible = false
 
-  constructor(env: HibitEnv, initialPage: HibitIdPage = 'login') {
+  constructor(env: HibitEnv, auth: UserAuthInfo | null = null, initialPage: HibitIdPage = 'login') {
     const existed = document.getElementById(IFRAME_CONTAINER_ID)
-    existed?.remove()
+    if (existed) {
+      this.container = existed as HTMLDivElement
+      this.iframe = this.container.querySelector('iframe') as HTMLIFrameElement
+      return
+    }
     const container = document.createElement('div')
     container.id = IFRAME_CONTAINER_ID
     const iframe = document.createElement('iframe')
-    iframe.src = getHibitIdUrl(env, initialPage)
-    iframe.allow='publickey-credentials-get *; publickey-credentials-create *'
+    iframe.src = getHibitIdUrl(env, auth, initialPage)
+    // iframe.allow='publickey-credentials-get *; publickey-credentials-create *'
     container.appendChild(iframe)
     document.body.appendChild(container)
     this.container = container
     this.iframe = iframe
-    this.show()
+    this.hide()
   }
 
   get visible() {

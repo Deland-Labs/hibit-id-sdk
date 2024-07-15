@@ -4,6 +4,8 @@ export enum ClientExposeRPCMethod {
 
 export enum HibitIdExposeRPCMethod {
   AUTHORIZE_DONE = 'authorizeDone',
+  GET_ACCOUNT = 'getAccount',
+  GET_CHAIN_INFO = 'getChainInfo',
   CONNECT = 'connect',
   GET_BALANCE = 'getBalance',
   TRANSFER = 'transfer',

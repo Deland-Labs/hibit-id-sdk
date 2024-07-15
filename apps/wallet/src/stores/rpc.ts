@@ -1,5 +1,5 @@
 import { RPC } from '@mixer/postmessage-rpc'
-import { ClientExposeRPCMethod, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse } from 'sdk'
+import { ClientExposeRPCMethod, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from 'sdk'
 import hibitIdSession from './session';
 import { BridgePromise } from 'sdk';
 import { makeAutoObservable } from 'mobx';
@@ -23,6 +23,8 @@ class RPCManager {
       // Optionally, allowlist the origin you want to talk to:
       // origin: 'example.com',
     });
+    rpc.expose(HibitIdExposeRPCMethod.GET_ACCOUNT, this.onRpcGetAccount);
+    rpc.expose(HibitIdExposeRPCMethod.GET_CHAIN_INFO, this.onRpcGetChainInfo);
     rpc.expose(HibitIdExposeRPCMethod.SIGN_MESSAGE, this.onRpcSignMessage);
     rpc.expose(HibitIdExposeRPCMethod.CONNECT, this.onRpcConnect);
     rpc.expose(HibitIdExposeRPCMethod.GET_BALANCE, this.onRpcGetBalance);
@@ -51,6 +53,18 @@ class RPCManager {
 
   public rejectConnect = (error: string) => {
     this._connectPromise?.reject(error)
+  }
+
+  private onRpcGetAccount = async (): Promise<WalletAccount> => {
+    this.checkInit()
+    return {
+      address: hibitIdSession.wallet!.getAddress()
+    }
+  }
+
+  private onRpcGetChainInfo = async () => {
+    this.checkInit()
+    return hibitIdSession.wallet!.chainInfo
   }
 
   private onRpcSignMessage = async (input: SignMessageRequest): Promise<SignMessageResponse> => {

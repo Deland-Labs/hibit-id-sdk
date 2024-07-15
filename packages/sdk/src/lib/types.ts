@@ -3,6 +3,11 @@ import { HibitIdAssetType, HibitIdChainId } from "./enums"
 export type HibitEnv = 'dev' | 'test' | 'prod'
 export type HibitIdPage = 'main' | 'login'
 
+export interface HibitIdAuth {
+  token: string
+  expiresAt: number
+}
+
 export class BridgePromise<T> {
   public promise: Promise<T>
   public resolve: (value: T) => void = () => {}
@@ -16,9 +21,32 @@ export class BridgePromise<T> {
   }
 }
 
-export interface ConnectResponse {
+export interface ChainInfo {
+  chainId: {
+    type: number
+    network: number
+  }
+  name: string
+  fullName: string
+  nativeAssetSymbol: string
+  nativeAssetDecimals: number
+  explorer: string
+  rpcUrls: string[]
+}
+
+export interface WalletAccount {
   address: string
   publicKey?: string
+}
+
+export interface UserAuthInfo {
+  id: string
+  name: string
+  authTimestamp: Date
+}
+
+export interface ConnectResponse extends WalletAccount {
+  user: UserAuthInfo
 }
 
 export interface SignMessageRequest {
@@ -51,4 +79,12 @@ export interface TransferRequest {
 
 export interface TransferResponse {
   txHash: string
+}
+
+export interface GetAddressResponse {
+  address: string
+}
+
+export interface GetChainInfoResponse {
+  chainInfo: ChainInfo
 }

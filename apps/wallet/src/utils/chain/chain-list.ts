@@ -308,6 +308,19 @@ export const Tron: ChainInfo = {
   explorer: 'https://tronscan.org',
   rpcUrls: ['https://rpc.trongrid.io'],
   caseSensitiveAddress: true,
+  getTxLink: (txId: string) => {
+    if (typeof txId !== 'string') {
+      return ''
+    }
+    const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
+    return `https://tronscan.org/#/transaction/${hash}`
+  },
+  getAddressLink: (address: string) => {
+    if (typeof address !== 'string') {
+      return ''
+    }
+    return `https://tronscan.org/#/address/${address}`
+  },
 };
 export const TronShasta: ChainInfo = {
   chainId: new ChainId(Chain.Tron, ChainNetwork.TronShastaTestNet),
@@ -320,6 +333,19 @@ export const TronShasta: ChainInfo = {
   explorer: 'https://shasta.tronscan.org',
   rpcUrls: ['https://api.shasta.trongrid.io'],
   caseSensitiveAddress: true,
+  getTxLink: (txId: string) => {
+    if (typeof txId !== 'string') {
+      return ''
+    }
+    const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
+    return `https://shasta.tronscan.org/#/transaction/${hash}`
+  },
+  getAddressLink: (address: string) => {
+    if (typeof address !== 'string') {
+      return ''
+    }
+    return `https://shasta.tronscan.org/#/address/${address}`
+  },
 };
 export const TronNile: ChainInfo = {
   chainId: new ChainId(Chain.Tron, ChainNetwork.TronNileTestNet),
@@ -332,4 +358,17 @@ export const TronNile: ChainInfo = {
   explorer: 'https://nile.tronscan.org',
   rpcUrls: ['https://api.nileex.io'],
   caseSensitiveAddress: true,
-};
+  getTxLink: (txId: string) => {
+    if (typeof txId !== 'string') {
+      return ''
+    }
+    const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
+    return `https://nile.tronscan.org/#/transaction/${hash}`
+  },
+  getAddressLink: (address: string) => {
+    if (typeof address !== 'string') {
+      return ''
+    }
+    return `https://nile.tronscan.org/#/address/${address}`
+  },
+}
