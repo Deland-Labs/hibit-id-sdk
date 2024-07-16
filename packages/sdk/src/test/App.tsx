@@ -19,13 +19,7 @@ const App: FC = () => {
       <div>
         <button className="btn btn-sm" onClick={async () => {
           setConnecting(true)
-          const account = await wallet?.connect(() => {
-            return new Promise((resolve) => {
-              setTimeout(() => {
-                resolve()
-              }, 2000)
-            })
-          })
+          const account = await wallet?.connect()
           setAccount(account ?? null)
           setConnecting(false)
         }}>

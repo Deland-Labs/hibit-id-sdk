@@ -34,7 +34,7 @@ export class HibitIdWallet {
     return this._connected
   }
 
-  public connect = async (onPostConnect?: (walletAccount: ConnectResponse) => Promise<void>) => {
+  public connect = async () => {
     if (this._connected) {
       return await this.getAccount()
     }
@@ -46,7 +46,6 @@ export class HibitIdWallet {
       if (!res) {
         throw new Error('No response from wallet')
       }
-      await onPostConnect?.(res)
       this._iframe!.hide()
       this._connected = true
       this._controller = new HibitIdController(this._iframe!.toggle)
@@ -60,8 +59,6 @@ export class HibitIdWallet {
       }
     } catch (e) {
       throw new Error(`Connect failed: ${e instanceof Error ? e.message : e}`)
-    } finally {
-      await this._rpc?.call(HibitIdExposeRPCMethod.AUTHORIZE_DONE, {})
     }
   }
 
@@ -143,8 +140,9 @@ export class HibitIdWallet {
       // origin: 'example.com',
     });
     rpc.expose(ClientExposeRPCMethod.CLOSE, this.onRpcClose);
-
+    console.log('[sdk rpc init]')
     await rpc.isReady
+    console.log('[sdk rpc ready]')
     this._rpc = rpc
   }
 

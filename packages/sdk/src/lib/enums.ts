@@ -3,7 +3,6 @@ export enum ClientExposeRPCMethod {
 }
 
 export enum HibitIdExposeRPCMethod {
-  AUTHORIZE_DONE = 'authorizeDone',
   GET_ACCOUNT = 'getAccount',
   GET_CHAIN_INFO = 'getChainInfo',
   CONNECT = 'connect',
@@ -22,6 +21,7 @@ export enum HibitIdAssetType {
   ICRC1 = 6,
   BRC20 = 7,
   SPL = 8,
+  TRC20 = 9,
   Jetton = 10,
 }
 

@@ -20,7 +20,7 @@ export class HibitIdSession {
   }
 
   get isConnected() {
-    return !!this.wallet && (RUNTIME_ENV === RuntimeEnv.SDK ? rpcManager.authorized : true)
+    return !!this.wallet
   }
 
   get validAddress() {

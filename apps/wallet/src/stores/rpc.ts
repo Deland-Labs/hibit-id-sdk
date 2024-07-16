@@ -10,11 +10,16 @@ import BigNumber from 'bignumber.js';
 class RPCManager {
   private _rpc: RPC | null = null
   private _connectPromise: BridgePromise<ConnectResponse> | null = null
-  private _authorized = false
 
   constructor() {
     makeAutoObservable(this)
+  }
 
+  get rpc() {
+    return this._rpc
+  }
+
+  public init = async () => {
     const rpc = new RPC({
       // The window you want to talk to:
       target: window.parent,
@@ -30,16 +35,11 @@ class RPCManager {
     rpc.expose(HibitIdExposeRPCMethod.GET_BALANCE, this.onRpcGetBalance);
     rpc.expose(HibitIdExposeRPCMethod.TRANSFER, this.onRpcTransfer);
     rpc.expose(HibitIdExposeRPCMethod.DISCONNECT, this.onRpcDisconnect);
-    rpc.expose(HibitIdExposeRPCMethod.AUTHORIZE_DONE, this.onRpcAuthorizeDone);
+
+    console.log('[wallet rpc init]')
+    await rpc.isReady
+    console.log('[wallet rpc ready]')
     this._rpc = rpc
-  }
-
-  get rpc() {
-    return this._rpc
-  }
-
-  get authorized() {
-    return this._authorized
   }
 
   public notifyClose = () => {
@@ -133,10 +133,6 @@ class RPCManager {
 
   private onRpcDisconnect = async () => {
     hibitIdSession.disconnect()
-  }
-
-  private onRpcAuthorizeDone = async () => {
-    this._authorized = true
   }
 
   private checkInit = () => {

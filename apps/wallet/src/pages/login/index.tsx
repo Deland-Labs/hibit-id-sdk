@@ -41,7 +41,7 @@ const LoginPage: FC = observer(() => {
         </div>
       </div>
     )
-  }, [loginSuccess, rpcManager.authorized])
+  }, [loginSuccess])
 
   useEffect(() => {
     if (loginSuccess && hibitIdSession.isConnected) {
