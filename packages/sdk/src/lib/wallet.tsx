@@ -21,7 +21,7 @@ export class HibitIdWallet {
         const auth = JSON.parse(authString) as UserAuthInfo
         this.prepareIframe(auth, 'main').then(() => {
           this._connected = true
-          this._controller = new HibitIdController(this._iframe!.toggle)
+          this._controller = new HibitIdController(this.toggleIframe)
         })
       } catch (e) {
         console.error('Failed to parse auth info from storage', e)
@@ -41,14 +41,14 @@ export class HibitIdWallet {
 
     try {
       await this.prepareIframe(undefined, 'login')
-      this._iframe!.show()
+      this._iframe!.show({ fullscreen: true, style: {} })
       const res = await this._rpc!.call<ConnectResponse>(HibitIdExposeRPCMethod.CONNECT, {})
       if (!res) {
         throw new Error('No response from wallet')
       }
       this._iframe!.hide()
       this._connected = true
-      this._controller = new HibitIdController(this._iframe!.toggle)
+      this._controller = new HibitIdController(this.toggleIframe)
       console.log('[hibit id connected]')
       sessionStorage.setItem(HIBIT_ID_STORAGE_KEY, JSON.stringify(res.user))
       console.log('[hibit id auth stored]')
@@ -116,12 +116,33 @@ export class HibitIdWallet {
   }
 
   public disconnect = async () => {
+    sessionStorage.removeItem(HIBIT_ID_STORAGE_KEY)
     await this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
     this._rpc?.destroy()
     this._rpc = null
     this._iframe?.destroy()
     this._controller?.destroy()
     this._connected = false
+  }
+
+  private toggleIframe = () => {
+    if (!this._iframe) return
+    if (this._iframe.visible) {
+      this._iframe.hide()
+    } else {
+      const controllerRect = this._controller?.getBoundingRect()
+      this._iframe.show({
+        fullscreen: !this._connected,
+        style: {
+          maxWidth: '100%',
+          maxHeight: '100%',
+          width: '332px',
+          height: '502px',
+          right: `${controllerRect ? (window.innerWidth - controllerRect.right) : 50}px`,
+          bottom: `${controllerRect ? (window.innerHeight - controllerRect.top + 20) : 50}px`,
+        }
+      })
+    }
   }
 
   private prepareIframe = async (auth?: UserAuthInfo, page?: HibitIdPage) => {

@@ -23,6 +23,10 @@ export class HibitIdController {
     this.button = button
   }
 
+  public getBoundingRect = () => {
+    return this.container.getBoundingClientRect()
+  }
+
   public setOpen = (open: boolean) => {
     if (open) {
       this.button.classList.remove('hidden')
@@ -74,9 +78,26 @@ export class HibitIdIframe {
     return this._visible
   }
 
-  public show = () => {
-    this.container.style.width = '100%'
-    this.container.style.height = '100%'
+  public show = (options: {
+    fullscreen: boolean,
+    style: Record<string, string>
+  }) => {
+    if (options.fullscreen) {
+      this.container.style.top = '0'
+      this.container.style.left = '0'
+      this.container.style.width = '100%'
+      this.container.style.height = '100%'
+      this.container.style.bottom = 'unset'
+      this.container.style.right = 'unset'
+    } else {
+      this.container.style.top = 'unset'
+      this.container.style.left = 'unset'
+      Object.keys(options.style).forEach((key) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        this.container.style[key] = options.style[key]
+      })
+    }
     this._visible = true
   }
 
@@ -84,14 +105,6 @@ export class HibitIdIframe {
     this.container.style.width = '0'
     this.container.style.height = '0'
     this._visible = false
-  }
-
-  public toggle = () => {
-    if (this._visible) {
-      this.hide()
-    } else {
-      this.show()
-    }
   }
 
   public destroy = () => {

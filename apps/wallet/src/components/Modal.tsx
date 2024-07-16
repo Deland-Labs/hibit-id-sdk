@@ -42,7 +42,7 @@ const Modal: FC<ModalProps> = ({ visible, title, content, onClose, modalClassNam
 
   return (
     <dialog ref={dialogRef} className="modal">
-      <div className={twMerge('modal-box w-[600px] max-w-full px-4 py-0 bg-base-200', modalClassName)}>
+      <div className={twMerge('modal-box w-[600px] max-w-full px-4 py-0 flex flex-col bg-base-200', modalClassName)}>
         <div className="h-[56px] flex justify-between items-center border-b border-accent">
           <h3 className="text-lg">{title}</h3>
           <form method="dialog">
@@ -52,7 +52,9 @@ const Modal: FC<ModalProps> = ({ visible, title, content, onClose, modalClassNam
             </button>
           </form>
         </div>
-        {typeof content === 'function' ? content(handleClose) : content}
+        <div className='flex-1'>
+          {typeof content === 'function' ? content(handleClose) : content}
+        </div>
       </div>
     </dialog>
   )
