@@ -9,6 +9,9 @@ export class EthereumChainWallet extends ChainWallet {
   private wallet: HDNodeWallet
 
   constructor(chainInfo: ChainInfo, phrase: string) {
+    if (!chainInfo.chainId.type.equals(Chain.Ethereum)) {
+      throw new Error('Ethereum: invalid chain type');
+    }
     super(chainInfo, phrase)
     this.provider = new JsonRpcProvider(
       this.chainInfo.rpcUrls[0],

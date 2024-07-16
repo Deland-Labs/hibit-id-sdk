@@ -12,6 +12,7 @@
   "dependencies": {
     "@mixer/postmessage-rpc": "^1.1.4",
     "@noble/secp256k1": "^1.7.0",
+    "@openproduct/web-sdk": "^0.23.0",
     "@orbs-network/ton-access": "^2.3.3",
     "@passwordless-id/webauthn": "^1.6.1",
     "@solana/web3.js": "^1.94.0",
@@ -27,7 +28,8 @@
     "reflect-metadata": "^0.2.2",
     "sdk": "*",
     "tailwind-merge": "^2.3.0",
-    "tonweb": "^0.0.66"
+    "tonweb": "^0.0.66",
+    "tonweb-mnemonic": "^1.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
