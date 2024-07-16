@@ -1,5 +1,6 @@
-import { AuthenticatorType, HibitIdAuth, IAuthenticateProvider } from "./types";
+import { AuthenticatorType, IAuthenticateProvider } from "./types";
 import { TelegramAuthenticateProvider } from "./providers/telegram";
+import hibitIdSession from "../../stores/session";
 
 export class AuthManager {
   public static readonly supportedAuthenticators: AuthenticatorType[] = [AuthenticatorType.Telegram]
@@ -12,10 +13,9 @@ export class AuthManager {
    * Log user into Hibit ID
    * @param {AuthenticatorType} type
    * @param launchParams same as in IAuthenticateProvider.authenticate()
-   * @returns {Promise<HibitIdAuth>} user's Hibit Id auth object
+   * @returns {Promise<void>}
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  login = async (type: AuthenticatorType, launchParams?: any): Promise<HibitIdAuth> => {
+  login = async (type: AuthenticatorType, launchParams?: any): Promise<void> => {
     switch (type) {
       case AuthenticatorType.Telegram: {
         this._provider = new TelegramAuthenticateProvider()
@@ -26,14 +26,7 @@ export class AuthManager {
       }
     }
     const userInfo = await this._provider.authenticate(launchParams)
-
-    // TODO: trade userInfo for wallet phrase
-    console.log('[authenticated user info]', userInfo)
-    const mnemonicPhrase = 'unaware manage apart embrace gap age alcohol rabbit decrease purchase nerve flee'
-    return {
-      userInfo,
-      phrase: mnemonicPhrase
-    }
+    await hibitIdSession.connect(userInfo)
   }
 }
 

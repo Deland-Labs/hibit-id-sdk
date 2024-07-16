@@ -8,7 +8,8 @@ import PageLoading from './components/PageLoading';
 import { RUNTIME_ENV, RUNTIME_PARAMS } from './utils/runtime';
 import { RuntimeEnv } from './utils/basicEnums';
 import authManager from './utils/auth'
-import { AuthenticatorType } from './utils/auth/types';
+import { AuthenticatorType, UserAuthInfo } from './utils/auth/types';
+import { WEB_STORAGE_KEY } from './utils/constants';
 
 const MainPage = lazy(() => import('./pages/main'));
 const LoginPage = lazy(() => import('./pages/login'));
@@ -24,15 +25,26 @@ const App: FC = observer(() => {
     (async () => {
       // login on launch if is as Telegram Mini App
       if (RUNTIME_ENV === RuntimeEnv.TELEGRAM_MINI_APP && RUNTIME_PARAMS) {
-        const auth = await authManager.login(AuthenticatorType.Telegram, RUNTIME_PARAMS)
-        hibitIdSession.connect(auth)
+        await authManager.login(AuthenticatorType.Telegram, RUNTIME_PARAMS)
+      } else if (RUNTIME_ENV === RuntimeEnv.SDK && RUNTIME_PARAMS) {
+        await hibitIdSession.connect(RUNTIME_PARAMS as UserAuthInfo)
+      } else if (RUNTIME_ENV === RuntimeEnv.WEB) {
+        const storedAuth = sessionStorage.getItem(WEB_STORAGE_KEY)
+        if (storedAuth) {
+          try {
+            await hibitIdSession.connect(JSON.parse(storedAuth) as UserAuthInfo)
+          } catch (e) {
+            console.error(e)
+            sessionStorage.removeItem(WEB_STORAGE_KEY)
+          }
+        }
       }
       setReady(true)
     })()
   }, [])
 
   return (
-    <main className={twMerge('h-full', (hibitIdSession.isConnected || !isDesktop) && 'max-w-[576px] mx-auto bg-base-200 p-6')}>
+    <main className={twMerge('h-full', (hibitIdSession.isConnected || !isDesktop) && 'max-w-[576px] mx-auto p-6')}>
       {!ready && <PageLoading />}
 
       {ready && (

@@ -1,12 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { HibitIdWallet } from "../lib/wallet";
-import { ConnectResponse } from "../lib";
+import { WalletAccount } from "../lib";
 
 const App: FC = () => {
   const [wallet, setWallet] = useState<HibitIdWallet | null>(null)
-  const [account, setAccount] = useState<ConnectResponse | null>(null)
+  const [account, setAccount] = useState<WalletAccount | null>(null)
   const [connecting, setConnecting] = useState(false)
   const [sig, setSig] = useState('')
+  const [balance, setBalance] = useState('')
 
   useEffect(() => {
     const wallet = new HibitIdWallet('dev')
@@ -18,13 +19,7 @@ const App: FC = () => {
       <div>
         <button className="btn btn-sm" onClick={async () => {
           setConnecting(true)
-          const account = await wallet?.connect(() => {
-            return new Promise((resolve) => {
-              setTimeout(() => {
-                resolve()
-              }, 2000)
-            })
-          })
+          const account = await wallet?.connect()
           setAccount(account ?? null)
           setConnecting(false)
         }}>
@@ -34,6 +29,15 @@ const App: FC = () => {
       <div>
         <p>account:</p>
         <pre>{JSON.stringify(account, null, 2)}</pre>
+      </div>
+      <div>
+        <button className="btn btn-sm" onClick={async () => {
+          const balance = await wallet?.getBalance()
+          setBalance(balance ?? '')
+        }}>
+          get balance
+        </button>
+        <p>balance: {balance}</p>
       </div>
       <div>
         <button className="btn btn-sm" onClick={async () => {

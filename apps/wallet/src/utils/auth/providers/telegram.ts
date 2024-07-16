@@ -24,7 +24,6 @@ const BOT_ID = import.meta.env.VITE_TELEGRAM_BOT_ID
 export class TelegramAuthenticateProvider implements IAuthenticateProvider {
   public readonly type = AuthenticatorType.Telegram
   
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public authenticate: (launchParams?: any) => Promise<UserAuthInfo> = async (launchParams?: InitDataParsed) => {
     if (launchParams) {
       return {

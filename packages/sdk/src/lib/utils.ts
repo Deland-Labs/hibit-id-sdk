@@ -1,6 +1,8 @@
-import { HibitEnv, HibitIdPage } from "./types";
+import { SDK_AUTH_PARAM_KEY } from "./constants";
+import { HibitEnv, HibitIdPage, UserAuthInfo } from "./types";
+import { Buffer } from 'buffer'
 
-export const getHibitIdUrl = (env: HibitEnv, initialPage: HibitIdPage) => {
+export const getHibitIdUrl = (env: HibitEnv, auth: UserAuthInfo | null, initialPage: HibitIdPage) => {
   let url = '';
   switch (env) {
     case 'dev': {
@@ -16,6 +18,7 @@ export const getHibitIdUrl = (env: HibitEnv, initialPage: HibitIdPage) => {
       break
     }
   }
-  url = `${url}/${initialPage === 'login' ? 'login' : ''}`
+  const authQuery = auth ? `?${SDK_AUTH_PARAM_KEY}=${Buffer.from(JSON.stringify(auth), 'utf-8').toString('hex')}` : ''
+  url = `${url}/${initialPage === 'login' ? 'login' : ''}${authQuery}`
   return url
 }

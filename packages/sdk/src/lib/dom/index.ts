@@ -1,5 +1,5 @@
 import { CONTROLLER_CONTAINER_ID, IFRAME_CONTAINER_ID } from "../constants"
-import { HibitEnv, HibitIdPage } from "../types"
+import { HibitEnv, HibitIdPage, UserAuthInfo } from "../types"
 import { getHibitIdUrl } from "../utils"
 import './index.css'
 
@@ -21,6 +21,10 @@ export class HibitIdController {
     
     this.container = container
     this.button = button
+  }
+
+  public getBoundingRect = () => {
+    return this.container.getBoundingClientRect()
   }
 
   public setOpen = (open: boolean) => {
@@ -49,30 +53,51 @@ export class HibitIdController {
 export class HibitIdIframe {
   public iframe: HTMLIFrameElement
   private container: HTMLDivElement
-  private _visible = true
+  private _visible = false
 
-  constructor(env: HibitEnv, initialPage: HibitIdPage = 'login') {
+  constructor(env: HibitEnv, auth: UserAuthInfo | null = null, initialPage: HibitIdPage = 'login') {
     const existed = document.getElementById(IFRAME_CONTAINER_ID)
-    existed?.remove()
+    if (existed) {
+      this.container = existed as HTMLDivElement
+      this.iframe = this.container.querySelector('iframe') as HTMLIFrameElement
+      return
+    }
     const container = document.createElement('div')
     container.id = IFRAME_CONTAINER_ID
     const iframe = document.createElement('iframe')
-    iframe.src = getHibitIdUrl(env, initialPage)
-    iframe.allow='publickey-credentials-get *; publickey-credentials-create *'
+    iframe.src = getHibitIdUrl(env, auth, initialPage)
+    // iframe.allow='publickey-credentials-get *; publickey-credentials-create *'
     container.appendChild(iframe)
     document.body.appendChild(container)
     this.container = container
     this.iframe = iframe
-    this.show()
+    this.hide()
   }
 
   get visible() {
     return this._visible
   }
 
-  public show = () => {
-    this.container.style.width = '100%'
-    this.container.style.height = '100%'
+  public show = (options: {
+    fullscreen: boolean,
+    style: Record<string, string>
+  }) => {
+    if (options.fullscreen) {
+      this.container.style.top = '0'
+      this.container.style.left = '0'
+      this.container.style.width = '100%'
+      this.container.style.height = '100%'
+      this.container.style.bottom = 'unset'
+      this.container.style.right = 'unset'
+    } else {
+      this.container.style.top = 'unset'
+      this.container.style.left = 'unset'
+      Object.keys(options.style).forEach((key) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        this.container.style[key] = options.style[key]
+      })
+    }
     this._visible = true
   }
 
@@ -80,14 +105,6 @@ export class HibitIdIframe {
     this.container.style.width = '0'
     this.container.style.height = '0'
     this._visible = false
-  }
-
-  public toggle = () => {
-    if (this._visible) {
-      this.hide()
-    } else {
-      this.show()
-    }
   }
 
   public destroy = () => {

@@ -3,13 +3,13 @@ import { useIsDesktop } from "../../utils/hooks";
 import rpcManager from "../../stores/rpc";
 import Modal from "../../components/Modal";
 import SvgLogo from '../../assets/logo.svg?react';
-import authManager, { AuthManager } from "../../utils/auth";
+import { AuthManager } from "../../utils/auth";
 import AuthenticatorButton from "../../components/AuthenticatorButton";
 import { observer } from "mobx-react";
 import PageLoading from "../../components/PageLoading";
 import { useNavigate } from "react-router-dom";
-import { RUNTIME_ENV } from "../../utils/runtime";
-import { RuntimeEnv } from "../../utils/basicEnums";
+import hibitIdSession from "../../stores/session";
+import { twMerge } from "tailwind-merge";
 
 const LoginPage: FC = observer(() => {
   const [loginSuccess, setLoginSuccess] = useState(false)
@@ -18,7 +18,7 @@ const LoginPage: FC = observer(() => {
   const navigate = useNavigate()
 
   const loginContent = useMemo(() => {
-    if (loginSuccess && RUNTIME_ENV === RuntimeEnv.SDK && !rpcManager.authorized) {
+    if (loginSuccess && !hibitIdSession.isConnected) {
       return <PageLoading />
     }
     return (
@@ -42,27 +42,23 @@ const LoginPage: FC = observer(() => {
         </div>
       </div>
     )
-  }, [loginSuccess, rpcManager.authorized])
+  }, [loginSuccess])
 
   useEffect(() => {
-    if (loginSuccess && (RUNTIME_ENV !== RuntimeEnv.SDK || rpcManager.authorized)) {
+    if (loginSuccess && hibitIdSession.isConnected) {
       navigate('/')
     }
-  }, [loginSuccess, rpcManager])
+  }, [loginSuccess, hibitIdSession.isConnected])
 
-  return isDesktop ? (
+  return (
     <Modal
       visible
-      title="Hibit ID"
+      title={isDesktop ? 'Hibit ID' : ''}
       onClose={() => rpcManager.notifyClose()}
       content={loginContent}
-      modalClassName="w-[480px]"
+      modalClassName={twMerge('max-w-full', isDesktop && 'w-[480px]', !isDesktop && 'w-[327px] h-[560px]')}
     />
-  ) : (
-    <div className="h-full">
-      {loginContent}
-    </div>
-  );
+  )
 })
 
 export default LoginPage;

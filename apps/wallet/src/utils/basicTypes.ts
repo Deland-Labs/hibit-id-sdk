@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { Transform, Type } from 'class-transformer';
-import { SignaturesSchema } from './basicEnums';
+import { WalletSignatureSchema } from './basicEnums';
 
 export class AssetId {
   value: BigNumber;
@@ -189,6 +189,8 @@ export class ChainNetwork {
   static EvmAvalancheFujiNet = new ChainNetwork(new BigNumber(43113));
   static EvmScrollNet = new ChainNetwork(new BigNumber(534352));
   static EvmScrollSepoliaNet = new ChainNetwork(new BigNumber(534351));
+  static EvmBitlayerNet = new ChainNetwork(new BigNumber(200901));
+  static EvmBitlayerTestNet = new ChainNetwork(new BigNumber(200810));
 
   static SolanaMainNet = new ChainNetwork(new BigNumber(0x3));
   static SolanaTestNet = new ChainNetwork(new BigNumber(0x2));
@@ -271,7 +273,7 @@ export class ChainInfo {
   icon!: string;
   nativeAssetSymbol!: string;
   nativeAssetDecimals!: number;
-  supportedSignaturesSchemas!: SignaturesSchema[];
+  supportedSignaturesSchemas!: WalletSignatureSchema[];
   explorer!: string;
   rpcUrls!: string[];
   caseSensitiveAddress?: boolean;

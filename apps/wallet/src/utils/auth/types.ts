@@ -13,11 +13,6 @@ export interface UserAuthInfo {
   authTimestamp: Date
 }
 
-export interface HibitIdAuth {
-  userInfo: UserAuthInfo
-  phrase: string
-}
-
 export interface IAuthenticateProvider {
   type: AuthenticatorType
 

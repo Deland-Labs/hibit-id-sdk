@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { AssetInfo, ChainWallet } from "../types";
 import { isAddress, JsonRpcProvider, Contract, HDNodeWallet, parseEther } from "ethers";
-import { ChainAssetType, ChainInfo } from "../../../basicTypes";
+import { Chain, ChainAssetType, ChainInfo } from "../../../basicTypes";
 import { erc20Abi } from "./erc20";
 
 export class EthereumChainWallet extends ChainWallet {
@@ -31,6 +31,9 @@ export class EthereumChainWallet extends ChainWallet {
     if (!isAddress(address)) {
       throw new Error('Ethereum: invalid wallet address');
     }
+    if (!assetInfo.chain.equals(Chain.Ethereum)) {
+      throw new Error('Ethereum: invalid asset chain');
+    }
     // native
     if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
       const balance = await this.provider.getBalance(address);
@@ -42,7 +45,7 @@ export class EthereumChainWallet extends ChainWallet {
       const getDecimals = contract.decimals();
       const getBalance = contract.balanceOf(address);
       const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
-      return new BigNumber(balance.toBigInt()).shiftedBy(-decimals);
+      return new BigNumber(balance.toString()).shiftedBy(-Number(decimals));
     }
 
     throw new Error(`Ethereum: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
@@ -51,6 +54,9 @@ export class EthereumChainWallet extends ChainWallet {
   public override transfer = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo) => {
     if (!isAddress(toAddress)) {
       throw new Error('Ethereum: invalid wallet address');
+    }
+    if (!assetInfo.chain.equals(Chain.Ethereum)) {
+      throw new Error('Ethereum: invalid asset chain');
     }
     // native
     if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {

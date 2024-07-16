@@ -3,6 +3,9 @@ import { QueryCacheKey } from "./query-keys"
 import { GetAllAssetsAsync } from "../services/token"
 import { getSupportedChains } from "../../utils/chain"
 import { ChainId } from "../../utils/basicTypes"
+import { RootAssetInfo } from "../models"
+import hibitIdSession from "../../stores/session"
+import BigNumber from "bignumber.js"
 
 export const useTokenListQuery = () => {
   return useQuery({
@@ -32,5 +35,19 @@ export const useTokenQuery = (addressOrSymbol: string) => {
       }) ?? null
     },
     enabled: !!allTokensQuery.data
+  })
+}
+
+export const useTokenBalanceQuery = (token: RootAssetInfo) => {
+  return useQuery({
+    queryKey: [QueryCacheKey.GET_TOKEN_BALANCE, token.assetId.toString()],
+    queryFn: async () => {
+      if (!hibitIdSession.wallet) {
+        return new BigNumber(0)
+      }
+      return await hibitIdSession.wallet?.balanceOf(hibitIdSession.wallet.getAddress(), token)
+    },
+    // FIXME: stop refetch if hidden
+    // refetchInterval: 10000,
   })
 }

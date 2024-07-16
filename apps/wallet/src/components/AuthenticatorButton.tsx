@@ -27,8 +27,7 @@ const AuthenticatorButton: FC<AuthenticatorButtonProps> = observer(({ type, onSu
   }, [type])
 
   const handleAuth = async () => {
-    const auth = await authManager.login(type)
-    hibitIdSession.connect(auth)
+    await authManager.login(type)
     onSuccess?.()
   }
 

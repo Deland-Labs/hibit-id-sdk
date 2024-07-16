@@ -1,3 +1,4 @@
+import { SDK_AUTH_PARAM_KEY } from "sdk";
 import { RuntimeEnv } from "./basicEnums";
 import { retrieveLaunchParams } from '@telegram-apps/sdk';
 
@@ -15,6 +16,18 @@ try {
     runtimeParams = initData
   }
 } catch (e) { /* empty */ }
+
+if (runtimeEnv === RuntimeEnv.SDK) {
+  const params = new URLSearchParams(window.location.search).get(SDK_AUTH_PARAM_KEY);
+  if (params) {
+    try {
+      const jsonString = Buffer.from(params, 'hex').toString('utf-8')
+      runtimeParams = JSON.parse(jsonString)
+    } catch (e) {
+      console.error('Failed to parse SDK auth params', e)
+    }
+  }
+}
 
 export const RUNTIME_ENV = runtimeEnv
 export const RUNTIME_PARAMS = runtimeParams

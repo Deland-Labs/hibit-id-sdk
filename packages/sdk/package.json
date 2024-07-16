@@ -1,7 +1,7 @@
 {
   "name": "sdk",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "files": [
     "dist"
@@ -30,6 +30,7 @@
   "dependencies": {
     "@mixer/postmessage-rpc": "^1.1.4",
     "@passwordless-id/webauthn": "^1.6.1",
+    "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",
     "ethers": "^6.13.1",
