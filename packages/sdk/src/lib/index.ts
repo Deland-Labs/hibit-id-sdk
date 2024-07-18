@@ -12,4 +12,6 @@ export type {
   GetBalanceResponse,
   TransferRequest,
   TransferResponse,
+  ChainChangedRequest,
+  AccountsChangedRequest,
 } from './types'

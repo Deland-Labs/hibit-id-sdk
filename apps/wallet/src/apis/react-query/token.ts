@@ -48,7 +48,8 @@ export const useTokenBalanceQuery = (token: RootAssetInfo) => {
       if (!hibitIdSession.wallet) {
         return new BigNumber(0)
       }
-      return await hibitIdSession.wallet?.balanceOf(await hibitIdSession.wallet.getAddress(), token)
+      const address = (await hibitIdSession.wallet.getAccount()).address
+      return await hibitIdSession.wallet?.balanceOf(address, token)
     },
     // FIXME: stop refetch if hidden
     // refetchInterval: 10000,
