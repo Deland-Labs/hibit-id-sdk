@@ -15,6 +15,8 @@ export class HibitIdSession {
   public auth: UserAuthInfo | null = null
   public chainInfo: ChainInfo
 
+  private _address: string | null = null
+
   constructor() {
     makeAutoObservable(this)
     this.chainInfo = EthereumSepolia
@@ -24,17 +26,21 @@ export class HibitIdSession {
     return !!this.wallet
   }
 
+  get address() {
+    return this._address || ''
+  }
+
   public getValidAddress = async () => {
-    if (!this.wallet) return ''
-    const rawAddress = await this.wallet.getAddress()
+    if (!this._address) return ''
     return this.chainInfo.caseSensitiveAddress
-      ? rawAddress
-      : rawAddress.toLowerCase()
+      ? this._address
+      : this._address.toLowerCase()
   }
 
   public connect = async (auth: UserAuthInfo) => {
     this.auth = auth
     this.wallet = await this.initWallet(this.chainInfo, auth)
+    this._address = await this.wallet.getAddress()
     console.log('[session connected]', this.auth)
     if (RUNTIME_ENV === RuntimeEnv.WEB) {
       sessionStorage.setItem(WEB_STORAGE_KEY, JSON.stringify(this.auth))
@@ -44,6 +50,7 @@ export class HibitIdSession {
   public disconnect = () => {
     this.auth = null
     this.wallet = null
+    this._address = null
     if (RUNTIME_ENV === RuntimeEnv.WEB) {
       sessionStorage.removeItem(WEB_STORAGE_KEY)
     }
@@ -55,6 +62,7 @@ export class HibitIdSession {
       throw new Error('Not connected')
     }
     this.wallet = await this.initWallet(chain, this.auth)
+    this._address = await this.wallet.getAddress()
     this.chainInfo = chain
   }
 

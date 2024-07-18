@@ -6,10 +6,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTokenQuery } from "../../apis/react-query/token";
 import PageLoading from "../../components/PageLoading";
 import SvgGo from '../../assets/right-arrow.svg?react';
-import SvgCopy from '../../assets/copy.svg?react';
 import { getChainByChainId } from "../../utils/chain";
 import { ChainId } from "../../utils/basicTypes";
-import { useQuery } from "@tanstack/react-query";
+import CopyButton from "../../components/CopyButton";
 
 const ReceiveTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
@@ -17,17 +16,12 @@ const ReceiveTokenPage: FC = observer(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const navigate = useNavigate()
 
-  const useAddressQuery = useQuery({
-    queryKey: ['address', hibitIdSession.chainInfo.chainId.toString()],
-    queryFn: async () => {
-      return await hibitIdSession.getValidAddress()
-    }
-  })
+  const address = hibitIdSession.address
 
   useEffect(() => {
-    if (!canvasRef.current || !useAddressQuery.data) return;
-    QRCode.toCanvas(canvasRef.current, useAddressQuery.data)
-  }, [useAddressQuery.data])
+    if (!canvasRef.current || !address) return;
+    QRCode.toCanvas(canvasRef.current, address)
+  }, [address])
 
   if (tokenQuery.isLoading || typeof tokenQuery.data === 'undefined') {
     return <PageLoading />
@@ -55,14 +49,9 @@ const ReceiveTokenPage: FC = observer(() => {
         <div className="p-2 bg-base-100 rounded-xl">
           <canvas ref={canvasRef} className="size-full rounded-lg" />
         </div>
-        <div className="p-2 flex items-center gap-4 bg-base-100 rounded-xl">
-          <span className="text-xs">{useAddressQuery.data}</span>
-          <button className="btn btn-ghost btn-xs btn-square" onClick={() => {
-            navigator.clipboard.writeText(useAddressQuery.data ?? '');
-            alert('copied')
-          }}>
-            <SvgCopy className="size-6" />
-          </button>
+        <div className="p-2 pr-1 flex items-center gap-2 bg-base-100 rounded-xl">
+          <span className="text-xs">{address}</span>
+          <CopyButton copyText={address} />
         </div>
       </div>
     </div>
