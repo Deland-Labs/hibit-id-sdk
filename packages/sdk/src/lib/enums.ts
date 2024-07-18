@@ -1,5 +1,7 @@
 export enum ClientExposeRPCMethod {
   CLOSE = 'close',
+  CHAIN_CHANGED = 'chainChanged',
+  ACCOUNTS_CHANGED = 'accountsChanged',
 }
 
 export enum HibitIdExposeRPCMethod {

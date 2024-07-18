@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTokenQuery } from "../../apis/react-query/token";
-import SvgGo from '../../assets/go.svg?react'
+import SvgGo from '../../assets/right-arrow.svg?react'
 import TokenIcon from "../../components/TokenIcon";
 import { getChainByChainId } from "../../utils/chain";
 import { ChainId } from "../../utils/basicTypes";

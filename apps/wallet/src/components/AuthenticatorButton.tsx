@@ -4,8 +4,6 @@ import UnknownSvg from '../assets/auth-logos/UNKNOWN.svg?react';
 import TelegramSvg from '../assets/auth-logos/Telegram.svg?react';
 import { observer } from "mobx-react";
 import authManager from "../utils/auth";
-import hibitIdSession from "../stores/session";
-import { useNavigate } from "react-router-dom";
 
 export interface AuthenticatorButtonProps {
   type: AuthenticatorType
@@ -13,8 +11,6 @@ export interface AuthenticatorButtonProps {
 }
 
 const AuthenticatorButton: FC<AuthenticatorButtonProps> = observer(({ type, onSuccess }) => {
-  const navigate = useNavigate()
-  
   const icon = useMemo(() => {
     switch (type) {
       case AuthenticatorType.Telegram: {

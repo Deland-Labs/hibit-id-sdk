@@ -1,7 +1,7 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { ChainInfo, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitEnv, HibitIdPage, SignMessageResponse, TransferRequest, TransferResponse, UserAuthInfo, WalletAccount } from './types';
+import { AccountsChangedRequest, ChainChangedRequest, ChainInfo, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitEnv, HibitIdEventHandlerMap, HibitIdPage, SignMessageResponse, TransferRequest, TransferResponse, UserAuthInfo, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdExposeRPCMethod } from './enums';
 
 const HIBIT_ID_STORAGE_KEY = 'hibitid_auth'
@@ -12,6 +12,13 @@ export class HibitIdWallet {
   private _rpc: RPC | null = null
   private _controller: HibitIdController | null = null
   private _iframe: HibitIdIframe | null = null
+  private _eventHandlers: {
+    accountsChanged: Array<HibitIdEventHandlerMap['accountsChanged']>
+    chainChanged: Array<HibitIdEventHandlerMap['chainChanged']>
+  } = {
+    accountsChanged: [],
+    chainChanged: [],
+  }
 
   constructor(env: HibitEnv) {
     this._env = env
@@ -125,6 +132,20 @@ export class HibitIdWallet {
     this._connected = false
   }
 
+  public addEventListener = <K extends keyof HibitIdEventHandlerMap>(event: K, handler: HibitIdEventHandlerMap[K]) => {
+    // @ts-expect-error ts not support this check yet
+    this._eventHandlers[event].push(handler)
+  }
+
+  public removeEventListener = <K extends keyof HibitIdEventHandlerMap>(event: K, handler: HibitIdEventHandlerMap[K]) => {
+    const arr = this._eventHandlers[event]
+    // @ts-expect-error ts not support this check yet
+    const index = arr.indexOf(handler)
+    if (index > -1) {
+      arr.splice(index, 1)
+    }
+  }
+
   private toggleIframe = () => {
     if (!this._iframe) return
     if (this._iframe.visible) {
@@ -161,6 +182,9 @@ export class HibitIdWallet {
       // origin: 'example.com',
     });
     rpc.expose(ClientExposeRPCMethod.CLOSE, this.onRpcClose);
+    rpc.expose(ClientExposeRPCMethod.CHAIN_CHANGED, this.onRpcChainChanged);
+    rpc.expose(ClientExposeRPCMethod.ACCOUNTS_CHANGED, this.onRpcAccountsChanged);
+
     console.log('[sdk rpc init]')
     await rpc.isReady
     console.log('[sdk rpc ready]')
@@ -170,5 +194,17 @@ export class HibitIdWallet {
   private onRpcClose = () => {
     this._iframe?.hide()
     this._controller?.setOpen(false)
+  }
+
+  private onRpcChainChanged = (input: ChainChangedRequest) => {
+    this._eventHandlers.chainChanged.forEach((handler) => {
+      handler(input.chainId)
+    })
+  }
+
+  private onRpcAccountsChanged = (input: AccountsChangedRequest) => {
+    this._eventHandlers.accountsChanged.forEach((handler) => {
+      handler(input.account)
+    })
   }
 }

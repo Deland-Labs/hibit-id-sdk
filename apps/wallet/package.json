@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.26.19",
     "@mixer/postmessage-rpc": "^1.1.4",
     "@noble/secp256k1": "^1.7.0",
     "@openproduct/web-sdk": "^0.23.0",

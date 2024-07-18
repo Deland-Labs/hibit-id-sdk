@@ -3,6 +3,7 @@ import { AssetInfo, ChainWallet } from "../types";
 import { isAddress, JsonRpcProvider, Contract, HDNodeWallet, parseEther } from "ethers";
 import { Chain, ChainAssetType, ChainInfo } from "../../../basicTypes";
 import { erc20Abi } from "./erc20";
+import { WalletAccount } from "sdk";
 
 export class EthereumChainWallet extends ChainWallet {
   private provider: JsonRpcProvider
@@ -21,8 +22,10 @@ export class EthereumChainWallet extends ChainWallet {
     this.wallet.connect(this.provider)
   }
 
-  public override getAddress: () => string = () => {
-    return this.wallet.address
+  public override getAccount: () => Promise<WalletAccount> = async () => {
+    return {
+      address: this.wallet.address
+    }
   }
 
   public override signMessage: (message: string) => Promise<string> = async (message) => {

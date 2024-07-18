@@ -8,6 +8,7 @@ import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { bytesToHex, hexToBytes } from '@openproduct/web-sdk';
 import { WalletV4ContractR2 } from "tonweb/dist/types/contract/wallet/v4/wallet-v4-contract-r2";
 import { sleep } from "../../common";
+import { WalletAccount } from "sdk";
 
 const { JettonMinter, JettonWallet } = TonWeb.token.jetton
 const { Address, toNano } = TonWeb.utils
@@ -28,8 +29,12 @@ export class TonChainWallet extends ChainWallet {
     })
   }
 
-  public override getAddress: () => string = () => {
-    return this.wallet?.address?.toString(true, true, false, this.getIsTestNet()) ?? ''
+  public override getAccount: () => Promise<WalletAccount> = async () => {
+    await this.readyPromise
+    const address = await this.wallet!.getAddress()
+    return {
+      address: address.toString(true, true, false, this.getIsTestNet()) ?? ''
+    }
   }
 
   // ref: OpenMask extension
@@ -108,7 +113,7 @@ export class TonChainWallet extends ChainWallet {
     }
     // jetton
     if (assetInfo.chainAssetType.equals(ChainAssetType.Jetton)) {
-      const ownerAddress = this.getAddress()
+      const ownerAddress = (await this.getAccount()).address
       const jettonWallet = await this.getJettonWallet(ownerAddress, assetInfo.contractAddress)
 
       // assemble payload

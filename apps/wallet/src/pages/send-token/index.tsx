@@ -4,7 +4,7 @@ import hibitIdSession from "../../stores/session";
 import { JsonRpcProvider, parseEther } from "ethers";
 import { SEPOLIA_RPC } from "../../utils/constants";
 import { useNavigate, useParams } from "react-router-dom";
-import SvgGo from '../../assets/go.svg?react';
+import SvgGo from '../../assets/right-arrow.svg?react';
 import { useTokenQuery } from "../../apis/react-query/token";
 import TokenSelect from "../../components/TokenSelect";
 import { RootAssetInfo } from "../../apis/models";

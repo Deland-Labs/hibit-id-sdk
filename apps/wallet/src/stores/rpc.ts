@@ -1,10 +1,10 @@
 import { RPC } from '@mixer/postmessage-rpc'
-import { ClientExposeRPCMethod, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from 'sdk'
+import { AccountsChangedRequest, ChainChangedRequest, ClientExposeRPCMethod, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from 'sdk'
 import hibitIdSession from './session';
 import { BridgePromise } from 'sdk';
 import { makeAutoObservable } from 'mobx';
 import { AssetInfo } from '../utils/chain/chain-wallets/types';
-import { Chain, ChainAssetType, ChainId, ChainNetwork, DecimalPlaces } from '../utils/basicTypes';
+import { Chain, ChainAssetType, ChainId, ChainInfo, ChainNetwork, DecimalPlaces } from '../utils/basicTypes';
 import BigNumber from 'bignumber.js';
 
 class RPCManager {
@@ -47,6 +47,14 @@ class RPCManager {
     this._rpc?.call(ClientExposeRPCMethod.CLOSE, {})
   }
 
+  public notifyChainChanged = (chainInfo: ChainInfo) => {
+    this._rpc?.call(ClientExposeRPCMethod.CHAIN_CHANGED, { chainId: chainInfo.chainId.toString() } as ChainChangedRequest)
+  }
+
+  public notifyAccountsChanged = (account: WalletAccount | null) => {
+    this._rpc?.call(ClientExposeRPCMethod.ACCOUNTS_CHANGED, { account } as AccountsChangedRequest)
+  }
+
   public resolveConnect = (response: ConnectResponse) => {
     this._connectPromise?.resolve(response)
   }
@@ -57,9 +65,7 @@ class RPCManager {
 
   private onRpcGetAccount = async (): Promise<WalletAccount> => {
     this.checkInit()
-    return {
-      address: hibitIdSession.wallet!.getAddress()
-    }
+    return await hibitIdSession.wallet!.getAccount()
   }
 
   private onRpcGetChainInfo = async () => {
@@ -87,7 +93,7 @@ class RPCManager {
     if (!contractAddress && typeof assetType !== 'undefined' && assetType !== HibitIdAssetType.Native) {
       throw new Error('Contract address is required for non-native assets')
     }
-    const address = hibitIdSession.wallet!.getAddress()
+    const address = (await hibitIdSession.wallet!.getAccount()).address
     const chainId = hibitIdChainId ? this.mapChainId(hibitIdChainId) : hibitIdSession.wallet!.chainInfo.chainId
     const decimal = decimalPlaces ?? hibitIdSession.wallet!.chainInfo.nativeAssetDecimals
     const assetInfo: AssetInfo = {

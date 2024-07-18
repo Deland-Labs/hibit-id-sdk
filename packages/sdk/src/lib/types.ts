@@ -8,6 +8,11 @@ export interface HibitIdAuth {
   expiresAt: number
 }
 
+export interface HibitIdEventHandlerMap {
+  'chainChanged': (chainId: HibitIdChainId) => void
+  'accountsChanged': (account: WalletAccount | null) => void
+}
+
 export class BridgePromise<T> {
   public promise: Promise<T>
   public resolve: (value: T) => void = () => {}
@@ -87,4 +92,12 @@ export interface GetAddressResponse {
 
 export interface GetChainInfoResponse {
   chainInfo: ChainInfo
+}
+
+export interface ChainChangedRequest {
+  chainId: HibitIdChainId
+}
+
+export interface AccountsChangedRequest {
+  account: WalletAccount | null
 }

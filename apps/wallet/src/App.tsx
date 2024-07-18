@@ -44,7 +44,7 @@ const App: FC = observer(() => {
   }, [])
 
   return (
-    <main className={twMerge('h-full', (hibitIdSession.isConnected || !isDesktop) && 'max-w-[576px] mx-auto p-6')}>
+    <main className={twMerge('h-full', (hibitIdSession.isConnected || !isDesktop) && 'max-w-[576px] mx-auto p-6 bg-base-200')}>
       {!ready && <PageLoading />}
 
       {ready && (
