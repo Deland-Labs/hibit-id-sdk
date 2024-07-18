@@ -5,6 +5,7 @@ import Dropdown from "./Dropdown";
 import CaretSvg from '../assets/caret-down.svg?react';
 import TokenIcon from "./TokenIcon";
 import { useTokenListQuery } from "../apis/react-query/token";
+import hibitIdSession from "../stores/session";
 
 export interface TokenSelectProps {
   value: RootAssetInfo | null
@@ -12,7 +13,7 @@ export interface TokenSelectProps {
 }
 
 const TokenSelect: FC<TokenSelectProps> = observer(({ value, onChange }) => {
-  const tokenListQuery = useTokenListQuery()
+  const tokenListQuery = useTokenListQuery(hibitIdSession.chainInfo.chainId.type)
 
   return (
     <Dropdown

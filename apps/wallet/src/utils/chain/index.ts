@@ -1,6 +1,6 @@
 import { BlockNetwork } from '../basicEnums';
 import { Chain, ChainId } from '../basicTypes';
-import { Ethereum, EthereumSepolia } from './chain-list';
+import { Ethereum, EthereumSepolia, Ton, TonTestnet } from './chain-list';
 import { ChainInfo } from '../basicTypes';
 import { BLOCK_NETWORK } from '../env';
 
@@ -13,7 +13,7 @@ const SupportedChainsForMainnet = [
   // EthereumAvalanche,
   // Bitcoin,
   // Solana,
-  // Ton,
+  Ton,
   // Tron
 ];
 const SupportedChainsForTestnet = [
@@ -24,7 +24,7 @@ const SupportedChainsForTestnet = [
   // EthereumAvalancheFuji,
   // BitcoinTestnet,
   // SolanaTestnet,
-  // TonTestnet,
+  TonTestnet,
   // TronNile,
 ];
 

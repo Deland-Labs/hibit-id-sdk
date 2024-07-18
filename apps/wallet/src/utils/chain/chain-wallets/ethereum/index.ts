@@ -21,7 +21,7 @@ export class EthereumChainWallet extends ChainWallet {
     this.wallet.connect(this.provider)
   }
 
-  public override getAddress: () => string = () => {
+  public override getAddress: () => Promise<string> = async () => {
     return this.wallet.address
   }
 

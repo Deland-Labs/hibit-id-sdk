@@ -58,7 +58,7 @@ class RPCManager {
   private onRpcGetAccount = async (): Promise<WalletAccount> => {
     this.checkInit()
     return {
-      address: hibitIdSession.wallet!.getAddress()
+      address: await hibitIdSession.wallet!.getAddress()
     }
   }
 
@@ -87,7 +87,7 @@ class RPCManager {
     if (!contractAddress && typeof assetType !== 'undefined' && assetType !== HibitIdAssetType.Native) {
       throw new Error('Contract address is required for non-native assets')
     }
-    const address = hibitIdSession.wallet!.getAddress()
+    const address = await hibitIdSession.wallet!.getAddress()
     const chainId = hibitIdChainId ? this.mapChainId(hibitIdChainId) : hibitIdSession.wallet!.chainInfo.chainId
     const decimal = decimalPlaces ?? hibitIdSession.wallet!.chainInfo.nativeAssetDecimals
     const assetInfo: AssetInfo = {

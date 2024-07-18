@@ -16,7 +16,7 @@ export abstract class ChainWallet {
     this.phrase = phrase
   }
 
-  public abstract getAddress: () => string
+  public abstract getAddress: () => Promise<string>
   public abstract signMessage: (message: string) => Promise<string>
   public abstract balanceOf: (address: string, assetInfo: AssetInfo) => Promise<BigNumber>
   public abstract transfer: (toAddress: string, amount: BigNumber, assetInfo: AssetInfo) => Promise<string>

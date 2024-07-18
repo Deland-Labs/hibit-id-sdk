@@ -2,14 +2,14 @@ import { useQuery } from "@tanstack/react-query"
 import { QueryCacheKey } from "./query-keys"
 import { GetAllAssetsAsync } from "../services/token"
 import { getSupportedChains } from "../../utils/chain"
-import { ChainId } from "../../utils/basicTypes"
+import { Chain, ChainId } from "../../utils/basicTypes"
 import { RootAssetInfo } from "../models"
 import hibitIdSession from "../../stores/session"
 import BigNumber from "bignumber.js"
 
-export const useTokenListQuery = () => {
+export const useTokenListQuery = (chainType?: Chain) => {
   return useQuery({
-    queryKey: [QueryCacheKey.GET_TOKEN_LIST],
+    queryKey: [QueryCacheKey.GET_TOKEN_LIST, chainType?.toString() ?? ''],
     queryFn: async () => {
       const res = await GetAllAssetsAsync()
       if (!res.isSuccess || !res.value) {
@@ -17,7 +17,10 @@ export const useTokenListQuery = () => {
       }
       const supportedChains = getSupportedChains()
       const chainTokens = res.value.filter((token) => {
-        return !!supportedChains.find((chain) => chain.chainId.equals(new ChainId(token.chain, token.chainNetwork)))
+        return (
+          !!supportedChains.find((chain) => chain.chainId.equals(new ChainId(token.chain, token.chainNetwork)))
+            && (chainType ? token.chain.equals(chainType) : true)
+        )
       })
       return chainTokens
     }
@@ -40,12 +43,12 @@ export const useTokenQuery = (addressOrSymbol: string) => {
 
 export const useTokenBalanceQuery = (token: RootAssetInfo) => {
   return useQuery({
-    queryKey: [QueryCacheKey.GET_TOKEN_BALANCE, token.assetId.toString()],
+    queryKey: [QueryCacheKey.GET_TOKEN_BALANCE, hibitIdSession.wallet?.chainInfo, token.assetId.toString()],
     queryFn: async () => {
       if (!hibitIdSession.wallet) {
         return new BigNumber(0)
       }
-      return await hibitIdSession.wallet?.balanceOf(hibitIdSession.wallet.getAddress(), token)
+      return await hibitIdSession.wallet?.balanceOf(await hibitIdSession.wallet.getAddress(), token)
     },
     // FIXME: stop refetch if hidden
     // refetchInterval: 10000,

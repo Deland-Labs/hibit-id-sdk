@@ -24,16 +24,17 @@ export class HibitIdSession {
     return !!this.wallet
   }
 
-  get validAddress() {
+  public getValidAddress = async () => {
     if (!this.wallet) return ''
+    const rawAddress = await this.wallet.getAddress()
     return this.chainInfo.caseSensitiveAddress
-      ? this.wallet.getAddress()
-      : this.wallet.getAddress().toLowerCase()
+      ? rawAddress
+      : rawAddress.toLowerCase()
   }
 
   public connect = async (auth: UserAuthInfo) => {
     this.auth = auth
-    this.wallet = await this.initWallet(auth)
+    this.wallet = await this.initWallet(this.chainInfo, auth)
     console.log('[session connected]', this.auth)
     if (RUNTIME_ENV === RuntimeEnv.WEB) {
       sessionStorage.setItem(WEB_STORAGE_KEY, JSON.stringify(this.auth))
@@ -48,7 +49,16 @@ export class HibitIdSession {
     }
   }
 
-  private initWallet = async (auth: UserAuthInfo): Promise<ChainWallet> => {
+  public switchChain = async (chain: ChainInfo) => {
+    if (this.chainInfo.chainId.equals(chain.chainId)) return
+    if (!this.auth) {
+      throw new Error('Not connected')
+    }
+    this.wallet = await this.initWallet(chain, this.auth)
+    this.chainInfo = chain
+  }
+
+  private initWallet = async (chainInfo: ChainInfo, auth: UserAuthInfo): Promise<ChainWallet> => {
     try {
       // TODO: trade userInfo for wallet phrase
       console.log('[query phrase with]', auth)
@@ -56,10 +66,10 @@ export class HibitIdSession {
 
       let wallet: ChainWallet | null = null
       // TODO: add more chains
-      if (this.chainInfo.chainId.type.equals(Chain.Ethereum)) {
-        wallet = new EthereumChainWallet(this.chainInfo, phrase)
-      } else if (this.chainInfo.chainId.type.equals(Chain.Ton)) {
-        wallet = new TonChainWallet(this.chainInfo, phrase)
+      if (chainInfo.chainId.type.equals(Chain.Ethereum)) {
+        wallet = new EthereumChainWallet(chainInfo, phrase)
+      } else if (chainInfo.chainId.type.equals(Chain.Ton)) {
+        wallet = new TonChainWallet(chainInfo, phrase)
       }
   
       if (!wallet) {
@@ -68,7 +78,7 @@ export class HibitIdSession {
       if (RUNTIME_ENV === RuntimeEnv.SDK) {
         rpcManager.resolveConnect({ 
           user: auth,
-          address: wallet.getAddress()
+          address: await wallet.getAddress()
         })
       }
       return wallet

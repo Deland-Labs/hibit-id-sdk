@@ -2,9 +2,10 @@ import { observer } from "mobx-react";
 import { FC } from "react";
 import { useTokenBalanceQuery, useTokenListQuery } from "../apis/react-query/token";
 import TokenIcon from "./TokenIcon";
-import SvgGo from '../assets/go.svg?react'
+import SvgGo from '../assets/right-arrow.svg?react'
 import { useNavigate } from "react-router-dom";
 import { RootAssetInfo } from "../apis/models";
+import hibitIdSession from "../stores/session";
 
 const TokenListItem: FC<{ token: RootAssetInfo }> = ({ token }) => {
   const navigate = useNavigate()
@@ -30,7 +31,7 @@ const TokenListItem: FC<{ token: RootAssetInfo }> = ({ token }) => {
 }
 
 const TokenList: FC = observer(() => {
-  const assetsQuery = useTokenListQuery()
+  const assetsQuery = useTokenListQuery(hibitIdSession.chainInfo.chainId.type)
 
   return (
     <ul className="flex flex-col gap-6">

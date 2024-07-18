@@ -28,8 +28,10 @@ export class TonChainWallet extends ChainWallet {
     })
   }
 
-  public override getAddress: () => string = () => {
-    return this.wallet?.address?.toString(true, true, false, this.getIsTestNet()) ?? ''
+  public override getAddress: () => Promise<string> = async () => {
+    await this.readyPromise
+    const address = await this.wallet!.getAddress()
+    return address.toString(true, true, false, this.getIsTestNet()) ?? ''
   }
 
   // ref: OpenMask extension
@@ -108,7 +110,7 @@ export class TonChainWallet extends ChainWallet {
     }
     // jetton
     if (assetInfo.chainAssetType.equals(ChainAssetType.Jetton)) {
-      const ownerAddress = this.getAddress()
+      const ownerAddress = await this.getAddress()
       const jettonWallet = await this.getJettonWallet(ownerAddress, assetInfo.contractAddress)
 
       // assemble payload
