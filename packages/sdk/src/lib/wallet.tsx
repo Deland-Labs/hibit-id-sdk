@@ -2,7 +2,7 @@ import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
 import { AccountsChangedRequest, ChainChangedRequest, ChainInfo, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitEnv, HibitIdEventHandlerMap, HibitIdPage, SignMessageResponse, TransferRequest, TransferResponse, UserAuthInfo, WalletAccount } from './types';
-import { ClientExposeRPCMethod, HibitIdExposeRPCMethod } from './enums';
+import { ClientExposeRPCMethod, HibitIdChainId, HibitIdExposeRPCMethod } from './enums';
 
 const HIBIT_ID_STORAGE_KEY = 'hibitid_auth'
 
@@ -70,15 +70,17 @@ export class HibitIdWallet {
   }
 
   public getAccount = async () => {
+    await this.prepareIframe()
     return await this._rpc?.call<WalletAccount>(HibitIdExposeRPCMethod.GET_ACCOUNT, {})
   }
 
   public getChainInfo = async () => {
+    await this.prepareIframe()
     const info = await this._rpc?.call<any>(HibitIdExposeRPCMethod.GET_CHAIN_INFO, {})
     return {
       chainId: {
-        type: info.chainId.type.value.toNumber(),
-        network: info.chainId.network.value.toNumber()
+        type: Number(info.chainId.type.value),
+        network: Number(info.chainId.network.value)
       },
       name: info.name,
       fullName: info.fullName,
@@ -130,6 +132,14 @@ export class HibitIdWallet {
     this._iframe?.destroy()
     this._controller?.destroy()
     this._connected = false
+  }
+
+  public switchToChain = async (chainId: HibitIdChainId) => {
+    const currentChain = await this.getChainInfo()
+    const currentChainId = `${currentChain.chainId.type}_${currentChain.chainId.network}`
+    if (currentChainId === chainId) return
+
+    await this._rpc?.call(HibitIdExposeRPCMethod.SWITCH_CHAIN, { chainId })
   }
 
   public addEventListener = <K extends keyof HibitIdEventHandlerMap>(event: K, handler: HibitIdEventHandlerMap[K]) => {

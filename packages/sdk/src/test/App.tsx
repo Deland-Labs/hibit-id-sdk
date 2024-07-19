@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { HibitIdWallet } from "../lib/wallet";
-import { WalletAccount } from "../lib";
+import { HibitIdChainId, WalletAccount } from "../lib";
 
 const App: FC = () => {
   const [wallet, setWallet] = useState<HibitIdWallet | null>(null)
@@ -8,10 +8,17 @@ const App: FC = () => {
   const [connecting, setConnecting] = useState(false)
   const [sig, setSig] = useState('')
   const [balance, setBalance] = useState('')
+  const [chainId, setChainId] = useState('')
 
   useEffect(() => {
     const wallet = new HibitIdWallet('dev')
     setWallet(wallet)
+    const handleChainChanged = (chainId: HibitIdChainId) => setChainId(chainId)
+    wallet.addEventListener('chainChanged', handleChainChanged)
+
+    return () => {
+      wallet.removeEventListener('chainChanged', handleChainChanged)
+    }
   }, [])
 
   return (
@@ -34,6 +41,9 @@ const App: FC = () => {
         <button className="btn btn-sm" onClick={async () => {
           const balance = await wallet?.getBalance()
           setBalance(balance ?? '')
+          setTimeout(() => {
+            setBalance('')
+          }, 1000)
         }}>
           get balance
         </button>
@@ -43,9 +53,25 @@ const App: FC = () => {
         <button className="btn btn-sm" onClick={async () => {
           const sig = await wallet?.signMessage('hello hibit')
           setSig(sig ?? '')
+          setTimeout(() => {
+            setSig('')
+          }, 1000)
         }}
         >sign message</button>
         <p>signature: {sig}</p>
+      </div>
+      <div>
+        <p>switch chain: {chainId}</p>
+        <button onClick={() => {
+          wallet?.switchToChain(HibitIdChainId.EthereumSepolia)
+        }}>
+          evm sepolia
+        </button>
+        <button onClick={() => {
+          wallet?.switchToChain(HibitIdChainId.TonTestnet)
+        }}>
+          ton testnet
+        </button>
       </div>
     </div>
   )

@@ -6,6 +6,8 @@ import { makeAutoObservable } from 'mobx';
 import { AssetInfo } from '../utils/chain/chain-wallets/types';
 import { Chain, ChainAssetType, ChainId, ChainInfo, ChainNetwork, DecimalPlaces } from '../utils/basicTypes';
 import BigNumber from 'bignumber.js';
+import { SwitchChainRequest } from '../../../../packages/sdk/dist/lib/types';
+import { getChainByChainId } from '../utils/chain';
 
 class RPCManager {
   private _rpc: RPC | null = null
@@ -20,6 +22,7 @@ class RPCManager {
   }
 
   public init = async () => {
+    this._rpc?.destroy()
     const rpc = new RPC({
       // The window you want to talk to:
       target: window.parent,
@@ -34,6 +37,7 @@ class RPCManager {
     rpc.expose(HibitIdExposeRPCMethod.CONNECT, this.onRpcConnect);
     rpc.expose(HibitIdExposeRPCMethod.GET_BALANCE, this.onRpcGetBalance);
     rpc.expose(HibitIdExposeRPCMethod.TRANSFER, this.onRpcTransfer);
+    rpc.expose(HibitIdExposeRPCMethod.SWITCH_CHAIN, this.onRpcSwitchChain);
     rpc.expose(HibitIdExposeRPCMethod.DISCONNECT, this.onRpcDisconnect);
 
     console.log('[wallet rpc init]')
@@ -64,16 +68,19 @@ class RPCManager {
   }
 
   private onRpcGetAccount = async (): Promise<WalletAccount> => {
+    console.log('[hibitid]', 'onRpcGetAccount')
     this.checkInit()
     return await hibitIdSession.wallet!.getAccount()
   }
 
   private onRpcGetChainInfo = async () => {
+    console.log('[hibitid]', 'onRpcGetChainInfo')
     this.checkInit()
     return hibitIdSession.wallet!.chainInfo
   }
 
   private onRpcSignMessage = async (input: SignMessageRequest): Promise<SignMessageResponse> => {
+    console.log('[hibitid]', 'onRpcSignMessage')
     this.checkInit()
     const signature = await hibitIdSession.wallet!.signMessage(input.message)
     return {
@@ -82,6 +89,7 @@ class RPCManager {
   }
 
   private onRpcConnect = async (): Promise<ConnectResponse> => {
+    console.log('[hibitid]', 'onRpcConnect')
     this._connectPromise = new BridgePromise()
     const res = await this._connectPromise.promise
     return res
@@ -117,6 +125,7 @@ class RPCManager {
     contractAddress,
     decimalPlaces
   }: TransferRequest): Promise<TransferResponse> => {
+    console.log('[hibitid]', 'onRpcTransfer')
     this.checkInit()
     if (assetType !== HibitIdAssetType.Native && (!contractAddress || !decimalPlaces )) {
       throw new Error('Contract address and decimal is required for non-native assets')
@@ -139,6 +148,20 @@ class RPCManager {
 
   private onRpcDisconnect = async () => {
     hibitIdSession.disconnect()
+  }
+
+  private onRpcSwitchChain = async ({ chainId }: SwitchChainRequest) => {
+    console.log('[hibitid]', 'onRpcSwitchChain')
+    const [type, network] = chainId.split('_')
+    if (!type || !network) {
+      throw new Error(`onRpcSwitchChain: Invalid chainId ${chainId}`)
+    }
+    const chainIdInstance = new ChainId(Chain.fromString(type)!, ChainNetwork.fromString(network)!)
+    const chainInfo = getChainByChainId(chainIdInstance)
+    if (!chainInfo) {
+      throw new Error(`onRpcSwitchChain: Chain ${chainId} not supported`)
+    }
+    await hibitIdSession.switchChain(chainInfo)
   }
 
   private checkInit = () => {

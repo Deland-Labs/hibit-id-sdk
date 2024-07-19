@@ -101,3 +101,7 @@ export interface ChainChangedRequest {
 export interface AccountsChangedRequest {
   account: WalletAccount | null
 }
+
+export interface SwitchChainRequest {
+  chainId: HibitIdChainId
+}
