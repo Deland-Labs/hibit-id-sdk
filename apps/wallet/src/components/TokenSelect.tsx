@@ -13,7 +13,7 @@ export interface TokenSelectProps {
 }
 
 const TokenSelect: FC<TokenSelectProps> = observer(({ value, onChange }) => {
-  const tokenListQuery = useTokenListQuery(hibitIdSession.chainInfo.chainId.type)
+  const tokenListQuery = useTokenListQuery(hibitIdSession.chainInfo)
 
   return (
     <Dropdown

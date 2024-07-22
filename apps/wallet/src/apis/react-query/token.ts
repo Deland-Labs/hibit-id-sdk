@@ -2,14 +2,14 @@ import { useQuery } from "@tanstack/react-query"
 import { QueryCacheKey } from "./query-keys"
 import { GetAllAssetsAsync } from "../services/token"
 import { getSupportedChains } from "../../utils/chain"
-import { Chain, ChainId } from "../../utils/basicTypes"
+import { ChainId, ChainInfo } from "../../utils/basicTypes"
 import { RootAssetInfo } from "../models"
 import hibitIdSession from "../../stores/session"
 import BigNumber from "bignumber.js"
 
-export const useTokenListQuery = (chainType?: Chain) => {
+export const useTokenListQuery = (chain?: ChainInfo) => {
   return useQuery({
-    queryKey: [QueryCacheKey.GET_TOKEN_LIST, chainType?.toString() ?? ''],
+    queryKey: [QueryCacheKey.GET_TOKEN_LIST, chain?.chainId.toString() ?? ''],
     queryFn: async () => {
       const res = await GetAllAssetsAsync()
       if (!res.isSuccess || !res.value) {
@@ -19,7 +19,7 @@ export const useTokenListQuery = (chainType?: Chain) => {
       const chainTokens = res.value.filter((token) => {
         return (
           !!supportedChains.find((chain) => chain.chainId.equals(new ChainId(token.chain, token.chainNetwork)))
-            && (chainType ? token.chain.equals(chainType) : true)
+            && (chain ? chain.chainId.equals(new ChainId(token.chain, token.chainNetwork)) : true)
         )
       })
       return chainTokens

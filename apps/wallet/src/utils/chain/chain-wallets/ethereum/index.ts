@@ -1,9 +1,10 @@
 import BigNumber from "bignumber.js";
 import { AssetInfo, ChainWallet } from "../types";
 import { isAddress, JsonRpcProvider, Contract, HDNodeWallet, parseEther } from "ethers";
-import { Chain, ChainAssetType, ChainInfo } from "../../../basicTypes";
+import { Chain, ChainAssetType, ChainId, ChainInfo } from "../../../basicTypes";
 import { erc20Abi } from "./erc20";
 import { WalletAccount } from "sdk";
+import { getChainByChainId } from "../..";
 
 export class EthereumChainWallet extends ChainWallet {
   private provider: JsonRpcProvider
@@ -47,7 +48,12 @@ export class EthereumChainWallet extends ChainWallet {
     }
     // erc20
     if (assetInfo.chainAssetType.equals(ChainAssetType.ERC20)) {
-      const contract = new Contract(assetInfo.contractAddress, erc20Abi, this.provider);
+      const chainInfo = getChainByChainId(new ChainId(assetInfo.chain, assetInfo.chainNetwork))
+      if (!chainInfo) {
+        throw new Error(`Ethereum: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`)
+      }
+      const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
+      const contract = new Contract(assetInfo.contractAddress, erc20Abi, provider);
       const getDecimals = contract.decimals();
       const getBalance = contract.balanceOf(address);
       const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
@@ -74,7 +80,12 @@ export class EthereumChainWallet extends ChainWallet {
     }
     // erc20
     if (assetInfo.chainAssetType.equals(ChainAssetType.ERC20)) {
-      const token = new Contract(assetInfo.contractAddress, erc20Abi, this.provider);
+      const chainInfo = getChainByChainId(new ChainId(assetInfo.chain, assetInfo.chainNetwork))
+      if (!chainInfo) {
+        throw new Error(`Ethereum: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`)
+      }
+      const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
+      const token = new Contract(assetInfo.contractAddress, erc20Abi, provider);
       const decimals = await token.decimals();
       const tx = await token
         .connect(this.wallet)
