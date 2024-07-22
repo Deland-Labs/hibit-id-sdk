@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { ChainWallet } from "../utils/chain/chain-wallets/types";
 import { Chain, ChainInfo } from "../utils/basicTypes";
 import { EthereumSepolia } from "../utils/chain/chain-list";
@@ -21,6 +21,18 @@ export class HibitIdSession {
   constructor() {
     makeAutoObservable(this)
     this.chainInfo = EthereumSepolia
+
+    if (RUNTIME_ENV === RuntimeEnv.SDK) {
+      // re-init rpcManager to avoid stale callback closure
+      reaction(
+        () => this.wallet,
+        (wallet) => {
+          if (wallet) {
+            rpcManager.init()
+          }
+        }
+      )
+    }
   }
 
   get isConnected() {

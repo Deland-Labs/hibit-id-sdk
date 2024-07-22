@@ -12,13 +12,13 @@ import { formatAddress } from "../../utils/formatter";
 import CopyButton from "../../components/CopyButton";
 
 const WalletMainPage: FC = observer(() => {
-  const tokenListQuery = useTokenListQuery(hibitIdSession.chainInfo.chainId.type)
+  const tokenListQuery = useTokenListQuery(hibitIdSession.chainInfo)
   const defaultTokenQuery = useQuery({
     queryKey: ['getDefaultToken', tokenListQuery.data],
     queryFn: async () => {
       return tokenListQuery.data?.find((token) => {
         return token.chainAssetType.equals(ChainAssetType.Native)
-      }) ?? null
+      }) ?? tokenListQuery.data?.[0] ?? null
     },
     enabled: !!tokenListQuery.data
   })

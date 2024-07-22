@@ -31,7 +31,7 @@ const TokenListItem: FC<{ token: RootAssetInfo }> = ({ token }) => {
 }
 
 const TokenList: FC = observer(() => {
-  const assetsQuery = useTokenListQuery(hibitIdSession.chainInfo.chainId.type)
+  const assetsQuery = useTokenListQuery(hibitIdSession.chainInfo)
 
   return (
     <ul className="flex flex-col gap-6">

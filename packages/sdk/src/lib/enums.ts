@@ -12,6 +12,7 @@ export enum HibitIdExposeRPCMethod {
   TRANSFER = 'transfer',
   DISCONNECT = 'disconnect',
   SIGN_MESSAGE = 'signMessage',
+  SWITCH_CHAIN = 'switchChain',
 }
 
 export enum HibitIdAssetType {
