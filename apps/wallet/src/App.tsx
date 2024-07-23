@@ -10,6 +10,7 @@ import { RuntimeEnv } from './utils/basicEnums';
 import authManager from './utils/auth'
 import { AuthenticatorType, UserAuthInfo } from './utils/auth/types';
 import { WEB_STORAGE_KEY } from './utils/constants';
+import PasswordPage from './pages/password';
 
 const MainPage = lazy(() => import('./pages/main'));
 const LoginPage = lazy(() => import('./pages/login'));
@@ -55,6 +56,8 @@ const App: FC = observer(() => {
             {hibitIdSession.isConnected && (
               <>
                 <Route path="/" element={<MainPage />} />
+                <Route path="/create-password" element={<PasswordPage isReset={false} />} />
+                <Route path="/change-password" element={<PasswordPage isReset={true} />} />
                 <Route path="/token/:addressOrSymbol" element={<TokenDetailPage />} />
                 <Route path="/send/:addressOrSymbol?" element={<SendTokenPage />} />
                 <Route path="/receive/:addressOrSymbol?" element={<ReceiveTokenPage />} />

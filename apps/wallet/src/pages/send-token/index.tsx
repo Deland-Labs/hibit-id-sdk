@@ -1,13 +1,12 @@
 import { observer } from "mobx-react";
 import { FC, useEffect, useState } from "react";
 import hibitIdSession from "../../stores/session";
-import { JsonRpcProvider, parseEther } from "ethers";
-import { SEPOLIA_RPC } from "../../utils/constants";
 import { useNavigate, useParams } from "react-router-dom";
 import SvgGo from '../../assets/right-arrow.svg?react';
 import { useTokenQuery } from "../../apis/react-query/token";
 import TokenSelect from "../../components/TokenSelect";
 import { RootAssetInfo } from "../../apis/models";
+import BigNumber from "bignumber.js";
 
 const SendTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
@@ -28,17 +27,16 @@ const SendTokenPage: FC = observer(() => {
 
   const handleSend = async () => {
     setAmountError('')
-    if (!hibitIdSession.wallet) {
+    if (!hibitIdSession.wallet || !tokenQuery.data) {
       return
     }
     try {
-      const provider = new JsonRpcProvider(SEPOLIA_RPC, 0xaa36a7)
-      hibitIdSession.wallet = hibitIdSession.wallet.connect(provider)
-      const res = await hibitIdSession.wallet.sendTransaction({
-        to: toAddress,
-        value: parseEther(amount)
-      })
-      alert(`Transaction sent: ${res.hash}`)
+      const txId = await hibitIdSession.wallet!.transfer(
+        toAddress,
+        new BigNumber(amount),
+        tokenQuery.data
+      )
+      alert(`Transaction sent: ${txId}`)
     } catch (e) {
       setAmountError(JSON.stringify(e, null, 2))
     }
