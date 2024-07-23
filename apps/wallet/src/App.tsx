@@ -16,6 +16,8 @@ const LoginPage = lazy(() => import('./pages/login'));
 const TokenDetailPage = lazy(() => import('./pages/token-detail'));
 const SendTokenPage = lazy(() => import('./pages/send-token'));
 const ReceiveTokenPage = lazy(() => import('./pages/receive-token'));
+const PasswordPage = lazy(() => import('./pages/password'));
+const SettingsPage = lazy(() => import('./pages/settings'));
 
 const App: FC = observer(() => {
   const [ready, setReady] = useState(false)
@@ -55,6 +57,9 @@ const App: FC = observer(() => {
             {hibitIdSession.isConnected && (
               <>
                 <Route path="/" element={<MainPage />} />
+                <Route path="/create-password" element={<PasswordPage isReset={false} />} />
+                <Route path="/change-password" element={<PasswordPage isReset={true} />} />
+                <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/token/:addressOrSymbol" element={<TokenDetailPage />} />
                 <Route path="/send/:addressOrSymbol?" element={<SendTokenPage />} />
                 <Route path="/receive/:addressOrSymbol?" element={<ReceiveTokenPage />} />

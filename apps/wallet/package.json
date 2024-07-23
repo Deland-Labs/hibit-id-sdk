@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.19",
+    "@hookform/resolvers": "^3.9.0",
     "@mixer/postmessage-rpc": "^1.1.4",
     "@noble/secp256k1": "^1.7.0",
     "@openproduct/web-sdk": "^0.23.0",
@@ -28,14 +29,18 @@
     "class-transformer": "^0.5.1",
     "dayjs": "^1.11.11",
     "ethers": "^6.13.1",
+    "i18next": "^23.12.2",
     "qrcode": "^1.5.3",
+    "react-hook-form": "^7.52.1",
+    "react-i18next": "^15.0.0",
     "react-telegram-login": "^1.1.2",
     "reflect-metadata": "^0.2.2",
     "sdk": "*",
     "tailwind-merge": "^2.3.0",
     "tonweb": "^0.0.66",
     "tonweb-mnemonic": "^1.0.1",
-    "tweetnacl": "^1.0.3"
+    "tweetnacl": "^1.0.3",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",

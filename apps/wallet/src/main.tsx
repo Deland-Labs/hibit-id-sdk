@@ -9,6 +9,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './apis/index.ts'
 import { RuntimeEnv } from './utils/basicEnums.ts'
 import rpcManager from './stores/rpc.ts'
+import './i18n'
 
 console.log('[runtime env]', RUNTIME_ENV)
 console.log('[runtime params]', RUNTIME_PARAMS)
