@@ -10,8 +10,11 @@ import { useQuery } from "@tanstack/react-query";
 import { ChainAssetType } from "../../utils/basicTypes";
 import { formatAddress } from "../../utils/formatter";
 import CopyButton from "../../components/CopyButton";
+import SvgSettings from '../../assets/setting.svg?react';
+import { useNavigate } from "react-router-dom";
 
 const WalletMainPage: FC = observer(() => {
+  const navigate = useNavigate()
   const tokenListQuery = useTokenListQuery(hibitIdSession.chainInfo)
   const defaultTokenQuery = useQuery({
     queryKey: ['getDefaultToken', tokenListQuery.data],
@@ -35,6 +38,11 @@ const WalletMainPage: FC = observer(() => {
           }}
         />
       </div>
+      <button className="btn btn-ghost btn-square btn-sm absolute top-0 right-0" onClick={() => {
+        navigate('/settings')
+      }}>
+        <SvgSettings />
+      </button>
 
       <div className="flex-none flex flex-col items-center gap-8 pb-6 border-b border-base-300">
         <h1 title={address} className="h-5 -mr-7 leading-5 text-xs flex items-center gap-1">

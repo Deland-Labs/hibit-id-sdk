@@ -54,5 +54,9 @@
 
   "page_password_warning1": "Hibit will use the wallet password you set to protect the data on your device to ensure the safety of your assets.",
   "page_password_warning2": "Hibit will not store your wallet password.",
-  "page_password_warning3": "If wallet password lost, wallet cannot be recovered."
+  "page_password_warning3": "If wallet password lost, wallet cannot be recovered.",
+
+  "page_settings_title": "Settings",
+  "page_settings_security": "Security",
+  "page_settings_changePassword": "Change wallet password"
 }
