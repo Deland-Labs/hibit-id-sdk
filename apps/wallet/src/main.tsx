@@ -10,6 +10,7 @@ import { queryClient } from './apis/index.ts'
 import { RuntimeEnv } from './utils/basicEnums.ts'
 import rpcManager from './stores/rpc.ts'
 import './i18n'
+import HibitToastContainer from './components/Toaster/Container.tsx'
 
 console.log('[runtime env]', RUNTIME_ENV)
 console.log('[runtime params]', RUNTIME_PARAMS)
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <App />
+        <HibitToastContainer />
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>
