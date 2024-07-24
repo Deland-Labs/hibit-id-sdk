@@ -27,7 +27,8 @@ const HibitToastContainer: FC = () => {
           </button>
         )
       }}
-      toastClassName="!py-0 !items-center !min-h-[50px] !px-5 !bg-[#3E537C] !rounded-lg"
+      className="flex justify-center !top-[var(--toastify-toast-top)]"
+      toastClassName="!max-w-[284px] !min-h-[50px] !px-5 !py-0 !gap-4 !items-center !bg-[#3E537C] !rounded-lg"
       bodyClassName="!m-0 !p-0"
     />
   )
