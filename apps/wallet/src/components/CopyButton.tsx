@@ -1,6 +1,7 @@
 import { forwardRef, HTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 import SvgCopy from '../assets/copy.svg?react';
+import toaster from "./Toaster";
 
 export interface CopyButtonProps extends HTMLAttributes<HTMLButtonElement> {
   copyText: string
@@ -14,7 +15,7 @@ const CopyButton = forwardRef<HTMLButtonElement, CopyButtonProps>(({ copyText, c
       {...props}
       onClick={() => {
         navigator.clipboard.writeText(copyText ?? '');
-        alert('copied')
+        toaster.success('Copy Success')
       }}
     >
       <SvgCopy className="size-full" />

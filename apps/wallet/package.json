@@ -34,6 +34,7 @@
     "react-hook-form": "^7.52.1",
     "react-i18next": "^15.0.0",
     "react-telegram-login": "^1.1.2",
+    "react-toastify": "^10.0.5",
     "reflect-metadata": "^0.2.2",
     "sdk": "*",
     "tailwind-merge": "^2.3.0",
