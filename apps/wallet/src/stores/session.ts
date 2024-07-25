@@ -6,7 +6,7 @@ import { EthereumChainWallet } from "../utils/chain/chain-wallets/ethereum";
 import { RUNTIME_ENV } from "../utils/runtime";
 import { RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
-import { UserAuthInfo } from "../utils/auth/types";
+import { UserAuthInfo } from "sdk";
 import { WEB_STORAGE_KEY } from "../utils/constants";
 import { TonChainWallet } from "../utils/chain/chain-wallets/ton";
 import { WalletAccount } from "sdk";

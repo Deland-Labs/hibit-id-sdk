@@ -15,6 +15,15 @@ export enum HibitIdExposeRPCMethod {
   SWITCH_CHAIN = 'switchChain',
 }
 
+export enum AuthenticatorType {
+  Telegram = 'telegram',
+  Google = 'google',
+  Facebook = 'facebook',
+  Apple = 'apple',
+  X = 'x',
+  // Add more authenticators here
+}
+
 export enum HibitIdAssetType {
   Native = 0,
   NativeGas = 1,

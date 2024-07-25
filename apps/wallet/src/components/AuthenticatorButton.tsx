@@ -1,9 +1,8 @@
-import { FC, useMemo } from "react";
-import { AuthenticatorType } from "../utils/auth/types";
-import UnknownSvg from '../assets/auth-logos/UNKNOWN.svg?react';
-import TelegramSvg from '../assets/auth-logos/Telegram.svg?react';
+import { FC } from "react";
+import { AuthenticatorType } from "sdk";
 import { observer } from "mobx-react";
 import authManager from "../utils/auth";
+import AuthenticatorLogo from "./AuthenticatorLogo";
 
 export interface AuthenticatorButtonProps {
   type: AuthenticatorType
@@ -11,17 +10,6 @@ export interface AuthenticatorButtonProps {
 }
 
 const AuthenticatorButton: FC<AuthenticatorButtonProps> = observer(({ type, onSuccess }) => {
-  const icon = useMemo(() => {
-    switch (type) {
-      case AuthenticatorType.Telegram: {
-        return <TelegramSvg className="size-8" />
-      }
-      default: {
-        return <UnknownSvg className="size-8" />
-      }
-    }
-  }, [type])
-
   const handleAuth = async () => {
     await authManager.login(type)
     onSuccess?.()
@@ -32,7 +20,7 @@ const AuthenticatorButton: FC<AuthenticatorButtonProps> = observer(({ type, onSu
       className="btn btn-circle btn-sm size-8 border-none"
       onClick={handleAuth}
     >
-      {icon}
+      <AuthenticatorLogo type={type} className="size-8" />
     </button>
   )
 })

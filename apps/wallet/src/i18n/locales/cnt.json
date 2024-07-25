@@ -52,5 +52,12 @@
   "common_native": "本地",
   "page_password_warning1": "HiBit將使用您設定的錢包密碼來保護您設備上的数据，以確保您的資產安全。",
   "page_password_warning2": "HiBit不會存儲您的錢包密碼。",
-  "page_password_warning3": "如果錢包密碼丟失，錢包將無法恢復。"
+  "page_password_warning3": "如果錢包密碼丟失，錢包將無法恢復。",
+  "page_settings_title": "設置",
+  "page_settings_security": "安全性",
+  "page_settings_changePassword": "更改錢包密碼",
+  "page_settings_account": "帳戶",
+  "page_settings_linkMore": "連結更多",
+  "page_account_title": "連結更多",
+  "page_account_linked": "已連結"
 }
