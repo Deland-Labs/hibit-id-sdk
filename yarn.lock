@@ -622,13 +622,13 @@
     isomorphic-fetch "^3.0.0"
 
 "@passwordless-id/webauthn@^1.6.1":
-  version "1.6.1"
-  resolved "https://registry.npmmirror.com/@passwordless-id/webauthn/-/webauthn-1.6.1.tgz#2cda072423282fc213888f6768ae7829d549e871"
-  integrity sha512-YQ1ZHU+exsqF1xAdQ1eBEQ3NZrMT4PSHKsaMSA5Oq38esursuH1hhOT2VHDfT/gimlipUfZr2VEs/cfriswT8w==
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@passwordless-id/webauthn/-/webauthn-1.6.2.tgz#677e963280eac2a98eb3317b54c80f9f59d56d15"
+  integrity sha512-52Cna/kaJ6iuYgTko+LuHCY5NUgoJTQ+iLWbvCHWiI0pT+zUeKz1+g22mWGlSi/JDrFGwZTKG/PL2YDaQGo0qQ==
 
 "@peculiar/asn1-schema@^2.3.8":
   version "2.3.8"
-  resolved "https://registry.npmmirror.com/@peculiar/asn1-schema/-/asn1-schema-2.3.8.tgz#04b38832a814e25731232dd5be883460a156da3b"
+  resolved "https://registry.yarnpkg.com/@peculiar/asn1-schema/-/asn1-schema-2.3.8.tgz#04b38832a814e25731232dd5be883460a156da3b"
   integrity sha512-ULB1XqHKx1WBU/tTFIA+uARuRoBVZ4pNdOA878RDrRbBfBGcSzi5HBkdScC6ZbHn8z7L8gmKCgPC1LHRrP46tA==
   dependencies:
     asn1js "^3.0.5"
