@@ -24,7 +24,7 @@ const TokenSelect: FC<TokenSelectProps> = observer(({ value, onChange }) => {
         </>
       )}
       triggerProps={{
-        className: 'px-2 h-8 min-w-[112px] justify-between'
+        className: 'px-2 !h-8 min-w-[112px] justify-between flex-nowrap'
       }}
       dropdownContent={(close) => (
         <div className="min-w-[200px] bg-base-300 rounded-xl p-2">

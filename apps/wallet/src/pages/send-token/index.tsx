@@ -3,10 +3,13 @@ import { FC, useEffect, useState } from "react";
 import hibitIdSession from "../../stores/session";
 import { useNavigate, useParams } from "react-router-dom";
 import SvgGo from '../../assets/right-arrow.svg?react';
-import { useTokenQuery } from "../../apis/react-query/token";
+import { useTokenBalanceQuery, useTokenQuery } from "../../apis/react-query/token";
 import TokenSelect from "../../components/TokenSelect";
 import { RootAssetInfo } from "../../apis/models";
 import BigNumber from "bignumber.js";
+import { formatNumber } from "../../utils/formatter";
+import toaster from "../../components/Toaster";
+import { useMutation } from "@tanstack/react-query";
 
 const SendTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
@@ -18,6 +21,20 @@ const SendTokenPage: FC = observer(() => {
   const navigate = useNavigate()
 
   const tokenQuery = useTokenQuery(addressOrSymbol ?? '')
+  const balanceQuery = useTokenBalanceQuery(token || undefined)
+
+  const transferMutation = useMutation({
+    mutationFn: async () => {
+      if (!hibitIdSession.wallet || !token) {
+        throw new Error('Wallet or token not ready')
+      }
+      return await hibitIdSession.wallet.transfer(
+        toAddress,
+        new BigNumber(amount),
+        token
+      )
+    }
+  })
 
   useEffect(() => {
     if (tokenQuery.data) {
@@ -27,18 +44,14 @@ const SendTokenPage: FC = observer(() => {
 
   const handleSend = async () => {
     setAmountError('')
-    if (!hibitIdSession.wallet || !tokenQuery.data) {
+    if (!hibitIdSession.wallet || !token) {
       return
     }
     try {
-      const txId = await hibitIdSession.wallet!.transfer(
-        toAddress,
-        new BigNumber(amount),
-        tokenQuery.data
-      )
-      alert(`Transaction sent: ${txId}`)
+      const txId = await transferMutation.mutateAsync()
+      toaster.success(`Transaction sent: ${txId}`)
     } catch (e) {
-      setAmountError(JSON.stringify(e, null, 2))
+      setAmountError(e instanceof Error ? e.message : JSON.stringify(e, null, 2))
     }
   }
 
@@ -79,7 +92,9 @@ const SendTokenPage: FC = observer(() => {
           <div className="label">
             <span className="label-text text-neutral text-xs">Amount</span>
             <span className="label-text-alt text-xs">
-              <button className="btn btn-link btn-xs">{`Max: 0 ETH`}</button>
+              <button className="btn btn-link btn-xs no-underline">
+                {`Max: ${formatNumber(balanceQuery.data || 0)} ${token?.assetSymbol}`}
+              </button>
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -103,7 +118,7 @@ const SendTokenPage: FC = observer(() => {
       <button
         className="btn btn-block btn-sm absolute bottom-0"
         onClick={handleSend}
-        disabled={!!addressError || !!amountError || !toAddress || Number(amount) === 0}
+        disabled={!toAddress || Number(amount) === 0}
       >
         Send
       </button>

@@ -6,7 +6,7 @@ import { EthereumChainWallet } from "../utils/chain/chain-wallets/ethereum";
 import { RUNTIME_ENV } from "../utils/runtime";
 import { RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
-import { UserAuthInfo } from "../utils/auth/types";
+import { UserAuthInfo } from "sdk";
 import { WEB_STORAGE_KEY } from "../utils/constants";
 import { TonChainWallet } from "../utils/chain/chain-wallets/ton";
 import { WalletAccount } from "sdk";
@@ -90,7 +90,7 @@ export class HibitIdSession {
     try {
       // TODO: trade userInfo for wallet phrase
       console.log('[query phrase with]', auth)
-      const phrase = await Promise.resolve('unaware manage apart embrace gap age alcohol rabbit decrease purchase nerve flee')
+      const phrase = await Promise.resolve('mail man solid begin spatial uncle border pupil cause public tuition soda')
 
       let wallet: ChainWallet | null = null
       // TODO: add more chains

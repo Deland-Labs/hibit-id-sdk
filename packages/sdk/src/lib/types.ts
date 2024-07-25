@@ -1,4 +1,4 @@
-import { HibitIdAssetType, HibitIdChainId } from "./enums"
+import { AuthenticatorType, HibitIdAssetType, HibitIdChainId } from "./enums"
 
 export type HibitEnv = 'dev' | 'test' | 'prod'
 export type HibitIdPage = 'main' | 'login'
@@ -45,6 +45,7 @@ export interface WalletAccount {
 }
 
 export interface UserAuthInfo {
+  type: AuthenticatorType
   id: string
   name: string
   authTimestamp: Date

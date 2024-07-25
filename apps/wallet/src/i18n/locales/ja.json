@@ -52,5 +52,12 @@
   "common_native": "ネイティブ",
   "page_password_warning1": "HiBitは、あなたの資産の安全性を確保するために、デバイス上のデータを保護するのに設定したウォレットパスワードを使用します。",
   "page_password_warning2": "HiBitはあなたのウォレットパスワードを保存しません。",
-  "page_password_warning3": "ウォレットパスワードを紛失した場合、ウォレットは回復できません。"
+  "page_password_warning3": "ウォレットパスワードを紛失した場合、ウォレットは回復できません。",
+  "page_settings_title": "設定",
+  "page_settings_security": "セキュリティ",
+  "page_settings_changePassword": "ウォレットパスワードの変更",
+  "page_settings_account": "アカウント",
+  "page_settings_linkMore": "さらにリンク",
+  "page_account_title": "さらにリンク",
+  "page_account_linked": "リンク済み"
 }

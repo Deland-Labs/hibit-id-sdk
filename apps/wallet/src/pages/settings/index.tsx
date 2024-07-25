@@ -3,6 +3,9 @@ import { FC } from "react";
 import SvgGo from '../../assets/right-arrow.svg?react';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import AuthenticatorLogo from "../../components/AuthenticatorLogo";
+import { AuthenticatorType } from "sdk";
+import hibitIdSession from "../../stores/session";
 
 const SettingsPage: FC = observer(() => {
   const navigate = useNavigate()
@@ -16,6 +19,24 @@ const SettingsPage: FC = observer(() => {
         </button>
         <span className="text-xs">{t('page_settings_title')}</span>
       </div>
+
+      <div className="mt-6">
+        <p className="label-text text-neutral text-xs">
+          {t('page_settings_account')}
+        </p>
+        <div className="mt-4 flex justify-between items-center">
+          <div className="flex items-center gap-2 text-xs">
+            <AuthenticatorLogo type={AuthenticatorType.Telegram} className="size-6" />
+            <span>{hibitIdSession.auth?.name}</span>
+          </div>
+          <button className="btn btn-link btn-xs no-underline p-0" onClick={() => {
+            navigate('/account-manage')
+          }}>
+            {t('page_settings_linkMore')}
+          </button>
+        </div>
+      </div>
+
       <div className="mt-6">
         <p className="label-text text-neutral text-xs">
           {t('page_settings_security')}
