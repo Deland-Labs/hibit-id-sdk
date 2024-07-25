@@ -15,7 +15,7 @@ html, body, #root {
   .btn-primary {
     @apply text-base-content;
   }
-  .btn-sm:not(.btn-square) {
+  .btn-sm:not(.btn-square,.btn-circle) {
     @apply h-10;
   }
   .btn-old-primary {

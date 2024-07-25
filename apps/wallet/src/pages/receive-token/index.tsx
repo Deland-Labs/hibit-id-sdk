@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useState } from "react";
 import hibitIdSession from "../../stores/session";
 import QRCode from 'qrcode'
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,17 +11,19 @@ import { ChainId } from "../../utils/basicTypes";
 import CopyButton from "../../components/CopyButton";
 
 const ReceiveTokenPage: FC = observer(() => {
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
   const { addressOrSymbol } = useParams()
   const tokenQuery = useTokenQuery(addressOrSymbol ?? '')
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const navigate = useNavigate()
 
   const address = hibitIdSession.address
 
   useEffect(() => {
-    if (!canvasRef.current || !address) return;
-    QRCode.toCanvas(canvasRef.current, address)
-  }, [address])
+    if (!canvas || !address) return;
+    QRCode.toCanvas(canvas, address, {
+      width: 164,
+    })
+  }, [canvas, address])
 
   if (tokenQuery.isLoading || typeof tokenQuery.data === 'undefined') {
     return <PageLoading />
@@ -44,13 +46,13 @@ const ReceiveTokenPage: FC = observer(() => {
           <span className="text-xs">Receive</span>
         </button>
       </div>
-      <div className="flex flex-col items-center gap-6">
+      <div className="mt-6 flex flex-col items-center gap-6">
         <p>{`Receive Assets on ${chainInfo?.name ?? '--'}`}</p>
-        <div className="p-2 bg-base-100 rounded-xl">
-          <canvas ref={canvasRef} className="size-full rounded-lg" />
+        <div className="size-[180px] p-2 bg-base-100 rounded-xl">
+          <canvas ref={setCanvas} className="size-full rounded-lg" />
         </div>
-        <div className="p-2 pr-1 flex items-center gap-2 bg-base-100 rounded-xl">
-          <span className="text-xs">{address}</span>
+        <div className="max-w-full p-2 pr-1 flex items-center gap-2 bg-base-100 rounded-xl">
+          <span className="text-xs break-all">{address}</span>
           <CopyButton copyText={address} />
         </div>
       </div>
