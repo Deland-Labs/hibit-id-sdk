@@ -41,16 +41,17 @@ export const useTokenQuery = (addressOrSymbol: string) => {
   })
 }
 
-export const useTokenBalanceQuery = (token: RootAssetInfo) => {
+export const useTokenBalanceQuery = (token?: RootAssetInfo) => {
   return useQuery({
-    queryKey: [QueryCacheKey.GET_TOKEN_BALANCE, hibitIdSession.wallet?.chainInfo, token.assetId.toString()],
+    queryKey: [QueryCacheKey.GET_TOKEN_BALANCE, hibitIdSession.wallet?.chainInfo, token?.assetId.toString()],
     queryFn: async () => {
-      if (!hibitIdSession.wallet) {
+      if (!hibitIdSession.wallet || !token) {
         return new BigNumber(0)
       }
       const address = (await hibitIdSession.wallet.getAccount()).address
       return await hibitIdSession.wallet?.balanceOf(address, token)
     },
+    enabled: !!token
     // FIXME: stop refetch if hidden
     // refetchInterval: 10000,
   })

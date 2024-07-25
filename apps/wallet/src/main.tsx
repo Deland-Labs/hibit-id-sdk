@@ -11,6 +11,9 @@ import { RuntimeEnv } from './utils/basicEnums.ts'
 import rpcManager from './stores/rpc.ts'
 import './i18n'
 import HibitToastContainer from './components/Toaster/Container.tsx'
+import BigNumber from 'bignumber.js'
+
+BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
 console.log('[runtime env]', RUNTIME_ENV)
 console.log('[runtime params]', RUNTIME_PARAMS)

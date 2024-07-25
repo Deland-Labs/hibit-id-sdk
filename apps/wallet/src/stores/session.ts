@@ -90,7 +90,7 @@ export class HibitIdSession {
     try {
       // TODO: trade userInfo for wallet phrase
       console.log('[query phrase with]', auth)
-      const phrase = await Promise.resolve('unaware manage apart embrace gap age alcohol rabbit decrease purchase nerve flee')
+      const phrase = await Promise.resolve('mail man solid begin spatial uncle border pupil cause public tuition soda')
 
       let wallet: ChainWallet | null = null
       // TODO: add more chains

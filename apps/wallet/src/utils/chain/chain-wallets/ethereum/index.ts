@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { AssetInfo, ChainWallet } from "../types";
-import { isAddress, JsonRpcProvider, Contract, HDNodeWallet, parseEther } from "ethers";
+import { isAddress, JsonRpcProvider, Contract, HDNodeWallet, parseEther, parseUnits } from "ethers";
 import { Chain, ChainAssetType, ChainId, ChainInfo } from "../../../basicTypes";
 import { erc20Abi } from "./erc20";
 import { WalletAccount } from "sdk";
@@ -20,7 +20,7 @@ export class EthereumChainWallet extends ChainWallet {
       this.chainInfo.chainId.network.value.toNumber()
     )
     this.wallet = HDNodeWallet.fromPhrase(this.phrase)
-    this.wallet.connect(this.provider)
+    this.wallet = this.wallet.connect(this.provider)
   }
 
   public override getAccount: () => Promise<WalletAccount> = async () => {
@@ -85,11 +85,10 @@ export class EthereumChainWallet extends ChainWallet {
         throw new Error(`Ethereum: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`)
       }
       const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
-      const token = new Contract(assetInfo.contractAddress, erc20Abi, provider);
+      const token = new Contract(assetInfo.contractAddress, erc20Abi, this.wallet.connect(provider));
       const decimals = await token.decimals();
       const tx = await token
-        .connect(this.wallet)
-        .getFunction('transfer')(toAddress, BigInt(amount.shiftedBy(decimals).toString()));
+        .getFunction('transfer')(toAddress, parseUnits(amount.toString(), decimals));
       return tx.hash;
     }
 
