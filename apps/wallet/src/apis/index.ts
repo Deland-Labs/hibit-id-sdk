@@ -9,22 +9,22 @@ interface ServiceRequestConfig<T> extends AxiosRequestConfig {
   data?: T;
 }
 
-const apiRequest = axios.create({
-  baseURL: 'https://alphaapi.ex3.one/',
+const ex3ApiRequest = axios.create({
+  baseURL: import.meta.env.VITE_EX3_BASE_API,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-export const serviceClient = async <D>(config: ServiceRequestConfig<D>) => {
+export const ex3ServiceClient = async <D>(config: ServiceRequestConfig<D>) => {
   const { method = 'GET' } = config;
   if (method === 'GET') config.params = config.data;
-  const res = await apiRequest.request(config);
+  const res = await ex3ApiRequest.request(config);
   return JSON.stringify(res.data)
 };
 
-export const sendWalletRequest = async <TInput>(
+export const sendEx3WalletRequest = async <TInput>(
   input: TInput,
   url: string
 ): Promise<string> => {
@@ -41,7 +41,7 @@ export const sendWalletRequest = async <TInput>(
     dataStr = input;
   }
   const walletSignature = await hibitIdSession.wallet?.signMessage(dataStr);
-  return await serviceClient({
+  return await ex3ServiceClient({
     url: url,
     method: 'POST',
     data: {
@@ -53,11 +53,11 @@ export const sendWalletRequest = async <TInput>(
   });
 }
 
-export const sendUnSignedRequest = async <TInput>(
+export const sendEx3UnSignedRequest = async <TInput>(
   input: TInput,
   url: string
 ): Promise<string> => {
-  return await serviceClient<TInput>({
+  return await ex3ServiceClient<TInput>({
     url: url,
     method: 'POST',
     data: input
