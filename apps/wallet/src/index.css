@@ -9,7 +9,10 @@ html, body, #root {
 }
 
 @layer components {
-  .btn:not(.btn-primary,.btn-secondary,.btn-ghost,.btn-link,.btn-old-primary) {
+  .btn {
+    @apply disabled:opacity-70 disabled:cursor-not-allowed;
+  }
+  .btn:not(.btn-primary,.btn-secondary,.btn-ghost,.btn-link,.btn-ex3-primary) {
     @apply bg-base-300 text-primary;
   }
   .btn-primary {
@@ -18,7 +21,11 @@ html, body, #root {
   .btn-sm:not(.btn-square,.btn-circle) {
     @apply h-10;
   }
-  .btn-old-primary {
+  .btn-ex3-primary {
     @apply bg-primary/20 border border-primary/50 text-base-content hover:bg-primary/10 hover:border-primary/40
+  }
+
+  .input, .textarea {
+    @apply placeholder:text-base-300;
   }
 }

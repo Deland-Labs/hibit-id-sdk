@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js';
 
+export const SYSTEM_MAX_DECIMALS = Number(import.meta.env.VITE_SYSTEM_MAX_DECIMALS) || 8
+
 export const priceFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD'
@@ -30,6 +32,7 @@ export const formatNumber = (
   if (!decimalsAutoPlacement) {
     digit = Math.min(dp, digit);
   }
+  digit = Math.min(digit, SYSTEM_MAX_DECIMALS);
   return x.toFormat(digit, BigNumber.ROUND_DOWN, fmtConfig);
 };
 

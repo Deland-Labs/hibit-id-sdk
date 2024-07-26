@@ -6,6 +6,7 @@ import { ChainId, ChainInfo } from "../../utils/basicTypes"
 import { RootAssetInfo } from "../models"
 import hibitIdSession from "../../stores/session"
 import BigNumber from "bignumber.js"
+import { SYSTEM_MAX_DECIMALS } from "../../utils/formatter/numberFormatter";
 
 export const useTokenListQuery = (chain?: ChainInfo) => {
   return useQuery({
@@ -49,7 +50,7 @@ export const useTokenBalanceQuery = (token?: RootAssetInfo) => {
         return new BigNumber(0)
       }
       const address = (await hibitIdSession.wallet.getAccount()).address
-      return await hibitIdSession.wallet?.balanceOf(address, token)
+      return (await hibitIdSession.wallet?.balanceOf(address, token))?.dp(SYSTEM_MAX_DECIMALS, BigNumber.ROUND_FLOOR)
     },
     enabled: !!token
     // FIXME: stop refetch if hidden
