@@ -31,7 +31,9 @@ const TokenSelect: FC<TokenSelectProps> = observer(({ value, onChange }) => {
           <ul className="flex flex-col gap-2">
             {tokenListQuery.data?.map((token) => (
               <li key={token.assetId.toString()} className="cursor-pointer" onClick={() => {
-                onChange(token)
+                if (!value || !value.assetId.equals(token.assetId)) {
+                  onChange(token)
+                }
                 close()
               }}>
                 <TokenIcon token={token} />

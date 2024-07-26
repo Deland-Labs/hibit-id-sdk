@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup"
 import PasswordWarnings from "./warning";
 import { observer } from "mobx-react";
+import LoaderButton from "../../components/LoaderButton";
+import { useMutation } from "@tanstack/react-query";
+import toaster from "../../components/Toaster";
 
 const formSchema = object({
   password: string()
@@ -23,12 +26,25 @@ const CreatePasswordPage: FC = observer(() => {
     handleSubmit,
     formState: { errors },
   } = useForm({
+    mode: 'onChange',
     resolver: yupResolver(formSchema),
   })
 
-  const handleConfirm = handleSubmit((values) => {
-    // TODO:
-    alert(JSON.stringify(values))
+  const submitMutation = useMutation({
+    mutationFn: async () => {
+      // TODO:
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(true)
+        }, 2000)
+      })
+    }
+  })
+
+  const handleConfirm = handleSubmit(async (values) => {
+    await submitMutation.mutateAsync()
+    toaster.success('Password created')
+    navigate('/')
   })
 
   return (
@@ -77,12 +93,13 @@ const CreatePasswordPage: FC = observer(() => {
         <PasswordWarnings />
       </div>
 
-      <button
+      <LoaderButton
         className="btn btn-block btn-sm absolute bottom-0"
         onClick={handleConfirm}
+        loading={submitMutation.isPending}
       >
         Confirm
-      </button>
+      </LoaderButton>
     </div>
   )
 })
