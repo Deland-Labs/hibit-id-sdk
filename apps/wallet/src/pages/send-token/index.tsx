@@ -15,6 +15,7 @@ import { object, string } from "yup";
 import { walletAddressValidate } from "../../utils/validator";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
+import { SYSTEM_MAX_DECIMALS } from "../../utils/formatter/numberFormatter";
 
 const SendTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
@@ -52,6 +53,7 @@ const SendTokenPage: FC = observer(() => {
 
   const {
     setValue,
+    trigger,
     register,
     control,
     handleSubmit,
@@ -157,7 +159,8 @@ const SendTokenPage: FC = observer(() => {
               onChange={(val) => {
                 setToken(val)
                 setTimeout(() => {
-                  setValue('amount', '0')
+                  setValue('amount', '')
+                  trigger('amount')
                 })
               }}
             />
@@ -170,6 +173,15 @@ const SendTokenPage: FC = observer(() => {
                   min={0}
                   className="input input-sm w-full text-xs"
                   {...field}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    const [, decimals] = value.split('.')
+                    if (decimals?.length > Math.min(SYSTEM_MAX_DECIMALS, token?.decimalPlaces.value ?? Infinity)) {
+                      return
+                    }
+                    setValue('amount', value)
+                    trigger('amount')
+                  }}
                 />
               )}
             />
