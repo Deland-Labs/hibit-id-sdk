@@ -16,7 +16,6 @@ import { walletAddressValidate } from "../../utils/validator";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 
-
 const SendTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
   const [token, setToken] = useState<RootAssetInfo | null>(null)
@@ -136,7 +135,7 @@ const SendTokenPage: FC = observer(() => {
             <span className="label-text text-neutral text-xs">Amount</span>
             <span className="label-text-alt text-xs">
               <button
-                className="btn btn-link btn-xs no-underline gap-0"
+                className="btn btn-link btn-xs px-0 no-underline gap-0"
                 onClick={() => {
                   setValue('amount', balanceQuery.data?.toString() ?? '0')
                 }}

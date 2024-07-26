@@ -31,9 +31,10 @@ const AccountManagePage: FC = () => {
               <AuthenticatorLogo type={AuthenticatorType.Telegram} className="size-6" />
               <span className="text-xs">{hibitIdSession.auth?.name}</span>
             </div>
-            <button className="btn btn-ghost btn-square btn-sm">
+            {/* // TODO: not deletable yet */}
+            {/* <button className="btn btn-ghost btn-square btn-sm">
               <SvgTrash />
-            </button>
+            </button> */}
           </li>
         </ul>
       </div>
