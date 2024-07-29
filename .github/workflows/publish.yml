@@ -31,5 +31,5 @@ jobs:
           else
             Version=$(git describe --tags --abbrev=0)
           fi
-          echo "Version: $Version"
-          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/sdk
+            echo Version: $Version
+            yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/sdk
