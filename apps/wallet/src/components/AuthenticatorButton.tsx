@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { AuthenticatorType } from "sdk";
+import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 import { observer } from "mobx-react";
 import authManager from "../utils/auth";
 import AuthenticatorLogo from "./AuthenticatorLogo";

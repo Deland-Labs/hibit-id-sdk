@@ -1,7 +1,6 @@
 import { RPC } from '@mixer/postmessage-rpc'
-import { AccountsChangedRequest, ChainChangedRequest, ClientExposeRPCMethod, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from 'sdk'
+import { AccountsChangedRequest, ChainChangedRequest, ClientExposeRPCMethod, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount, BridgePromise } from "@deland-labs/hibit-id-sdk"
 import hibitIdSession from './session';
-import { BridgePromise } from 'sdk';
 import { makeAutoObservable } from 'mobx';
 import { AssetInfo } from '../utils/chain/chain-wallets/types';
 import { Chain, ChainAssetType, ChainId, ChainInfo, ChainNetwork, DecimalPlaces } from '../utils/basicTypes';

@@ -6,10 +6,10 @@ import { EthereumChainWallet } from "../utils/chain/chain-wallets/ethereum";
 import { RUNTIME_ENV } from "../utils/runtime";
 import { RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
-import { UserAuthInfo } from "sdk";
+import { UserAuthInfo } from "@deland-labs/hibit-id-sdk";
 import { WEB_STORAGE_KEY } from "../utils/constants";
 import { TonChainWallet } from "../utils/chain/chain-wallets/ton";
-import { WalletAccount } from "sdk";
+import { WalletAccount } from "@deland-labs/hibit-id-sdk";
 
 export class HibitIdSession {
   public wallet: ChainWallet | null = null

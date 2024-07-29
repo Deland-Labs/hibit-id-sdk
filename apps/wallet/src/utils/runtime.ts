@@ -1,4 +1,4 @@
-import { SDK_AUTH_PARAM_KEY } from "sdk";
+import { SDK_AUTH_PARAM_KEY } from "@deland-labs/hibit-id-sdk";
 import { RuntimeEnv } from "./basicEnums";
 import { retrieveLaunchParams } from '@telegram-apps/sdk';
 

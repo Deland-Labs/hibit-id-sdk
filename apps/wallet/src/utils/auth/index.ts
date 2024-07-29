@@ -1,7 +1,7 @@
 import { IAuthenticateProvider } from "./types";
 import { TelegramAuthenticateProvider } from "./providers/telegram";
 import hibitIdSession from "../../stores/session";
-import { AuthenticatorType } from "sdk";
+import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 
 export class AuthManager {
   public static readonly supportedAuthenticators: AuthenticatorType[] = [AuthenticatorType.Telegram]
