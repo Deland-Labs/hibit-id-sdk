@@ -5,8 +5,8 @@
     "dev:wallet": "turbo run dev --filter=wallet",
     "build:wallet": "turbo run build --filter=wallet",
     "preview:wallet": "turbo run preview --filter=wallet",
-    "dev:sdk": "turbo run dev --filter=sdk",
-    "build:sdk": "turbo run build --filter=sdk",
+    "dev:sdk": "turbo run dev --filter=@deland-labs/hibit-id-sdk",
+    "build:sdk": "turbo run build --filter=@deland-labs/hibit-id-sdk",
     "prepare": "husky install"
   },
   "workspaces": [
@@ -48,5 +48,6 @@
     "vite-bundle-analyzer": "^0.9.3",
     "vite-plugin-node-polyfills": "^0.21.0",
     "vite-plugin-svgr": "^4.2.0"
-  }
+  },
+  "version": "1.0.0"
 }

@@ -1,0 +1,33 @@
+name: publish hibit-id-sdk package to gitlab
+on:
+  release:
+    types: [ published ]
+  push:
+    branches:
+      - main
+      - release
+jobs:
+  Build-and-Publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          registry-url: https://npm.pkg.github.com
+          cache: yarn
+
+      - run: |
+          yarn install --frozen-lockfile
+      - run: |
+          npm config set ${REGISTRY}:_authToken ${{ secrets.GITLAB_PACKAGE_TOKEN }}
+          npm config set @deland-labs:registry https:${REGISTRY}
+        env:
+          REGISTRY: //gitlab.com/api/v4/projects/37663507/packages/npm/
+      - run: |
+          # set version from timestamp if current branch is main
+          if [ "${GITHUB_REF}" = "refs/heads/main" or "${GITHUB_REF}" = "refs/heads/release" ]; then
+              Version=1.0.0-alpha.$(date +"%Y%m%d%H%M%S")
+          else
+              Version=$(git describe --tags --abbrev=0)
+          yarn publish packages/sdk --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version}
