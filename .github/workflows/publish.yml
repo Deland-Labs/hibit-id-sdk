@@ -25,11 +25,11 @@ jobs:
         env:
           REGISTRY: //gitlab.com/api/v4/projects/37663507/packages/npm/
       - run: |
-        # set version from timestamp if current branch is main
+          # set version from timestamp if current branch is main
           if [ "${{ github.ref }}" = "main" ] || [ "${{ github.ref }}" = "release" ]; then
             Version=1.0.0-alpha.$(date +"%Y%m%d%H%M%S")
           else
             Version=$(git describe --tags --abbrev=0)
           fi
-            echo Version: $Version
-            yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/sdk
+          echo Version: $Version
+          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/sdk
