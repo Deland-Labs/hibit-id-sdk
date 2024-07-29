@@ -1,0 +1,7 @@
+node_modules/
+build/
+
+# npmignore
+!build/
+src/
+test/
