@@ -1,7 +1,7 @@
 import { InitDataParsed } from "@telegram-apps/sdk";
 import { IAuthenticateProvider } from "../types";
 import dayjs from "dayjs";
-import { AuthenticatorType, UserAuthInfo } from "sdk";
+import { AuthenticatorType, UserAuthInfo } from "@deland-labs/hibit-id-sdk";
 
 declare global {
   interface Window {

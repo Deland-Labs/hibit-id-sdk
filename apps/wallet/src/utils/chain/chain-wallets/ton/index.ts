@@ -5,7 +5,7 @@ import { Buffer } from 'buffer';
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { bytesToHex, hexToBytes } from '@openproduct/web-sdk';
 import { sleep } from "../../common";
-import { WalletAccount } from "sdk";
+import { WalletAccount } from "@deland-labs/hibit-id-sdk";
 import { TonClient, WalletContractV4, internal, Address, toNano, fromNano, OpenedContract, JettonMaster, JettonWallet, beginCell } from "@ton/ton";
 import { KeyPair, mnemonicToPrivateKey } from "@ton/crypto";
 import nacl from "tweetnacl";

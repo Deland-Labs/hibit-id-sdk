@@ -4,7 +4,7 @@ import SvgGo from '../../assets/right-arrow.svg?react';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AuthenticatorLogo from "../../components/AuthenticatorLogo";
-import { AuthenticatorType } from "sdk";
+import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 import hibitIdSession from "../../stores/session";
 
 const SettingsPage: FC = observer(() => {

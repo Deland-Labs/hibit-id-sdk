@@ -8,7 +8,7 @@ import PageLoading from './components/PageLoading';
 import { RUNTIME_ENV, RUNTIME_PARAMS } from './utils/runtime';
 import { RuntimeEnv } from './utils/basicEnums';
 import authManager from './utils/auth'
-import { AuthenticatorType, UserAuthInfo } from 'sdk';
+import { AuthenticatorType, UserAuthInfo } from "@deland-labs/hibit-id-sdk";
 import { WEB_STORAGE_KEY } from './utils/constants';
 
 const MainPage = lazy(() => import('./pages/main'));

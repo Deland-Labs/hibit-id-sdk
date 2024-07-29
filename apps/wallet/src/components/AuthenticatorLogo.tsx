@@ -1,5 +1,5 @@
 import { FC, SVGProps } from "react";
-import { AuthenticatorType } from "sdk";
+import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 import UnknownSvg from '../assets/auth-logos/UNKNOWN.svg?react';
 import TelegramSvg from '../assets/auth-logos/Telegram.svg?react';
 

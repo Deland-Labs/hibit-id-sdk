@@ -3,7 +3,7 @@ import { AssetInfo, ChainWallet } from "../types";
 import { isAddress, JsonRpcProvider, Contract, HDNodeWallet, parseEther, parseUnits } from "ethers";
 import { Chain, ChainAssetType, ChainId, ChainInfo } from "../../../basicTypes";
 import { erc20Abi } from "./erc20";
-import { WalletAccount } from "sdk";
+import { WalletAccount } from "@deland-labs/hibit-id-sdk";
 import { getChainByChainId } from "../..";
 
 export class EthereumChainWallet extends ChainWallet {

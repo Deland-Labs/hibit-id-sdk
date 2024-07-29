@@ -1,4 +1,4 @@
-import { AuthenticatorType, UserAuthInfo } from "sdk"
+import { AuthenticatorType, UserAuthInfo } from "@deland-labs/hibit-id-sdk"
 
 export interface IAuthenticateProvider {
   type: AuthenticatorType
