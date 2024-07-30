@@ -1,17 +1,23 @@
-# EX3 dapp
-EX3 frontend monorepo based on React, Typescript, and [Turbo](https://turbo.build/)
+# Hibit ID
+HibitID frontend monorepo based on React, Typescript, and [Turbo](https://turbo.build/)
 ## Develop
 ```
 yarn install
-yarn dev:<workspace_name>
+
+# wallet app
+yarn dev:wallet
+# sdk test app
+yarn dev:sdk
 ```
 ## Build
 ```
-yarn build:<workspace_name>
+# wallet app
+yarn build:wallet
+# sdk library
+yarn build:sdk
 ```
 ## Workspaces
 - apps
-  - `web`: EX3 frontend project, built with ReactBootstrap and less
-  - `new-web`: EX3 new UI frontend project, built with Tailwindcss and DaisyUI
+  - `wallet`: HibitID wallet app frontend project, built with Tailwindcss and DaisyUI
 - packages
-  - `common`: common shared package
+  - `sdk`: HibitID sdk for dapps to integrate HibitID wallet
