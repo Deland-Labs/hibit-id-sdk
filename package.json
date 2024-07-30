@@ -38,7 +38,7 @@
     "@types/react-dom": "^18.2.24",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "dotenv": "^16.4.5",
-    "husky": "^8.0.1",
+    "husky": "^9.0.0",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
     "punycode": "^1.4.1",
