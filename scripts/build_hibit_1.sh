@@ -2,8 +2,10 @@
 
 yarn install --frozen-lockfile
 
-export VITE_BASE_API=https://api.hibit.app/
-export VITE_WS_BASE_API=https://ws.hibit.app/
-export VITE_APP_ENV=Mainnet
+export VITE_HIBIT_ID_API=https://idapi.hibit.app/
+export VITE_HIBIT_AUTH_SERVER=https://auth.hibit.app/
+export VITE_HIBIT_AUTH_CLIENT_ID=hibit_id_local
+export VITE_TELEGRAM_BOT_ID=6944468360
+export VITE_APP_ENV=TestNet
 
-yarn build:web
+yarn build:wallet
