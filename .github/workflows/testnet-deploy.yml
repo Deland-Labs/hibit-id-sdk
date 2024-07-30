@@ -1,0 +1,42 @@
+name: deploy testnet website
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: testnet
+      url: https://testnetid.hibit.app
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          cache: 'yarn'
+      - name: build
+        run: |
+          export VITE_RELEASE_VERSION=${{ github.ref }}
+          ./scripts/build_testnet.sh
+      - uses: amondnet/vercel-action@v25.2.0 #deploy
+        with:
+          scope: ${{ secrets.TEAM_ID_1 }}
+          # github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN_1 }} # Required
+          # vercel-args: '--prebuilt'
+          vercel-org-id: ${{ secrets.ORG_ID_1}} #Required
+          vercel-project-id: ${{ secrets.PROJECT_ID_1}} #Required
+      - name: Feishu Robot Message
+        run: |
+          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"hibit-id testnet web published\nrepository: ${{ github.repository }}\ncommitter: ${{ github.actor }}\ncompare: ${{ github.event.compare }}\njob status: ${{ job.status }}"}}' ${{ secrets.FEISHU_ROBOT_WEBHOOK_URL }}
+          # url: ${{ secrets.FEISHU_ROBOT_WEBHOOK_URL }}
+          # title: "hibit-id testnet web published"
+          # text: |
+          #   hibit-id testnet web published
+          #   repository: ${{ github.repository }}
+          #   committer: ${{ github.actor }}
+          #   compare: ${{ github.event.compare }}
+          #   job status: ${{ job.status }}
