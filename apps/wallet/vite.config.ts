@@ -16,7 +16,7 @@ export default defineConfig({
   plugins: [
     react({ tsDecorators: true }),
     svgr(),
-    basicSsl(),
+    // basicSsl(),
     nodePolyfills()
     // analyzer()
   ],

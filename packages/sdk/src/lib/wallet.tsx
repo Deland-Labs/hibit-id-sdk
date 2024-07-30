@@ -4,8 +4,6 @@ import { HibitIdController, HibitIdIframe } from './dom';
 import { AccountsChangedRequest, ChainChangedRequest, ChainInfo, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitEnv, HibitIdEventHandlerMap, HibitIdPage, SignMessageResponse, TransferRequest, TransferResponse, UserAuthInfo, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdChainId, HibitIdExposeRPCMethod } from './enums';
 
-const HIBIT_ID_STORAGE_KEY = 'hibitid_auth'
-
 export class HibitIdWallet {
   private _env: HibitEnv = 'prod'
   private _connected = false
@@ -22,19 +20,6 @@ export class HibitIdWallet {
 
   constructor(env: HibitEnv) {
     this._env = env
-    const authString = sessionStorage.getItem(HIBIT_ID_STORAGE_KEY)
-    if (authString) {
-      try {
-        const auth = JSON.parse(authString) as UserAuthInfo
-        this.prepareIframe(auth, 'main').then(() => {
-          this._connected = true
-          this._controller = new HibitIdController(this.toggleIframe)
-        })
-      } catch (e) {
-        console.error('Failed to parse auth info from storage', e)
-        sessionStorage.removeItem(HIBIT_ID_STORAGE_KEY)
-      }
-    }
   }
 
   get isConnected() {
@@ -57,8 +42,6 @@ export class HibitIdWallet {
       this._connected = true
       this._controller = new HibitIdController(this.toggleIframe)
       console.log('[hibit id connected]')
-      sessionStorage.setItem(HIBIT_ID_STORAGE_KEY, JSON.stringify(res.user))
-      console.log('[hibit id auth stored]')
 
       return {
         address: res.address,
@@ -125,7 +108,6 @@ export class HibitIdWallet {
   }
 
   public disconnect = async () => {
-    sessionStorage.removeItem(HIBIT_ID_STORAGE_KEY)
     await this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
     this._rpc?.destroy()
     this._rpc = null

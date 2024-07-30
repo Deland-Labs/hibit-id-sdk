@@ -1,7 +1,6 @@
 import { InitDataParsed } from "@telegram-apps/sdk";
 import { IAuthenticateProvider } from "../types";
-import dayjs from "dayjs";
-import { AuthenticatorType, UserAuthInfo } from "@deland-labs/hibit-id-sdk";
+import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 
 declare global {
   interface Window {
@@ -25,16 +24,11 @@ const BOT_ID = import.meta.env.VITE_TELEGRAM_BOT_ID
 export class TelegramAuthenticateProvider implements IAuthenticateProvider {
   public readonly type = AuthenticatorType.Telegram
   
-  public authenticate: (launchParams?: any) => Promise<UserAuthInfo> = async (launchParams?: InitDataParsed) => {
+  public authenticate: (launchParams?: any) => Promise<any> = async (launchParams?: InitDataParsed) => {
     // mini app
     if (launchParams) {
       // TODO: Validate data here 
-      return {
-        type: this.type,
-        id: launchParams.user?.id.toString() ?? '',
-        name: launchParams.user?.username ?? '',
-        authTimestamp: launchParams.authDate,
-      }
+      return launchParams
     }
     
     // web login
@@ -47,12 +41,7 @@ export class TelegramAuthenticateProvider implements IAuthenticateProvider {
           }
           // TODO: Validate data here 
           console.log('[tg data]', data);
-          resolve({
-            type: this.type,
-            id: data.id.toString(),
-            name: data.username || [data.first_name, data.last_name].join(' '),
-            authTimestamp: dayjs(data.auth_date * 1000).toDate(),
-          })
+          resolve(data)
         },
       );
     })

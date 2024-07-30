@@ -5,11 +5,9 @@ import hibitIdSession from './stores/session';
 import { twMerge } from 'tailwind-merge'
 import { useIsDesktop } from './utils/hooks';
 import PageLoading from './components/PageLoading';
-import { RUNTIME_ENV, RUNTIME_PARAMS } from './utils/runtime';
+import { useOidc } from './utils/oidc';
+import { RUNTIME_ENV } from './utils/runtime';
 import { RuntimeEnv } from './utils/basicEnums';
-import authManager from './utils/auth'
-import { AuthenticatorType, UserAuthInfo } from "@deland-labs/hibit-id-sdk";
-import { WEB_STORAGE_KEY } from './utils/constants';
 
 const MainPage = lazy(() => import('./pages/main'));
 const LoginPage = lazy(() => import('./pages/login'));
@@ -22,29 +20,41 @@ const AccountManagePage = lazy(() => import('./pages/account-manage'));
 
 const App: FC = observer(() => {
   const [ready, setReady] = useState(false)
+  const { isUserLoggedIn, login, oidcTokens } = useOidc()
   const isDesktop = useIsDesktop()
 
   useEffect(() => {
     (async () => {
-      // login on launch if is as Telegram Mini App
-      if (RUNTIME_ENV === RuntimeEnv.TELEGRAM_MINI_APP && RUNTIME_PARAMS) {
-        await authManager.login(AuthenticatorType.Telegram, RUNTIME_PARAMS)
-      } else if (RUNTIME_ENV === RuntimeEnv.SDK && RUNTIME_PARAMS) {
-        await hibitIdSession.connect(RUNTIME_PARAMS as UserAuthInfo)
-      } else if (RUNTIME_ENV === RuntimeEnv.WEB) {
-        const storedAuth = sessionStorage.getItem(WEB_STORAGE_KEY)
-        if (storedAuth) {
-          try {
-            await hibitIdSession.connect(JSON.parse(storedAuth) as UserAuthInfo)
-          } catch (e) {
-            console.error(e)
-            sessionStorage.removeItem(WEB_STORAGE_KEY)
-          }
+      // // login on launch if is as Telegram Mini App
+      // if (RUNTIME_ENV === RuntimeEnv.TELEGRAM_MINI_APP && RUNTIME_PARAMS) {
+      //   await authManager.login(AuthenticatorType.Telegram, RUNTIME_PARAMS)
+      // } else if (RUNTIME_ENV === RuntimeEnv.SDK && RUNTIME_PARAMS) {
+      //   await hibitIdSession.connect(RUNTIME_PARAMS as UserAuthInfo)
+      // } else if (RUNTIME_ENV === RuntimeEnv.WEB) {
+      //   const storedAuth = sessionStorage.getItem(WEB_STORAGE_KEY)
+      //   if (storedAuth) {
+      //     try {
+      //       await hibitIdSession.connect(JSON.parse(storedAuth) as UserAuthInfo)
+      //     } catch (e) {
+      //       console.error(e)
+      //       sessionStorage.removeItem(WEB_STORAGE_KEY)
+      //     }
+      //   }
+      // }
+      if (isUserLoggedIn) {
+        await hibitIdSession.connect(oidcTokens)
+      } else {
+        if (RUNTIME_ENV !== RuntimeEnv.SDK) {
+          // TODO: distinguish pure WEB and Telegram redirect
+          login({
+            doesCurrentHrefRequiresAuth: true,
+            redirectUrl: '/',
+          })
         }
       }
       setReady(true)
     })()
-  }, [])
+  }, [isUserLoggedIn])
 
   return (
     <main className={twMerge('h-full', (hibitIdSession.isConnected || !isDesktop) && 'max-w-[576px] mx-auto p-6 bg-base-200')}>
