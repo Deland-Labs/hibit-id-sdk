@@ -12,6 +12,7 @@ import rpcManager from './stores/rpc.ts'
 import './i18n'
 import HibitToastContainer from './components/Toaster/Container.tsx'
 import BigNumber from 'bignumber.js'
+import { OidcProvider } from './utils/oidc.ts'
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
@@ -24,11 +25,13 @@ if (RUNTIME_ENV === RuntimeEnv.SDK) {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <App />
-        <HibitToastContainer />
-      </BrowserRouter>
-    </QueryClientProvider>
+    <OidcProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <App />
+          <HibitToastContainer />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </OidcProvider>
   </React.StrictMode>
 )

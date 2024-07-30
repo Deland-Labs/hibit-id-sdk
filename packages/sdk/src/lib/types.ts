@@ -52,7 +52,6 @@ export interface UserAuthInfo {
 }
 
 export interface ConnectResponse extends WalletAccount {
-  user: UserAuthInfo
 }
 
 export interface SignMessageRequest {

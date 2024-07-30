@@ -1,7 +1,5 @@
-import { InitDataParsed } from "@telegram-apps/sdk";
 import { IAuthenticateProvider } from "../types";
-import dayjs from "dayjs";
-import { AuthenticatorType, UserAuthInfo } from "@deland-labs/hibit-id-sdk";
+import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 
 declare global {
   interface Window {
@@ -21,40 +19,30 @@ interface ResponseType {
 }
 
 const BOT_ID = import.meta.env.VITE_TELEGRAM_BOT_ID
+const AUTH_SERVER_URL = `${import.meta.env.VITE_HIBIT_AUTH_SERVER}Telegram/Login`
 
 export class TelegramAuthenticateProvider implements IAuthenticateProvider {
   public readonly type = AuthenticatorType.Telegram
   
-  public authenticate: (launchParams?: any) => Promise<UserAuthInfo> = async (launchParams?: InitDataParsed) => {
+  public authenticate: (launchParams?: any) => Promise<any> = async (launchParams?: string) => {
     // mini app
     if (launchParams) {
-      // TODO: Validate data here 
-      return {
-        type: this.type,
-        id: launchParams.user?.id.toString() ?? '',
-        name: launchParams.user?.username ?? '',
-        authTimestamp: launchParams.authDate,
-      }
+      window.location.href = `${AUTH_SERVER_URL}?tgWebAppData=${launchParams}`
     }
     
     // web login
-    return new Promise((resolve) => {
-      window.Telegram.Login.auth(
-        { bot_id: BOT_ID, request_access: 'write' },
-        (data: ResponseType) => {
-          if (!data) {
-            console.log('ERROR: something went wrong');
-          }
-          // TODO: Validate data here 
-          console.log('[tg data]', data);
-          resolve({
-            type: this.type,
-            id: data.id.toString(),
-            name: data.username || [data.first_name, data.last_name].join(' '),
-            authTimestamp: dayjs(data.auth_date * 1000).toDate(),
-          })
-        },
-      );
-    })
+    window.Telegram.Login.auth(
+      { bot_id: BOT_ID, request_access: 'write' },
+      (data: ResponseType) => {
+        if (!data) {
+          console.log('ERROR: something went wrong');
+        }
+        const userData: any = { ...data }
+        delete userData.hash
+        delete userData.auth_date
+        const queryValue = `user=${encodeURIComponent(JSON.stringify(userData))}&auth_data=${data.auth_date}&hash=${data.hash}`
+        window.location.href = `${AUTH_SERVER_URL}?tgWebAppData=${encodeURIComponent(queryValue)}`
+      },
+    );
   }
 }

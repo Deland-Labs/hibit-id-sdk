@@ -31,6 +31,7 @@
     "dayjs": "^1.11.11",
     "ethers": "^6.13.1",
     "i18next": "^23.12.2",
+    "oidc-spa": "^4.11.0",
     "qrcode": "^1.5.3",
     "react-hook-form": "^7.52.1",
     "react-i18next": "^15.0.0",

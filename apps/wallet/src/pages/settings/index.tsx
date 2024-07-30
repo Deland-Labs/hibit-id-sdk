@@ -27,7 +27,7 @@ const SettingsPage: FC = observer(() => {
         <div className="mt-4 flex justify-between items-center">
           <div className="flex items-center gap-2 text-xs">
             <AuthenticatorLogo type={AuthenticatorType.Telegram} className="size-6" />
-            <span>{hibitIdSession.auth?.name}</span>
+            <span>{hibitIdSession.auth?.decodedIdToken?.sub as string}</span>
           </div>
           <button className="btn btn-link btn-xs no-underline p-0" onClick={() => {
             navigate('/account-manage')

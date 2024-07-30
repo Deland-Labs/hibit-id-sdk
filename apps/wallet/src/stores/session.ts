@@ -6,13 +6,13 @@ import { EthereumChainWallet } from "../utils/chain/chain-wallets/ethereum";
 import { RUNTIME_ENV } from "../utils/runtime";
 import { RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
-import { UserAuthInfo, WalletAccount } from "@deland-labs/hibit-id-sdk";
-import { WEB_STORAGE_KEY } from "../utils/constants";
+import { WalletAccount } from "@deland-labs/hibit-id-sdk";
 import { TonChainWallet } from "../utils/chain/chain-wallets/ton";
+import { Oidc } from "oidc-spa/oidc";
 
 export class HibitIdSession {
   public wallet: ChainWallet | null = null
-  public auth: UserAuthInfo | null = null
+  public auth: Oidc.Tokens | null = null
   public chainInfo: ChainInfo
 
   private _account: WalletAccount | null = null
@@ -49,23 +49,17 @@ export class HibitIdSession {
       : this._account.address.toLowerCase()
   }
 
-  public connect = async (auth: UserAuthInfo) => {
+  public connect = async (auth: Oidc.Tokens) => {
     this.auth = auth
     this.wallet = await this.initWallet(this.chainInfo, auth)
     this._account = await this.wallet.getAccount()
     console.log('[session connected]', this.auth)
-    if (RUNTIME_ENV === RuntimeEnv.WEB) {
-      sessionStorage.setItem(WEB_STORAGE_KEY, JSON.stringify(this.auth))
-    }
   }
 
   public disconnect = () => {
     this.auth = null
     this.wallet = null
     this._account = null
-    if (RUNTIME_ENV === RuntimeEnv.WEB) {
-      sessionStorage.removeItem(WEB_STORAGE_KEY)
-    }
   }
 
   public switchChain = async (chain: ChainInfo) => {
@@ -85,7 +79,7 @@ export class HibitIdSession {
     }
   }
 
-  private initWallet = async (chainInfo: ChainInfo, auth: UserAuthInfo): Promise<ChainWallet> => {
+  private initWallet = async (chainInfo: ChainInfo, auth: Oidc.Tokens): Promise<ChainWallet> => {
     try {
       // TODO: trade userInfo for wallet phrase
       console.log('[query phrase with]', auth)
@@ -103,10 +97,7 @@ export class HibitIdSession {
         throw new Error('Unsupported chain')
       }
       if (RUNTIME_ENV === RuntimeEnv.SDK) {
-        rpcManager.resolveConnect({ 
-          user: auth,
-          address: (await wallet.getAccount()).address
-        })
+        rpcManager.resolveConnect(await wallet.getAccount())
       }
       return wallet
     } catch (e) {

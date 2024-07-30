@@ -29,7 +29,7 @@ const AccountManagePage: FC = () => {
           <li className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <AuthenticatorLogo type={AuthenticatorType.Telegram} className="size-6" />
-              <span className="text-xs">{hibitIdSession.auth?.name}</span>
+              <span className="text-xs">{hibitIdSession.auth?.decodedIdToken?.sub as string}</span>
             </div>
             {/* // TODO: not deletable yet */}
             {/* <button className="btn btn-ghost btn-square btn-sm">
