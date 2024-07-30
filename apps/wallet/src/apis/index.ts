@@ -10,7 +10,7 @@ interface ServiceRequestConfig<T> extends AxiosRequestConfig {
 }
 
 const ex3ApiRequest = axios.create({
-  baseURL: import.meta.env.VITE_EX3_BASE_API,
+  baseURL: import.meta.env.VITE_HIBIT_ID_API,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
