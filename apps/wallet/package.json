@@ -1,5 +1,5 @@
 {
-  "name": "wallet",
+  "name": "@deland-labs/hibit-id-wallet",
   "private": true,
   "version": "0.0.0",
   "type": "module",
