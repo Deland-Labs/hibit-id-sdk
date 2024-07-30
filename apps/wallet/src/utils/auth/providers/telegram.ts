@@ -40,7 +40,7 @@ export class TelegramAuthenticateProvider implements IAuthenticateProvider {
         const userData: any = { ...data }
         delete userData.hash
         delete userData.auth_date
-        const queryValue = `user=${encodeURIComponent(JSON.stringify(userData))}&auth_data=${data.auth_date}&hash=${data.hash}`
+        const queryValue = `user=${encodeURIComponent(JSON.stringify(userData))}&auth_date=${data.auth_date}&hash=${data.hash}`
         window.location.href = `${AUTH_SERVER_URL}?tgWebAppData=${encodeURIComponent(queryValue)}`
       },
     );
