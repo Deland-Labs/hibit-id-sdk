@@ -31,18 +31,22 @@ export class TelegramAuthenticateProvider implements IAuthenticateProvider {
     }
     
     // web login
-    window.Telegram.Login.auth(
-      { bot_id: BOT_ID, request_access: 'write' },
-      (data: ResponseType) => {
-        if (!data) {
-          console.log('ERROR: something went wrong');
-        }
-        const userData: any = { ...data }
-        delete userData.hash
-        delete userData.auth_date
-        const queryValue = `user=${encodeURIComponent(JSON.stringify(userData))}&auth_date=${data.auth_date}&hash=${data.hash}`
-        window.location.href = `${AUTH_SERVER_URL}?tgWebAppData=${encodeURIComponent(queryValue)}`
-      },
-    );
+    return new Promise((resolve, reject) => {
+      window.Telegram.Login.auth(
+        { bot_id: BOT_ID, request_access: 'write' },
+        (data: ResponseType) => {
+          if (!data) {
+            reject(new Error('Telegram login failed'))
+            return
+          }
+          const userData: any = { ...data }
+          delete userData.hash
+          delete userData.auth_date
+          const queryValue = `user=${encodeURIComponent(JSON.stringify(userData))}&auth_date=${data.auth_date}&hash=${data.hash}`
+          window.location.href = `${AUTH_SERVER_URL}?tgWebAppData=${encodeURIComponent(queryValue)}`
+          resolve(true)
+        },
+      );
+    })
   }
 }

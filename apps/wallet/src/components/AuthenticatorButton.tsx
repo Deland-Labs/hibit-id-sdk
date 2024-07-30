@@ -3,6 +3,7 @@ import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 import { observer } from "mobx-react";
 import authManager from "../utils/auth";
 import AuthenticatorLogo from "./AuthenticatorLogo";
+import toaster from "./Toaster";
 
 export interface AuthenticatorButtonProps {
   type: AuthenticatorType
@@ -11,8 +12,13 @@ export interface AuthenticatorButtonProps {
 
 const AuthenticatorButton: FC<AuthenticatorButtonProps> = observer(({ type, onSuccess }) => {
   const handleAuth = async () => {
-    await authManager.login(type)
-    onSuccess?.()
+    try {
+      await authManager.login(type)
+      onSuccess?.()
+    } catch (e) {
+      console.error(e)
+      toaster.error(e instanceof Error ? e.message : `${AuthenticatorType[type]} login failed`)
+    }
   }
 
   return (
