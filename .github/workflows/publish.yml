@@ -19,6 +19,7 @@ jobs:
 
       - run: |
           yarn install --frozen-lockfile
+          yarn build:sdk
       - run: |
           npm config set ${REGISTRY}:_authToken ${{ secrets.GITLAB_PACKAGE_TOKEN }}
           npm config set @deland-labs:registry https:${REGISTRY}
