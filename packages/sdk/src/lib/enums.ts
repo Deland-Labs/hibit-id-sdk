@@ -16,11 +16,11 @@ export enum HibitIdExposeRPCMethod {
 }
 
 export enum AuthenticatorType {
-  Telegram = 'telegram',
-  Google = 'google',
-  Facebook = 'facebook',
-  Apple = 'apple',
-  X = 'x',
+  Telegram = 'Telegram',
+  Google = 'Google',
+  Facebook = 'Facebook',
+  Apple = 'Apple',
+  X = 'X',
   // Add more authenticators here
 }
 

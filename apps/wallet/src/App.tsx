@@ -6,11 +6,14 @@ import { twMerge } from 'tailwind-merge'
 import { useIsDesktop } from './utils/hooks';
 import PageLoading from './components/PageLoading';
 import { useOidc } from './utils/oidc';
-import { RUNTIME_ENV } from './utils/runtime';
+import { RUNTIME_ENV, RUNTIME_PARAMS_RAW } from './utils/runtime';
 import { RuntimeEnv } from './utils/basicEnums';
+import { AuthenticatorType } from '@deland-labs/hibit-id-sdk';
+import authManager from './utils/auth';
 
 const MainPage = lazy(() => import('./pages/main'));
 const LoginPage = lazy(() => import('./pages/login'));
+const OidcLoginPage = lazy(() => import('./pages/oidc-login'));
 const TokenDetailPage = lazy(() => import('./pages/token-detail'));
 const SendTokenPage = lazy(() => import('./pages/send-token'));
 const ReceiveTokenPage = lazy(() => import('./pages/receive-token'));
@@ -20,36 +23,17 @@ const AccountManagePage = lazy(() => import('./pages/account-manage'));
 
 const App: FC = observer(() => {
   const [ready, setReady] = useState(false)
-  const { isUserLoggedIn, login, oidcTokens } = useOidc()
+  const { isUserLoggedIn, oidcTokens } = useOidc()
   const isDesktop = useIsDesktop()
 
   useEffect(() => {
     (async () => {
-      // // login on launch if is as Telegram Mini App
-      // if (RUNTIME_ENV === RuntimeEnv.TELEGRAM_MINI_APP && RUNTIME_PARAMS) {
-      //   await authManager.login(AuthenticatorType.Telegram, RUNTIME_PARAMS)
-      // } else if (RUNTIME_ENV === RuntimeEnv.SDK && RUNTIME_PARAMS) {
-      //   await hibitIdSession.connect(RUNTIME_PARAMS as UserAuthInfo)
-      // } else if (RUNTIME_ENV === RuntimeEnv.WEB) {
-      //   const storedAuth = sessionStorage.getItem(WEB_STORAGE_KEY)
-      //   if (storedAuth) {
-      //     try {
-      //       await hibitIdSession.connect(JSON.parse(storedAuth) as UserAuthInfo)
-      //     } catch (e) {
-      //       console.error(e)
-      //       sessionStorage.removeItem(WEB_STORAGE_KEY)
-      //     }
-      //   }
-      // }
       if (isUserLoggedIn) {
         await hibitIdSession.connect(oidcTokens)
       } else {
-        if (RUNTIME_ENV !== RuntimeEnv.SDK) {
-          // TODO: distinguish pure WEB and Telegram redirect
-          login({
-            doesCurrentHrefRequiresAuth: true,
-            redirectUrl: '/',
-          })
+        // login on launch if is as Telegram Mini App
+        if (RUNTIME_ENV === RuntimeEnv.TELEGRAM_MINI_APP && RUNTIME_PARAMS_RAW) {
+          await authManager.login(AuthenticatorType.Telegram, RUNTIME_PARAMS_RAW)
         }
       }
       setReady(true)
@@ -64,6 +48,7 @@ const App: FC = observer(() => {
         <Suspense fallback={<PageLoading />}>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/oidc-login" element={<OidcLoginPage />} />
 
             {hibitIdSession.isConnected && (
               <>

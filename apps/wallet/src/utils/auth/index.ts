@@ -1,7 +1,6 @@
 import { IAuthenticateProvider } from "./types";
 import { TelegramAuthenticateProvider } from "./providers/telegram";
 import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
-import { prOidc } from "../oidc";
 
 export class AuthManager {
   public static readonly supportedAuthenticators: AuthenticatorType[] = [AuthenticatorType.Telegram]
@@ -26,15 +25,7 @@ export class AuthManager {
         throw new Error(`Authenticator type ${type} is not supported`)
       }
     }
-    const oidc = await prOidc
-    if (!oidc.isUserLoggedIn) {
-      const oidcParams = await this._provider.authenticate(launchParams)
-      oidc.login({
-        doesCurrentHrefRequiresAuth: false,
-        redirectUrl: '/',
-        extraQueryParams: oidcParams,
-      })
-    }
+    await this._provider.authenticate(launchParams)
   }
 }
 

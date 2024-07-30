@@ -18,6 +18,7 @@ const AuthenticatorButton: FC<AuthenticatorButtonProps> = observer(({ type, onSu
   return (
     <button
       className="btn btn-circle btn-sm size-8 border-none"
+      title={AuthenticatorType[type]}
       onClick={handleAuth}
     >
       <AuthenticatorLogo type={type} className="size-8" />
