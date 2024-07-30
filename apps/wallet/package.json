@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@deland-labs/hibit-id-sdk": "*",
     "@floating-ui/react": "^0.26.19",
     "@hookform/resolvers": "^3.9.0",
     "@mixer/postmessage-rpc": "^1.1.4",
@@ -36,7 +37,6 @@
     "react-telegram-login": "^1.1.2",
     "react-toastify": "^10.0.5",
     "reflect-metadata": "^0.2.2",
-    "@deland-labs/hibit-id-sdk": "^1.0.0-alpha.20240729122111",
     "tailwind-merge": "^2.3.0",
     "tonweb": "^0.0.66",
     "tonweb-mnemonic": "^1.0.1",
