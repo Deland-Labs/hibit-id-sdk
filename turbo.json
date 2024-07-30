@@ -1,12 +1,15 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
-    "build": {
-      "dependsOn": ["^build"],
+  "tasks": {
+    "@deland-labs/hibit-id-sdk#build": {
       "outputs": ["dist/**"]
     },
-    "preview": {
-      "dependsOn": ["build"]
+    "@deland-labs/hibit-id-wallet#build": {
+      "dependsOn": ["@deland-labs/hibit-id-sdk#build"],
+      "outputs": ["dist/**"]
+    },
+    "@deland-labs/hibit-id-wallet#preview": {
+      "dependsOn": ["@deland-labs/hibit-id-wallet#build"]
     },
     "lint": {},
     "dev": {
