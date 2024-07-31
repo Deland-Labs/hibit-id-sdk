@@ -1,6 +1,6 @@
-import { createReactOidc } from "oidc-spa/react";
+import {createReactOidc} from "oidc-spa/react";
 
-export const { OidcProvider, useOidc, prOidc } = createReactOidc({
+export const {OidcProvider, useOidc, prOidc} = createReactOidc({
   issuerUri: import.meta.env.VITE_HIBIT_AUTH_SERVER,
   clientId: import.meta.env.VITE_HIBIT_AUTH_CLIENT_ID,
   /**
@@ -8,5 +8,6 @@ export const { OidcProvider, useOidc, prOidc } = createReactOidc({
    * CRA:   `publicUrl: process.env.PUBLIC_URL`
    * Other: `publicUrl: "/"` (Usually)
    */
-  publicUrl: import.meta.env.BASE_URL
+  scopes: ["openid", "profile", "email", "offline_access"],
+  publicUrl: import.meta.env.BASE_URL,
 });
