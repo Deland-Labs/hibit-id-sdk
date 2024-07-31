@@ -1,10 +1,10 @@
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import svgr from "vite-plugin-svgr";
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import {nodePolyfills} from 'vite-plugin-node-polyfills'
 // import { analyzer } from "vite-bundle-analyzer";
-import { resolve } from 'path';
+import {resolve} from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -14,15 +14,15 @@ export default defineConfig({
     },
   },
   plugins: [
-    react({ tsDecorators: true }),
+    react({tsDecorators: true}),
     svgr(),
-    // basicSsl(),
-    nodePolyfills()
+    basicSsl(),
+    nodePolyfills(),
     // analyzer()
   ],
   server: {
     host: '0.0.0.0',
-    port: 5176,
+    port: 5176
   },
   preview: {
     port: 4175,
