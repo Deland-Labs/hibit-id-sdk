@@ -1,6 +1,6 @@
 import { FC, Suspense, lazy, useEffect, useState } from 'react';
 import { observer } from 'mobx-react'
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import hibitIdSession from './stores/session';
 import { twMerge } from 'tailwind-merge'
 import { useIsDesktop } from './utils/hooks';
@@ -26,11 +26,17 @@ const App: FC = observer(() => {
   const [ready, setReady] = useState(false)
   const { isUserLoggedIn, oidcTokens } = useOidc()
   const isDesktop = useIsDesktop()
+  const navigate = useNavigate()
 
   useEffect(() => {
     (async () => {
       if (isUserLoggedIn) {
-        await hibitIdSession.connect(oidcTokens)
+        await hibitIdSession.login(oidcTokens)
+        if (!hibitIdSession.isMnemonicCreated) {
+          navigate('/create-password')
+        } else {
+          navigate('/verify-password')
+        }
       } else {
         // login on launch if is as Telegram Mini App
         if (RUNTIME_ENV === RuntimeEnv.TELEGRAM_MINI_APP && RUNTIME_PARAMS_RAW) {
@@ -47,7 +53,7 @@ const App: FC = observer(() => {
   }, [isUserLoggedIn])
 
   return (
-    <main className={twMerge('h-full', (hibitIdSession.isConnected || !isDesktop) && 'max-w-[576px] mx-auto p-6 bg-base-200')}>
+    <main className={twMerge('h-full', (hibitIdSession.isLoggedIn || !isDesktop) && 'max-w-[576px] mx-auto p-6 bg-base-200')}>
       {!ready && <PageLoading />}
 
       {ready && (
@@ -56,11 +62,12 @@ const App: FC = observer(() => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/oidc-login" element={<OidcLoginPage />} />
 
-            {hibitIdSession.isConnected && (
+            {hibitIdSession.isLoggedIn && (
               <>
                 <Route path="/" element={<MainPage />} />
-                <Route path="/create-password" element={<PasswordPage isReset={false} />} />
-                <Route path="/change-password" element={<PasswordPage isReset={true} />} />
+                <Route path="/verify-password" element={<PasswordPage type="verify" />} />
+                <Route path="/create-password" element={<PasswordPage type="create" />} />
+                <Route path="/change-password" element={<PasswordPage type="change" />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/account-manage" element={<AccountManagePage />} />
                 <Route path="/token/:addressOrSymbol" element={<TokenDetailPage />} />

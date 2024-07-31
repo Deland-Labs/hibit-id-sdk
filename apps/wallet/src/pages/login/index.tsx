@@ -18,7 +18,7 @@ const LoginPage: FC = observer(() => {
   const navigate = useNavigate()
 
   const loginContent = useMemo(() => {
-    if (loginSuccess && !hibitIdSession.isConnected) {
+    if (loginSuccess && !hibitIdSession.isLoggedIn) {
       return <PageLoading />
     }
     return (
@@ -45,10 +45,10 @@ const LoginPage: FC = observer(() => {
   }, [loginSuccess])
 
   useEffect(() => {
-    if (loginSuccess && hibitIdSession.isConnected) {
+    if (loginSuccess && hibitIdSession.isLoggedIn) {
       navigate('/')
     }
-  }, [loginSuccess, hibitIdSession.isConnected])
+  }, [loginSuccess, hibitIdSession.isLoggedIn])
 
   return (
     <Modal

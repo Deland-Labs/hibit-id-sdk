@@ -12,6 +12,12 @@ const OidcLoginPage: FC = observer(() => {
     if (isUserLoggedIn) {
       navigate('/')
     }
+    // } else {
+    //   login({
+    //     doesCurrentHrefRequiresAuth: false,
+    //     redirectUrl: '/oidc-login'
+    //   })
+    // }
   }, [isUserLoggedIn])
 
   return (

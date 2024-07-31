@@ -342,3 +342,45 @@ export class GetBrc20BalanceResult {
   @Transform(({ value }) => Ex3Decimal.fromString(value), { toClassOnly: true })
   balance!: Ex3Decimal;
 }
+
+export interface AuthServerErrorResponse {
+  error: {
+    code: any
+    message: string
+    details: any
+    data: any
+    validationErrors: any
+  }
+}
+
+export class CreateMnemonicInput {
+  aesKey!: string
+  mnemonicContent!: string
+  version!: number  // 0 means no encryption
+
+  public constructor(init?: Partial<CreateMnemonicInput>) {
+    Object.assign(this, init);
+  }
+}
+
+export class GetMnemonicInput {
+  publicKey!: string
+
+  public constructor(init?: Partial<GetMnemonicInput>) {
+    Object.assign(this, init);
+  }
+}
+
+export class GetMnemonicResult {
+  id!: string // mnemonic id
+  userId!: string // user id
+  mnemonicContent!: string // phrase
+  version!: number // whether mnemonicContent is encrypted, 0 means no encryption
+  aesKey!: string // aes key to decrypt mnemonicContent when version > 0
+  createdAt!: string
+  updatedAt!: string
+}
+
+export class GetPublicKeyResult {
+  publicKeyBase64!: string
+}
