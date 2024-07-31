@@ -28,7 +28,11 @@ export class TelegramAuthenticateProvider implements IAuthenticateProvider {
   public authenticate: (launchParams?: any) => Promise<any> = async (launchParams?: string) => {
     // mini app
     if (launchParams) {
-      window.location.href = `${AUTH_SERVER_URL}Telegram/Login?tgWebAppData=${launchParams}`
+      // const query = location.hash.slice(1)
+      // window.location.href = `${AUTH_SERVER_URL}Telegram/Login?${query}`
+      sessionStorage.removeItem('telegram-apps/launch-params')
+      window.location.href = `${AUTH_SERVER_URL}Telegram/Login?tgWebAppData=${encodeURIComponent(launchParams)}&returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
+      return
     }
     
     // web login
@@ -45,6 +49,7 @@ export class TelegramAuthenticateProvider implements IAuthenticateProvider {
           // delete userData.auth_date
           // const queryValue = `user=${encodeURIComponent(JSON.stringify(userData))}&auth_date=${data.auth_date}&hash=${data.hash}`
           const queryValue = objToQuery(data)
+          sessionStorage.removeItem('telegram-apps/launch-params')
           window.location.href = `${AUTH_SERVER_URL}Telegram/WebLogin?${queryValue}&returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
           resolve(true)
         },
