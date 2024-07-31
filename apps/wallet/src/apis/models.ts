@@ -384,3 +384,17 @@ export class GetMnemonicResult {
 export class GetPublicKeyResult {
   publicKeyBase64!: string
 }
+
+export class UpdateMnemonicInput {
+  aesKey!: string
+  oldMnemonicContent!: string
+  oldVersion!: number
+  newMnemonicContent!: string
+  newVersion!: number
+
+  public constructor(init?: Partial<UpdateMnemonicInput>) {
+    Object.assign(this, init);
+  }
+}
+
+export class UpdateMnemonicResult extends GetMnemonicResult {}
