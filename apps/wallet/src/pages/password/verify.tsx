@@ -1,29 +1,23 @@
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
-import { object, string, ref } from 'yup'
+import { object, string } from 'yup'
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup"
 import PasswordWarnings from "./warning";
 import { observer } from "mobx-react";
 import LoaderButton from "../../components/LoaderButton";
 import toaster from "../../components/Toaster";
-import { CreateMnemonicInput } from "../../apis/models";
-import { AES, format, MD5 } from 'crypto-js'
-import { HDNodeWallet } from "ethers";
+import { MD5 } from 'crypto-js'
 import hibitIdSession from "../../stores/session";
 import { useMutation } from "@tanstack/react-query";
-import { CreateMnemonicAsync } from "../../apis/services/auth";
 
 const formSchema = object({
   password: string()
     .min(8, 'Password must be at least 8 characters')
     .required('Password is required'),
-  confirmPassword: string()
-    .oneOf([ref('password'), ''], 'Passwords must match')
-    .required('Confirm password is required'),
 })
 
-const CreatePasswordPage: FC = observer(() => {
+const VerifyPasswordPage: FC = observer(() => {
   const navigate = useNavigate()
   const {
     register,
@@ -41,14 +35,6 @@ const CreatePasswordPage: FC = observer(() => {
         return
       }
       const pwd = MD5(`${password}${hibitIdSession.userId}`).toString()
-      const phrase = HDNodeWallet.createRandom().mnemonic!.phrase
-      const encryptedPhrase = AES.encrypt(phrase, pwd).toString(format.Hex)
-      await CreateMnemonicAsync(new CreateMnemonicInput({
-        aesKey: '', // TODO: aesKey
-        mnemonicContent: encryptedPhrase,
-        version: 0, // TODO: version
-      }))
-      await hibitIdSession.fetchMnemonic()
       await hibitIdSession.connect(pwd)
       navigate('/')
     }
@@ -61,7 +47,7 @@ const CreatePasswordPage: FC = observer(() => {
   return (
     <div className="h-full relative">
       <div className="flex items-center gap-2">
-        <span className="text-xs">Set wallet password</span>
+        <span className="text-xs">Unlock Wallet</span>
       </div>
       <div className="mt-6">
         <label className="form-control w-full">
@@ -81,23 +67,6 @@ const CreatePasswordPage: FC = observer(() => {
         </label>
       </div>
       <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Confirm Wallet Password</span>
-          </div>
-          <input
-            {...register('confirmPassword')}
-            className="input input-sm w-full h-8 text-xs"
-            type="password"
-          />
-          {errors.confirmPassword && (
-            <div className="label">
-              <span className="label-text-alt text-error">{errors.confirmPassword.message}</span>
-            </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
         <PasswordWarnings />
       </div>
 
@@ -112,4 +81,4 @@ const CreatePasswordPage: FC = observer(() => {
   )
 })
 
-export default CreatePasswordPage;
+export default VerifyPasswordPage;

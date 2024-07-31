@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import hibitIdSession from "../stores/session";
 import axios, { AxiosRequestConfig } from 'axios';
+import { AuthServerErrorResponse } from "./models";
 
 export const queryClient = new QueryClient()
 
@@ -17,10 +18,25 @@ const ex3ApiRequest = axios.create({
   },
 });
 
+const authApiRequest = axios.create({
+  baseURL: import.meta.env.VITE_HIBIT_ID_API,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 export const ex3ServiceClient = async <D>(config: ServiceRequestConfig<D>) => {
   const { method = 'GET' } = config;
   if (method === 'GET') config.params = config.data;
   const res = await ex3ApiRequest.request(config);
+  return JSON.stringify(res.data)
+};
+
+export const authServiceClient = async <D>(config: ServiceRequestConfig<D>) => {
+  const { method = 'GET' } = config;
+  if (method === 'GET') config.params = config.data;
+  const res = await authApiRequest.request(config);
   return JSON.stringify(res.data)
 };
 
@@ -62,4 +78,31 @@ export const sendEx3UnSignedRequest = async <TInput>(
     method: 'POST',
     data: input
   });
+}
+
+export const sendAuthRequest = async <TInput, TOutput>(
+  input: TInput,
+  url: string,
+  method: 'GET' | 'POST' = 'POST'
+): Promise<TOutput> => {
+  if (!hibitIdSession.auth?.idToken) {
+    throw new Error('No auth session');
+  }
+  const res = await authServiceClient<TInput>({
+    url: url,
+    method,
+    data: input,
+    headers: {
+      'Authorization': `Bearer ${hibitIdSession.auth.idToken}`
+    },
+  });
+  try {
+    const resultData = JSON.parse(res)
+    if (resultData.error) {
+      throw new Error((resultData as AuthServerErrorResponse).error.message)
+    }
+    return resultData as TOutput
+  } catch (e) {
+    throw new Error('Malformed response');
+  }
 }
