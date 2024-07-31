@@ -94,7 +94,7 @@ export class HibitIdSession {
         rpcManager.resolveConnect(await this.wallet.getAccount())
       }
     } catch (e) {
-      if (RUNTIME_ENV === RuntimeEnv.SDK) {
+      if (RUNTIME_ENV === RuntimeEnv.SDK && !(e instanceof HibitIDError && e.code === HibitIDErrorCode.INVALID_PASSWORD)) {
         rpcManager.rejectConnect(e instanceof Error ? e.message : JSON.stringify(e))
       }
       throw e
@@ -143,6 +143,9 @@ export class HibitIdSession {
     }
     const utf8Content = Buffer.from(this._mnemonic.mnemonicContent, 'hex').toString('utf8')
     const phrase = AES.decrypt(utf8Content, password).toString(enc.Utf8);
+    if (!phrase) {
+      throw new HibitIDError(HibitIDErrorCode.INVALID_PASSWORD)
+    }
     let wallet: ChainWallet | null = null
     // TODO: add more chains
     if (chainInfo.chainId.type.equals(Chain.Ethereum)) {

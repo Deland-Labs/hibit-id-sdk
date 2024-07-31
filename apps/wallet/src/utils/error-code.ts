@@ -3,6 +3,7 @@ import { TFunction } from "i18next";
 export enum HibitIDErrorCode {
   MNEMONIC_NOT_CREATED = 1000,
   WALLET_LOCKED = 1001,
+  INVALID_PASSWORD = 1002,
 }
 
 export class HibitIDError extends Error {

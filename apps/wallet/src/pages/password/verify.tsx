@@ -10,6 +10,7 @@ import toaster from "../../components/Toaster";
 import { MD5 } from 'crypto-js'
 import hibitIdSession from "../../stores/session";
 import { useMutation } from "@tanstack/react-query";
+import { HibitIDError, HibitIDErrorCode } from "../../utils/error-code";
 
 const formSchema = object({
   password: string()
@@ -20,6 +21,7 @@ const formSchema = object({
 const VerifyPasswordPage: FC = observer(() => {
   const navigate = useNavigate()
   const {
+    setError,
     register,
     handleSubmit,
     formState: { errors },
@@ -35,8 +37,17 @@ const VerifyPasswordPage: FC = observer(() => {
         return
       }
       const pwd = MD5(`${password}${hibitIdSession.userId}`).toString()
-      await hibitIdSession.connect(pwd)
-      navigate('/')
+      try {
+        await hibitIdSession.connect(pwd)
+        navigate('/')
+      } catch (e) {
+        if (e instanceof HibitIDError && e.code === HibitIDErrorCode.INVALID_PASSWORD) {
+          setError('password', {
+            type: 'manual',
+            message: 'Password is incorrect',
+          })
+        }
+      }
     }
   })
 
