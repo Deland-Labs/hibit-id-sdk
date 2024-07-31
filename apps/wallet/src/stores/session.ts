@@ -9,10 +9,10 @@ import rpcManager from "./rpc";
 import { WalletAccount } from "@deland-labs/hibit-id-sdk";
 import { TonChainWallet } from "../utils/chain/chain-wallets/ton";
 import { Oidc } from "oidc-spa/oidc";
-import { GetMnemonicAsync } from "../apis/services/auth";
+import { GetMnemonicAsync, UpdateMnemonicAsync } from "../apis/services/auth";
 import { HibitIDError, HibitIDErrorCode } from "../utils/error-code";
-import { GetMnemonicInput, GetMnemonicResult } from "../apis/models";
-import { AES, enc } from "crypto-js";
+import { GetMnemonicInput, GetMnemonicResult, UpdateMnemonicInput } from "../apis/models";
+import { AES, enc, MD5 } from "crypto-js";
 
 export class HibitIdSession {
   public wallet: ChainWallet | null = null
@@ -137,12 +137,35 @@ export class HibitIdSession {
     this._mnemonic = mnemonicRes
   }
 
+  public updatePassword = async (oldPasswordRaw: string, newPasswordRaw: string) => {
+    if (!this._mnemonic?.mnemonicContent) {
+      throw new HibitIDError(HibitIDErrorCode.MNEMONIC_NOT_CREATED)
+    }
+    if (!this._password) {
+      throw new HibitIDError(HibitIDErrorCode.WALLET_LOCKED)
+    }
+    const oldPwd = MD5(`${oldPasswordRaw}${this.userId}`).toString()
+    if (oldPwd !== this._password) {
+      throw new HibitIDError(HibitIDErrorCode.INVALID_PASSWORD)
+    }
+    const newPwd = MD5(`${newPasswordRaw}${this.userId}`).toString()
+    const phrase = AES.decrypt(this._mnemonic.mnemonicContent, oldPwd).toString(enc.Utf8);
+    const encryptedContent = AES.encrypt(phrase, newPwd).toString()
+    await UpdateMnemonicAsync(new UpdateMnemonicInput({
+      aesKey: '',  // TODO: 
+      oldMnemonicContent: this._mnemonic.mnemonicContent,
+      oldVersion: 0,  // TODO:
+      newMnemonicContent: encryptedContent,
+      newVersion: 0,  // TODO:
+    }))
+    await this.fetchMnemonic()
+  }
+
   private initWallet = async (chainInfo: ChainInfo, password: string): Promise<ChainWallet> => {
     if (!this._mnemonic?.id || !this._mnemonic?.mnemonicContent) {
       throw new HibitIDError(HibitIDErrorCode.MNEMONIC_NOT_CREATED)
     }
-    const utf8Content = Buffer.from(this._mnemonic.mnemonicContent, 'hex').toString('utf8')
-    const phrase = AES.decrypt(utf8Content, password).toString(enc.Utf8);
+    const phrase = AES.decrypt(this._mnemonic.mnemonicContent, password).toString(enc.Utf8);
     if (!phrase) {
       throw new HibitIDError(HibitIDErrorCode.INVALID_PASSWORD)
     }

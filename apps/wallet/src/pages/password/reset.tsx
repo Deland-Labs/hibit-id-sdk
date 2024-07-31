@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import SvgGo from '../../assets/right-arrow.svg?react'
 import { useNavigate } from "react-router-dom";
 import { object, string, ref } from 'yup'
@@ -9,6 +9,9 @@ import { observer } from "mobx-react";
 import { useMutation } from "@tanstack/react-query";
 import toaster from "../../components/Toaster";
 import LoaderButton from "../../components/LoaderButton";
+import hibitIdSession from "../../stores/session";
+import { getErrorMessage, HibitIDError, HibitIDErrorCode } from "../../utils/error-code";
+import { useTranslation } from "react-i18next";
 
 const formSchema = object({
   password: string()
@@ -23,7 +26,9 @@ const formSchema = object({
 
 const ResetPasswordPage: FC = observer(() => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const {
+    setError,
     register,
     handleSubmit,
     formState: { errors },
@@ -33,20 +38,29 @@ const ResetPasswordPage: FC = observer(() => {
   })
 
   const submitMutation = useMutation({
-    mutationFn: async () => {
-      // TODO:
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(true)
-        }, 2000)
-      })
+    mutationFn: async ({ oldPassword, newPassword }: {
+      oldPassword: string
+      newPassword: string
+    }) => {
+      try {
+        await hibitIdSession.updatePassword(oldPassword, newPassword)
+        toaster.success('Password changed')
+        navigate('/')
+      } catch (e) {
+        if (e instanceof HibitIDError && e.code === HibitIDErrorCode.INVALID_PASSWORD) {
+          setError('password', { message: 'Password incorrect' })
+        } else {
+          toaster.error(getErrorMessage(e, t))
+        }
+      }
     }
   })
 
   const handleConfirm = handleSubmit(async (values) => {
-    await submitMutation.mutateAsync()
-    toaster.success('Password changed')
-    navigate('/')
+    await submitMutation.mutateAsync({
+      oldPassword: values.password,
+      newPassword: values.newPassword
+    })
   })
 
   return (

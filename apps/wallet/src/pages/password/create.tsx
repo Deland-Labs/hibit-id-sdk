@@ -42,7 +42,7 @@ const CreatePasswordPage: FC = observer(() => {
       }
       const pwd = MD5(`${password}${hibitIdSession.userId}`).toString()
       const phrase = HDNodeWallet.createRandom().mnemonic!.phrase
-      const encryptedPhrase = AES.encrypt(phrase, pwd).toString(format.Hex)
+      const encryptedPhrase = AES.encrypt(phrase, pwd).toString()
       await CreateMnemonicAsync(new CreateMnemonicInput({
         aesKey: '', // TODO: aesKey
         mnemonicContent: encryptedPhrase,
