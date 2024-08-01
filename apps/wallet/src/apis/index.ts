@@ -13,7 +13,7 @@ interface ServiceRequestConfig<T> extends AxiosRequestConfig {
 }
 
 const ex3ApiRequest = axios.create({
-  baseURL: import.meta.env.VITE_HIBIT_ID_API,
+  baseURL: import.meta.env.VITE_EX3_API,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -52,35 +52,6 @@ export const authServiceClient = async <D>(config: ServiceRequestConfig<D>) => {
   const res = await authApiRequest.request(config);
   return JSON.stringify(res.data)
 };
-
-export const sendEx3WalletRequest = async <TInput>(
-  input: TInput,
-  url: string
-): Promise<string> => {
-  let dataStr = '';
-  // to json if not string
-  if (typeof input !== 'string') {
-    const timestamp = parseInt(new Date().getTime().toString());
-    const contextData = {
-      ...input,
-      timestamp: timestamp
-    };
-    dataStr = JSON.stringify(contextData);
-  } else {
-    dataStr = input;
-  }
-  const walletSignature = await hibitIdSession.wallet?.signMessage(dataStr);
-  return await ex3ServiceClient({
-    url: url,
-    method: 'POST',
-    data: {
-      chain: '60',
-      chainNetwork: '11155111',
-      message: dataStr,
-      signature: walletSignature
-    }
-  });
-}
 
 export const sendEx3UnSignedRequest = async <TInput>(
   input: TInput,
