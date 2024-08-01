@@ -2,13 +2,11 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "@deland-labs/hibit-id-sdk#build": {
+      "env": ["VITE_*"],
       "outputs": ["dist/**"]
     },
     "@deland-labs/hibit-id-wallet#build": {
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env.hibit-id.testnet"
-      ],
+      "env": ["VITE_*"],
       "dependsOn": ["@deland-labs/hibit-id-sdk#build"],
       "outputs": ["dist/**"]
     },
