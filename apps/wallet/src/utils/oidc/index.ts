@@ -1,4 +1,4 @@
-import {createReactOidc} from "oidc-spa/react";
+import {createReactOidc} from "./lib/oidc-spa-4.11.1/src/react";
 
 export const {OidcProvider, useOidc, prOidc} = createReactOidc({
   issuerUri: import.meta.env.VITE_HIBIT_AUTH_SERVER,
