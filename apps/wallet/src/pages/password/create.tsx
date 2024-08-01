@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import LoaderButton from "../../components/LoaderButton";
 import toaster from "../../components/Toaster";
 import { CreateMnemonicInput } from "../../apis/models";
-import { AES, format, MD5 } from 'crypto-js'
+import { AES, MD5 } from 'crypto-js'
 import { HDNodeWallet } from "ethers";
 import hibitIdSession from "../../stores/session";
 import { useMutation } from "@tanstack/react-query";

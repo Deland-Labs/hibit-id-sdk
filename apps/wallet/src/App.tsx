@@ -11,6 +11,7 @@ import { RuntimeEnv } from './utils/basicEnums';
 import { AuthenticatorType } from '@deland-labs/hibit-id-sdk';
 import authManager from './utils/auth';
 import toaster from './components/Toaster';
+import rpcManager from './stores/rpc';
 
 const MainPage = lazy(() => import('./pages/main'));
 const LoginPage = lazy(() => import('./pages/login'));
@@ -30,7 +31,13 @@ const App: FC = observer(() => {
 
   useEffect(() => {
     (async () => {
+      if (RUNTIME_ENV === RuntimeEnv.SDK) {
+        await rpcManager.init()
+      }
       if (isUserLoggedIn) {
+        if (RUNTIME_ENV === RuntimeEnv.SDK) {
+          rpcManager.notifyLoginChanged(true, oidcTokens.decodedIdToken.sub as string || '')
+        }
         await hibitIdSession.login(oidcTokens)
         if (!hibitIdSession.isMnemonicCreated) {
           navigate('/create-password')
@@ -46,6 +53,8 @@ const App: FC = observer(() => {
             console.error(e)
             toaster.error('Telegram login failed')
           }
+        } else if (RUNTIME_ENV === RuntimeEnv.SDK) {
+          rpcManager.notifyLoginChanged(false)
         }
       }
       setReady(true)

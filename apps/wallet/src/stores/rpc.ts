@@ -43,11 +43,20 @@ class RPCManager {
     await rpc.isReady
     console.log('[wallet rpc ready]')
     this._rpc = rpc
+    this.notifyReady()
   }
 
   public notifyClose = () => {
     this._connectPromise?.reject('User manually closed')
     this._rpc?.call(ClientExposeRPCMethod.CLOSE, {})
+  }
+
+  public notifyReady = () => {
+    this._rpc?.call(ClientExposeRPCMethod.IFRAME_READY, {})
+  }
+
+  public notifyLoginChanged = (isLogin: boolean, sub?: string) => {
+    this._rpc?.call(ClientExposeRPCMethod.LOGIN_CHANGED, { isLogin, sub })
   }
 
   public notifyChainChanged = (chainInfo: ChainInfo) => {
@@ -90,6 +99,9 @@ class RPCManager {
   private onRpcConnect = async (): Promise<ConnectResponse> => {
     console.log('[hibitid]', 'onRpcConnect')
     this._connectPromise = new BridgePromise()
+    if (hibitIdSession.wallet) {
+      this.resolveConnect(await hibitIdSession.wallet.getAccount())
+    }
     const res = await this._connectPromise.promise
     return res
   }

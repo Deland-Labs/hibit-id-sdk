@@ -4,7 +4,6 @@ export { ClientExposeRPCMethod, HibitIdExposeRPCMethod, AuthenticatorType, Hibit
 export { BridgePromise } from './types'
 export type {
   HibitEnv,
-  UserAuthInfo,
   WalletAccount,
   ConnectResponse,
   SignMessageRequest,
@@ -15,4 +14,5 @@ export type {
   TransferResponse,
   ChainChangedRequest,
   AccountsChangedRequest,
+  LoginChangedRequest,
 } from './types'
