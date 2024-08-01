@@ -10,7 +10,7 @@ jobs:
     timeout-minutes: 15
     environment:
       name: testnet
-      url: https://testnetid.hibit.app
+      url: https://idtestnet.hibit.app
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
