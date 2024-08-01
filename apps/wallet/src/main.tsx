@@ -12,7 +12,7 @@ import rpcManager from './stores/rpc.ts'
 import './i18n'
 import HibitToastContainer from './components/Toaster/Container.tsx'
 import BigNumber from 'bignumber.js'
-import { OidcProvider } from './utils/oidc.ts'
+import { OidcProvider } from './utils/oidc/index.ts'
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 

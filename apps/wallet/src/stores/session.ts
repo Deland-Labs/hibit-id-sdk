@@ -8,7 +8,7 @@ import { RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
 import { WalletAccount } from "@deland-labs/hibit-id-sdk";
 import { TonChainWallet } from "../utils/chain/chain-wallets/ton";
-import { Oidc } from "oidc-spa/oidc";
+import { Oidc } from "../utils/oidc/lib/oidc-spa-4.11.1/src/oidc";
 import { GetMnemonicAsync, UpdateMnemonicAsync } from "../apis/services/auth";
 import { HibitIDError, HibitIDErrorCode } from "../utils/error-code";
 import { GetMnemonicInput, GetMnemonicResult, UpdateMnemonicInput } from "../apis/models";

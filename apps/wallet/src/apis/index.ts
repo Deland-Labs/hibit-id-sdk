@@ -2,6 +2,8 @@ import { QueryClient } from "@tanstack/react-query";
 import hibitIdSession from "../stores/session";
 import axios, { AxiosRequestConfig } from 'axios';
 import { AuthServerErrorResponse } from "./models";
+import toaster from "../components/Toaster";
+import { prOidc } from "../utils/oidc";
 
 export const queryClient = new QueryClient()
 
@@ -25,6 +27,17 @@ const authApiRequest = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+authApiRequest.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      hibitIdSession.disconnect();
+      toaster.error('User unauthorized, please login again');
+    }
+    return Promise.reject(error);
+  }
+)
 
 export const ex3ServiceClient = async <D>(config: ServiceRequestConfig<D>) => {
   const { method = 'GET' } = config;
@@ -85,7 +98,8 @@ export const sendAuthRequest = async <TInput, TOutput>(
   url: string,
   method: 'GET' | 'POST' = 'POST'
 ): Promise<TOutput> => {
-  if (!hibitIdSession.auth?.idToken) {
+  const oidc = await prOidc
+  if (!oidc.isUserLoggedIn) {
     throw new Error('No auth session');
   }
   const res = await authServiceClient<TInput>({
@@ -93,7 +107,7 @@ export const sendAuthRequest = async <TInput, TOutput>(
     method,
     data: input,
     headers: {
-      'Authorization': `Bearer ${hibitIdSession.auth.idToken}`
+      'Authorization': `Bearer ${oidc.getTokens().idToken}`
     },
   });
   try {
