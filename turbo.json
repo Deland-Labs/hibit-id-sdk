@@ -5,6 +5,10 @@
       "outputs": ["dist/**"]
     },
     "@deland-labs/hibit-id-wallet#build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env.hibit-id.testnet"
+      ],
       "dependsOn": ["@deland-labs/hibit-id-sdk#build"],
       "outputs": ["dist/**"]
     },
