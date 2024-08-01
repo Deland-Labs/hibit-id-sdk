@@ -218,6 +218,8 @@ export async function createOidc<
     const configHash = fnv1aHashToHex(
         `${issuerUri} ${clientId} ${clientSecret ?? ""} ${scopes.join(" ")}`
     );
+    // TODO: TEMP CHANGE
+    console.debug('[oidc configHash]', configHash)
 
     {
         const cleanups = hotReloadCleanups.get(configHash);
@@ -1168,7 +1170,8 @@ function oidcClientTsUserToTokens<DecodedIdToken extends Record<string, unknown>
         // }
 
         // assert(false, "Failed to get refresh token expiration time");
-        return 3600000
+        const envTimeout = Number(import.meta.env.VITE_OIDC_REFRESH_TOKEN_TIMEOUT)
+        return envTimeout || 3600000
     })();
 
     const idToken = oidcClientTsUser.id_token;
