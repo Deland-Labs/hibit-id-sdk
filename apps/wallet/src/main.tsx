@@ -7,8 +7,6 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './apis/index.ts'
-import { RuntimeEnv } from './utils/basicEnums.ts'
-import rpcManager from './stores/rpc.ts'
 import './i18n'
 import HibitToastContainer from './components/Toaster/Container.tsx'
 import BigNumber from 'bignumber.js'
@@ -18,10 +16,6 @@ BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
 console.log('[runtime env]', RUNTIME_ENV)
 console.log('[runtime params]', RUNTIME_PARAMS)
-
-if (RUNTIME_ENV === RuntimeEnv.SDK) {
-  rpcManager.init()
-}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

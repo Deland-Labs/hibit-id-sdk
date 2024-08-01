@@ -1,5 +1,7 @@
 export enum ClientExposeRPCMethod {
   CLOSE = 'close',
+  IFRAME_READY = 'iframeReady',
+  LOGIN_CHANGED = 'loginChanged',
   CHAIN_CHANGED = 'chainChanged',
   ACCOUNTS_CHANGED = 'accountsChanged',
 }

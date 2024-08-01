@@ -1,4 +1,4 @@
-import { AuthenticatorType, HibitIdAssetType, HibitIdChainId } from "./enums"
+import { HibitIdAssetType, HibitIdChainId } from "./enums"
 
 export type HibitEnv = 'dev' | 'test' | 'prod'
 export type HibitIdPage = 'main' | 'login'
@@ -42,13 +42,6 @@ export interface ChainInfo {
 export interface WalletAccount {
   address: string
   publicKey?: string
-}
-
-export interface UserAuthInfo {
-  type: AuthenticatorType
-  id: string
-  name: string
-  authTimestamp: Date
 }
 
 export interface ConnectResponse extends WalletAccount {
@@ -104,4 +97,9 @@ export interface AccountsChangedRequest {
 
 export interface SwitchChainRequest {
   chainId: HibitIdChainId
+}
+
+export interface LoginChangedRequest {
+  isLogin: boolean
+  sub?: string  // required if isLogin is true
 }

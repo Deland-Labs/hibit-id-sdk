@@ -1,8 +1,10 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { AccountsChangedRequest, ChainChangedRequest, ChainInfo, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitEnv, HibitIdEventHandlerMap, HibitIdPage, SignMessageResponse, TransferRequest, TransferResponse, UserAuthInfo, WalletAccount } from './types';
+import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitEnv, HibitIdEventHandlerMap, HibitIdPage, LoginChangedRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdChainId, HibitIdExposeRPCMethod } from './enums';
+
+const LOGIN_SESSION_KEY = 'hibit-id-session'
 
 export class HibitIdWallet {
   private _env: HibitEnv = 'prod'
@@ -10,6 +12,7 @@ export class HibitIdWallet {
   private _rpc: RPC | null = null
   private _controller: HibitIdController | null = null
   private _iframe: HibitIdIframe | null = null
+  private _iframeReadyPromise = new BridgePromise<boolean>()
   private _eventHandlers: {
     accountsChanged: Array<HibitIdEventHandlerMap['accountsChanged']>
     chainChanged: Array<HibitIdEventHandlerMap['chainChanged']>
@@ -20,6 +23,14 @@ export class HibitIdWallet {
 
   constructor(env: HibitEnv) {
     this._env = env
+
+    const sessionString = sessionStorage.getItem(LOGIN_SESSION_KEY)
+    if (sessionString) {
+      this.prepareIframe().then(() => {
+        this._connected = true
+        this._controller = new HibitIdController(this.toggleIframe)
+      })
+    }
   }
 
   get isConnected() {
@@ -32,15 +43,15 @@ export class HibitIdWallet {
     }
 
     try {
-      await this.prepareIframe(undefined, 'login')
-      this._iframe!.show({ fullscreen: true, style: {} })
+      await this.prepareIframe()
+      // this._iframe!.show({ fullscreen: true, style: {} })
       const res = await this._rpc!.call<ConnectResponse>(HibitIdExposeRPCMethod.CONNECT, {})
       if (!res) {
         throw new Error('No response from wallet')
       }
       this._iframe!.hide()
       this._connected = true
-      this._controller = new HibitIdController(this.toggleIframe)
+      // this._controller = new HibitIdController(this.toggleIframe)
       console.log('[hibit id connected]')
 
       return {
@@ -114,6 +125,7 @@ export class HibitIdWallet {
     this._iframe?.destroy()
     this._controller?.destroy()
     this._connected = false
+    this._iframeReadyPromise = new BridgePromise<boolean>()
   }
 
   public switchToChain = async (chainId: HibitIdChainId) => {
@@ -145,7 +157,7 @@ export class HibitIdWallet {
     } else {
       const controllerRect = this._controller?.getBoundingRect()
       this._iframe.show({
-        fullscreen: !this._connected,
+        fullscreen: false,
         style: {
           maxWidth: '100%',
           maxHeight: '100%',
@@ -158,13 +170,14 @@ export class HibitIdWallet {
     }
   }
 
-  private prepareIframe = async (auth?: UserAuthInfo, page?: HibitIdPage) => {
+  private prepareIframe = async (page?: HibitIdPage) => {
     if (this._rpc && this._iframe) {
       await this._rpc.isReady
       return
     }
 
-    this._iframe = new HibitIdIframe(this._env, auth, page)
+    this._iframe = new HibitIdIframe(this._env, page)
+    
     const rpc = new RPC({
       // The window you want to talk to:
       target: this._iframe.iframe.contentWindow!,
@@ -174,18 +187,45 @@ export class HibitIdWallet {
       // origin: 'example.com',
     });
     rpc.expose(ClientExposeRPCMethod.CLOSE, this.onRpcClose);
+    rpc.expose(ClientExposeRPCMethod.IFRAME_READY, this.onRpcIframeReady);
+    rpc.expose(ClientExposeRPCMethod.LOGIN_CHANGED, this.onRpcLoginChanged);
     rpc.expose(ClientExposeRPCMethod.CHAIN_CHANGED, this.onRpcChainChanged);
     rpc.expose(ClientExposeRPCMethod.ACCOUNTS_CHANGED, this.onRpcAccountsChanged);
-
+    
     console.log('[sdk rpc init]')
     await rpc.isReady
+    await this._iframeReadyPromise.promise
     console.log('[sdk rpc ready]')
     this._rpc = rpc
   }
-
+  
   private onRpcClose = () => {
     this._iframe?.hide()
     this._controller?.setOpen(false)
+  }
+
+  private onRpcLoginChanged = (input: LoginChangedRequest) => {
+    if (!input.isLogin) {
+      this._iframe?.show({ fullscreen: true, style: {} })
+    } else {
+      if (!this._controller) {
+        this._controller = new HibitIdController(this.toggleIframe)
+      }
+      const controllerRect = this._controller?.getBoundingRect()
+      this._iframe?.show({
+        fullscreen: false,
+        style: {
+          maxWidth: '100%',
+          maxHeight: '100%',
+          width: '332px',
+          height: '502px',
+          right: `${controllerRect ? (window.innerWidth - controllerRect.right) : 50}px`,
+          bottom: `${controllerRect ? (window.innerHeight - controllerRect.top + 20) : 50}px`,
+        }
+      })
+      this._controller?.setOpen(true)
+      sessionStorage.setItem(LOGIN_SESSION_KEY, input.sub || '')
+    }
   }
 
   private onRpcChainChanged = (input: ChainChangedRequest) => {
@@ -198,5 +238,9 @@ export class HibitIdWallet {
     this._eventHandlers.accountsChanged.forEach((handler) => {
       handler(input.account)
     })
+  }
+
+  private onRpcIframeReady = () => {
+    this._iframeReadyPromise.resolve(true)
   }
 }
