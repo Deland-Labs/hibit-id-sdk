@@ -17,8 +17,8 @@ export const Ethereum: ChainInfo = {
 };
 export const EthereumSepolia: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmSepoliaNet),
-  name: 'Sepolia',
-  fullName: 'Sepolia Testnet',
+  name: 'ETH Sepolia',
+  fullName: 'ETH Sepolia Testnet',
   icon: '/chain-icons/Ethereum.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
