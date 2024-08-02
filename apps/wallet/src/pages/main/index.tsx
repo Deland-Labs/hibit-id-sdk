@@ -38,7 +38,7 @@ const WalletMainPage: FC = observer(() => {
           }}
         />
       </div>
-      <button className="btn btn-ghost btn-square btn-sm absolute top-0 right-6" onClick={() => {
+      <button className="btn btn-ghost btn-square btn-sm hover:bg-transparent absolute -top-1 right-6" onClick={() => {
         navigate('/settings')
       }}>
         <SvgSettings />
