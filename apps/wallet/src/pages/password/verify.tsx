@@ -60,34 +60,37 @@ const VerifyPasswordPage: FC = observer(() => {
       <div className="flex items-center gap-2">
         <span className="text-xs">Unlock Wallet</span>
       </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Wallet Password</span>
-          </div>
-          <input
-            {...register('password')}
-            className="input input-sm w-full h-8 text-xs"
-            type="password"
-          />
-          {errors.password && (
+      <form onSubmit={handleConfirm}>
+        <div className="mt-6">
+          <label className="form-control w-full">
             <div className="label">
-              <span className="label-text-alt text-error">{errors.password.message}</span>
+              <span className="label-text text-neutral text-xs">Wallet Password</span>
             </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
-        <PasswordWarnings />
-      </div>
+            <input
+              {...register('password')}
+              className="input input-sm w-full h-8 text-xs"
+              type="password"
+              autoFocus
+            />
+            {errors.password && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.password.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
+        <div className="mt-6">
+          <PasswordWarnings />
+        </div>
 
-      <LoaderButton
-        className="btn btn-block btn-sm absolute bottom-0"
-        onClick={handleConfirm}
-        loading={submitMutation.isPending}
-      >
-        Confirm
-      </LoaderButton>
+        <LoaderButton
+          className="btn btn-block btn-sm absolute bottom-0"
+          type="submit"
+          loading={submitMutation.isPending}
+        >
+          Unlock
+        </LoaderButton>
+      </form>
     </div>
   )
 })

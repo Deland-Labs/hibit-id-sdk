@@ -71,68 +71,71 @@ const ResetPasswordPage: FC = observer(() => {
         </button>
         <span className="text-xs">Change wallet password</span>
       </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Wallet Password</span>
-          </div>
-          <input
-            {...register('password')}
-            className="input input-sm w-full h-8 text-xs"
-            type="password"
-          />
-          {errors.password && (
+      <form onSubmit={handleConfirm}>
+        <div className="mt-6">
+          <label className="form-control w-full">
             <div className="label">
-              <span className="label-text-alt text-error">{errors.password.message}</span>
+              <span className="label-text text-neutral text-xs">Wallet Password</span>
             </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">New Wallet Password</span>
-          </div>
-          <input
-            {...register('newPassword')}
-            className="input input-sm w-full h-8 text-xs"
-            type="password"
-          />
-          {errors.newPassword && (
+            <input
+              {...register('password')}
+              className="input input-sm w-full h-8 text-xs"
+              type="password"
+              autoFocus
+            />
+            {errors.password && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.password.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
+        <div className="mt-6">
+          <label className="form-control w-full">
             <div className="label">
-              <span className="label-text-alt text-error">{errors.newPassword.message}</span>
+              <span className="label-text text-neutral text-xs">New Wallet Password</span>
             </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Confirm Wallet Password</span>
-          </div>
-          <input
-            {...register('confirmNewPassword')}
-            className="input input-sm w-full h-8 text-xs"
-            type="password"
-          />
-          {errors.confirmNewPassword && (
+            <input
+              {...register('newPassword')}
+              className="input input-sm w-full h-8 text-xs"
+              type="password"
+            />
+            {errors.newPassword && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.newPassword.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
+        <div className="mt-6">
+          <label className="form-control w-full">
             <div className="label">
-              <span className="label-text-alt text-error">{errors.confirmNewPassword.message}</span>
+              <span className="label-text text-neutral text-xs">Confirm Wallet Password</span>
             </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
-        <PasswordWarnings />
-      </div>
+            <input
+              {...register('confirmNewPassword')}
+              className="input input-sm w-full h-8 text-xs"
+              type="password"
+            />
+            {errors.confirmNewPassword && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.confirmNewPassword.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
+        <div className="mt-6">
+          <PasswordWarnings />
+        </div>
 
-      <LoaderButton
-        className="btn btn-block btn-sm absolute bottom-0"
-        onClick={handleConfirm}
-        loading={submitMutation.isPending}
-      >
-        Confirm
-      </LoaderButton>
+        <LoaderButton
+          className="btn btn-block btn-sm absolute bottom-0"
+          loading={submitMutation.isPending}
+          type="submit"
+        >
+          Confirm
+        </LoaderButton>
+      </form>
     </div>
   )
 })

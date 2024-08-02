@@ -63,51 +63,54 @@ const CreatePasswordPage: FC = observer(() => {
       <div className="flex items-center gap-2">
         <span className="text-xs">Set wallet password</span>
       </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Wallet Password</span>
-          </div>
-          <input
-            {...register('password')}
-            className="input input-sm w-full h-8 text-xs"
-            type="password"
-          />
-          {errors.password && (
+      <form onSubmit={handleConfirm}>
+        <div className="mt-6">
+          <label className="form-control w-full">
             <div className="label">
-              <span className="label-text-alt text-error">{errors.password.message}</span>
+              <span className="label-text text-neutral text-xs">Wallet Password</span>
             </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Confirm Wallet Password</span>
-          </div>
-          <input
-            {...register('confirmPassword')}
-            className="input input-sm w-full h-8 text-xs"
-            type="password"
-          />
-          {errors.confirmPassword && (
+            <input
+              {...register('password')}
+              className="input input-sm w-full h-8 text-xs"
+              type="password"
+              autoFocus
+            />
+            {errors.password && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.password.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
+        <div className="mt-6">
+          <label className="form-control w-full">
             <div className="label">
-              <span className="label-text-alt text-error">{errors.confirmPassword.message}</span>
+              <span className="label-text text-neutral text-xs">Confirm Wallet Password</span>
             </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
-        <PasswordWarnings />
-      </div>
+            <input
+              {...register('confirmPassword')}
+              className="input input-sm w-full h-8 text-xs"
+              type="password"
+            />
+            {errors.confirmPassword && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.confirmPassword.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
+        <div className="mt-6">
+          <PasswordWarnings />
+        </div>
 
-      <LoaderButton
-        className="btn btn-block btn-sm absolute bottom-0"
-        onClick={handleConfirm}
-        loading={submitMutation.isPending}
-      >
-        Confirm
-      </LoaderButton>
+        <LoaderButton
+          className="btn btn-block btn-sm absolute bottom-0"
+          loading={submitMutation.isPending}
+          type="submit"
+        >
+          Confirm
+        </LoaderButton>
+      </form>
     </div>
   )
 })
