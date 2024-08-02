@@ -29,8 +29,8 @@ const WalletMainPage: FC = observer(() => {
   const address = hibitIdSession.address
 
   return (
-    <div className="h-full relative flex flex-col">
-      <div className="absolute top-0 left-0">
+    <div className="h-full px-6 relative flex flex-col gap-6 overflow-auto">
+      <div className="absolute top-0 left-6">
         <ChainSelect
           value={hibitIdSession.chainInfo}
           onChange={(chain) => {
@@ -38,7 +38,7 @@ const WalletMainPage: FC = observer(() => {
           }}
         />
       </div>
-      <button className="btn btn-ghost btn-square btn-sm absolute top-0 right-0" onClick={() => {
+      <button className="btn btn-ghost btn-square btn-sm absolute top-0 right-6" onClick={() => {
         navigate('/settings')
       }}>
         <SvgSettings />
@@ -59,7 +59,7 @@ const WalletMainPage: FC = observer(() => {
         </div>
       </div>
 
-      <div className="mt-6 flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <p className="text-neutral">Tokens</p>
         <div className="mt-6 flex-1 overflow-auto">
           <TokenList />

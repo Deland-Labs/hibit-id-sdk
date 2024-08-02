@@ -12,7 +12,7 @@ const SettingsPage: FC = observer(() => {
   const { t } = useTranslation()
 
   return (
-    <div className="h-full relative">
+    <div className="h-full px-6 overflow-auto">
       <div className="flex items-center gap-2">
         <button className="btn btn-ghost btn-square btn-sm items-center" onClick={() => navigate(-1)}>
           <SvgGo className="size-6 rotate-180" />

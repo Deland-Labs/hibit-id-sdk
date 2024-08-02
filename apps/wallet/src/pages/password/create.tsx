@@ -13,6 +13,7 @@ import { HDNodeWallet } from "ethers";
 import hibitIdSession from "../../stores/session";
 import { useMutation } from "@tanstack/react-query";
 import { CreateMnemonicAsync } from "../../apis/services/auth";
+import LogoSection from "../../components/LogoSection";
 
 const formSchema = object({
   password: string()
@@ -59,12 +60,13 @@ const CreatePasswordPage: FC = observer(() => {
   })
 
   return (
-    <div className="h-full relative">
-      <div className="flex items-center gap-2">
-        <span className="text-xs">Set wallet password</span>
+    <div className="h-full px-6 overflow-auto">
+      <LogoSection />
+      <div className="mt-6 text-center text-xs">
+        Set wallet password
       </div>
-      <form onSubmit={handleConfirm}>
-        <div className="mt-6">
+      <form className="mt-4 flex flex-col gap-6" onSubmit={handleConfirm}>
+        <div>
           <label className="form-control w-full">
             <div className="label">
               <span className="label-text text-neutral text-xs">Wallet Password</span>
@@ -82,7 +84,7 @@ const CreatePasswordPage: FC = observer(() => {
             )}
           </label>
         </div>
-        <div className="mt-6">
+        <div>
           <label className="form-control w-full">
             <div className="label">
               <span className="label-text text-neutral text-xs">Confirm Wallet Password</span>
@@ -99,17 +101,16 @@ const CreatePasswordPage: FC = observer(() => {
             )}
           </label>
         </div>
-        <div className="mt-6">
-          <PasswordWarnings />
-        </div>
 
         <LoaderButton
-          className="btn btn-block btn-sm absolute bottom-0"
+          className="btn btn-block btn-sm"
           loading={submitMutation.isPending}
           type="submit"
         >
           Confirm
         </LoaderButton>
+
+        <PasswordWarnings />
       </form>
     </div>
   )
