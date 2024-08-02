@@ -18,6 +18,7 @@
       "cache": false,
       "persistent": true
     },
-    "test": {}
+    "test": {},
+    "test:watch": {}
   }
 }

@@ -5,6 +5,8 @@
     "dev:wallet": "turbo run dev --filter=@deland-labs/hibit-id-wallet",
     "build:wallet": "turbo run @deland-labs/hibit-id-wallet#build",
     "preview:wallet": "turbo run @deland-labs/hibit-id-wallet#preview",
+    "test:wallet": "turbo run test --filter=@deland-labs/hibit-id-wallet",
+    "test:watch:wallet": "turbo run test:watch --filter=@deland-labs/hibit-id-wallet",
     "dev:sdk": "turbo run dev --filter=@deland-labs/hibit-id-sdk",
     "build:sdk": "turbo run @deland-labs/hibit-id-sdk#build",
     "prepare": "husky install"
@@ -47,7 +49,8 @@
     "vite": "^5.2.8",
     "vite-bundle-analyzer": "^0.10.0",
     "vite-plugin-node-polyfills": "^0.22.0",
-    "vite-plugin-svgr": "^4.2.0"
+    "vite-plugin-svgr": "^4.2.0",
+    "vitest": "^2.0.5"
   },
   "version": "1.0.0",
   "packageManager": "yarn@1.22.22"

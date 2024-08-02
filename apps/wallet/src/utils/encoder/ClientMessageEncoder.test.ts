@@ -1,6 +1,8 @@
+import 'reflect-metadata'
 import BigNumber from 'bignumber.js';
 import { Ex3BigInteger } from '../../apis/models';
 import { CborDataFactory, cborIndex } from './ClientMessageEncoder';
+import { test, expect } from 'vitest';
 
 class TestCborData {
   @cborIndex(0)
@@ -39,5 +41,5 @@ test('null data', () => {
   const parentData = new ParentCborData2();
   parentData.value2 = 'value2';
   const result = CborDataFactory.createCborArray(parentData);
-  expect(result).toEqual([undefined, 'value2']);
+  expect(result).toEqual([null, 'value2']);
 });
