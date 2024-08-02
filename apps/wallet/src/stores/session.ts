@@ -159,6 +159,7 @@ export class HibitIdSession {
       newVersion: 0,  // TODO:
     }))
     await this.fetchMnemonic()
+    this._password = newPwd
   }
 
   private initWallet = async (chainInfo: ChainInfo, password: string): Promise<ChainWallet> => {
