@@ -1,4 +1,4 @@
-import { FC, Suspense, lazy, useEffect, useState } from 'react';
+import { FC, Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import hibitIdSession from './stores/session';
@@ -7,11 +7,13 @@ import { useIsDesktop } from './utils/hooks';
 import PageLoading from './components/PageLoading';
 import { useOidc } from './utils/oidc';
 import { RUNTIME_ENV, RUNTIME_PARAMS_RAW } from './utils/runtime';
-import { RuntimeEnv } from './utils/basicEnums';
+import { HibitEnv, RuntimeEnv } from './utils/basicEnums';
 import { AuthenticatorType } from '@deland-labs/hibit-id-sdk';
 import authManager from './utils/auth';
 import toaster from './components/Toaster';
 import rpcManager from './stores/rpc';
+import VConsole from 'vconsole';
+import { HIBIT_ENV } from './utils/env';
 
 const MainPage = lazy(() => import('./pages/main'));
 const LoginPage = lazy(() => import('./pages/login'));
@@ -28,6 +30,18 @@ const App: FC = observer(() => {
   const { isUserLoggedIn, oidcTokens } = useOidc()
   const isDesktop = useIsDesktop()
   const navigate = useNavigate()
+  const vConsoleRef = useRef<VConsole>();
+
+  // show vConsole if is mobile and test env
+  useEffect(() => {
+    if (isDesktop && vConsoleRef.current) {
+      vConsoleRef.current.destroy();
+      vConsoleRef.current = undefined;
+    }
+    if (!isDesktop && !vConsoleRef.current && HIBIT_ENV !== HibitEnv.PROD) {
+      vConsoleRef.current = new VConsole();
+    }
+  }, [isDesktop]);
 
   useEffect(() => {
     (async () => {

@@ -19,6 +19,8 @@ jobs:
           cache: 'yarn'
       - name: build
         run: ./scripts/build_testnet.sh
+      - name: test
+        run: yarn test:wallet
       - uses: amondnet/vercel-action@v25.2.0 #deploy
         id: vercel_deploy
         with:

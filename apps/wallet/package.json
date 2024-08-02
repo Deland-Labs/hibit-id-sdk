@@ -7,7 +7,9 @@
     "dev": "vite --force",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@deland-labs/hibit-id-sdk": "*",
@@ -44,6 +46,7 @@
     "tonweb-mnemonic": "^1.0.1",
     "tsafe": "^1.7.2",
     "tweetnacl": "^1.0.3",
+    "vconsole": "^3.15.1",
     "worker-timers": "^8.0.3",
     "yup": "^1.4.0",
     "zod": "^3.23.8"
