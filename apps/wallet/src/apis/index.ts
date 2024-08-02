@@ -27,13 +27,14 @@ const authApiRequest = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
 authApiRequest.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       hibitIdSession.disconnect();
       toaster.error('User unauthorized, please login again');
+    } else {
+      toaster.error(`[${error.response?.status}] ${error.response?.data?.error?.message || error.message}`);
     }
     return Promise.reject(error);
   }

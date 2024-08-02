@@ -12,7 +12,7 @@ const AccountManagePage: FC = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="h-full relative">
+    <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
       <div className="flex items-center gap-2">
         <button className="btn btn-ghost btn-square btn-sm items-center" onClick={() => navigate(-1)}>
           <SvgGo className="size-6 rotate-180" />
@@ -23,7 +23,7 @@ const AccountManagePage: FC = () => {
       {/* <div className="mt-6">
 
       </div> */}
-      <div className="mt-6">
+      <div className="flex-1">
         <p className="label-text text-neutral text-xs">{t('page_account_linked')}</p>
         <ul className="mt-4">
           <li className="flex justify-between items-center">
@@ -40,7 +40,7 @@ const AccountManagePage: FC = () => {
       </div>
 
       <button
-        className="btn btn-block btn-sm absolute bottom-0"
+        className="btn btn-block btn-sm"
         onClick={() => navigate('/')}
       >
         Confirm

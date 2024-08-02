@@ -107,95 +107,98 @@ const SendTokenPage: FC = observer(() => {
   })
 
   return (
-    <div className="h-full relative">
+    <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
       <div>
         <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate(-1)}>
           <SvgGo className="size-6 rotate-180" />
           <span className="text-xs">Send</span>
         </button>
       </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Send to</span>
-          </div>
-          <textarea
-            placeholder="Recipient address"
-            className="textarea w-full h-16 text-xs"
-            {...register('toAddress')}
-          />
-          {errors.toAddress && (
+
+      <div className="flex-1 flex flex-col gap-6">
+        <div>
+          <label className="form-control w-full">
             <div className="label">
-              <span className="label-text-alt text-error">{errors.toAddress.message}</span>
+              <span className="label-text text-neutral text-xs">Send to</span>
             </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Amount</span>
-            <span className="label-text-alt text-xs">
-              <button
-                className="btn btn-link btn-xs px-0 no-underline gap-0"
-                onClick={() => {
-                  setValue('amount', balanceQuery.data?.toString() ?? '0')
-                }}
-              >
-                Max:
-                {balanceQuery.isLoading && (
-                  <span className="loading loading-spinner loading-xs"></span>
-                )}
-                {balanceQuery.data && (
-                  <span className="mx-1">{formatNumber(balanceQuery.data || 0)}</span>
-                )}
-                {token?.assetSymbol}
-              </button>
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <TokenSelect
-              value={token}
-              onChange={(val) => {
-                setToken(val)
-                setTimeout(() => {
-                  setValue('amount', '')
-                  trigger('amount')
-                })
-              }}
+            <textarea
+              placeholder="Recipient address"
+              className="textarea w-full h-16 text-xs"
+              {...register('toAddress')}
             />
-            <Controller
-              name="amount"
-              control={control}
-              render={({ field }) => (
-                <input
-                  type="number"
-                  min={0}
-                  className="input input-sm w-full text-xs"
-                  {...field}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    const [, decimals] = value.split('.')
-                    if (decimals?.length > Math.min(SYSTEM_MAX_DECIMALS, token?.decimalPlaces.value ?? Infinity)) {
-                      return
-                    }
-                    setValue('amount', value)
-                    trigger('amount')
+            {errors.toAddress && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.toAddress.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
+        <div>
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text text-neutral text-xs">Amount</span>
+              <span className="label-text-alt text-xs">
+                <button
+                  className="btn btn-link btn-xs px-0 no-underline gap-0"
+                  onClick={() => {
+                    setValue('amount', balanceQuery.data?.toString() ?? '0')
                   }}
-                />
-              )}
-            />
-          </div>
-          {errors.amount && (
-            <div className="label">
-              <span className="label-text-alt text-error">{errors.amount.message}</span>
+                >
+                  Max:
+                  {balanceQuery.isLoading && (
+                    <span className="loading loading-spinner loading-xs"></span>
+                  )}
+                  {balanceQuery.data && (
+                    <span className="mx-1">{formatNumber(balanceQuery.data || 0)}</span>
+                  )}
+                  {token?.assetSymbol}
+                </button>
+              </span>
             </div>
-          )}
-        </label>
+            <div className="flex items-center gap-2">
+              <TokenSelect
+                value={token}
+                onChange={(val) => {
+                  setToken(val)
+                  setTimeout(() => {
+                    setValue('amount', '')
+                    trigger('amount')
+                  })
+                }}
+              />
+              <Controller
+                name="amount"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    type="number"
+                    min={0}
+                    className="input input-sm w-full text-xs"
+                    {...field}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      const [, decimals] = value.split('.')
+                      if (decimals?.length > Math.min(SYSTEM_MAX_DECIMALS, token?.decimalPlaces.value ?? Infinity)) {
+                        return
+                      }
+                      setValue('amount', value)
+                      trigger('amount')
+                    }}
+                  />
+                )}
+              />
+            </div>
+            {errors.amount && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.amount.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
       </div>
 
       <LoaderButton
-        className="btn btn-block btn-sm absolute bottom-0 disabled:opacity-70"
+        className="btn btn-block btn-sm disabled:opacity-70"
         onClick={handleSend}
         loading={transferMutation.isPending}
       >

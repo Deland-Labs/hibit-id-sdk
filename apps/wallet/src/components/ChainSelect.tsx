@@ -6,6 +6,7 @@ import SvgCaret from '../assets/caret-down.svg?react'
 import SvgRightArrow from '../assets/right-arrow.svg?react'
 import { ChainInfo } from "../utils/basicTypes";
 import { getSupportedChains } from "../utils/chain";
+import { useTranslation } from "react-i18next";
 
 export interface ChainSelectProps {
   value: ChainInfo
@@ -13,6 +14,8 @@ export interface ChainSelectProps {
 }
 
 const ChainSelect: FC<ChainSelectProps> = observer(({ value, onChange }) => {
+  const { t } = useTranslation()
+
   const chains = useMemo(() => {
     const chainsMap: Record<string, ChainInfo[]> = {}
     const supportedChains = getSupportedChains()
@@ -39,7 +42,7 @@ const ChainSelect: FC<ChainSelectProps> = observer(({ value, onChange }) => {
           <div className="flex-1 flex flex-col gap-6">
             {Object.entries(chains).map(([chainName, chainList]) => (
               <div key={chainName}>
-                <span className="text-neutral text-xs">{chainName}</span>
+                <span className="text-neutral text-xs">{`${chainName} ${t('common_ecosystem')}`}</span>
                 <ul className="mt-2 flex flex-col gap-2">
                   {chainList.map((chainInfo) => (
                     <li

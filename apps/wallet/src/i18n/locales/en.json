@@ -51,6 +51,7 @@
   "common_address": "Address",
   "common_addressCopied": "Address copied",
   "common_native": "Native",
+  "common_ecosystem": "Ecosystem",
 
   "page_password_warning1": "Hibit will use the wallet password you set to protect the data on your device to ensure the safety of your assets.",
   "page_password_warning2": "Hibit will not store your wallet password.",

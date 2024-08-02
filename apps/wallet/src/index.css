@@ -28,4 +28,7 @@ html, body, #root {
   .input, .textarea {
     @apply placeholder:text-base-300;
   }
+  .input:focus,.input:focus-within,.textarea:focus,.textarea:focus-within {
+    outline: none;
+  }
 }

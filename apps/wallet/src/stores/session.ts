@@ -1,10 +1,10 @@
 import { makeAutoObservable, reaction } from "mobx";
 import { ChainWallet } from "../utils/chain/chain-wallets/types";
-import { Chain, ChainInfo } from "../utils/basicTypes";
-import { EthereumSepolia } from "../utils/chain/chain-list";
+import { Chain, ChainId, ChainInfo } from "../utils/basicTypes";
+import { Ethereum, EthereumSepolia, Ton, TonTestnet } from "../utils/chain/chain-list";
 import { EthereumChainWallet } from "../utils/chain/chain-wallets/ethereum";
 import { RUNTIME_ENV } from "../utils/runtime";
-import { RuntimeEnv } from "../utils/basicEnums";
+import { HibitEnv, RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
 import { WalletAccount } from "@deland-labs/hibit-id-sdk";
 import { TonChainWallet } from "../utils/chain/chain-wallets/ton";
@@ -13,6 +13,14 @@ import { GetMnemonicAsync, UpdateMnemonicAsync } from "../apis/services/auth";
 import { HibitIDError, HibitIDErrorCode } from "../utils/error-code";
 import { GetMnemonicInput, GetMnemonicResult, UpdateMnemonicInput } from "../apis/models";
 import { AES, enc, MD5 } from "crypto-js";
+import { HIBIT_ENV } from "../utils/env";
+import { getChainByChainId } from "../utils/chain";
+
+const SESSION_CONFIG_KEY = 'hibitIdSessionConfig'
+
+interface SessionConfig {
+  lastChainId: string
+}
 
 export class HibitIdSession {
   public wallet: ChainWallet | null = null
@@ -26,7 +34,20 @@ export class HibitIdSession {
 
   constructor() {
     makeAutoObservable(this)
-    this.chainInfo = EthereumSepolia
+
+    let initialChainInfo = RUNTIME_ENV === RuntimeEnv.TELEGRAM_MINI_APP
+      ? HIBIT_ENV === HibitEnv.PROD ? Ton : TonTestnet
+      : HIBIT_ENV === HibitEnv.PROD ? Ethereum : EthereumSepolia
+    const config = localStorage.getItem(SESSION_CONFIG_KEY)
+    if (config) {
+      const { lastChainId } = JSON.parse(config) as SessionConfig
+      const chainId = ChainId.fromString(lastChainId)
+      const chainInfo = getChainByChainId(chainId)
+      if (chainInfo) {
+        initialChainInfo = chainInfo
+      }
+    }
+    this.chainInfo = initialChainInfo
 
     if (RUNTIME_ENV === RuntimeEnv.SDK) {
       // re-init rpcManager to avoid stale callback closure
@@ -180,6 +201,9 @@ export class HibitIdSession {
     if (!wallet) {
       throw new Error('Unsupported chain')
     }
+    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify({
+      lastChainId: chainInfo.chainId.toString(),
+    } as SessionConfig))
     return wallet
   }
 }

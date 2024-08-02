@@ -50,6 +50,7 @@
   "common_address": "地址",
   "common_addressCopied": "地址已複製",
   "common_native": "本地",
+  "common_ecosystem": "生態",
   "page_password_warning1": "HiBit將使用您設定的錢包密碼來保護您設備上的数据，以確保您的資產安全。",
   "page_password_warning2": "HiBit不會存儲您的錢包密碼。",
   "page_password_warning3": "如果錢包密碼丟失，錢包將無法恢復。",

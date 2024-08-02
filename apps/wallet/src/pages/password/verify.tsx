@@ -11,6 +11,7 @@ import { MD5 } from 'crypto-js'
 import hibitIdSession from "../../stores/session";
 import { useMutation } from "@tanstack/react-query";
 import { HibitIDError, HibitIDErrorCode } from "../../utils/error-code";
+import LogoSection from "../../components/LogoSection";
 
 const formSchema = object({
   password: string()
@@ -56,38 +57,41 @@ const VerifyPasswordPage: FC = observer(() => {
   })
 
   return (
-    <div className="h-full relative">
-      <div className="flex items-center gap-2">
-        <span className="text-xs">Unlock Wallet</span>
+    <div className="h-full px-6 overflow-auto">
+      <LogoSection />
+      <div className="mt-6 text-center text-xs">
+        Unlock wallet
       </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Wallet Password</span>
-          </div>
-          <input
-            {...register('password')}
-            className="input input-sm w-full h-8 text-xs"
-            type="password"
-          />
-          {errors.password && (
+      <form className="mt-4 flex flex-col gap-6" onSubmit={handleConfirm}>
+        <div>
+          <label className="form-control w-full">
             <div className="label">
-              <span className="label-text-alt text-error">{errors.password.message}</span>
+              <span className="label-text text-neutral text-xs">Wallet Password</span>
             </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
-        <PasswordWarnings />
-      </div>
+            <input
+              {...register('password')}
+              className="input input-sm w-full h-8 text-xs"
+              type="password"
+              autoFocus
+            />
+            {errors.password && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.password.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
 
-      <LoaderButton
-        className="btn btn-block btn-sm absolute bottom-0"
-        onClick={handleConfirm}
-        loading={submitMutation.isPending}
-      >
-        Confirm
-      </LoaderButton>
+        <LoaderButton
+          className="btn btn-block btn-sm"
+          type="submit"
+          loading={submitMutation.isPending}
+        >
+          Unlock
+        </LoaderButton>
+
+        <PasswordWarnings />
+      </form>
     </div>
   )
 })

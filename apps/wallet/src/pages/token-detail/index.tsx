@@ -32,7 +32,7 @@ const TokenDetailPage: FC = observer(() => {
   const chainInfo = getChainByChainId(new ChainId(token.chain, token.chainNetwork))
 
   return (
-    <div>
+    <div className="h-full px-6 overflow-auto">
       <div>
         <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate('/')}>
           <SvgGo className="size-6 rotate-180" />

@@ -13,6 +13,7 @@ import { HDNodeWallet } from "ethers";
 import hibitIdSession from "../../stores/session";
 import { useMutation } from "@tanstack/react-query";
 import { CreateMnemonicAsync } from "../../apis/services/auth";
+import LogoSection from "../../components/LogoSection";
 
 const formSchema = object({
   password: string()
@@ -59,55 +60,58 @@ const CreatePasswordPage: FC = observer(() => {
   })
 
   return (
-    <div className="h-full relative">
-      <div className="flex items-center gap-2">
-        <span className="text-xs">Set wallet password</span>
+    <div className="h-full px-6 overflow-auto">
+      <LogoSection />
+      <div className="mt-6 text-center text-xs">
+        Set wallet password
       </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Wallet Password</span>
-          </div>
-          <input
-            {...register('password')}
-            className="input input-sm w-full h-8 text-xs"
-            type="password"
-          />
-          {errors.password && (
+      <form className="mt-4 flex flex-col gap-6" onSubmit={handleConfirm}>
+        <div>
+          <label className="form-control w-full">
             <div className="label">
-              <span className="label-text-alt text-error">{errors.password.message}</span>
+              <span className="label-text text-neutral text-xs">Wallet Password</span>
             </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text text-neutral text-xs">Confirm Wallet Password</span>
-          </div>
-          <input
-            {...register('confirmPassword')}
-            className="input input-sm w-full h-8 text-xs"
-            type="password"
-          />
-          {errors.confirmPassword && (
+            <input
+              {...register('password')}
+              className="input input-sm w-full h-8 text-xs"
+              type="password"
+              autoFocus
+            />
+            {errors.password && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.password.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
+        <div>
+          <label className="form-control w-full">
             <div className="label">
-              <span className="label-text-alt text-error">{errors.confirmPassword.message}</span>
+              <span className="label-text text-neutral text-xs">Confirm Wallet Password</span>
             </div>
-          )}
-        </label>
-      </div>
-      <div className="mt-6">
-        <PasswordWarnings />
-      </div>
+            <input
+              {...register('confirmPassword')}
+              className="input input-sm w-full h-8 text-xs"
+              type="password"
+            />
+            {errors.confirmPassword && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.confirmPassword.message}</span>
+              </div>
+            )}
+          </label>
+        </div>
 
-      <LoaderButton
-        className="btn btn-block btn-sm absolute bottom-0"
-        onClick={handleConfirm}
-        loading={submitMutation.isPending}
-      >
-        Confirm
-      </LoaderButton>
+        <LoaderButton
+          className="btn btn-block btn-sm"
+          loading={submitMutation.isPending}
+          type="submit"
+        >
+          Confirm
+        </LoaderButton>
+
+        <PasswordWarnings />
+      </form>
     </div>
   )
 })

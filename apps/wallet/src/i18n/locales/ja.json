@@ -50,6 +50,7 @@
   "common_address": "住所",
   "common_addressCopied": "アドレスをコピーしました",
   "common_native": "ネイティブ",
+  "common_ecosystem": "エコシステム",
   "page_password_warning1": "HiBitは、あなたの資産の安全性を確保するために、デバイス上のデータを保護するのに設定したウォレットパスワードを使用します。",
   "page_password_warning2": "HiBitはあなたのウォレットパスワードを保存しません。",
   "page_password_warning3": "ウォレットパスワードを紛失した場合、ウォレットは回復できません。",

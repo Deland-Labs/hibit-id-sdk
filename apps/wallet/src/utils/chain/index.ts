@@ -28,7 +28,8 @@ const SupportedChainsForTestnet = [
   // TronNile,
 ];
 
-export function getChainByChainId(chainId: ChainId): ChainInfo | null {
+export function getChainByChainId(chainId: ChainId | null): ChainInfo | null {
+  if (!chainId) return null;
   const chains = getSupportedChains();
   return chains.find(c => c.chainId.equals(chainId)) ?? null;
 }
