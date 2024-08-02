@@ -8,6 +8,7 @@ const LOGIN_SESSION_KEY = 'hibit-id-session'
 
 export class HibitIdWallet {
   private _env: HibitEnv = 'prod'
+  private _hasSession = false
   private _connected = false
   private _rpc: RPC | null = null
   private _controller: HibitIdController | null = null
@@ -26,8 +27,8 @@ export class HibitIdWallet {
 
     const sessionString = sessionStorage.getItem(LOGIN_SESSION_KEY)
     if (sessionString) {
+      this._hasSession = true
       this.prepareIframe().then(() => {
-        this._connected = true
         this._controller = new HibitIdController(this.toggleIframe)
       })
     }
@@ -44,12 +45,16 @@ export class HibitIdWallet {
 
     try {
       await this.prepareIframe()
+      if (this._hasSession) {
+        this.showIframe()
+      }
       // this._iframe!.show({ fullscreen: true, style: {} })
       const res = await this._rpc!.call<ConnectResponse>(HibitIdExposeRPCMethod.CONNECT, {})
       if (!res) {
         throw new Error('No response from wallet')
       }
       this._iframe!.hide()
+      this._controller?.setOpen(false)
       this._connected = true
       // this._controller = new HibitIdController(this.toggleIframe)
       console.log('[hibit id connected]')
@@ -155,18 +160,7 @@ export class HibitIdWallet {
     if (this._iframe.visible) {
       this._iframe.hide()
     } else {
-      const controllerRect = this._controller?.getBoundingRect()
-      this._iframe.show({
-        fullscreen: false,
-        style: {
-          maxWidth: '100%',
-          maxHeight: '100%',
-          width: '332px',
-          height: '502px',
-          right: `${controllerRect ? (window.innerWidth - controllerRect.right) : 50}px`,
-          bottom: `${controllerRect ? (window.innerHeight - controllerRect.top + 20) : 50}px`,
-        }
-      })
+      this.showIframe()
     }
   }
 
@@ -198,21 +192,14 @@ export class HibitIdWallet {
     console.log('[sdk rpc ready]')
     this._rpc = rpc
   }
-  
-  private onRpcClose = () => {
-    this._iframe?.hide()
-    this._controller?.setOpen(false)
-  }
 
-  private onRpcLoginChanged = (input: LoginChangedRequest) => {
-    if (!input.isLogin) {
-      this._iframe?.show({ fullscreen: true, style: {} })
+  private showIframe = (fullscreen?: boolean) => {
+    if (!this._iframe) return
+    if (fullscreen) {
+      this._iframe.show({ fullscreen: true, style: {} })
     } else {
-      if (!this._controller) {
-        this._controller = new HibitIdController(this.toggleIframe)
-      }
       const controllerRect = this._controller?.getBoundingRect()
-      this._iframe?.show({
+      this._iframe.show({
         fullscreen: false,
         style: {
           maxWidth: '100%',
@@ -223,6 +210,25 @@ export class HibitIdWallet {
           bottom: `${controllerRect ? (window.innerHeight - controllerRect.top + 20) : 50}px`,
         }
       })
+    }
+  }
+  
+  private onRpcClose = () => {
+    this._iframe?.hide()
+    this._controller?.setOpen(false)
+  }
+
+  private onRpcLoginChanged = (input: LoginChangedRequest) => {
+    if (!input.isLogin) {
+      this.showIframe(true)
+    } else {
+      if (!this._controller) {
+        this._controller = new HibitIdController(this.toggleIframe)
+      }
+      if (this._hasSession) {
+        return
+      }
+      this.showIframe()
       this._controller?.setOpen(true)
       sessionStorage.setItem(LOGIN_SESSION_KEY, input.sub || '')
     }
