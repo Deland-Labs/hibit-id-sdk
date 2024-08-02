@@ -131,6 +131,7 @@ export class HibitIdWallet {
     this._controller?.destroy()
     this._connected = false
     this._iframeReadyPromise = new BridgePromise<boolean>()
+    sessionStorage.removeItem(LOGIN_SESSION_KEY)
   }
 
   public switchToChain = async (chainId: HibitIdChainId) => {
