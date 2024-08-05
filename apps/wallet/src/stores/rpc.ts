@@ -5,7 +5,7 @@ import { makeAutoObservable } from 'mobx';
 import { AssetInfo } from '../utils/chain/chain-wallets/types';
 import { Chain, ChainAssetType, ChainId, ChainInfo, ChainNetwork, DecimalPlaces } from '../utils/basicTypes';
 import BigNumber from 'bignumber.js';
-import { SwitchChainRequest } from '../../../../packages/sdk/dist/lib/types';
+import { ConnectRequest, SwitchChainRequest } from '../../../../packages/sdk/dist/lib/types';
 import { getChainByChainId } from '../utils/chain';
 
 class RPCManager {
@@ -96,11 +96,20 @@ class RPCManager {
     }
   }
 
-  private onRpcConnect = async (): Promise<ConnectResponse> => {
+  private onRpcConnect = async (input: ConnectRequest): Promise<ConnectResponse> => {
     console.log('[hibitid]', 'onRpcConnect')
+    const chainInfo = getChainByChainId(ChainId.fromString(input.chainId))
+    if (!chainInfo) {
+      throw new Error('Chain not supported')
+    }
     this._connectPromise = new BridgePromise()
     if (hibitIdSession.wallet) {
+      if (!hibitIdSession.chainInfo.chainId.equals(chainInfo.chainId)) {
+        await hibitIdSession.switchChain(chainInfo)
+      }
       this.resolveConnect(await hibitIdSession.wallet.getAccount())
+    } else {
+      hibitIdSession.setChainInfo(chainInfo)
     }
     const res = await this._connectPromise.promise
     return res

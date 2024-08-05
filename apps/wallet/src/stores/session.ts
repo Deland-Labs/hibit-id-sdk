@@ -82,6 +82,10 @@ export class HibitIdSession {
     return this._account?.address || ''
   }
 
+  public setChainInfo = (chainInfo: ChainInfo) => {
+    this.chainInfo = chainInfo
+  }
+
   public getValidAddress = async () => {
     if (!this._account) return ''
     return this.chainInfo.caseSensitiveAddress
@@ -139,7 +143,7 @@ export class HibitIdSession {
     this.wallet = await this.initWallet(chain, this._password)
     const oldAddress = this._account?.address
     this._account = await this.wallet.getAccount()
-    this.chainInfo = chain
+    this.setChainInfo(chain)
     if (RUNTIME_ENV === RuntimeEnv.SDK) {
       rpcManager.notifyChainChanged(chain)
       if (oldAddress !== this._account.address) {

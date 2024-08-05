@@ -38,8 +38,12 @@ export class HibitIdWallet {
     return this._connected
   }
 
-  public connect = async () => {
+  public connect = async (chainId: HibitIdChainId) => {
     if (this._connected) {
+      const currentChain = await this.getChainInfo()
+      if (`${currentChain.chainId.type}_${currentChain.chainId.network}` !== chainId) {
+        await this.switchToChain(chainId)
+      }
       return await this.getAccount()
     }
 
@@ -49,7 +53,9 @@ export class HibitIdWallet {
         this.showIframe()
       }
       // this._iframe!.show({ fullscreen: true, style: {} })
-      const res = await this._rpc!.call<ConnectResponse>(HibitIdExposeRPCMethod.CONNECT, {})
+      const res = await this._rpc!.call<ConnectResponse>(HibitIdExposeRPCMethod.CONNECT, {
+        chainId,
+      })
       if (!res) {
         throw new Error('No response from wallet')
       }
