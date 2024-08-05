@@ -64,7 +64,7 @@ const ResetPasswordPage: FC = observer(() => {
   })
 
   return (
-    <div className="h-full px-6 overflow-auto">
+    <div className="h-full px-6 pb-14 overflow-auto">
       <div className="flex items-center gap-2">
         <button className="btn btn-ghost btn-square btn-sm items-center" onClick={() => navigate(-1)}>
           <SvgGo className="size-6 rotate-180" />
@@ -125,15 +125,17 @@ const ResetPasswordPage: FC = observer(() => {
           </label>
         </div>
 
-        <LoaderButton
-          className="btn btn-block btn-sm"
-          loading={submitMutation.isPending}
-          type="submit"
-        >
-          Confirm
-        </LoaderButton>
-
         <PasswordWarnings />
+
+        <div className="w-full p-6 pt-4 fixed left-0 bottom-0 bg-base-200">
+          <LoaderButton
+            className="btn btn-block btn-sm"
+            loading={submitMutation.isPending}
+            type="submit"
+          >
+            Confirm
+          </LoaderButton>
+        </div>
       </form>
     </div>
   )

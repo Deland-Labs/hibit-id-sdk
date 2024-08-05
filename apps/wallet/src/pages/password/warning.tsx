@@ -6,9 +6,7 @@ const PasswordWarnings: FC = () => {
 
   return (
     <div className="flex flex-col gap-6 text-neutral text-xs">
-      <p>{`* ${t('page_password_warning1')}`}</p>
-      <p>{`* ${t('page_password_warning2')}`}</p>
-      <p>{`* ${t('page_password_warning3')}`}</p>
+      <p>{`* ${t('page_password_info')}`}</p>
     </div>
   )
 }

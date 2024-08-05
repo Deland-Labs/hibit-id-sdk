@@ -12,6 +12,9 @@ import hibitIdSession from "../../stores/session";
 import { useMutation } from "@tanstack/react-query";
 import { HibitIDError, HibitIDErrorCode } from "../../utils/error-code";
 import LogoSection from "../../components/LogoSection";
+import authManager from "../../utils/auth";
+import { useUserLoginsQuery } from "../../apis/react-query/auth";
+import { useOidc } from "../../utils/oidc";
 
 const formSchema = object({
   password: string()
@@ -21,6 +24,8 @@ const formSchema = object({
 
 const VerifyPasswordPage: FC = observer(() => {
   const navigate = useNavigate()
+  const { isUserLoggedIn } = useOidc()
+  const userLoginsQuery = useUserLoginsQuery(isUserLoggedIn)
   const {
     setError,
     register,
@@ -57,11 +62,26 @@ const VerifyPasswordPage: FC = observer(() => {
   })
 
   return (
-    <div className="h-full px-6 overflow-auto">
-      <LogoSection />
-      <div className="mt-6 text-center text-xs">
+    <div className="h-full px-6 pb-14 overflow-auto">
+      <div className="text-xs">
         Unlock wallet
       </div>
+      <div className="mt-6">
+        <LogoSection />
+      </div>
+      {isUserLoggedIn && (
+        <div className="text-xs mt-6">
+          <span>Hibit ID logged by your {userLoginsQuery.data?.[0]?.providerDisplayName ?? '--'}</span>
+          <button
+            className="btn btn-link btn-xs p-0 outline-none"
+            onClick={() => {
+              authManager.logout()
+            }}
+          >
+            [logout]
+          </button>
+        </div>
+      )}
       <form className="mt-4 flex flex-col gap-6" onSubmit={handleConfirm}>
         <div>
           <label className="form-control w-full">
@@ -82,15 +102,17 @@ const VerifyPasswordPage: FC = observer(() => {
           </label>
         </div>
 
-        <LoaderButton
-          className="btn btn-block btn-sm"
-          type="submit"
-          loading={submitMutation.isPending}
-        >
-          Unlock
-        </LoaderButton>
-
         <PasswordWarnings />
+
+        <div className="w-full p-6 pt-4 fixed left-0 bottom-0 bg-base-200">
+          <LoaderButton
+            className="btn btn-block btn-sm"
+            type="submit"
+            loading={submitMutation.isPending}
+          >
+            Unlock
+          </LoaderButton>
+        </div>
       </form>
     </div>
   )
