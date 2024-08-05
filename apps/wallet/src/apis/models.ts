@@ -398,3 +398,11 @@ export class UpdateMnemonicInput {
 }
 
 export class UpdateMnemonicResult extends GetMnemonicResult {}
+
+export class GetUserLoginsResultItem {
+  providerKey!: string
+  loginProvider!: string
+  providerDisplayName!: string
+}
+
+export type GetUserLoginsResult = GetUserLoginsResultItem[]

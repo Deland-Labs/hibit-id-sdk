@@ -1,5 +1,5 @@
 import { sendAuthRequest } from "..";
-import { CreateMnemonicInput, GetMnemonicInput, GetMnemonicResult, GetPublicKeyResult, UpdateMnemonicInput, UpdateMnemonicResult } from "../models";
+import { CreateMnemonicInput, GetMnemonicInput, GetMnemonicResult, GetPublicKeyResult, GetUserLoginsResult, UpdateMnemonicInput, UpdateMnemonicResult } from "../models";
 
 export const CreateMnemonicAsync = async (input: CreateMnemonicInput) => {
   await sendAuthRequest(
@@ -37,5 +37,13 @@ export const UpdateMnemonicAsync = async (input: UpdateMnemonicInput) => {
     input,
     '/api/app/mnemonic/update'
   );
+  return result
+}
+
+export const GetUserLoginsAsync = async () => {
+  const result = await sendAuthRequest<null, GetUserLoginsResult>(
+    null,
+    '/api/app/user-login/get-user-logins',
+  )
   return result
 }

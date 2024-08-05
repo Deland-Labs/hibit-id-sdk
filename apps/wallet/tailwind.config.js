@@ -10,7 +10,7 @@ const hibitDarkTheme = {
   "base-300": '#354159',
   // "info": "#00b1d1",
   success: '#14C394',
-  // "warning": "#ffb600",
+  "warning": "#FFC349",
   error: '#F53D54',
 
   '--bc': '100% 0 0',
