@@ -86,3 +86,11 @@ export const UpdateMnemonicAsync = async (input: UpdateMnemonicInput) => {
     '/api/app/mnemonic/update'
   );
 };
+
+export const GetUserLoginsAsync = async () => {
+  const result = await sendAuthRequest<null, GetUserLoginsResult>(
+    null,
+    '/api/app/user-login/get-user-logins',
+  )
+  return result
+}

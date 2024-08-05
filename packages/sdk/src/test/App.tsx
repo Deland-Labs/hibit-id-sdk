@@ -26,7 +26,7 @@ const App: FC = () => {
       <div>
         <button className="btn btn-sm" onClick={async () => {
           setConnecting(true)
-          const account = await wallet?.connect()
+          const account = await wallet?.connect(HibitIdChainId.EthereumSepolia)
           setAccount(account ?? null)
           setConnecting(false)
         }}>

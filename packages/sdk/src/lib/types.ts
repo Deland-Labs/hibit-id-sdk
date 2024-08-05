@@ -44,6 +44,10 @@ export interface WalletAccount {
   publicKey?: string
 }
 
+export interface ConnectRequest {
+  chainId: HibitIdChainId
+}
+
 export interface ConnectResponse extends WalletAccount {
 }
 

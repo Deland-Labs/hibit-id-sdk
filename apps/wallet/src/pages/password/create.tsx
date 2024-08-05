@@ -14,6 +14,7 @@ import hibitIdSession from "../../stores/session";
 import { useMutation } from "@tanstack/react-query";
 import {CreateMnemonicAsync, MnemonicManager, MnemonicVersion} from "../../apis/services/auth";
 import LogoSection from "../../components/LogoSection";
+import { useTranslation } from "react-i18next";
 
 const formSchema = object({
   password: string()
@@ -25,6 +26,7 @@ const formSchema = object({
 })
 
 const CreatePasswordPage: FC = observer(() => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const {
     register,
@@ -56,10 +58,15 @@ const CreatePasswordPage: FC = observer(() => {
   })
 
   return (
-    <div className="h-full px-6 overflow-auto">
-      <LogoSection />
-      <div className="mt-6 text-center text-xs">
+    <div className="h-full px-6 pb-14 overflow-auto">
+      <div className="text-xs">
         Set wallet password
+      </div>
+      <div className="mt-6">
+        <LogoSection />
+      </div>
+      <div className="p-2 mt-6 rounded-lg bg-warning/15 text-warning text-xs">
+        {t('page_password_create_warn')}
       </div>
       <form className="mt-4 flex flex-col gap-6" onSubmit={handleConfirm}>
         <div>
@@ -98,15 +105,17 @@ const CreatePasswordPage: FC = observer(() => {
           </label>
         </div>
 
-        <LoaderButton
-          className="btn btn-block btn-sm"
-          loading={submitMutation.isPending}
-          type="submit"
-        >
-          Confirm
-        </LoaderButton>
-
         <PasswordWarnings />
+
+        <div className="w-full p-6 pt-4 fixed left-0 bottom-0 bg-base-200">
+          <LoaderButton
+            className="btn btn-block btn-sm"
+            loading={submitMutation.isPending}
+            type="submit"
+          >
+            Confirm
+          </LoaderButton>
+        </div>
       </form>
     </div>
   )
