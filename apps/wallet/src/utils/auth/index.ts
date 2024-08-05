@@ -3,7 +3,7 @@ import { TelegramAuthenticateProvider } from "./providers/telegram";
 import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 import { prOidc } from "../oidc";
 
-const AUTH_SERVER_URL = import.meta.env.VITE_HIBIT_AUTH_SERVER
+const HIBIT_ID_WEB = import.meta.env.VITE_HIBIT_ID_WEB
 
 export class AuthManager {
   public static readonly supportedAuthenticators: AuthenticatorType[] = [AuthenticatorType.Telegram]
@@ -38,7 +38,7 @@ export class AuthManager {
     }
     await oidc.logout({
       redirectTo: 'specific url',
-      url: `${AUTH_SERVER_URL}Account/Logout?returnUrl=${encodeURIComponent(window.location.origin + '/login')}`,
+      url: HIBIT_ID_WEB,
     })
   }
 }
