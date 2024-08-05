@@ -12,7 +12,7 @@ import { AES, MD5 } from 'crypto-js'
 import { HDNodeWallet } from "ethers";
 import hibitIdSession from "../../stores/session";
 import { useMutation } from "@tanstack/react-query";
-import { CreateMnemonicAsync } from "../../apis/services/auth";
+import {CreateMnemonicAsync, MnemonicManager, MnemonicVersion} from "../../apis/services/auth";
 import LogoSection from "../../components/LogoSection";
 
 const formSchema = object({
@@ -44,11 +44,7 @@ const CreatePasswordPage: FC = observer(() => {
       const pwd = MD5(`${password}${hibitIdSession.userId}`).toString()
       const phrase = HDNodeWallet.createRandom().mnemonic!.phrase
       const encryptedPhrase = AES.encrypt(phrase, pwd).toString()
-      await CreateMnemonicAsync(new CreateMnemonicInput({
-        aesKey: '', // TODO: aesKey
-        mnemonicContent: encryptedPhrase,
-        version: 0, // TODO: version
-      }))
+      await MnemonicManager.instance.createAsync(encryptedPhrase)
       await hibitIdSession.fetchMnemonic()
       await hibitIdSession.connect(pwd)
       navigate('/')

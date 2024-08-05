@@ -10,7 +10,8 @@ import {
   Ex3Decimal,
   Ex3Price,
   Nonce,
-  UserId} from '../utils/basicTypes';
+  UserId
+} from '../utils/basicTypes';
 import { SignaturesSchema } from '../utils/basicEnums';
 
 export type Ex3BigInteger = BigNumber;
@@ -47,7 +48,8 @@ export class CryptoAsset {
   }
 }
 
-export class EmptyRequestResult {}
+export class EmptyRequestResult {
+}
 
 export class NonceResult {
   @Type(() => Nonce)
@@ -350,13 +352,14 @@ export interface AuthServerErrorResponse {
     details: any
     data: any
     validationErrors: any
-  }
+  };
 }
 
+
 export class CreateMnemonicInput {
-  aesKey!: string
-  mnemonicContent!: string
-  version!: number  // 0 means no encryption
+  aesKey!: string;
+  mnemonicContent!: string;
+  version!: number;  // 0 means no encryption
 
   public constructor(init?: Partial<CreateMnemonicInput>) {
     Object.assign(this, init);
@@ -364,7 +367,7 @@ export class CreateMnemonicInput {
 }
 
 export class GetMnemonicInput {
-  publicKey!: string
+  publicKey!: string;
 
   public constructor(init?: Partial<GetMnemonicInput>) {
     Object.assign(this, init);
@@ -372,29 +375,34 @@ export class GetMnemonicInput {
 }
 
 export class GetMnemonicResult {
-  id!: string // mnemonic id
-  userId!: string // user id
-  mnemonicContent!: string // phrase
-  version!: number // whether mnemonicContent is encrypted, 0 means no encryption
-  aesKey!: string // aes key to decrypt mnemonicContent when version > 0
-  createdAt!: string
-  updatedAt!: string
+  id!: string; // mnemonic id
+  userId!: string; // user id
+  mnemonicContent!: string; // phrase
+  version!: number; // whether mnemonicContent is encrypted, 0 means no encryption
+  aesKey!: string; // aes key to decrypt mnemonicContent when version > 0
+  createdAt!: string;
+  updatedAt!: string;
+
+  public constructor(init?: Partial<GetMnemonicResult>) {
+    Object.assign(this, init);
+  }
 }
 
 export class GetPublicKeyResult {
-  publicKeyBase64!: string
+  publicKeyBase64!: string;
 }
 
 export class UpdateMnemonicInput {
-  aesKey!: string
-  oldMnemonicContent!: string
-  oldVersion!: number
-  newMnemonicContent!: string
-  newVersion!: number
+  aesKey!: string;
+  oldMnemonicContent!: string;
+  oldVersion!: number;
+  newMnemonicContent!: string;
+  newVersion!: number;
 
   public constructor(init?: Partial<UpdateMnemonicInput>) {
     Object.assign(this, init);
   }
 }
 
-export class UpdateMnemonicResult extends GetMnemonicResult {}
+export class UpdateMnemonicResult extends GetMnemonicResult {
+}

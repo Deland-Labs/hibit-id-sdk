@@ -1171,7 +1171,7 @@ function oidcClientTsUserToTokens<DecodedIdToken extends Record<string, unknown>
 
         // assert(false, "Failed to get refresh token expiration time");
         const envTimeout = Number(import.meta.env.VITE_OIDC_REFRESH_TOKEN_TIMEOUT)
-        return envTimeout || 3600000
+        return envTimeout || 14 * 24 * 60 * 60 * 1000
     })();
 
     const idToken = oidcClientTsUser.id_token;

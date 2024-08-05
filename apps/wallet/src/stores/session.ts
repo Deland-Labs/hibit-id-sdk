@@ -8,10 +8,10 @@ import { HibitEnv, RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
 import { WalletAccount } from "@deland-labs/hibit-id-sdk";
 import { TonChainWallet } from "../utils/chain/chain-wallets/ton";
-import { Oidc } from "../utils/oidc/lib/oidc-spa-4.11.1/src/oidc";
-import { GetMnemonicAsync, UpdateMnemonicAsync } from "../apis/services/auth";
+import { Oidc } from '../utils/oidc/lib/oidc-spa-4.11.1/src';
+import { MnemonicManager, UpdateMnemonicAsync } from '../apis/services/auth';
 import { HibitIDError, HibitIDErrorCode } from "../utils/error-code";
-import { GetMnemonicInput, GetMnemonicResult, UpdateMnemonicInput } from "../apis/models";
+import { GetMnemonicResult, UpdateMnemonicInput } from "../apis/models";
 import { AES, enc, MD5 } from "crypto-js";
 import { HIBIT_ENV } from "../utils/env";
 import { getChainByChainId } from "../utils/chain";
@@ -152,9 +152,8 @@ export class HibitIdSession {
     if (this._publicKey === null) {
       throw new Error('Not logged in')
     }
-    const mnemonicRes = await GetMnemonicAsync(new GetMnemonicInput({
-      publicKey: this._publicKey,
-    }))
+    
+    const mnemonicRes = await MnemonicManager.instance.getAsync();
     this._mnemonic = mnemonicRes
   }
 
