@@ -72,11 +72,11 @@ export const sendApiRequest = async <TInput, TOutput>(
   auth = true
 ): Promise<TOutput> => {
   const oidc = await prOidc;
-  if (auth && !oidc.isUserLoggedIn) {
-    throw new Error('No auth session');
-  }
   let headers = {};
   if (auth) {
+    if (!oidc.isUserLoggedIn) {
+      throw new Error('No auth session');
+    }
     headers = {
       'Authorization': `Bearer ${oidc.getTokens().idToken}`
     };

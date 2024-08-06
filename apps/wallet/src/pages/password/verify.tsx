@@ -15,6 +15,8 @@ import LogoSection from "../../components/LogoSection";
 import authManager from "../../utils/auth";
 import { useUserLoginsQuery } from "../../apis/react-query/auth";
 import { useOidc } from "../../utils/oidc";
+import { RUNTIME_ENV } from "../../utils/runtime";
+import { RuntimeEnv } from "../../utils/basicEnums";
 
 const formSchema = object({
   password: string()
@@ -69,7 +71,7 @@ const VerifyPasswordPage: FC = observer(() => {
       <div className="mt-6">
         <LogoSection />
       </div>
-      {isUserLoggedIn && (
+      {(isUserLoggedIn && RUNTIME_ENV !== RuntimeEnv.TELEGRAM_MINI_APP) && (
         <div className="text-xs mt-6">
           <span>Hibit ID logged by your {userLoginsQuery.data?.[0]?.providerDisplayName ?? '--'}</span>
           <button
