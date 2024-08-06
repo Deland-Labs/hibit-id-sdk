@@ -28,10 +28,12 @@ export class HibitIdWallet {
     const sessionString = sessionStorage.getItem(LOGIN_SESSION_KEY)
     if (sessionString) {
       this._hasSession = true
-      this.prepareIframe().then(() => {
-        this._controller = new HibitIdController(this.toggleIframe)
-      })
     }
+    this.prepareIframe().then(() => {
+      if (this._hasSession) {
+        this._controller = new HibitIdController(this.toggleIframe)
+      }
+    })
   }
 
   get isConnected() {
@@ -52,6 +54,7 @@ export class HibitIdWallet {
       if (this._hasSession) {
         this.showIframe()
       }
+      console.debug('[sdk call Connect]', { chainId })
       const res = await this._rpc!.call<ConnectResponse>(HibitIdExposeRPCMethod.CONNECT, {
         chainId,
       })
@@ -61,7 +64,7 @@ export class HibitIdWallet {
       this._iframe!.hide()
       this._controller?.setOpen(false)
       this._connected = true
-      console.log('[hibit id connected]')
+      console.debug('[sdk connected]')
 
       return {
         address: res.address,
@@ -74,11 +77,13 @@ export class HibitIdWallet {
 
   public getAccount = async () => {
     await this.prepareIframe()
+    console.debug('[sdk call GetAccount]')
     return await this._rpc?.call<WalletAccount>(HibitIdExposeRPCMethod.GET_ACCOUNT, {})
   }
 
   public getChainInfo = async () => {
     await this.prepareIframe()
+    console.debug('[sdk call GetChainInfo]')
     const info = await this._rpc?.call<any>(HibitIdExposeRPCMethod.GET_CHAIN_INFO, {})
     return {
       chainId: {
@@ -97,6 +102,7 @@ export class HibitIdWallet {
   public signMessage = async (message: string) => {
     try {
       await this.prepareIframe()
+      console.debug('[sdk call SignMessage]', { message })
       const res = await this._rpc?.call<SignMessageResponse>(HibitIdExposeRPCMethod.SIGN_MESSAGE, {
         message,
       })
@@ -110,6 +116,7 @@ export class HibitIdWallet {
     const request: GetBalanceRequest = option || {}
     try {
       await this.prepareIframe()
+      console.debug('[sdk call GetBalance]', { request })
       const res = await this._rpc?.call<GetBalanceResponse>(HibitIdExposeRPCMethod.GET_BALANCE, request)
       return res?.balance ?? null
     } catch (e) {
@@ -120,6 +127,7 @@ export class HibitIdWallet {
   public transfer = async (option: TransferRequest) => {
     try {
       await this.prepareIframe()
+      console.debug('[sdk call Transfer]', { option })
       const res = await this._rpc?.call<TransferResponse>(HibitIdExposeRPCMethod.TRANSFER, option)
       return res?.txHash ?? null
     } catch (e) {
@@ -128,6 +136,7 @@ export class HibitIdWallet {
   }
 
   public disconnect = async () => {
+    console.debug('[sdk call Disconnect]')
     await this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
     this._rpc?.destroy()
     this._rpc = null
@@ -143,6 +152,7 @@ export class HibitIdWallet {
     const currentChainId = `${currentChain.chainId.type}_${currentChain.chainId.network}`
     if (currentChainId === chainId) return
 
+    console.debug('[sdk call SwitchToChain]', { chainId })
     await this._rpc?.call(HibitIdExposeRPCMethod.SWITCH_CHAIN, { chainId })
   }
 
@@ -191,10 +201,10 @@ export class HibitIdWallet {
     rpc.expose(ClientExposeRPCMethod.CHAIN_CHANGED, this.onRpcChainChanged);
     rpc.expose(ClientExposeRPCMethod.ACCOUNTS_CHANGED, this.onRpcAccountsChanged);
     
-    console.log('[sdk rpc init]')
+    console.debug('[sdk rpc init]')
     await rpc.isReady
     await this._iframeReadyPromise.promise
-    console.log('[sdk rpc ready]')
+    console.debug('[sdk rpc ready]')
     this._rpc = rpc
   }
 
@@ -219,11 +229,13 @@ export class HibitIdWallet {
   }
   
   private onRpcClose = () => {
+    console.debug('[sdk on Close]')
     this._iframe?.hide()
     this._controller?.setOpen(false)
   }
 
   private onRpcLoginChanged = (input: LoginChangedRequest) => {
+    console.debug('[sdk on LoginChanged]', { input })
     if (!input.isLogin) {
       this.showIframe(true)
     } else {
@@ -240,18 +252,21 @@ export class HibitIdWallet {
   }
 
   private onRpcChainChanged = (input: ChainChangedRequest) => {
+    console.debug('[sdk on ChainChanged]', { input })
     this._eventHandlers.chainChanged.forEach((handler) => {
       handler(input.chainId)
     })
   }
 
   private onRpcAccountsChanged = (input: AccountsChangedRequest) => {
+    console.debug('[sdk on AccountsChanged]', { input })
     this._eventHandlers.accountsChanged.forEach((handler) => {
       handler(input.account)
     })
   }
 
   private onRpcIframeReady = () => {
+    console.debug('[sdk on IframeReady]')
     this._iframeReadyPromise.resolve(true)
   }
 }

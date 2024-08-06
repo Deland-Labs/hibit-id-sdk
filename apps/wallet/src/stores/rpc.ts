@@ -39,31 +39,36 @@ class RPCManager {
     rpc.expose(HibitIdExposeRPCMethod.SWITCH_CHAIN, this.onRpcSwitchChain);
     rpc.expose(HibitIdExposeRPCMethod.DISCONNECT, this.onRpcDisconnect);
 
-    console.log('[wallet rpc init]')
+    console.debug('[wallet rpc init]')
     await rpc.isReady
-    console.log('[wallet rpc ready]')
+    console.debug('[wallet rpc ready]')
     this._rpc = rpc
     this.notifyReady()
   }
 
   public notifyClose = () => {
     this._connectPromise?.reject('User manually closed')
+    console.debug('[wallet notify close]')
     this._rpc?.call(ClientExposeRPCMethod.CLOSE, {})
   }
 
   public notifyReady = () => {
+    console.debug('[wallet notify iframeReady]')
     this._rpc?.call(ClientExposeRPCMethod.IFRAME_READY, {})
   }
 
   public notifyLoginChanged = (isLogin: boolean, sub?: string) => {
+    console.debug('[wallet notify login changed]', { isLogin, sub })
     this._rpc?.call(ClientExposeRPCMethod.LOGIN_CHANGED, { isLogin, sub })
   }
 
   public notifyChainChanged = (chainInfo: ChainInfo) => {
+    console.debug('[wallet notify chain changed]', { chainInfo })
     this._rpc?.call(ClientExposeRPCMethod.CHAIN_CHANGED, { chainId: chainInfo.chainId.toString() } as ChainChangedRequest)
   }
 
   public notifyAccountsChanged = (account: WalletAccount | null) => {
+    console.debug('[wallet notify accounts changed]', { account })
     this._rpc?.call(ClientExposeRPCMethod.ACCOUNTS_CHANGED, { account } as AccountsChangedRequest)
   }
 
@@ -76,19 +81,19 @@ class RPCManager {
   }
 
   private onRpcGetAccount = async (): Promise<WalletAccount> => {
-    console.log('[hibitid]', 'onRpcGetAccount')
+    console.debug('[wallet on GetAccount]')
     this.checkInit()
     return await hibitIdSession.wallet!.getAccount()
   }
 
   private onRpcGetChainInfo = async () => {
-    console.log('[hibitid]', 'onRpcGetChainInfo')
+    console.debug('[wallet on GetChainInfo]')
     this.checkInit()
     return hibitIdSession.wallet!.chainInfo
   }
 
   private onRpcSignMessage = async (input: SignMessageRequest): Promise<SignMessageResponse> => {
-    console.log('[hibitid]', 'onRpcSignMessage')
+    console.debug('[wallet on SignMessage]', { input })
     this.checkInit()
     const signature = await hibitIdSession.wallet!.signMessage(input.message)
     return {
@@ -97,7 +102,7 @@ class RPCManager {
   }
 
   private onRpcConnect = async (input: ConnectRequest): Promise<ConnectResponse> => {
-    console.log('[hibitid]', 'onRpcConnect')
+    console.debug('[wallet on Connect]', { input })
     const chainInfo = getChainByChainId(ChainId.fromString(input.chainId))
     if (!chainInfo) {
       throw new Error('Chain not supported')
@@ -116,7 +121,7 @@ class RPCManager {
   }
 
   private onRpcGetBalance = async ({ assetType, chainId: hibitIdChainId, contractAddress, decimalPlaces }: GetBalanceRequest): Promise<GetBalanceResponse> => {
-    console.log('[hibitid]', 'onRpcGetBalance')
+    console.debug('[wallet on GetBalance]', { assetType, chainId: hibitIdChainId, contractAddress, decimalPlaces })
     this.checkInit()
     if (!contractAddress && typeof assetType !== 'undefined' && assetType !== HibitIdAssetType.Native) {
       throw new Error('Contract address is required for non-native assets')
@@ -145,7 +150,7 @@ class RPCManager {
     contractAddress,
     decimalPlaces
   }: TransferRequest): Promise<TransferResponse> => {
-    console.log('[hibitid]', 'onRpcTransfer')
+    console.debug('[wallet on Transfer]', { toAddress, amount, assetType, chainId: hibitIdChainId, contractAddress, decimalPlaces })
     this.checkInit()
     if (assetType !== HibitIdAssetType.Native && (!contractAddress || !decimalPlaces )) {
       throw new Error('Contract address and decimal is required for non-native assets')
@@ -167,11 +172,12 @@ class RPCManager {
   }
 
   private onRpcDisconnect = async () => {
-    hibitIdSession.disconnect()
+    console.debug('[wallet on Disconnect]')
+    await hibitIdSession.disconnect()
   }
 
   private onRpcSwitchChain = async ({ chainId }: SwitchChainRequest) => {
-    console.log('[hibitid]', 'onRpcSwitchChain')
+    console.debug('[wallet on SwitchChain]', { chainId })
     const [type, network] = chainId.split('_')
     if (!type || !network) {
       throw new Error(`onRpcSwitchChain: Invalid chainId ${chainId}`)
