@@ -3,6 +3,7 @@ import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
 import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitEnv, HibitIdEventHandlerMap, HibitIdPage, LoginChangedRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdChainId, HibitIdExposeRPCMethod } from './enums';
+import { clamp } from './utils';
 
 const LOGIN_SESSION_KEY = 'hibit-id-session'
 
@@ -31,7 +32,7 @@ export class HibitIdWallet {
     }
     this.prepareIframe().then(() => {
       if (this._hasSession) {
-        this._controller = new HibitIdController(this.toggleIframe)
+        this._controller = new HibitIdController(this.toggleIframe, this.handleControllerMove)
       }
     })
   }
@@ -208,6 +209,21 @@ export class HibitIdWallet {
     this._rpc = rpc
   }
 
+  private handleControllerMove = (x: number, y: number) => {
+    if (!this._iframe) return
+    const controllerRect = this._controller?.getBoundingRect()
+    const maxRight = window.innerWidth - (controllerRect?.width ?? 0)
+    const maxBottom = window.innerHeight - (controllerRect?.height ?? 0)
+    const right = clamp(0, controllerRect ? (window.innerWidth - controllerRect.right) : 50, maxRight)
+    const bottom = clamp(0, controllerRect ? (window.innerHeight - controllerRect.top + 20) : 50, maxBottom)
+    this._iframe.updateStyle({
+      // width: '332px',
+      // height: '502px',
+      right: `${right}px`,
+      bottom: `${bottom}px`
+    })
+  }
+
   private showIframe = (fullscreen?: boolean) => {
     if (!this._iframe) return
     if (fullscreen) {
@@ -240,7 +256,7 @@ export class HibitIdWallet {
       this.showIframe(true)
     } else {
       if (!this._controller) {
-        this._controller = new HibitIdController(this.toggleIframe)
+        this._controller = new HibitIdController(this.toggleIframe, this.handleControllerMove)
       }
       if (this._hasSession) {
         return
