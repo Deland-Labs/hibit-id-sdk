@@ -2,6 +2,9 @@ import { IAuthenticateProvider } from "./types";
 import { TelegramAuthenticateProvider } from "./providers/telegram";
 import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 import { prOidc } from "../oidc";
+import { RUNTIME_ENV } from "../runtime";
+import { RuntimeEnv } from "../basicEnums";
+import rpcManager from "../../stores/rpc";
 
 const HIBIT_ID_WEB = import.meta.env.VITE_HIBIT_ID_WEB
 
@@ -35,6 +38,9 @@ export class AuthManager {
     const oidc = await prOidc
     if (!oidc.isUserLoggedIn) {
       return;
+    }
+    if (RUNTIME_ENV === RuntimeEnv.SDK) {
+      rpcManager.notifyAccountsChanged(null)
     }
     await oidc.logout({
       redirectTo: 'specific url',

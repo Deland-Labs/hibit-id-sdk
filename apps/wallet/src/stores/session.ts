@@ -15,6 +15,7 @@ import { GetMnemonicResult, UpdateMnemonicInput } from "../apis/models";
 import { AES, enc, MD5 } from "crypto-js";
 import { HIBIT_ENV } from "../utils/env";
 import { getChainByChainId } from "../utils/chain";
+import authManager from "../utils/auth";
 
 const SESSION_CONFIG_KEY = 'hibitIdSessionConfig'
 
@@ -116,12 +117,15 @@ export class HibitIdSession {
     }
   }
 
-  public disconnect = () => {
+  public disconnect = async () => {
     this.auth = null
     this.wallet = null
     this._account = null
     this._mnemonic = null
     this._password = null
+    if (RUNTIME_ENV === RuntimeEnv.SDK) {
+      await authManager.logout()
+    }
   }
 
   public switchChain = async (chain: ChainInfo) => {
