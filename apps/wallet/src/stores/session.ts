@@ -85,6 +85,9 @@ export class HibitIdSession {
 
   public setChainInfo = (chainInfo: ChainInfo) => {
     this.chainInfo = chainInfo
+    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify({
+      lastChainId: chainInfo.chainId.toString(),
+    } as SessionConfig))
   }
 
   public getValidAddress = async () => {
@@ -108,11 +111,11 @@ export class HibitIdSession {
       console.log('[session connected]', this._account)
   
       if (RUNTIME_ENV === RuntimeEnv.SDK) {
-        rpcManager.resolveConnect(await this.wallet.getAccount())
+        rpcManager.notifyConnected(await this.wallet.getAccount())
       }
     } catch (e) {
       if (RUNTIME_ENV === RuntimeEnv.SDK && !(e instanceof HibitIDError && e.code === HibitIDErrorCode.INVALID_PASSWORD)) {
-        rpcManager.rejectConnect(e instanceof Error ? e.message : JSON.stringify(e))
+        rpcManager.notifyConnected(null)
       }
       throw e
     }
@@ -194,9 +197,6 @@ export class HibitIdSession {
     if (!wallet) {
       throw new Error('Unsupported chain')
     }
-    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify({
-      lastChainId: chainInfo.chainId.toString(),
-    } as SessionConfig))
     return wallet
   }
 }

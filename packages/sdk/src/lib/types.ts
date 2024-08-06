@@ -48,8 +48,7 @@ export interface ConnectRequest {
   chainId: HibitIdChainId
 }
 
-export interface ConnectResponse extends WalletAccount {
-}
+export interface ConnectedRequest extends WalletAccount {}
 
 export interface SignMessageRequest {
   message: string

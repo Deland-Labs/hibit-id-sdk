@@ -1,7 +1,7 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitEnv, HibitIdEventHandlerMap, HibitIdPage, LoginChangedRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
+import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetBalanceRequest, GetBalanceResponse, HibitEnv, HibitIdEventHandlerMap, HibitIdPage, LoginChangedRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdChainId, HibitIdExposeRPCMethod } from './enums';
 import { clamp } from './utils';
 
@@ -15,6 +15,7 @@ export class HibitIdWallet {
   private _controller: HibitIdController | null = null
   private _iframe: HibitIdIframe | null = null
   private _iframeReadyPromise = new BridgePromise<boolean>()
+  private _connectPromise: BridgePromise<WalletAccount> | null = null
   private _eventHandlers: {
     accountsChanged: Array<HibitIdEventHandlerMap['accountsChanged']>
     chainChanged: Array<HibitIdEventHandlerMap['chainChanged']>
@@ -56,12 +57,11 @@ export class HibitIdWallet {
         this.showIframe()
       }
       console.debug('[sdk call Connect]', { chainId })
-      const res = await this._rpc!.call<ConnectResponse>(HibitIdExposeRPCMethod.CONNECT, {
+      this._connectPromise = new BridgePromise<WalletAccount>()
+      this._rpc!.call(HibitIdExposeRPCMethod.CONNECT, {
         chainId,
       })
-      if (!res) {
-        throw new Error('No response from wallet')
-      }
+      const res = await this._connectPromise?.promise
       this._iframe!.hide()
       this._controller?.setOpen(false)
       this._connected = true
@@ -197,6 +197,7 @@ export class HibitIdWallet {
       // origin: 'example.com',
     });
     rpc.expose(ClientExposeRPCMethod.CLOSE, this.onRpcClose);
+    rpc.expose(ClientExposeRPCMethod.CONNECTED, this.onRpcConnected);
     rpc.expose(ClientExposeRPCMethod.IFRAME_READY, this.onRpcIframeReady);
     rpc.expose(ClientExposeRPCMethod.LOGIN_CHANGED, this.onRpcLoginChanged);
     rpc.expose(ClientExposeRPCMethod.CHAIN_CHANGED, this.onRpcChainChanged);
@@ -284,5 +285,10 @@ export class HibitIdWallet {
   private onRpcIframeReady = () => {
     console.debug('[sdk on IframeReady]')
     this._iframeReadyPromise.resolve(true)
+  }
+
+  private onRpcConnected = (input: ConnectedRequest) => {
+    console.debug('[sdk on Connected]')
+    this._connectPromise?.resolve(input)
   }
 }
