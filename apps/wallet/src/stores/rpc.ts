@@ -14,6 +14,7 @@ class RPCManager {
 
   constructor() {
     makeAutoObservable(this)
+    console.debug('[wallet rpc constructor called]')
   }
 
   get rpc() {
