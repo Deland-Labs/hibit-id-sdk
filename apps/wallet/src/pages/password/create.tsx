@@ -7,12 +7,11 @@ import PasswordWarnings from "./warning";
 import { observer } from "mobx-react";
 import LoaderButton from "../../components/LoaderButton";
 import toaster from "../../components/Toaster";
-import { CreateMnemonicInput } from "../../apis/models";
 import { AES, MD5 } from 'crypto-js'
 import { HDNodeWallet } from "ethers";
 import hibitIdSession from "../../stores/session";
 import { useMutation } from "@tanstack/react-query";
-import {CreateMnemonicAsync, MnemonicManager, MnemonicVersion} from "../../apis/services/auth";
+import {MnemonicManager} from "../../apis/services/auth";
 import LogoSection from "../../components/LogoSection";
 import { useTranslation } from "react-i18next";
 

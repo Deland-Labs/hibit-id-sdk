@@ -27,7 +27,6 @@ export class HibitIdSession {
   public auth: Oidc.Tokens | null = null
   public chainInfo: ChainInfo
 
-  private _publicKey: string | null = null
   private _mnemonic: GetMnemonicResult | null = null
   private _password: string | null = null
   private _account: WalletAccount | null = null
@@ -95,15 +94,6 @@ export class HibitIdSession {
 
   public login = async (auth: Oidc.Tokens) => {
     this.auth = auth
-
-    // TODO: get pubkey for encrypted requests
-    // const pubkeyRes = await GetPublicKeyAsync()
-    // if (!pubkeyRes?.publicKeyBase64) {
-    //   // should go to create password page
-    //   throw new HibitIDError(HibitIDErrorCode.PASSWORD_NOT_CREATED)
-    // }
-    // this._publicKey = pubkeyRes.publicKeyBase64
-    this._publicKey = ''
     await this.fetchMnemonic()
     console.log('[session logged in]', this.auth)
   }
@@ -130,7 +120,6 @@ export class HibitIdSession {
     this.auth = null
     this.wallet = null
     this._account = null
-    this._publicKey = null
     this._mnemonic = null
     this._password = null
   }
@@ -153,10 +142,6 @@ export class HibitIdSession {
   }
 
   public fetchMnemonic = async () => {
-    if (this._publicKey === null) {
-      throw new Error('Not logged in')
-    }
-    
     const mnemonicRes = await MnemonicManager.instance.getAsync();
     this._mnemonic = mnemonicRes
   }
