@@ -44,7 +44,7 @@ export class AuthManager {
     }
     await oidc.logout({
       redirectTo: 'specific url',
-      url: HIBIT_ID_WEB,
+      url: HIBIT_ID_WEB.replace(/\/+$/, ''),
     })
   }
 }
