@@ -11,6 +11,9 @@ const SettingsPage: FC = observer(() => {
   const navigate = useNavigate()
   const { t } = useTranslation()
 
+  const userName: string = (hibitIdSession.auth?.decodedIdToken?.preferred_username
+    || hibitIdSession.auth?.decodedIdToken?.unique_name) as string
+  
   return (
     <div className="h-full px-6 overflow-auto">
       <div className="flex items-center gap-2">
@@ -27,7 +30,7 @@ const SettingsPage: FC = observer(() => {
         <div className="mt-4 flex justify-between items-center">
           <div className="flex items-center gap-2 text-xs">
             <AuthenticatorLogo type={AuthenticatorType.Telegram} className="size-6" />
-            <span>{hibitIdSession.auth?.decodedIdToken?.sub as string}</span>
+            <span>{userName}</span>
           </div>
           <button className="btn btn-link btn-xs no-underline p-0" onClick={() => {
             navigate('/account-manage')
