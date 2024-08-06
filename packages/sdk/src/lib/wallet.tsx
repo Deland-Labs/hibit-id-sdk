@@ -52,7 +52,6 @@ export class HibitIdWallet {
       if (this._hasSession) {
         this.showIframe()
       }
-      // this._iframe!.show({ fullscreen: true, style: {} })
       const res = await this._rpc!.call<ConnectResponse>(HibitIdExposeRPCMethod.CONNECT, {
         chainId,
       })
@@ -62,7 +61,6 @@ export class HibitIdWallet {
       this._iframe!.hide()
       this._controller?.setOpen(false)
       this._connected = true
-      // this._controller = new HibitIdController(this.toggleIframe)
       console.log('[hibit id connected]')
 
       return {
