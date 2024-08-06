@@ -34,6 +34,7 @@ export class HibitIdSession {
 
   constructor() {
     makeAutoObservable(this)
+    console.debug('[wallet session constructor called]')
 
     let initialChainInfo = RUNTIME_ENV === RuntimeEnv.TELEGRAM_MINI_APP
       ? HIBIT_ENV === HibitEnv.PROD ? Ton : TonTestnet
