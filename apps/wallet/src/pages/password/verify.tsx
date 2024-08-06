@@ -27,7 +27,7 @@ const formSchema = object({
 const VerifyPasswordPage: FC = observer(() => {
   const navigate = useNavigate()
   const { isUserLoggedIn } = useOidc()
-  const userLoginsQuery = useUserLoginsQuery(isUserLoggedIn)
+  const userLoginsQuery = useUserLoginsQuery()
   const {
     setError,
     register,
