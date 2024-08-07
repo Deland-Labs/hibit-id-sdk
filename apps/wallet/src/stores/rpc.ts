@@ -1,5 +1,5 @@
 import { RPC } from '@mixer/postmessage-rpc'
-import { AccountsChangedRequest, ChainChangedRequest, ClientExposeRPCMethod, ConnectResponse, GetBalanceRequest, GetBalanceResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount, BridgePromise } from "@deland-labs/hibit-id-sdk"
+import { AccountsChangedRequest, ChainChangedRequest, ClientExposeRPCMethod, GetBalanceRequest, GetBalanceResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from "@deland-labs/hibit-id-sdk"
 import hibitIdSession from './session';
 import { makeAutoObservable } from 'mobx';
 import { AssetInfo } from '../utils/chain/chain-wallets/types';
@@ -10,7 +10,6 @@ import { getChainByChainId } from '../utils/chain';
 
 class RPCManager {
   private _rpc: RPC | null = null
-  private _connectPromise: BridgePromise<ConnectResponse> | null = null
 
   constructor() {
     makeAutoObservable(this)
@@ -48,7 +47,7 @@ class RPCManager {
   }
 
   public notifyClose = () => {
-    this._connectPromise?.reject('User manually closed')
+    this.notifyConnected(null)
     console.debug('[wallet notify close]')
     this._rpc?.call(ClientExposeRPCMethod.CLOSE, {})
   }
@@ -56,6 +55,11 @@ class RPCManager {
   public notifyReady = () => {
     console.debug('[wallet notify iframeReady]')
     this._rpc?.call(ClientExposeRPCMethod.IFRAME_READY, {})
+  }
+
+  public notifyConnected = (account: WalletAccount | null) => {
+    console.debug('[wallet notify Connected]')
+    this._rpc?.call(ClientExposeRPCMethod.CONNECTED, account || {})
   }
 
   public notifyLoginChanged = (isLogin: boolean, sub?: string) => {
@@ -71,14 +75,6 @@ class RPCManager {
   public notifyAccountsChanged = (account: WalletAccount | null) => {
     console.debug('[wallet notify accounts changed]', { account })
     this._rpc?.call(ClientExposeRPCMethod.ACCOUNTS_CHANGED, { account } as AccountsChangedRequest)
-  }
-
-  public resolveConnect = (response: ConnectResponse) => {
-    this._connectPromise?.resolve(response)
-  }
-
-  public rejectConnect = (error: string) => {
-    this._connectPromise?.reject(error)
   }
 
   private onRpcGetAccount = async (): Promise<WalletAccount> => {
@@ -102,23 +98,20 @@ class RPCManager {
     }
   }
 
-  private onRpcConnect = async (input: ConnectRequest): Promise<ConnectResponse> => {
+  private onRpcConnect = async (input: ConnectRequest): Promise<void> => {
     console.debug('[wallet on Connect]', { input })
     const chainInfo = getChainByChainId(ChainId.fromString(input.chainId))
     if (!chainInfo) {
       throw new Error('Chain not supported')
     }
-    this._connectPromise = new BridgePromise()
     if (hibitIdSession.wallet) {
       if (!hibitIdSession.chainInfo.chainId.equals(chainInfo.chainId)) {
         await hibitIdSession.switchChain(chainInfo)
       }
-      this.resolveConnect(await hibitIdSession.wallet.getAccount())
+      this.notifyConnected(await hibitIdSession.wallet.getAccount())
     } else {
       hibitIdSession.setChainInfo(chainInfo)
     }
-    const res = await this._connectPromise.promise
-    return res
   }
 
   private onRpcGetBalance = async ({ assetType, chainId: hibitIdChainId, contractAddress, decimalPlaces }: GetBalanceRequest): Promise<GetBalanceResponse> => {
