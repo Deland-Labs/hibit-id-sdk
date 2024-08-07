@@ -34,7 +34,8 @@ export class TonChainWallet extends ChainWallet {
         urlSafe: true,
         bounceable: false,
         testOnly: this.getIsTestNet(),
-      })
+      }),
+      publicKey: this.wallet!.publicKey.toString('hex'),
     }
   }
 
