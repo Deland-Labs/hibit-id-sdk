@@ -55,7 +55,7 @@ const App: FC = observer(() => {
         await hibitIdSession.login(oidcTokens)
         if (!hibitIdSession.isMnemonicCreated) {
           navigate('/create-password')
-        } else {
+        } else if (!hibitIdSession.isConnected) {
           navigate('/verify-password')
         }
       } else {
