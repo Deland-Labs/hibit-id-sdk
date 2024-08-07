@@ -64,13 +64,16 @@ export class HibitIdWallet {
       const res = await this._connectPromise?.promise
       this._iframe!.hide()
       this._controller?.setOpen(false)
-      this._connected = true
-      console.debug('[sdk connected]')
-
-      return {
-        address: res.address,
-        publicKey: res.publicKey,
+      if (res?.address) {
+        this._connected = true
+        console.debug('[sdk connected]')
+  
+        return {
+          address: res.address,
+          publicKey: res.publicKey,
+        }
       }
+      throw new Error('User manually canceled')
     } catch (e) {
       throw new Error(`Connect failed: ${e instanceof Error ? e.message : e}`)
     }
