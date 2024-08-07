@@ -134,6 +134,7 @@ export class HibitIdSession {
     this._account = null
     this._mnemonic = null
     this._password = null
+    sessionStorage.removeItem(PASSWORD_STORAGE_KEY)
   }
 
   public switchChain = async (chain: ChainInfo) => {

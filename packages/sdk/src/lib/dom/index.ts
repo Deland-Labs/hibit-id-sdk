@@ -87,7 +87,7 @@ export class HibitIdIframe {
   private container: HTMLDivElement
   private _visible = false
 
-  constructor(env: HibitEnv, initialPage: HibitIdPage = 'login') {
+  constructor(env: HibitEnv, initialPage: HibitIdPage = 'main') {
     const existed = document.getElementById(IFRAME_CONTAINER_ID)
     if (existed) {
       this.container = existed as HTMLDivElement
