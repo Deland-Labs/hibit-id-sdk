@@ -142,17 +142,25 @@ export class HibitIdWallet {
 
   public disconnect = async () => {
     console.debug('[sdk call Disconnect]')
-    this._controller?.destroy()
-    this._connected = false
-    this._iframeReadyPromise = new BridgePromise<boolean>()
-    sessionStorage.removeItem(LOGIN_SESSION_KEY)
-
     this._disconnectedPromise = new BridgePromise<boolean>()
     this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
     await this._disconnectedPromise.promise
+    this.dispose()
+  }
+
+  public dispose = async () => {
+    console.debug('[sdk call Dispose]')
+    sessionStorage.removeItem(LOGIN_SESSION_KEY)
+    this._controller?.destroy()
+    this._controller = null
+    this._connected = false
+    this._iframeReadyPromise = new BridgePromise<boolean>()
+    this._connectPromise = null
+    this._disconnectedPromise = null
     this._rpc?.destroy()
     this._rpc = null
     this._iframe?.destroy()
+    this._iframe = null
   }
 
   public switchToChain = async (chainId: HibitIdChainId) => {
