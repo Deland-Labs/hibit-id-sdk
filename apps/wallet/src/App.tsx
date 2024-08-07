@@ -101,7 +101,7 @@ const App: FC = observer(() => {
                 <Route path="/account-manage" element={<AccountManagePage />} />
                 <Route path="/token/:addressOrSymbol" element={<TokenDetailPage />} />
                 <Route path="/send/:addressOrSymbol?" element={<SendTokenPage />} />
-                <Route path="/receive/:addressOrSymbol?" element={<ReceiveTokenPage />} />
+                <Route path="/receive" element={<ReceiveTokenPage />} />
               </>
             )}
 

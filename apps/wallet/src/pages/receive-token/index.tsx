@@ -2,21 +2,16 @@ import { observer } from "mobx-react";
 import { FC, useEffect, useState } from "react";
 import hibitIdSession from "../../stores/session";
 import QRCode from 'qrcode'
-import { useNavigate, useParams } from "react-router-dom";
-import { useTokenQuery } from "../../apis/react-query/token";
-import PageLoading from "../../components/PageLoading";
+import { useNavigate } from "react-router-dom";
 import SvgGo from '../../assets/right-arrow.svg?react';
-import { getChainByChainId } from "../../utils/chain";
-import { ChainId } from "../../utils/basicTypes";
 import CopyButton from "../../components/CopyButton";
 
 const ReceiveTokenPage: FC = observer(() => {
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
-  const { addressOrSymbol } = useParams()
-  const tokenQuery = useTokenQuery(addressOrSymbol ?? '')
   const navigate = useNavigate()
 
   const address = hibitIdSession.address
+  const chainInfo = hibitIdSession.chainInfo
 
   useEffect(() => {
     if (!canvas || !address) return;
@@ -24,20 +19,7 @@ const ReceiveTokenPage: FC = observer(() => {
       width: 164,
     })
   }, [canvas, address])
-
-  if (tokenQuery.isLoading || typeof tokenQuery.data === 'undefined') {
-    return <PageLoading />
-  }
-
-  if (tokenQuery.data === null) {
-    return (
-      <div>token not found</div>
-    )
-  }
-
-  const token = tokenQuery.data
-  const chainInfo = getChainByChainId(new ChainId(token.chain, token.chainNetwork))
-
+  
   return (
     <div className="h-full px-6 overflow-auto">
       <div>
