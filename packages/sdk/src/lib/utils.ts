@@ -16,7 +16,7 @@ export const getHibitIdUrl = (env: HibitEnv, initialPage: HibitIdPage) => {
       break
     }
   }
-  url = `${url}/${initialPage === 'login' ? 'login' : ''}`
+  url = `${url}${initialPage === 'login' ? '/login' : ''}`
   return url
 }
 
