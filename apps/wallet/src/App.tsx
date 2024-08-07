@@ -69,6 +69,12 @@ const App: FC = observer(() => {
           }
         } else if (RUNTIME_ENV === RuntimeEnv.SDK) {
           rpcManager.notifyLoginChanged(false)
+          if (rpcManager.passiveDisconnecting) {
+            rpcManager.notifyDisconnected()
+          }
+          if (rpcManager.activeDisconnecting) {
+            rpcManager.notifyAccountsChanged(null)
+          }
         }
       }
       setReady(true)

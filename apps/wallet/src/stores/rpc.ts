@@ -7,6 +7,11 @@ import { Chain, ChainAssetType, ChainId, ChainInfo, ChainNetwork, DecimalPlaces 
 import BigNumber from 'bignumber.js';
 import { ConnectRequest, SwitchChainRequest } from '../../../../packages/sdk/dist/lib/types';
 import { getChainByChainId } from '../utils/chain';
+import authManager from '../utils/auth';
+import { prOidc } from '../utils/oidc';
+
+const PASSIVE_DISCONNECT_STORAGE_KEY = 'hibitId-passive-disconnect'
+const ACTIVE_DISCONNECT_STORAGE_KEY = 'hibitId-active-disconnect'
 
 class RPCManager {
   private _rpc: RPC | null = null
@@ -18,6 +23,14 @@ class RPCManager {
 
   get rpc() {
     return this._rpc
+  }
+
+  get passiveDisconnecting() {
+    return !!sessionStorage.getItem(PASSIVE_DISCONNECT_STORAGE_KEY)
+  }
+
+  get activeDisconnecting() {
+    return !!sessionStorage.getItem(ACTIVE_DISCONNECT_STORAGE_KEY)
   }
 
   public init = async () => {
@@ -46,6 +59,10 @@ class RPCManager {
     this.notifyReady()
   }
 
+  public beginActiveDisconnect = () => {
+    sessionStorage.setItem(ACTIVE_DISCONNECT_STORAGE_KEY, Date.now().toString())
+  }
+
   public notifyClose = () => {
     this.notifyConnected(null)
     console.debug('[wallet notify close]')
@@ -62,6 +79,12 @@ class RPCManager {
     this._rpc?.call(ClientExposeRPCMethod.CONNECTED, account || {})
   }
 
+  public notifyDisconnected = () => {
+    console.debug('[wallet notify Disconnected]')
+    this._rpc?.call(ClientExposeRPCMethod.DISCONNECTED, {})
+    sessionStorage.removeItem(PASSIVE_DISCONNECT_STORAGE_KEY)
+  }
+
   public notifyLoginChanged = (isLogin: boolean, sub?: string) => {
     console.debug('[wallet notify login changed]', { isLogin, sub })
     this._rpc?.call(ClientExposeRPCMethod.LOGIN_CHANGED, { isLogin, sub })
@@ -75,6 +98,7 @@ class RPCManager {
   public notifyAccountsChanged = (account: WalletAccount | null) => {
     console.debug('[wallet notify accounts changed]', { account })
     this._rpc?.call(ClientExposeRPCMethod.ACCOUNTS_CHANGED, { account } as AccountsChangedRequest)
+    sessionStorage.removeItem(ACTIVE_DISCONNECT_STORAGE_KEY)
   }
 
   private onRpcGetAccount = async (): Promise<WalletAccount> => {
@@ -168,6 +192,11 @@ class RPCManager {
   private onRpcDisconnect = async () => {
     console.debug('[wallet on Disconnect]')
     await hibitIdSession.disconnect()
+    const oidc = await prOidc
+    if (oidc.isUserLoggedIn) {
+      sessionStorage.setItem(PASSIVE_DISCONNECT_STORAGE_KEY, Date.now().toString())
+      await authManager.logout()
+    }
   }
 
   private onRpcSwitchChain = async ({ chainId }: SwitchChainRequest) => {
