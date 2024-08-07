@@ -32,14 +32,14 @@ const ChainSelect: FC<ChainSelectProps> = observer(({ value, onChange }) => {
     <Popover
       placement="bottom-start"
       content={(close) => (
-        <div className="min-w-[280px] p-6 rounded-lg bg-base-300 flex flex-col gap-6">
+        <div className="min-w-[280px] max-h-[85vh] p-6 rounded-lg bg-base-300 flex flex-col gap-6">
           <div className="flex-none flex items-center gap-2 text-xs">
             <button className="btn btn-xs btn-square btn-ghost" onClick={close}>
               <SvgRightArrow className="rotate-180" />
             </button>
             <span>Select Network</span>
           </div>
-          <div className="flex-1 flex flex-col gap-6">
+          <div className="flex-1 flex flex-col gap-6 overflow-auto">
             {Object.entries(chains).map(([chainName, chainList]) => (
               <div key={chainName}>
                 <span className="text-neutral text-xs">{`${chainName} ${t('common_ecosystem')}`}</span>
