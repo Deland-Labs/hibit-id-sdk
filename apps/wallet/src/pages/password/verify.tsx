@@ -17,6 +17,7 @@ import { useUserLoginsQuery } from "../../apis/react-query/auth";
 import { useOidc } from "../../utils/oidc";
 import { RUNTIME_ENV } from "../../utils/runtime";
 import { RuntimeEnv } from "../../utils/basicEnums";
+import rpcManager from "../../stores/rpc";
 
 const formSchema = object({
   password: string()
@@ -77,6 +78,9 @@ const VerifyPasswordPage: FC = observer(() => {
           <button
             className="btn btn-link btn-xs p-0 outline-none"
             onClick={() => {
+              if (RUNTIME_ENV === RuntimeEnv.SDK) {
+                rpcManager.beginActiveDisconnect()
+              }
               authManager.logout()
             }}
           >

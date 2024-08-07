@@ -16,6 +16,7 @@ export class HibitIdWallet {
   private _iframe: HibitIdIframe | null = null
   private _iframeReadyPromise = new BridgePromise<boolean>()
   private _connectPromise: BridgePromise<WalletAccount> | null = null
+  private _disconnectedPromise: BridgePromise<boolean> | null = null
   private _eventHandlers: {
     accountsChanged: Array<HibitIdEventHandlerMap['accountsChanged']>
     chainChanged: Array<HibitIdEventHandlerMap['chainChanged']>
@@ -141,14 +142,17 @@ export class HibitIdWallet {
 
   public disconnect = async () => {
     console.debug('[sdk call Disconnect]')
-    await this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
-    this._rpc?.destroy()
-    this._rpc = null
-    this._iframe?.destroy()
     this._controller?.destroy()
     this._connected = false
     this._iframeReadyPromise = new BridgePromise<boolean>()
     sessionStorage.removeItem(LOGIN_SESSION_KEY)
+
+    this._disconnectedPromise = new BridgePromise<boolean>()
+    this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
+    await this._disconnectedPromise.promise
+    this._rpc?.destroy()
+    this._rpc = null
+    this._iframe?.destroy()
   }
 
   public switchToChain = async (chainId: HibitIdChainId) => {
@@ -201,6 +205,7 @@ export class HibitIdWallet {
     });
     rpc.expose(ClientExposeRPCMethod.CLOSE, this.onRpcClose);
     rpc.expose(ClientExposeRPCMethod.CONNECTED, this.onRpcConnected);
+    rpc.expose(ClientExposeRPCMethod.DISCONNECTED, this.onRpcDisconnected);
     rpc.expose(ClientExposeRPCMethod.IFRAME_READY, this.onRpcIframeReady);
     rpc.expose(ClientExposeRPCMethod.LOGIN_CHANGED, this.onRpcLoginChanged);
     rpc.expose(ClientExposeRPCMethod.CHAIN_CHANGED, this.onRpcChainChanged);
@@ -293,5 +298,12 @@ export class HibitIdWallet {
   private onRpcConnected = (input: ConnectedRequest) => {
     console.debug('[sdk on Connected]')
     this._connectPromise?.resolve(input)
+    this._connectPromise = null
+  }
+
+  private onRpcDisconnected = () => {
+    console.debug('[sdk on Disconnected]')
+    this._disconnectedPromise?.resolve(true)
+    this._disconnectedPromise = null
   }
 }

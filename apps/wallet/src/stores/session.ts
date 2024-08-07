@@ -127,9 +127,6 @@ export class HibitIdSession {
     this._account = null
     this._mnemonic = null
     this._password = null
-    if (RUNTIME_ENV === RuntimeEnv.SDK) {
-      await authManager.logout()
-    }
   }
 
   public switchChain = async (chain: ChainInfo) => {
