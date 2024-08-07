@@ -15,9 +15,9 @@ import { GetMnemonicResult, UpdateMnemonicInput } from "../apis/models";
 import { AES, enc, MD5 } from "crypto-js";
 import { HIBIT_ENV } from "../utils/env";
 import { getChainByChainId } from "../utils/chain";
-import authManager from "../utils/auth";
 
-const SESSION_CONFIG_KEY = 'hibitIdSessionConfig'
+const SESSION_CONFIG_KEY = 'hibit-id-config'
+const PASSWORD_STORAGE_KEY = 'hibit-id-p'
 
 interface SessionConfig {
   lastChainId: string
@@ -101,6 +101,12 @@ export class HibitIdSession {
     this.auth = auth
     await this.fetchMnemonic()
     console.log('[session logged in]', this.auth)
+    if (this.isMnemonicCreated) {
+      const storedPassword = sessionStorage.getItem(PASSWORD_STORAGE_KEY)
+      if (storedPassword) {
+        await this.connect(storedPassword)
+      }
+    }
   }
 
   public connect = async (password: string) => {
@@ -108,6 +114,7 @@ export class HibitIdSession {
     try {
       this.wallet = await this.initWallet(this.chainInfo, password)
       this._account = await this.wallet.getAccount()
+      sessionStorage.setItem(PASSWORD_STORAGE_KEY, password)
       console.log('[session connected]', this._account)
   
       if (RUNTIME_ENV === RuntimeEnv.SDK) {

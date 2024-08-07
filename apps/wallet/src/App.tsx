@@ -55,7 +55,7 @@ const App: FC = observer(() => {
         await hibitIdSession.login(oidcTokens)
         if (!hibitIdSession.isMnemonicCreated) {
           navigate('/create-password')
-        } else {
+        } else if (!hibitIdSession.isConnected) {
           navigate('/verify-password')
         }
       } else {
@@ -101,7 +101,7 @@ const App: FC = observer(() => {
                 <Route path="/account-manage" element={<AccountManagePage />} />
                 <Route path="/token/:addressOrSymbol" element={<TokenDetailPage />} />
                 <Route path="/send/:addressOrSymbol?" element={<SendTokenPage />} />
-                <Route path="/receive/:addressOrSymbol?" element={<ReceiveTokenPage />} />
+                <Route path="/receive" element={<ReceiveTokenPage />} />
               </>
             )}
 

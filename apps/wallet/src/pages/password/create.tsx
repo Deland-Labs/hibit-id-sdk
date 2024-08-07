@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { object, string, ref } from 'yup'
 import { useForm } from "react-hook-form";
@@ -35,6 +35,14 @@ const CreatePasswordPage: FC = observer(() => {
     mode: 'onChange',
     resolver: yupResolver(formSchema),
   })
+
+  useEffect(() => {
+    if (errors.password) {
+      errors.password.ref?.scrollIntoView?.({ behavior: 'smooth' })
+    } else if (errors.confirmPassword) {
+      errors.confirmPassword.ref?.scrollIntoView?.({ behavior: 'smooth' })
+    }
+  }, [errors])
 
   const submitMutation = useMutation({
     mutationFn: async (password: string) => {

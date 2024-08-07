@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import SvgGo from '../../assets/right-arrow.svg?react'
 import { useNavigate } from "react-router-dom";
 import { object, string, ref } from 'yup'
@@ -36,6 +36,16 @@ const ResetPasswordPage: FC = observer(() => {
     mode: 'onChange',
     resolver: yupResolver(formSchema),
   })
+
+  useEffect(() => {
+    if (errors.password) {
+      errors.password.ref?.scrollIntoView?.({ behavior: 'smooth' })
+    } else if (errors.newPassword) {
+      errors.newPassword.ref?.scrollIntoView?.({ behavior: 'smooth' })
+    } else if (errors.confirmNewPassword) {
+      errors.confirmNewPassword.ref?.scrollIntoView?.({ behavior: 'smooth' })
+    }
+  }, [errors])
 
   const submitMutation = useMutation({
     mutationFn: async ({ oldPassword, newPassword }: {
