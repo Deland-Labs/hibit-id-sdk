@@ -10,6 +10,7 @@ const HibitToastContainer: FC = () => {
     <ToastContainer
       position='top-center'
       autoClose={3000}
+      pauseOnFocusLoss={false}
       hideProgressBar
       icon={(props) => {
         if (props.type === 'success') {
