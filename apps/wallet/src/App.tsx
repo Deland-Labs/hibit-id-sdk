@@ -16,6 +16,7 @@ import VConsole from 'vconsole';
 import { HIBIT_ENV } from './utils/env';
 
 const MainPage = lazy(() => import('./pages/main'));
+const SelectNetworkPage = lazy(() => import('./pages/select-network'));
 const LoginPage = lazy(() => import('./pages/login'));
 const OidcLoginPage = lazy(() => import('./pages/oidc-login'));
 const TokenDetailPage = lazy(() => import('./pages/token-detail'));
@@ -94,6 +95,7 @@ const App: FC = observer(() => {
             {hibitIdSession.isLoggedIn && (
               <>
                 <Route path="/" element={<MainPage />} />
+                <Route path="/network-select" element={<SelectNetworkPage />} />
                 <Route path="/verify-password" element={<PasswordPage type="verify" />} />
                 <Route path="/create-password" element={<PasswordPage type="create" />} />
                 <Route path="/change-password" element={<PasswordPage type="change" />} />
