@@ -9,6 +9,7 @@ export class HibitIdController {
   private open = false
   private dragging = false
   private mouseDownStartAt = 0
+  private lastTouchPosition = { x: 0, y: 0 }
   private onClick: () => void
   private onMove: (x: number, y: number) => void
 
@@ -22,9 +23,12 @@ export class HibitIdController {
     container.id = CONTROLLER_CONTAINER_ID
     const button = document.createElement('button')
     button.classList.add('hidden')
-    button.onmousedown = this.handleMouseDown
+    button.addEventListener('mousedown', this.handleMouseDown)
+    button.addEventListener('touchstart', this.handleTouchStart)
     window.addEventListener('mouseup', this.handleMouseUp)
+    window.addEventListener('touchend', this.handleTouchEnd)
     window.addEventListener('mousemove', this.handleMouseMove)
+    window.addEventListener('touchmove', this.handleTouchMove)
     container.appendChild(button)
     document.body.appendChild(container)
     
@@ -50,7 +54,9 @@ export class HibitIdController {
   public destroy = () => {
     this.container?.remove()
     window.removeEventListener('mouseup', this.handleMouseUp)
+    window.removeEventListener('touchend', this.handleTouchEnd)
     window.removeEventListener('mousemove', this.handleMouseMove)
+    window.removeEventListener('touchmove', this.handleTouchMove)
   }
 
   private handleClick = () => {
@@ -63,11 +69,20 @@ export class HibitIdController {
     this.mouseDownStartAt = Date.now()
   }
 
+  private handleTouchStart = (e: TouchEvent) => {
+    this.dragging = true
+    this.lastTouchPosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  }
+
   private handleMouseUp = () => {
     this.dragging = false
     if (Date.now() - this.mouseDownStartAt < 200) {
       this.handleClick()
     }
+  }
+
+  private handleTouchEnd = () => {
+    this.dragging = false
   }
 
   private handleMouseMove = (e: MouseEvent) => {
@@ -78,6 +93,22 @@ export class HibitIdController {
       this.container.style.right = `${right}px`
       this.container.style.bottom = `${bottom}px`
       this.onMove(e.clientX, e.clientY)
+    }
+  }
+
+  private handleTouchMove = (e: TouchEvent) => {
+    if (this.dragging) {
+      const movement = {
+        x: e.touches[0].clientX - this.lastTouchPosition.x,
+        y: e.touches[0].clientY - this.lastTouchPosition.y,
+      }
+      this.lastTouchPosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+      const rect = this.getBoundingRect()
+      const right = clamp(0, window.innerWidth - rect.right - movement.x, window.innerWidth - rect.width)
+      const bottom = clamp(0, window.innerHeight - rect.bottom - movement.y, window.innerHeight - rect.height)
+      this.container.style.right = `${right}px`
+      this.container.style.bottom = `${bottom}px`
+      this.onMove(e.touches[0].clientX, e.touches[0].clientY)
     }
   }
 }
