@@ -98,7 +98,7 @@ export class HibitIdIframe {
     container.id = IFRAME_CONTAINER_ID
     const iframe = document.createElement('iframe')
     iframe.src = getHibitIdUrl(env, initialPage)
-    // iframe.allow='publickey-credentials-get *; publickey-credentials-create *'
+    iframe.allow='clipboard-write; publickey-credentials-get *; publickey-credentials-create *'
     container.appendChild(iframe)
     document.body.appendChild(container)
     this.container = container
