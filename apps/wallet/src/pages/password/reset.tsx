@@ -81,7 +81,7 @@ const ResetPasswordPage: FC = observer(() => {
         </button>
         <span className="text-xs">Change wallet password</span>
       </div>
-      <form className="mt-6 flex flex-col gap-6" onSubmit={handleConfirm}>
+      <form className="mt-4 flex flex-col gap-5" onSubmit={handleConfirm}>
         <div>
           <label className="form-control w-full">
             <div className="label">

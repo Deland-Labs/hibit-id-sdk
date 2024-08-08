@@ -66,16 +66,14 @@ const CreatePasswordPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 pb-14 overflow-auto">
-      <div className="text-xs">
+      {/* <div className="text-xs">
         Set wallet password
-      </div>
-      <div className="mt-6">
-        <LogoSection />
-      </div>
+      </div> */}
+      <LogoSection />
       <div className="p-2 mt-6 rounded-lg bg-warning/15 text-warning text-xs">
         {t('page_password_create_warn')}
       </div>
-      <form className="mt-4 flex flex-col gap-6" onSubmit={handleConfirm}>
+      <form className="mt-4 flex flex-col gap-5" onSubmit={handleConfirm}>
         <div>
           <label className="form-control w-full">
             <div className="label">
