@@ -75,11 +75,11 @@ const VerifyPasswordPage: FC = observer(() => {
       <div className="text-xs">
         Unlock wallet
       </div>
-      <div className="mt-6">
+      <div className="mt-4">
         <LogoSection />
       </div>
       {(isUserLoggedIn && RUNTIME_ENV !== RuntimeEnv.TELEGRAM_MINI_APP) && (
-        <div className="text-xs mt-6">
+        <div className="text-xs mt-4">
           <span>Hibit ID logged by your {userLoginsQuery.data?.[0]?.providerDisplayName ?? '--'}</span>
           <button
             className="btn btn-link btn-xs p-0 outline-none"
@@ -94,7 +94,7 @@ const VerifyPasswordPage: FC = observer(() => {
           </button>
         </div>
       )}
-      <form className="mt-4 flex flex-col gap-6" onSubmit={handleConfirm}>
+      <form className="mt-4 flex flex-col gap-5" onSubmit={handleConfirm}>
         <div>
           <label className="form-control w-full">
             <div className="label">
