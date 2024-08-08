@@ -58,7 +58,7 @@ const TokenDetailPage: FC = observer(() => {
         </div>
         <div className="flex items-center gap-10">
           <SendButton token={token} />
-          <ReceiveButton token={token} />
+          <ReceiveButton />
         </div>
       </div>
     </div>

@@ -57,7 +57,7 @@ const WalletMainPage: FC = observer(() => {
         </div>
         <div className="flex gap-10">
           <SendButton token={defaultTokenQuery.data || undefined} />
-          <ReceiveButton token={defaultTokenQuery.data || undefined} />
+          <ReceiveButton />
         </div>
       </div>
 
