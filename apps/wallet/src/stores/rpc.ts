@@ -1,28 +1,25 @@
 import { RPC } from '@mixer/postmessage-rpc'
 import { AccountsChangedRequest, ChainChangedRequest, ClientExposeRPCMethod, GetBalanceRequest, GetBalanceResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from "@deland-labs/hibit-id-sdk"
-import hibitIdSession from './session';
 import { makeAutoObservable } from 'mobx';
-import { AssetInfo } from '../utils/chain/chain-wallets/types';
+import { AssetInfo, ChainWallet } from '../utils/chain/chain-wallets/types';
 import { Chain, ChainAssetType, ChainId, ChainInfo, ChainNetwork, DecimalPlaces } from '../utils/basicTypes';
 import BigNumber from 'bignumber.js';
 import { ConnectRequest, SwitchChainRequest } from '../../../../packages/sdk/dist/lib/types';
 import { getChainByChainId } from '../utils/chain';
 import authManager from '../utils/auth';
 import { prOidc } from '../utils/oidc';
+import hibitIdSession from './session';
 
 const PASSIVE_DISCONNECT_STORAGE_KEY = 'hibitId-passive-disconnect'
 const ACTIVE_DISCONNECT_STORAGE_KEY = 'hibitId-active-disconnect'
 
 class RPCManager {
   private _rpc: RPC | null = null
+  private _wallet: ChainWallet | null = null
 
   constructor() {
     makeAutoObservable(this)
     console.debug('[wallet rpc constructor called]')
-  }
-
-  get rpc() {
-    return this._rpc
   }
 
   get passiveDisconnecting() {
@@ -57,6 +54,11 @@ class RPCManager {
     console.debug('[wallet rpc ready]')
     this._rpc = rpc
     this.notifyReady()
+  }
+
+  public setWallet = (wallet: ChainWallet) => {
+    console.debug('[wallet set wallet]', wallet)
+    this._wallet = wallet
   }
 
   public beginActiveDisconnect = () => {
@@ -104,19 +106,19 @@ class RPCManager {
   private onRpcGetAccount = async (): Promise<WalletAccount> => {
     console.debug('[wallet on GetAccount]')
     this.checkInit()
-    return await hibitIdSession.wallet!.getAccount()
+    return await this._wallet!.getAccount()
   }
 
   private onRpcGetChainInfo = async () => {
     console.debug('[wallet on GetChainInfo]')
     this.checkInit()
-    return hibitIdSession.wallet!.chainInfo
+    return this._wallet!.chainInfo
   }
 
   private onRpcSignMessage = async (input: SignMessageRequest): Promise<SignMessageResponse> => {
     console.debug('[wallet on SignMessage]', { input })
     this.checkInit()
-    const signature = await hibitIdSession.wallet!.signMessage(input.message)
+    const signature = await this._wallet!.signMessage(input.message)
     return {
       signature
     }
@@ -128,11 +130,12 @@ class RPCManager {
     if (!chainInfo) {
       throw new Error('Chain not supported')
     }
-    if (hibitIdSession.wallet) {
-      if (!hibitIdSession.chainInfo.chainId.equals(chainInfo.chainId)) {
+    if (this._wallet) {
+      if (!this._wallet.chainInfo.chainId.equals(chainInfo.chainId)) {
         await hibitIdSession.switchChain(chainInfo)
+        this.setWallet(hibitIdSession.wallet!)
       }
-      this.notifyConnected(await hibitIdSession.wallet.getAccount())
+      this.notifyConnected(await this._wallet.getAccount())
     } else {
       hibitIdSession.setChainInfo(chainInfo)
     }
@@ -144,9 +147,9 @@ class RPCManager {
     if (!contractAddress && typeof assetType !== 'undefined' && assetType !== HibitIdAssetType.Native) {
       throw new Error('Contract address is required for non-native assets')
     }
-    const address = (await hibitIdSession.wallet!.getAccount()).address
-    const chainId = hibitIdChainId ? this.mapChainId(hibitIdChainId) : hibitIdSession.wallet!.chainInfo.chainId
-    const decimal = decimalPlaces ?? hibitIdSession.wallet!.chainInfo.nativeAssetDecimals
+    const address = (await this._wallet!.getAccount()).address
+    const chainId = hibitIdChainId ? this.mapChainId(hibitIdChainId) : this._wallet!.chainInfo.chainId
+    const decimal = decimalPlaces ?? this._wallet!.chainInfo.nativeAssetDecimals
     const assetInfo: AssetInfo = {
       chainAssetType: assetType ? this.mapAssetType(assetType) : ChainAssetType.Native,
       chain: chainId.type,
@@ -154,7 +157,7 @@ class RPCManager {
       contractAddress: contractAddress || '',
       decimalPlaces: new DecimalPlaces(decimal)
     }
-    const balance = await hibitIdSession.wallet!.balanceOf(address, assetInfo)
+    const balance = await this._wallet!.balanceOf(address, assetInfo)
     return {
       balance: balance.shiftedBy(decimal).toString()
     }
@@ -173,8 +176,8 @@ class RPCManager {
     if (assetType !== HibitIdAssetType.Native && (!contractAddress || !decimalPlaces )) {
       throw new Error('Contract address and decimal is required for non-native assets')
     }
-    const chainId = hibitIdChainId ? this.mapChainId(hibitIdChainId) : hibitIdSession.wallet!.chainInfo.chainId
-    const decimal = decimalPlaces ?? hibitIdSession.wallet!.chainInfo.nativeAssetDecimals
+    const chainId = hibitIdChainId ? this.mapChainId(hibitIdChainId) : this._wallet!.chainInfo.chainId
+    const decimal = decimalPlaces ?? this._wallet!.chainInfo.nativeAssetDecimals
     const amountBn = new BigNumber(amount).shiftedBy(-decimal)
     const assetInfo: AssetInfo = {
       chainAssetType: assetType ? this.mapAssetType(assetType) : ChainAssetType.Native,
@@ -183,7 +186,7 @@ class RPCManager {
       contractAddress: contractAddress || '',
       decimalPlaces: new DecimalPlaces(decimal)
     }
-    const txHash = await hibitIdSession.wallet!.transfer(toAddress, amountBn, assetInfo)
+    const txHash = await this._wallet!.transfer(toAddress, amountBn, assetInfo)
     return {
       txHash
     }
@@ -214,7 +217,7 @@ class RPCManager {
   }
 
   private checkInit = () => {
-    if (!hibitIdSession.wallet) {
+    if (!this._wallet) {
       throw new Error('Wallet not initialized')
     }
   }
