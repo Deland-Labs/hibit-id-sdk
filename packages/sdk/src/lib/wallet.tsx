@@ -142,10 +142,10 @@ export class HibitIdWallet {
 
   public disconnect = async () => {
     console.debug('[sdk call Disconnect]')
-    this._disconnectedPromise = new BridgePromise<boolean>()
-    this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
-    await this._disconnectedPromise.promise
-    this.dispose()
+    // this._disconnectedPromise = new BridgePromise<boolean>()
+    // this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
+    // await this._disconnectedPromise.promise
+    // this.dispose()
   }
 
   public dispose = async () => {
