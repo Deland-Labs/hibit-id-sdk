@@ -56,7 +56,7 @@ export class HibitIdSession {
         () => this.wallet,
         (wallet) => {
           if (wallet) {
-            rpcManager.init()
+            rpcManager.setWallet(wallet)
           }
         }
       )
