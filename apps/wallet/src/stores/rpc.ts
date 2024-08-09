@@ -173,7 +173,7 @@ class RPCManager {
   }: TransferRequest): Promise<TransferResponse> => {
     console.debug('[wallet on Transfer]', { toAddress, amount, assetType, chainId: hibitIdChainId, contractAddress, decimalPlaces })
     this.checkInit()
-    if (assetType !== HibitIdAssetType.Native && (!contractAddress || !decimalPlaces )) {
+    if (typeof assetType !== 'undefined' && assetType !== HibitIdAssetType.Native && (!contractAddress || !decimalPlaces )) {
       throw new Error('Contract address and decimal is required for non-native assets')
     }
     const chainId = hibitIdChainId ? this.mapChainId(hibitIdChainId) : this._wallet!.chainInfo.chainId
