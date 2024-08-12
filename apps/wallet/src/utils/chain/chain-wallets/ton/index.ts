@@ -6,7 +6,7 @@ import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { bytesToHex, hexToBytes } from '@openproduct/web-sdk';
 import { sleep } from "../../common";
 import { WalletAccount } from "@deland-labs/hibit-id-sdk";
-import { TonClient, WalletContractV4, internal, Address, toNano, fromNano, OpenedContract, JettonMaster, JettonWallet, beginCell } from "@ton/ton";
+import { TonClient, WalletContractV4, internal, Address, toNano, fromNano, OpenedContract, JettonMaster, JettonWallet, beginCell, SendMode } from '@ton/ton';
 import { KeyPair, mnemonicToPrivateKey } from "@ton/crypto";
 import nacl from "tweetnacl";
 
@@ -103,7 +103,8 @@ export class TonChainWallet extends ChainWallet {
         messages: [internal({
           value: toNano(amount.toString()),
           to: Address.parse(toAddress),
-        })]
+        })],
+        sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS,
       });
       // wait until confirmed
       let currentSeqno = seqno;
@@ -139,7 +140,7 @@ export class TonChainWallet extends ChainWallet {
         to: jettonWallet.address,
         value: toNano('0.1'),
         bounce: true,
-        body: messageBody
+        body: messageBody,
       });
       
       // send jetton
@@ -148,6 +149,7 @@ export class TonChainWallet extends ChainWallet {
         seqno: seqno,
         secretKey: this.keyPair!.secretKey,
         messages: [internalMessage],
+        sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS,
       })
       // wait until confirmed
       let currentSeqno = seqno;

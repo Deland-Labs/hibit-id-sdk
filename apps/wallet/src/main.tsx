@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import 'reflect-metadata'
-import { RUNTIME_ENV, RUNTIME_PARAMS } from './utils/runtime.ts'
+import { IS_IN_IFRAME, RUNTIME_ENV, RUNTIME_PARAMS } from './utils/runtime.ts'
 import App from './App.tsx'
 import './index.css'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './apis/index.ts'
 import './i18n'
@@ -21,10 +21,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <OidcProvider>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <App />
-          <HibitToastContainer />
-        </BrowserRouter>
+        {IS_IN_IFRAME ? (
+          <MemoryRouter>
+            <App />
+            <HibitToastContainer />
+          </MemoryRouter>
+        ) : (
+          <BrowserRouter>
+            <App />
+            <HibitToastContainer />
+          </BrowserRouter>
+        )}
       </QueryClientProvider>
     </OidcProvider>
   </React.StrictMode>
