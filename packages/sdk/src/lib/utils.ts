@@ -1,4 +1,16 @@
-import { HibitEnv, HibitIdPage } from "./types";
+import { AuthParty, HibitEnv, HibitIdPage } from "./types";
+
+export const getSupportedAuthParties = (env: HibitEnv): AuthParty[] => {
+  const url = getHibitIdUrl(env, 'main')
+  // TODO: grow this list
+  return [
+    {
+      key: 'telegram',
+      name: 'Telegram',
+      icon: `${url}/auth-icons/Telegram.svg`,
+    }
+  ]
+}
 
 export const getHibitIdUrl = (env: HibitEnv, initialPage: HibitIdPage) => {
   let url = '';

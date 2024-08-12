@@ -39,6 +39,12 @@ export interface ChainInfo {
   rpcUrls: string[]
 }
 
+export interface AuthParty {
+  key: string
+  name: string
+  icon: string
+}
+
 export interface WalletAccount {
   address: string
   publicKey?: string
