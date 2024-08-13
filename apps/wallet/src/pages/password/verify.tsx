@@ -15,7 +15,7 @@ import LogoSection from "../../components/LogoSection";
 import authManager from "../../utils/auth";
 import { useUserLoginsQuery } from "../../apis/react-query/auth";
 import { useOidc } from "../../utils/oidc";
-import { RUNTIME_ENV } from "../../utils/runtime";
+import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV } from "../../utils/runtime";
 import { RuntimeEnv } from "../../utils/basicEnums";
 import rpcManager from "../../stores/rpc";
 
@@ -53,7 +53,7 @@ const VerifyPasswordPage: FC = observer(() => {
       }
       const pwd = MD5(`${password}${hibitIdSession.userId}`).toString()
       try {
-        await hibitIdSession.connect(pwd)
+        await hibitIdSession.unlock(pwd)
         navigate('/')
       } catch (e) {
         if (e instanceof HibitIDError && e.code === HibitIDErrorCode.INVALID_PASSWORD) {
@@ -78,7 +78,7 @@ const VerifyPasswordPage: FC = observer(() => {
       <div className="mt-4">
         <LogoSection />
       </div>
-      {(isUserLoggedIn && RUNTIME_ENV !== RuntimeEnv.TELEGRAM_MINI_APP) && (
+      {(isUserLoggedIn && !IS_TELEGRAM_MINI_APP) && (
         <div className="text-xs mt-4">
           <span>Hibit ID logged by your {userLoginsQuery.data?.[0]?.providerDisplayName ?? '--'}</span>
           <button

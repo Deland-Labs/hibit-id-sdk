@@ -1,14 +1,14 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetBalanceRequest, GetBalanceResponse, HibitEnv, HibitIdEventHandlerMap, HibitIdPage, LoginChangedRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
+import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetBalanceRequest, GetBalanceResponse, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdChainId, HibitIdExposeRPCMethod } from './enums';
 import { clamp } from './utils';
 
 const LOGIN_SESSION_KEY = 'hibit-id-session'
 
 export class HibitIdWallet {
-  private _env: HibitEnv = 'prod'
+  private _options: HibitIdWalletOptions
   private _hasSession = false
   private _connected = false
   private _rpc: RPC | null = null
@@ -25,8 +25,8 @@ export class HibitIdWallet {
     chainChanged: [],
   }
 
-  constructor(env: HibitEnv) {
-    this._env = env
+  constructor(options: HibitIdWalletOptions) {
+    this._options = options
 
     const sessionString = sessionStorage.getItem(LOGIN_SESSION_KEY)
     if (sessionString) {
@@ -44,6 +44,7 @@ export class HibitIdWallet {
   }
 
   public connect = async (chainId: HibitIdChainId) => {
+    console.debug('[sdk call Connect]', { chainId })
     if (this._connected) {
       const currentChain = await this.getChainInfo()
       if (`${currentChain.chainId.type}_${currentChain.chainId.network}` !== chainId) {
@@ -53,11 +54,9 @@ export class HibitIdWallet {
     }
 
     try {
-      await this.prepareIframe()
       if (this._hasSession) {
         this.showIframe()
       }
-      console.debug('[sdk call Connect]', { chainId })
       this._connectPromise = new BridgePromise<WalletAccount>()
       this._rpc!.call(HibitIdExposeRPCMethod.CONNECT, {
         chainId,
@@ -81,14 +80,14 @@ export class HibitIdWallet {
   }
 
   public getAccount = async () => {
-    await this.prepareIframe()
     console.debug('[sdk call GetAccount]')
+    this.assertConnected()
     return await this._rpc?.call<WalletAccount>(HibitIdExposeRPCMethod.GET_ACCOUNT, {})
   }
 
   public getChainInfo = async () => {
-    await this.prepareIframe()
     console.debug('[sdk call GetChainInfo]')
+    this.assertConnected()
     const info = await this._rpc?.call<any>(HibitIdExposeRPCMethod.GET_CHAIN_INFO, {})
     return {
       chainId: {
@@ -105,9 +104,9 @@ export class HibitIdWallet {
   }
 
   public signMessage = async (message: string) => {
+    console.debug('[sdk call SignMessage]', { message })
+    this.assertConnected()
     try {
-      await this.prepareIframe()
-      console.debug('[sdk call SignMessage]', { message })
       const res = await this._rpc?.call<SignMessageResponse>(HibitIdExposeRPCMethod.SIGN_MESSAGE, {
         message,
       })
@@ -119,9 +118,9 @@ export class HibitIdWallet {
 
   public getBalance = async (option?: GetBalanceRequest) => {
     const request: GetBalanceRequest = option || {}
+    console.debug('[sdk call GetBalance]', { request })
+    this.assertConnected()
     try {
-      await this.prepareIframe()
-      console.debug('[sdk call GetBalance]', { request })
       const res = await this._rpc?.call<GetBalanceResponse>(HibitIdExposeRPCMethod.GET_BALANCE, request)
       return res?.balance ?? null
     } catch (e) {
@@ -130,9 +129,9 @@ export class HibitIdWallet {
   }
 
   public transfer = async (option: TransferRequest) => {
+    console.debug('[sdk call Transfer]', { option })
+    this.assertConnected()
     try {
-      await this.prepareIframe()
-      console.debug('[sdk call Transfer]', { option })
       const res = await this._rpc?.call<TransferResponse>(HibitIdExposeRPCMethod.TRANSFER, option)
       return res?.txHash ?? null
     } catch (e) {
@@ -142,6 +141,7 @@ export class HibitIdWallet {
 
   public disconnect = async () => {
     console.debug('[sdk call Disconnect]')
+    this._connected = false
     // this._disconnectedPromise = new BridgePromise<boolean>()
     // this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
     // await this._disconnectedPromise.promise
@@ -186,6 +186,12 @@ export class HibitIdWallet {
     }
   }
 
+  private assertConnected = () => {
+    if (!this._connected) {
+      throw new Error('Wallet is not connected')
+    }
+  }
+
   private toggleIframe = () => {
     if (!this._iframe) return
     if (this._iframe.visible) {
@@ -195,13 +201,13 @@ export class HibitIdWallet {
     }
   }
 
-  private prepareIframe = async (page?: HibitIdPage) => {
+  private prepareIframe = async () => {
     if (this._rpc && this._iframe) {
       await this._rpc.isReady
       return
     }
 
-    this._iframe = new HibitIdIframe(this._env, page)
+    this._iframe = new HibitIdIframe(this._options.env, this._options.iframeUrlAppendix)
     
     const rpc = new RPC({
       // The window you want to talk to:

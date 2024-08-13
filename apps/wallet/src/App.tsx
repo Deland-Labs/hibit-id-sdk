@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge'
 import { useIsDesktop } from './utils/hooks';
 import PageLoading from './components/PageLoading';
 import { useOidc } from './utils/oidc';
-import { RUNTIME_ENV, RUNTIME_PARAMS_RAW } from './utils/runtime';
+import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV, RUNTIME_PARAMS_RAW } from './utils/runtime';
 import { HibitEnv, RuntimeEnv } from './utils/basicEnums';
 import { AuthenticatorType } from '@deland-labs/hibit-id-sdk';
 import authManager from './utils/auth';
@@ -56,12 +56,12 @@ const App: FC = observer(() => {
         await hibitIdSession.login(oidcTokens)
         if (!hibitIdSession.isMnemonicCreated) {
           navigate('/create-password')
-        } else if (!hibitIdSession.isConnected) {
+        } else if (!hibitIdSession.isUnlocked) {
           navigate('/verify-password')
         }
       } else {
         // login on launch if is as Telegram Mini App
-        if (RUNTIME_ENV === RuntimeEnv.TELEGRAM_MINI_APP && RUNTIME_PARAMS_RAW) {
+        if (IS_TELEGRAM_MINI_APP && RUNTIME_PARAMS_RAW) {
           try {
             await authManager.login(AuthenticatorType.Telegram, RUNTIME_PARAMS_RAW)
           } catch (e) {

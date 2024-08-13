@@ -3,7 +3,7 @@ import { ChainWallet } from "../utils/chain/chain-wallets/types";
 import { Chain, ChainId, ChainInfo } from "../utils/basicTypes";
 import { Ethereum, EthereumSepolia, Ton, TonTestnet } from "../utils/chain/chain-list";
 import { EthereumChainWallet } from "../utils/chain/chain-wallets/ethereum";
-import { RUNTIME_ENV } from "../utils/runtime";
+import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV } from "../utils/runtime";
 import { HibitEnv, RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
 import { WalletAccount } from "@deland-labs/hibit-id-sdk";
@@ -36,7 +36,7 @@ export class HibitIdSession {
     makeAutoObservable(this)
     console.debug('[wallet session constructor called]')
 
-    let initialChainInfo = RUNTIME_ENV === RuntimeEnv.TELEGRAM_MINI_APP
+    let initialChainInfo = IS_TELEGRAM_MINI_APP
       ? HIBIT_ENV === HibitEnv.PROD ? Ton : TonTestnet
       : HIBIT_ENV === HibitEnv.PROD ? Ethereum : EthereumSepolia
     const config = localStorage.getItem(SESSION_CONFIG_KEY)
@@ -67,7 +67,7 @@ export class HibitIdSession {
     return !!this.auth
   }
 
-  get isConnected() {
+  get isUnlocked() {
     return !!this.wallet
   }
 
@@ -104,21 +104,21 @@ export class HibitIdSession {
     if (this.isMnemonicCreated) {
       const storedPassword = sessionStorage.getItem(PASSWORD_STORAGE_KEY)
       if (storedPassword) {
-        await this.connect(storedPassword)
+        await this.unlock(storedPassword)
       }
     }
   }
 
-  public connect = async (password: string) => {
+  public unlock = async (password: string) => {
     this._password = password
     try {
       this.wallet = await this.initWallet(this.chainInfo, password)
       this._account = await this.wallet.getAccount()
       sessionStorage.setItem(PASSWORD_STORAGE_KEY, password)
-      console.log('[session connected]', this._account)
+      console.log('[session unlocked]', this._account)
   
       if (RUNTIME_ENV === RuntimeEnv.SDK) {
-        rpcManager.notifyConnected(await this.wallet.getAccount())
+        rpcManager.notifyConnected(this._account)
       }
     } catch (e) {
       if (RUNTIME_ENV === RuntimeEnv.SDK && !(e instanceof HibitIDError && e.code === HibitIDErrorCode.INVALID_PASSWORD)) {
