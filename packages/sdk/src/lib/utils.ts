@@ -1,7 +1,7 @@
-import { AuthParty, HibitEnv, HibitIdPage } from "./types";
+import { AuthParty, HibitEnv } from "./types";
 
 export const getSupportedAuthParties = (env: HibitEnv): AuthParty[] => {
-  const url = getHibitIdUrl(env, 'main')
+  const url = getHibitIdUrl(env)
   // TODO: grow this list
   return [
     {
@@ -12,7 +12,7 @@ export const getSupportedAuthParties = (env: HibitEnv): AuthParty[] => {
   ]
 }
 
-export const getHibitIdUrl = (env: HibitEnv, initialPage: HibitIdPage) => {
+export const getHibitIdUrl = (env: HibitEnv) => {
   let url = '';
   switch (env) {
     case 'dev': {
@@ -28,7 +28,6 @@ export const getHibitIdUrl = (env: HibitEnv, initialPage: HibitIdPage) => {
       break
     }
   }
-  url = `${url}${initialPage === 'login' ? '/login' : ''}`
   return url
 }
 

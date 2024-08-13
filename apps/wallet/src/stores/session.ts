@@ -67,7 +67,7 @@ export class HibitIdSession {
     return !!this.auth
   }
 
-  get isConnected() {
+  get isUnlocked() {
     return !!this.wallet
   }
 
@@ -104,21 +104,21 @@ export class HibitIdSession {
     if (this.isMnemonicCreated) {
       const storedPassword = sessionStorage.getItem(PASSWORD_STORAGE_KEY)
       if (storedPassword) {
-        await this.connect(storedPassword)
+        await this.unlock(storedPassword)
       }
     }
   }
 
-  public connect = async (password: string) => {
+  public unlock = async (password: string) => {
     this._password = password
     try {
       this.wallet = await this.initWallet(this.chainInfo, password)
       this._account = await this.wallet.getAccount()
       sessionStorage.setItem(PASSWORD_STORAGE_KEY, password)
-      console.log('[session connected]', this._account)
+      console.log('[session unlocked]', this._account)
   
       if (RUNTIME_ENV === RuntimeEnv.SDK) {
-        rpcManager.notifyConnected(await this.wallet.getAccount())
+        rpcManager.notifyConnected(this._account)
       }
     } catch (e) {
       if (RUNTIME_ENV === RuntimeEnv.SDK && !(e instanceof HibitIDError && e.code === HibitIDErrorCode.INVALID_PASSWORD)) {

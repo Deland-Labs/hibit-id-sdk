@@ -1,7 +1,13 @@
 import { HibitIdAssetType, HibitIdChainId } from "./enums"
 
 export type HibitEnv = 'dev' | 'test' | 'prod'
-export type HibitIdPage = 'main' | 'login'
+
+export interface HibitIdWalletOptions {
+  env: HibitEnv
+  chains: HibitIdChainId[]
+  defaultChain: HibitIdChainId
+  iframeUrlAppendix?: string
+}
 
 export interface HibitIdAuth {
   token: string

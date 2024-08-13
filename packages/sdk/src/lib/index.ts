@@ -5,6 +5,7 @@ export { ClientExposeRPCMethod, HibitIdExposeRPCMethod, AuthenticatorType, Hibit
 export { BridgePromise } from './types'
 export type {
   HibitEnv,
+  HibitIdWalletOptions,
   WalletAccount,
   ConnectRequest,
   ConnectedRequest,

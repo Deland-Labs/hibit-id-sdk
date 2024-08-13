@@ -53,7 +53,7 @@ const VerifyPasswordPage: FC = observer(() => {
       }
       const pwd = MD5(`${password}${hibitIdSession.userId}`).toString()
       try {
-        await hibitIdSession.connect(pwd)
+        await hibitIdSession.unlock(pwd)
         navigate('/')
       } catch (e) {
         if (e instanceof HibitIDError && e.code === HibitIDErrorCode.INVALID_PASSWORD) {

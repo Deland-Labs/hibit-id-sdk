@@ -55,7 +55,7 @@ const CreatePasswordPage: FC = observer(() => {
       const encryptedPhrase = AES.encrypt(phrase, pwd).toString()
       await MnemonicManager.instance.createAsync(encryptedPhrase)
       await hibitIdSession.fetchMnemonic()
-      await hibitIdSession.connect(pwd)
+      await hibitIdSession.unlock(pwd)
       navigate('/')
     }
   })
