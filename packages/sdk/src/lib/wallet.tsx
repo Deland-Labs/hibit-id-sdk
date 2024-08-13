@@ -9,6 +9,7 @@ const LOGIN_SESSION_KEY = 'hibit-id-session'
 
 export class HibitIdWallet {
   private _options: HibitIdWalletOptions
+  private _initPromise: BridgePromise<boolean>
   private _hasSession = false
   private _connected = false
   private _rpc: RPC | null = null
@@ -27,12 +28,14 @@ export class HibitIdWallet {
 
   constructor(options: HibitIdWalletOptions) {
     this._options = options
+    this._initPromise = new BridgePromise<boolean>()
 
     const sessionString = sessionStorage.getItem(LOGIN_SESSION_KEY)
     if (sessionString) {
       this._hasSession = true
     }
     this.prepareIframe().then(() => {
+      this._initPromise.resolve(true)
       if (this._hasSession) {
         this._controller = new HibitIdController(this.toggleIframe, this.handleControllerMove)
       }
@@ -45,6 +48,8 @@ export class HibitIdWallet {
 
   public connect = async (chainId: HibitIdChainId) => {
     console.debug('[sdk call Connect]', { chainId })
+    await this._initPromise.promise
+    
     if (this._connected) {
       const currentChain = await this.getChainInfo()
       if (`${currentChain.chainId.type}_${currentChain.chainId.network}` !== chainId) {
