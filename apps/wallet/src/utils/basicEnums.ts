@@ -7,7 +7,6 @@ export enum HibitEnv {
 export enum RuntimeEnv {
   WEB = 'web',
   SDK = 'sdk',
-  TELEGRAM_MINI_APP = 'telegram-mini-app',
 }
 
 export enum BlockNetwork {
