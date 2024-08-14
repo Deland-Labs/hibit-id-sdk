@@ -75,6 +75,7 @@ export class HibitIdController {
     ev.preventDefault()
     ev.stopPropagation()
     this.dragging = true
+    this.mouseDownStartAt = Date.now()
     this.lastTouchPosition = { x: ev.touches[0].clientX, y: ev.touches[0].clientY }
   }
 
@@ -91,6 +92,9 @@ export class HibitIdController {
     ev.preventDefault()
     ev.stopPropagation()
     this.dragging = false
+    if (Date.now() - this.mouseDownStartAt < 200) {
+      this.handleClick()
+    }
   }
 
   private handleMouseMove = (ev: MouseEvent) => {
