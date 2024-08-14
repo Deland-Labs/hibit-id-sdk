@@ -140,6 +140,7 @@ export class HibitIdWallet {
       const res = await this._rpc?.call<TransferResponse>(HibitIdExposeRPCMethod.TRANSFER, option)
       return res?.txHash ?? null
     } catch (e: any) {
+      console.error(e, JSON.stringify(e))
       throw new Error(`Transfer failed: ${e.message || e}`)
     }
   }
