@@ -65,18 +65,21 @@ export class HibitIdController {
   }
 
   private handleMouseDown = (ev: MouseEvent) => {
+    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = true
     this.mouseDownStartAt = Date.now()
   }
 
-  private handleTouchStart = (e: TouchEvent) => {
-    e.stopPropagation()
+  private handleTouchStart = (ev: TouchEvent) => {
+    ev.preventDefault()
+    ev.stopPropagation()
     this.dragging = true
-    this.lastTouchPosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    this.lastTouchPosition = { x: ev.touches[0].clientX, y: ev.touches[0].clientY }
   }
 
   private handleMouseUp = (ev: MouseEvent) => {
+    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = false
     if (Date.now() - this.mouseDownStartAt < 200) {
@@ -85,36 +88,39 @@ export class HibitIdController {
   }
 
   private handleTouchEnd = (ev: TouchEvent) => {
+    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = false
   }
 
-  private handleMouseMove = (e: MouseEvent) => {
-    e.stopPropagation()
+  private handleMouseMove = (ev: MouseEvent) => {
+    ev.preventDefault()
+    ev.stopPropagation()
     if (this.dragging) {
       const rect = this.getBoundingRect()
-      const right = clamp(0, window.innerWidth - rect.right - e.movementX, window.innerWidth - rect.width)
-      const bottom = clamp(0, window.innerHeight - rect.bottom - e.movementY, window.innerHeight - rect.height)
+      const right = clamp(0, window.innerWidth - rect.right - ev.movementX, window.innerWidth - rect.width)
+      const bottom = clamp(0, window.innerHeight - rect.bottom - ev.movementY, window.innerHeight - rect.height)
       this.container.style.right = `${right}px`
       this.container.style.bottom = `${bottom}px`
-      this.onMove(e.clientX, e.clientY)
+      this.onMove(ev.clientX, ev.clientY)
     }
   }
 
-  private handleTouchMove = (e: TouchEvent) => {
-    e.stopPropagation()
+  private handleTouchMove = (ev: TouchEvent) => {
+    ev.preventDefault()
+    ev.stopPropagation()
     if (this.dragging) {
       const movement = {
-        x: e.touches[0].clientX - this.lastTouchPosition.x,
-        y: e.touches[0].clientY - this.lastTouchPosition.y,
+        x: ev.touches[0].clientX - this.lastTouchPosition.x,
+        y: ev.touches[0].clientY - this.lastTouchPosition.y,
       }
-      this.lastTouchPosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+      this.lastTouchPosition = { x: ev.touches[0].clientX, y: ev.touches[0].clientY }
       const rect = this.getBoundingRect()
       const right = clamp(0, window.innerWidth - rect.right - movement.x, window.innerWidth - rect.width)
       const bottom = clamp(0, window.innerHeight - rect.bottom - movement.y, window.innerHeight - rect.height)
       this.container.style.right = `${right}px`
       this.container.style.bottom = `${bottom}px`
-      this.onMove(e.touches[0].clientX, e.touches[0].clientY)
+      this.onMove(ev.touches[0].clientX, ev.touches[0].clientY)
     }
   }
 }
