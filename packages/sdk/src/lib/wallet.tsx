@@ -79,8 +79,8 @@ export class HibitIdWallet {
         }
       }
       throw new Error('User manually canceled')
-    } catch (e) {
-      throw new Error(`Connect failed: ${e instanceof Error ? e.message : e}`)
+    } catch (e: any) {
+      throw new Error(`Connect failed: ${e.message || e}`)
     }
   }
 
@@ -116,8 +116,8 @@ export class HibitIdWallet {
         message,
       })
       return res?.signature ?? null
-    } catch (e) {
-      throw new Error(`Sign message failed: ${e instanceof Error ? e.message : e}`)
+    } catch (e: any) {
+      throw new Error(`Sign message failed: ${e.message || e}`)
     }
   }
 
@@ -128,8 +128,8 @@ export class HibitIdWallet {
     try {
       const res = await this._rpc?.call<GetBalanceResponse>(HibitIdExposeRPCMethod.GET_BALANCE, request)
       return res?.balance ?? null
-    } catch (e) {
-      throw new Error(`Get balance failed: ${e instanceof Error ? e.message : e}`)
+    } catch (e: any) {
+      throw new Error(`Get balance failed: ${e.message || e}`)
     }
   }
 
@@ -139,8 +139,8 @@ export class HibitIdWallet {
     try {
       const res = await this._rpc?.call<TransferResponse>(HibitIdExposeRPCMethod.TRANSFER, option)
       return res?.txHash ?? null
-    } catch (e) {
-      throw new Error(`Transfer failed: ${e instanceof Error ? e.message : e}`)
+    } catch (e: any) {
+      throw new Error(`Transfer failed: ${e.message || e}`)
     }
   }
 

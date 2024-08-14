@@ -145,19 +145,29 @@ export class TonChainWallet extends ChainWallet {
       
       // send jetton
       const seqno = await this.wallet!.getSeqno() || 0;
-      await this.wallet!.sendTransfer({
-        seqno: seqno,
-        secretKey: this.keyPair!.secretKey,
-        messages: [internalMessage],
-        sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS,
-      })
-      // wait until confirmed
-      let currentSeqno = seqno;
-      while (currentSeqno == seqno) {
-        await sleep(3000);
-        currentSeqno = await this.wallet!.getSeqno() || 0;
+      try {
+        await this.wallet!.sendTransfer({
+          seqno: seqno,
+          secretKey: this.keyPair!.secretKey,
+          messages: [internalMessage],
+          sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS,
+        })
+        // wait until confirmed
+        let currentSeqno = seqno;
+        while (currentSeqno == seqno) {
+          await sleep(3000);
+          currentSeqno = await this.wallet!.getSeqno() || 0;
+        }
+        return ''
+      } catch (e: any) {
+        if (e.response?.status === 500) {
+          const message: string = e.response?.data?.error || ''
+          if (/^LITE_SERVER_UNKNOWN:[.\s\S]*inbound external message rejected by transaction[.\s\S]*$/i.test(message)) {
+            throw new Error('Insufficient Ton gas')
+          }
+        }
+        throw e
       }
-      return ''
     }
 
     throw new Error(`Ton: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
