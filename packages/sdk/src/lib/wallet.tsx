@@ -16,7 +16,7 @@ export class HibitIdWallet {
   private _controller: HibitIdController | null = null
   private _iframe: HibitIdIframe | null = null
   private _iframeReadyPromise = new BridgePromise<boolean>()
-  private _connectPromise: BridgePromise<WalletAccount> | null = null
+  private _connectPromise: BridgePromise<WalletAccount | null> | null = null
   private _disconnectedPromise: BridgePromise<boolean> | null = null
   private _eventHandlers: {
     accountsChanged: Array<HibitIdEventHandlerMap['accountsChanged']>
@@ -62,7 +62,7 @@ export class HibitIdWallet {
       if (this._hasSession) {
         this.showIframe()
       }
-      this._connectPromise = new BridgePromise<WalletAccount>()
+      this._connectPromise = new BridgePromise<WalletAccount | null>()
       this._rpc!.call(HibitIdExposeRPCMethod.CONNECT, {
         chainId,
       })
@@ -328,14 +328,18 @@ export class HibitIdWallet {
     this._iframeReadyPromise.resolve(true)
   }
 
-  private onRpcConnected = (input: ConnectedRequest) => {
+  private onRpcConnected = (input: ConnectedRequest | null) => {
     console.debug('[sdk on Connected]')
+    if (input) {
+      this._connected = true
+    }
     this._connectPromise?.resolve(input)
     this._connectPromise = null
   }
 
   private onRpcDisconnected = () => {
     console.debug('[sdk on Disconnected]')
+    this._connected = false
     this._disconnectedPromise?.resolve(true)
     this._disconnectedPromise = null
   }
