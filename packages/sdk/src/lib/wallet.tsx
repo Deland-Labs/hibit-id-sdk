@@ -1,7 +1,7 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetBalanceRequest, GetBalanceResponse, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
+import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdChainId, HibitIdExposeRPCMethod } from './enums';
 import { clamp } from './utils';
 
@@ -84,61 +84,74 @@ export class HibitIdWallet {
     }
   }
 
-  public getAccount = async () => {
+  public getAccount = async (): Promise<WalletAccount> => {
     console.debug('[sdk call GetAccount]')
     this.assertConnected()
-    return await this._rpc?.call<WalletAccount>(HibitIdExposeRPCMethod.GET_ACCOUNT, {})
+    try {
+      const res = await this._rpc?.call<GetAccountResponse>(HibitIdExposeRPCMethod.GET_ACCOUNT, {})
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data
+    } catch (e: any) {
+      throw new Error(`Get account failed: ${this.getRpcErrorMessage(e)}`)
+    }
   }
 
-  public getChainInfo = async () => {
+  public getChainInfo = async (): Promise<ChainInfo> => {
     console.debug('[sdk call GetChainInfo]')
     this.assertConnected()
-    const info = await this._rpc?.call<any>(HibitIdExposeRPCMethod.GET_CHAIN_INFO, {})
-    return {
-      chainId: {
-        type: Number(info.chainId.type.value),
-        network: Number(info.chainId.network.value)
-      },
-      name: info.name,
-      fullName: info.fullName,
-      nativeAssetSymbol: info.nativeAssetSymbol,
-      nativeAssetDecimals: info.nativeAssetDecimals,
-      explorer: info.explorer,
-      rpcUrls: info.rpcUrls,
-    } as ChainInfo
+    try {
+      const res = await this._rpc?.call<GetChainInfoResponse>(HibitIdExposeRPCMethod.GET_CHAIN_INFO, {})
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data.chainInfo
+    } catch (e: any) {
+      throw new Error(`Get chainInfo failed: ${this.getRpcErrorMessage(e)}`)
+    }
   }
 
-  public signMessage = async (message: string) => {
+  public signMessage = async (message: string): Promise<string> => {
     console.debug('[sdk call SignMessage]', { message })
     this.assertConnected()
     try {
       const res = await this._rpc?.call<SignMessageResponse>(HibitIdExposeRPCMethod.SIGN_MESSAGE, {
         message,
       })
-      return res?.signature ?? null
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data.signature ?? null
     } catch (e: any) {
       throw new Error(`Sign message failed: ${this.getRpcErrorMessage(e)}`)
     }
   }
 
-  public getBalance = async (option?: GetBalanceRequest) => {
+  public getBalance = async (option?: GetBalanceRequest): Promise<string> => {
     const request: GetBalanceRequest = option || {}
     console.debug('[sdk call GetBalance]', { request })
     this.assertConnected()
     try {
       const res = await this._rpc?.call<GetBalanceResponse>(HibitIdExposeRPCMethod.GET_BALANCE, request)
-      return res?.balance ?? null
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data.balance ?? null
     } catch (e: any) {
       throw new Error(`Get balance failed: ${this.getRpcErrorMessage(e)}`)
     }
   }
 
-  public transfer = async (option: TransferRequest) => {
+  public transfer = async (option: TransferRequest): Promise<string> => {
     console.debug('[sdk call Transfer]', { option })
     this.assertConnected()
     try {
       const res = await this._rpc?.call<TransferResponse>(HibitIdExposeRPCMethod.TRANSFER, option)
-      return res?.txHash ?? null
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data.txHash ?? null
     } catch (e: any) {
       console.error(e, JSON.stringify(e))
       throw new Error(`Transfer failed: ${this.getRpcErrorMessage(e)}`)

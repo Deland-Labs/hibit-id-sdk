@@ -9,6 +9,8 @@ export type {
   WalletAccount,
   ConnectRequest,
   ConnectedRequest,
+  GetAccountResponse,
+  GetChainInfoResponse,
   SignMessageRequest,
   SignMessageResponse,
   GetBalanceRequest,

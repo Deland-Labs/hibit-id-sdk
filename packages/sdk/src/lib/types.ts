@@ -56,6 +56,14 @@ export interface WalletAccount {
   publicKey?: string
 }
 
+export type RpcBaseResponse<T> = {
+  success: false
+  errMsg: string
+} | {
+  success: true
+  data: T
+}
+
 export interface ConnectRequest {
   chainId: HibitIdChainId
 }
@@ -66,9 +74,9 @@ export interface SignMessageRequest {
   message: string
 }
 
-export interface SignMessageResponse {
+export type SignMessageResponse = RpcBaseResponse<{
   signature: string
-}
+}>
 
 export interface GetBalanceRequest {
   assetType?: HibitIdAssetType
@@ -77,9 +85,9 @@ export interface GetBalanceRequest {
   decimalPlaces?: number
 }
 
-export interface GetBalanceResponse {
+export type GetBalanceResponse = RpcBaseResponse<{
   balance: string // in minimal unit (like wei for eth)
-}
+}>
 
 export interface TransferRequest {
   toAddress: string
@@ -90,17 +98,15 @@ export interface TransferRequest {
   decimalPlaces?: number
 }
 
-export interface TransferResponse {
+export type TransferResponse = RpcBaseResponse<{
   txHash: string
-}
+}>
 
-export interface GetAddressResponse {
-  address: string
-}
+export type GetAccountResponse = RpcBaseResponse<WalletAccount>
 
-export interface GetChainInfoResponse {
+export type GetChainInfoResponse = RpcBaseResponse<{
   chainInfo: ChainInfo
-}
+}>
 
 export interface ChainChangedRequest {
   chainId: HibitIdChainId
