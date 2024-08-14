@@ -80,7 +80,7 @@ export class HibitIdWallet {
       }
       throw new Error('User manually canceled')
     } catch (e: any) {
-      throw new Error(`Connect failed: ${e.message || e}`)
+      throw new Error(`Connect failed: ${this.getRpcErrorMessage(e)}`)
     }
   }
 
@@ -117,7 +117,7 @@ export class HibitIdWallet {
       })
       return res?.signature ?? null
     } catch (e: any) {
-      throw new Error(`Sign message failed: ${e.message || e}`)
+      throw new Error(`Sign message failed: ${this.getRpcErrorMessage(e)}`)
     }
   }
 
@@ -129,7 +129,7 @@ export class HibitIdWallet {
       const res = await this._rpc?.call<GetBalanceResponse>(HibitIdExposeRPCMethod.GET_BALANCE, request)
       return res?.balance ?? null
     } catch (e: any) {
-      throw new Error(`Get balance failed: ${e.message || e}`)
+      throw new Error(`Get balance failed: ${this.getRpcErrorMessage(e)}`)
     }
   }
 
@@ -141,7 +141,7 @@ export class HibitIdWallet {
       return res?.txHash ?? null
     } catch (e: any) {
       console.error(e, JSON.stringify(e))
-      throw new Error(`Transfer failed: ${e.message || e}`)
+      throw new Error(`Transfer failed: ${this.getRpcErrorMessage(e)}`)
     }
   }
 
@@ -325,5 +325,9 @@ export class HibitIdWallet {
     console.debug('[sdk on Disconnected]')
     this._disconnectedPromise?.resolve(true)
     this._disconnectedPromise = null
+  }
+
+  private getRpcErrorMessage = (e: any) => {
+    return (e.message as string)?.split('\n')[0].replace('Error: ', '') || String(e)
   }
 }
