@@ -10,6 +10,9 @@ import { TonClient, WalletContractV4, internal, Address, toNano, fromNano, Opene
 import { KeyPair, mnemonicToPrivateKey } from "@ton/crypto";
 import nacl from "tweetnacl";
 
+const JETTON_TRANSFER_AMOUNT = new BigNumber(0.1)
+const JETTON_FORWARD_AMOUNT = new BigNumber(0.0001)
+
 export class TonChainWallet extends ChainWallet {
   private keyPair: KeyPair | null = null
   private client: TonClient | null = null
@@ -117,6 +120,15 @@ export class TonChainWallet extends ChainWallet {
     // jetton
     if (assetInfo.chainAssetType.equals(ChainAssetType.Jetton)) {
       const ownerAddress = (await this.getAccount()).address
+
+      // gas check
+      const gasBalance = await this.client!.getBalance(Address.parse(ownerAddress));
+      const gasBn = new BigNumber(fromNano(gasBalance))
+      const minGas = JETTON_TRANSFER_AMOUNT.plus(JETTON_FORWARD_AMOUNT)
+      if (gasBn.lt(minGas)) {
+        throw new Error(`Insufficient gas balance (at least ${minGas.toString()} Ton)`)
+      }
+
       const jettonWallet = await this.getJettonWallet(ownerAddress, assetInfo.contractAddress)
 
       const forwardPayload = beginCell()
@@ -131,14 +143,14 @@ export class TonChainWallet extends ChainWallet {
         .storeAddress(Address.parse(toAddress))
         .storeAddress(Address.parse(ownerAddress)) // response destination
         .storeBit(0) // no custom payload
-        .storeCoins(toNano('0.0001')) // forward amount - if >0, will send notification message
+        .storeCoins(toNano(JETTON_FORWARD_AMOUNT.toString())) // forward amount - if >0, will send notification message
         .storeBit(1) // we store forwardPayload as a reference
         .storeRef(forwardPayload)
         .endCell();
 
       const internalMessage = internal({
         to: jettonWallet.address,
-        value: toNano('0.1'),
+        value: toNano(JETTON_TRANSFER_AMOUNT.toString()),
         bounce: true,
         body: messageBody,
       });
@@ -163,7 +175,7 @@ export class TonChainWallet extends ChainWallet {
         if (e.response?.status === 500) {
           const message: string = e.response?.data?.error || ''
           if (/^LITE_SERVER_UNKNOWN:[.\s\S]*inbound external message rejected by transaction[.\s\S]*$/i.test(message)) {
-            throw new Error('Insufficient Ton gas')
+            throw new Error(`Insufficient gas balance (at least ${minGas} Ton)`)
           }
         }
         throw e
