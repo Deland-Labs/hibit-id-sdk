@@ -11,7 +11,11 @@ const App: FC = () => {
   const [chainId, setChainId] = useState('')
 
   useEffect(() => {
-    const wallet = new HibitIdWallet('dev')
+    const wallet = new HibitIdWallet({
+      env: 'dev',
+      chains: [HibitIdChainId.EthereumSepolia, HibitIdChainId.TonTestnet],
+      defaultChain: HibitIdChainId.EthereumSepolia,
+    })
     setWallet(wallet)
     const handleChainChanged = (chainId: HibitIdChainId) => setChainId(chainId)
     wallet.addEventListener('chainChanged', handleChainChanged)

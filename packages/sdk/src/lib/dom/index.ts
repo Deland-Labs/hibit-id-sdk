@@ -64,28 +64,33 @@ export class HibitIdController {
     this.setOpen(!this.open)
   }
 
-  private handleMouseDown = () => {
+  private handleMouseDown = (ev: MouseEvent) => {
+    ev.stopPropagation()
     this.dragging = true
     this.mouseDownStartAt = Date.now()
   }
 
   private handleTouchStart = (e: TouchEvent) => {
+    e.stopPropagation()
     this.dragging = true
     this.lastTouchPosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }
   }
 
-  private handleMouseUp = () => {
+  private handleMouseUp = (ev: MouseEvent) => {
+    ev.stopPropagation()
     this.dragging = false
     if (Date.now() - this.mouseDownStartAt < 200) {
       this.handleClick()
     }
   }
 
-  private handleTouchEnd = () => {
+  private handleTouchEnd = (ev: TouchEvent) => {
+    ev.stopPropagation()
     this.dragging = false
   }
 
   private handleMouseMove = (e: MouseEvent) => {
+    e.stopPropagation()
     if (this.dragging) {
       const rect = this.getBoundingRect()
       const right = clamp(0, window.innerWidth - rect.right - e.movementX, window.innerWidth - rect.width)
@@ -97,6 +102,7 @@ export class HibitIdController {
   }
 
   private handleTouchMove = (e: TouchEvent) => {
+    e.stopPropagation()
     if (this.dragging) {
       const movement = {
         x: e.touches[0].clientX - this.lastTouchPosition.x,
