@@ -25,10 +25,6 @@ export class HibitIdController {
     button.classList.add('hidden')
     button.addEventListener('mousedown', this.handleMouseDown)
     button.addEventListener('touchstart', this.handleTouchStart)
-    window.addEventListener('mouseup', this.handleMouseUp)
-    window.addEventListener('touchend', this.handleTouchEnd)
-    window.addEventListener('mousemove', this.handleMouseMove)
-    window.addEventListener('touchmove', this.handleTouchMove)
     container.appendChild(button)
     document.body.appendChild(container)
     
@@ -53,10 +49,6 @@ export class HibitIdController {
 
   public destroy = () => {
     this.container?.remove()
-    window.removeEventListener('mouseup', this.handleMouseUp)
-    window.removeEventListener('touchend', this.handleTouchEnd)
-    window.removeEventListener('mousemove', this.handleMouseMove)
-    window.removeEventListener('touchmove', this.handleTouchMove)
   }
 
   private handleClick = () => {
@@ -65,32 +57,47 @@ export class HibitIdController {
   }
 
   private handleMouseDown = (ev: MouseEvent) => {
+    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = true
     this.mouseDownStartAt = Date.now()
+    window.addEventListener('mouseup', this.handleMouseUp)
+    window.addEventListener('mousemove', this.handleMouseMove)
   }
 
   private handleTouchStart = (ev: TouchEvent) => {
+    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = true
+    this.mouseDownStartAt = Date.now()
     this.lastTouchPosition = { x: ev.touches[0].clientX, y: ev.touches[0].clientY }
+    window.addEventListener('touchend', this.handleTouchEnd)
+    window.addEventListener('touchmove', this.handleTouchMove)
   }
 
   private handleMouseUp = (ev: MouseEvent) => {
+    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = false
     if (Date.now() - this.mouseDownStartAt < 200) {
       this.handleClick()
     }
+    window.removeEventListener('mouseup', this.handleMouseUp)
+    window.removeEventListener('mousemove', this.handleMouseMove)
   }
 
   private handleTouchEnd = (ev: TouchEvent) => {
+    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = false
+    if (Date.now() - this.mouseDownStartAt < 200) {
+      this.handleClick()
+    }
+    window.removeEventListener('touchend', this.handleTouchEnd)
+    window.removeEventListener('touchmove', this.handleTouchMove)
   }
 
   private handleMouseMove = (ev: MouseEvent) => {
-    ev.preventDefault()
     ev.stopPropagation()
     if (this.dragging) {
       const rect = this.getBoundingRect()
@@ -103,7 +110,6 @@ export class HibitIdController {
   }
 
   private handleTouchMove = (ev: TouchEvent) => {
-    ev.preventDefault()
     ev.stopPropagation()
     if (this.dragging) {
       const movement = {
