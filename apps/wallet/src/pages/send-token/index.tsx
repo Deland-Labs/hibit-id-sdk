@@ -72,10 +72,10 @@ const SendTokenPage: FC = observer(() => {
       address: string
       amount: string
     }) => {
-      if (!hibitIdSession.wallet || !token) {
+      if (!hibitIdSession.walletPool || !token) {
         throw new Error('Wallet or token not ready')
       }
-      return await hibitIdSession.wallet.transfer(
+      return await hibitIdSession.walletPool.transfer(
         address,
         new BigNumber(amount),
         token
@@ -90,7 +90,7 @@ const SendTokenPage: FC = observer(() => {
   }, [tokenQuery.data])
 
   const handleSend = handleSubmit(async ({ toAddress, amount }) => {
-    if (!hibitIdSession.wallet || !token) {
+    if (!hibitIdSession.walletPool || !token) {
       return
     }
     try {

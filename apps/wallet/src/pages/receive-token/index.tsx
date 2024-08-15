@@ -10,7 +10,7 @@ const ReceiveTokenPage: FC = observer(() => {
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
   const navigate = useNavigate()
 
-  const address = hibitIdSession.address
+  const address = hibitIdSession.account?.address ?? ''
   const chainInfo = hibitIdSession.chainInfo
 
   useEffect(() => {
