@@ -67,7 +67,7 @@ const CreatePasswordPage: FC = observer(() => {
   return (
     <div className="h-full px-6 pb-14 overflow-auto">
       {/* <div className="text-xs">
-        Set wallet password
+        Set Password
       </div> */}
       <LogoSection />
       <div className="p-2 mt-6 rounded-lg bg-warning/15 text-warning text-xs">
@@ -77,7 +77,7 @@ const CreatePasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Wallet Password</span>
+              <span className="label-text text-neutral text-xs">Set Password</span>
             </div>
             <input
               {...register('password')}
@@ -95,7 +95,7 @@ const CreatePasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Confirm Wallet Password</span>
+              <span className="label-text text-neutral text-xs">Confirm Password</span>
             </div>
             <input
               {...register('confirmPassword')}

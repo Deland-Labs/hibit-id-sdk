@@ -80,7 +80,7 @@ const VerifyPasswordPage: FC = observer(() => {
       </div>
       {(isUserLoggedIn && !IS_TELEGRAM_MINI_APP) && (
         <div className="text-xs mt-4">
-          <span>Hibit ID logged by your {userLoginsQuery.data?.[0]?.providerDisplayName ?? '--'}</span>
+          <span>Wallet authenticated via {userLoginsQuery.data?.[0]?.providerDisplayName ?? '--'}</span>
           <button
             className="btn btn-link btn-xs p-0 outline-none"
             onClick={() => {
@@ -98,7 +98,7 @@ const VerifyPasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Wallet Password</span>
+              <span className="label-text text-neutral text-xs">Password</span>
             </div>
             <input
               {...register('password')}
