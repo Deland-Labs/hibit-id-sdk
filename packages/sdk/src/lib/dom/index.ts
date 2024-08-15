@@ -65,22 +65,18 @@ export class HibitIdController {
   }
 
   private handleMouseDown = (ev: MouseEvent) => {
-    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = true
     this.mouseDownStartAt = Date.now()
   }
 
   private handleTouchStart = (ev: TouchEvent) => {
-    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = true
-    this.mouseDownStartAt = Date.now()
     this.lastTouchPosition = { x: ev.touches[0].clientX, y: ev.touches[0].clientY }
   }
 
   private handleMouseUp = (ev: MouseEvent) => {
-    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = false
     if (Date.now() - this.mouseDownStartAt < 200) {
@@ -89,12 +85,8 @@ export class HibitIdController {
   }
 
   private handleTouchEnd = (ev: TouchEvent) => {
-    ev.preventDefault()
     ev.stopPropagation()
     this.dragging = false
-    if (Date.now() - this.mouseDownStartAt < 200) {
-      this.handleClick()
-    }
   }
 
   private handleMouseMove = (ev: MouseEvent) => {
