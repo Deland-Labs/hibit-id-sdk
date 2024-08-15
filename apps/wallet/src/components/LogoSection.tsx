@@ -9,7 +9,7 @@ const LogoSection: FC = () => {
       </div> */}
       <h1 className="mt-2 text-neutral">Hibit ID</h1>
       <p className="mt-2 font-bold text-xl">
-        Link <span className="text-primary">Web2</span> to <span className="text-primary">Web3</span> world
+        Unlocking <span className="text-primary">Web3.0</span> Wealth
       </p>
     </section>
   )

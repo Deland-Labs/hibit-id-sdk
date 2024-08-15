@@ -79,13 +79,13 @@ const ResetPasswordPage: FC = observer(() => {
         <button className="btn btn-ghost btn-square btn-sm items-center" onClick={() => navigate(-1)}>
           <SvgGo className="size-6 rotate-180" />
         </button>
-        <span className="text-xs">Change wallet password</span>
+        <span className="text-xs">Change Wallet Password</span>
       </div>
       <form className="mt-4 flex flex-col gap-5" onSubmit={handleConfirm}>
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Wallet Password</span>
+              <span className="label-text text-neutral text-xs">Password</span>
             </div>
             <input
               {...register('password')}
@@ -103,7 +103,7 @@ const ResetPasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">New Wallet Password</span>
+              <span className="label-text text-neutral text-xs">New Password</span>
             </div>
             <input
               {...register('newPassword')}
@@ -120,7 +120,7 @@ const ResetPasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Confirm Wallet Password</span>
+              <span className="label-text text-neutral text-xs">Confirm Password</span>
             </div>
             <input
               {...register('confirmNewPassword')}
