@@ -259,8 +259,6 @@ export class HibitIdWallet {
     const right = clamp(0, controllerRect ? (window.innerWidth - controllerRect.right) : 50, maxRight)
     const bottom = clamp(0, controllerRect ? (window.innerHeight - controllerRect.top + 20) : 50, maxBottom)
     this._iframe.updateStyle({
-      // width: '332px',
-      // height: '502px',
       right: `${right}px`,
       bottom: `${bottom}px`
     })
@@ -269,20 +267,13 @@ export class HibitIdWallet {
   private showIframe = (fullscreen?: boolean) => {
     if (!this._iframe) return
     if (fullscreen) {
-      this._iframe.show({ fullscreen: true, style: {} })
+      this._iframe.show(true)
     } else {
       const controllerRect = this._controller?.getBoundingRect()
-      this._iframe.show({
-        fullscreen: false,
-        style: {
-          maxWidth: '100%',
-          maxHeight: '100%',
-          width: '332px',
-          height: '502px',
-          right: `${controllerRect ? (window.innerWidth - controllerRect.right) : 50}px`,
-          bottom: `${controllerRect ? (window.innerHeight - controllerRect.top + 20) : 50}px`,
-        }
-      })
+      this._iframe.show(false, controllerRect ? {
+        right: window.innerWidth - controllerRect.right,
+        bottom: window.innerHeight - controllerRect.top + 20,
+      } : undefined)
     }
   }
   
