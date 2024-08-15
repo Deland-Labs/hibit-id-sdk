@@ -1,6 +1,6 @@
 import { BlockNetwork } from '../basicEnums';
 import { Chain, ChainId } from '../basicTypes';
-import { Ethereum, EthereumAvalanche, EthereumAvalancheFuji, EthereumBase, EthereumBaseSepolia, EthereumBsc, EthereumBscTestnet, EthereumScroll, EthereumScrollSepolia, EthereumSepolia, Ton, TonTestnet } from './chain-list';
+import { Ethereum, EthereumAvalanche, EthereumAvalancheFuji, EthereumBase, EthereumBaseSepolia, EthereumBsc, EthereumBscTestnet, EthereumScroll, EthereumScrollSepolia, EthereumSepolia, EthereumBitlayer, EthereumBitlayerTestnet, Ton, TonTestnet } from './chain-list';
 import { ChainInfo } from '../basicTypes';
 import { BLOCK_NETWORK } from '../env';
 
@@ -11,6 +11,7 @@ const SupportedChainsForMainnet = [
   EthereumBase,
   EthereumScroll,
   EthereumAvalanche,
+  EthereumBitlayer,
   // Bitcoin,
   // Solana,
   Ton,
@@ -22,6 +23,7 @@ const SupportedChainsForTestnet = [
   EthereumBaseSepolia,
   EthereumScrollSepolia,
   EthereumAvalancheFuji,
+  EthereumBitlayerTestnet,
   // BitcoinTestnet,
   // SolanaTestnet,
   TonTestnet,
