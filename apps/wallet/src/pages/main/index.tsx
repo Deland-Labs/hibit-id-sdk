@@ -27,7 +27,7 @@ const WalletMainPage: FC = observer(() => {
     enabled: !!tokenListQuery.data
   })
 
-  const address = hibitIdSession.address
+  const address = hibitIdSession.account?.address ?? ''
 
   return (
     <div className="h-full px-6 relative flex flex-col gap-6 overflow-auto">

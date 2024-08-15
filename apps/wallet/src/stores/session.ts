@@ -1,13 +1,11 @@
 import { makeAutoObservable, reaction } from "mobx";
-import { ChainWallet } from "../utils/chain/chain-wallets/types";
-import { Chain, ChainId, ChainInfo } from "../utils/basicTypes";
+import { ChainWalletPool } from "../utils/chain/chain-wallets";
+import { ChainId, ChainInfo } from "../utils/basicTypes";
 import { Ethereum, EthereumSepolia, Ton, TonTestnet } from "../utils/chain/chain-list";
-import { EthereumChainWallet } from "../utils/chain/chain-wallets/ethereum";
 import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV } from "../utils/runtime";
 import { HibitEnv, RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
 import { WalletAccount } from "@deland-labs/hibit-id-sdk";
-import { TonChainWallet } from "../utils/chain/chain-wallets/ton";
 import { Oidc } from '../utils/oidc/lib/oidc-spa-4.11.1/src';
 import { MnemonicManager, UpdateMnemonicAsync } from '../apis/services/auth';
 import { HibitIDError, HibitIDErrorCode } from "../utils/error-code";
@@ -24,7 +22,7 @@ interface SessionConfig {
 }
 
 export class HibitIdSession {
-  public wallet: ChainWallet | null = null
+  public walletPool: ChainWalletPool | null = null
   public auth: Oidc.Tokens | null = null
   public chainInfo: ChainInfo
 
@@ -51,12 +49,20 @@ export class HibitIdSession {
     this.chainInfo = initialChainInfo
 
     if (RUNTIME_ENV === RuntimeEnv.SDK) {
-      // re-init rpcManager to avoid stale callback closure
       reaction(
-        () => this.wallet,
-        (wallet) => {
-          if (wallet) {
-            rpcManager.setWallet(wallet)
+        () => this.chainInfo,
+        (chainInfo) => {
+          if (chainInfo) {
+            rpcManager.setChainInfo(chainInfo)
+          }
+        },
+        { fireImmediately: true }
+      )
+      reaction(
+        () => this.walletPool,
+        (walletPool) => {
+          if (walletPool) {
+            rpcManager.setWalletPool(walletPool)
           }
         }
       )
@@ -68,7 +74,7 @@ export class HibitIdSession {
   }
 
   get isUnlocked() {
-    return !!this.wallet
+    return !!this.walletPool
   }
 
   get isMnemonicCreated() {
@@ -79,8 +85,8 @@ export class HibitIdSession {
     return this._mnemonic?.userId || ''
   }
 
-  get address() {
-    return this._account?.address || ''
+  get account() {
+    return this._account
   }
 
   public setChainInfo = (chainInfo: ChainInfo) => {
@@ -112,8 +118,8 @@ export class HibitIdSession {
   public unlock = async (password: string) => {
     this._password = password
     try {
-      this.wallet = await this.initWallet(this.chainInfo, password)
-      this._account = await this.wallet.getAccount()
+      this.walletPool = this.initWalletPool(password)
+      this._account = await this.walletPool.getAccount(this.chainInfo.chainId)
       sessionStorage.setItem(PASSWORD_STORAGE_KEY, password)
       console.log('[session unlocked]', this._account)
   
@@ -130,7 +136,7 @@ export class HibitIdSession {
 
   public disconnect = async () => {
     this.auth = null
-    this.wallet = null
+    this.walletPool = null
     this._account = null
     this._mnemonic = null
     this._password = null
@@ -139,13 +145,12 @@ export class HibitIdSession {
 
   public switchChain = async (chain: ChainInfo) => {
     if (this.chainInfo.chainId.equals(chain.chainId)) return
-    if (!this._password) {
+    if (!this.walletPool) {
       throw new HibitIDError(HibitIDErrorCode.WALLET_LOCKED)
     }
-    this.wallet = await this.initWallet(chain, this._password)
-    const oldAddress = this._account?.address
-    this._account = await this.wallet.getAccount()
     this.setChainInfo(chain)
+    const oldAddress = this._account?.address
+    this._account = await this.walletPool.getAccount(chain.chainId)
     if (RUNTIME_ENV === RuntimeEnv.SDK) {
       rpcManager.notifyChainChanged(chain)
       if (oldAddress !== this._account.address) {
@@ -174,7 +179,7 @@ export class HibitIdSession {
     const phrase = AES.decrypt(this._mnemonic.mnemonicContent, oldPwd).toString(enc.Utf8);
     const encryptedContent = AES.encrypt(phrase, newPwd).toString()
     await UpdateMnemonicAsync(new UpdateMnemonicInput({
-      aesKey: '',  // TODO: 
+      aesKey: '',  // TODO:
       oldMnemonicContent: this._mnemonic.mnemonicContent,
       oldVersion: 0,  // TODO:
       newMnemonicContent: encryptedContent,
@@ -184,7 +189,7 @@ export class HibitIdSession {
     this._password = newPwd
   }
 
-  private initWallet = async (chainInfo: ChainInfo, password: string): Promise<ChainWallet> => {
+  private initWalletPool = (password: string): ChainWalletPool => {
     if (!this._mnemonic?.id || !this._mnemonic?.mnemonicContent) {
       throw new HibitIDError(HibitIDErrorCode.MNEMONIC_NOT_CREATED)
     }
@@ -192,17 +197,8 @@ export class HibitIdSession {
     if (!phrase) {
       throw new HibitIDError(HibitIDErrorCode.INVALID_PASSWORD)
     }
-    let wallet: ChainWallet | null = null
-    // TODO: add more chains
-    if (chainInfo.chainId.type.equals(Chain.Ethereum)) {
-      wallet = new EthereumChainWallet(chainInfo, phrase)
-    } else if (chainInfo.chainId.type.equals(Chain.Ton)) {
-      wallet = new TonChainWallet(chainInfo, phrase)
-    }
-    if (!wallet) {
-      throw new Error('Unsupported chain')
-    }
-    return wallet
+    const pool = new ChainWalletPool(phrase)
+    return pool
   }
 }
 

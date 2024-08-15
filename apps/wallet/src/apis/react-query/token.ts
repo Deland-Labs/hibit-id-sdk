@@ -44,13 +44,14 @@ export const useTokenQuery = (addressOrSymbol: string) => {
 
 export const useTokenBalanceQuery = (token?: RootAssetInfo) => {
   return useQuery({
-    queryKey: [QueryCacheKey.GET_TOKEN_BALANCE, hibitIdSession.wallet?.chainInfo, token?.assetId.toString()],
+    queryKey: [QueryCacheKey.GET_TOKEN_BALANCE, token?.assetId.toString()],
     queryFn: async () => {
-      if (!hibitIdSession.wallet || !token) {
+      if (!hibitIdSession.walletPool || !token) {
         return new BigNumber(0)
       }
-      const address = (await hibitIdSession.wallet.getAccount()).address
-      return (await hibitIdSession.wallet?.balanceOf(address, token))?.dp(SYSTEM_MAX_DECIMALS, BigNumber.ROUND_FLOOR)
+      const chainId = new ChainId(token.chain, token.chainNetwork)
+      const address = (await hibitIdSession.walletPool.getAccount(chainId)).address
+      return (await hibitIdSession.walletPool.balanceOf(address, token))?.dp(SYSTEM_MAX_DECIMALS, BigNumber.ROUND_FLOOR)
     },
     enabled: !!token,
     staleTime: 10000,
