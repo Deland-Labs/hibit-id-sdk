@@ -4,6 +4,8 @@ import { clamp, getHibitIdUrl } from "../utils"
 import './index.css'
 
 export class HibitIdController {
+  public readonly isDesktop: boolean
+  public readonly isTouchDevice: boolean
   private container: HTMLDivElement
   private button: HTMLButtonElement
   private open = false
@@ -16,20 +18,40 @@ export class HibitIdController {
   constructor(onClick: () => void, onMove: (x: number, y: number) => void) {
     this.onClick = onClick
     this.onMove = onMove
+    this.isDesktop = window.innerWidth > 576
+    this.isTouchDevice = 
+      ( 'ontouchstart' in window ) || 
+      ( navigator.maxTouchPoints > 0 )
 
     const existed = document.getElementById(CONTROLLER_CONTAINER_ID)
     existed?.remove()
     const container = document.createElement('div')
     container.id = CONTROLLER_CONTAINER_ID
+    if (this.isDesktop) {
+      container.classList.add('desktop')
+    }
     const button = document.createElement('button')
     button.classList.add('hidden')
-    button.addEventListener('mousedown', this.handleMouseDown)
-    button.addEventListener('touchstart', this.handleTouchStart)
+    if (this.isTouchDevice) {
+      button.addEventListener('touchstart', this.handleTouchStart)
+    } else {
+      button.addEventListener('mousedown', this.handleMouseDown)
+    }
     container.appendChild(button)
     document.body.appendChild(container)
     
     this.container = container
     this.button = button
+  }
+
+  get defaultPosition() {
+    return this.isDesktop ? {
+      right: 50,
+      bottom: 50,
+    } : {
+      right: 16,
+      bottom: 16,
+    }
   }
 
   public getBoundingRect = () => {
@@ -129,10 +151,12 @@ export class HibitIdController {
 
 export class HibitIdIframe {
   public iframe: HTMLIFrameElement
+  public readonly isDesktop: boolean
   private container: HTMLDivElement
   private _visible = false
 
   constructor(env: HibitEnv, urlAppendix: string = '') {
+    this.isDesktop = window.innerWidth > 576
     const existed = document.getElementById(IFRAME_CONTAINER_ID)
     if (existed) {
       this.container = existed as HTMLDivElement
@@ -163,11 +187,8 @@ export class HibitIdIframe {
     })
   }
 
-  public show = (options: {
-    fullscreen: boolean,
-    style: Record<string, string>
-  }) => {
-    if (options.fullscreen) {
+  public show = (fullscreen?: boolean, pos?: { right: number, bottom: number }) => {
+    if (fullscreen) {
       this.updateStyle({
         top: '0',
         left: '0',
@@ -180,7 +201,12 @@ export class HibitIdIframe {
       this.updateStyle({
         top: 'unset',
         left: 'unset',
-        ...options.style
+        maxWidth: '100%',
+        maxHeight: '100%',
+        width: this.isDesktop ? '332px' : 'calc(100% - 32px)',
+        height: this.isDesktop ? '502px' : '560px',
+        right: `${pos?.right ?? (this.isDesktop ? 50 : 16)}px`,
+        bottom: `${pos?.bottom ?? (this.isDesktop ? 50 : 16)}px`,
       })
     }
     this._visible = true
