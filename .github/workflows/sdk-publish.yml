@@ -16,10 +16,6 @@ jobs:
           node-version: 22
           registry-url: https://npm.pkg.github.com
           cache: yarn
-
-      - run: |
-          yarn install --frozen-lockfile
-          yarn build:sdk
       - run: |
           npm config set ${REGISTRY}:_authToken ${{ secrets.GITLAB_PACKAGE_TOKEN }}
           npm config set @deland-labs:registry https:${REGISTRY}
@@ -32,4 +28,7 @@ jobs:
             Version=$(git describe --tags --abbrev=0)
           fi
           echo Version: $Version
+          export VITE_RELEASE_VERSION=$Version
+          yarn install --frozen-lockfile
+          yarn build:sdk
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/sdk
