@@ -198,16 +198,28 @@ export class HibitIdIframe {
         right: 'unset',
       })
     } else {
-      this.updateStyle({
-        top: 'unset',
-        left: 'unset',
-        maxWidth: '100%',
-        maxHeight: '100%',
-        width: this.isDesktop ? '332px' : 'calc(100% - 32px)',
-        height: this.isDesktop ? '502px' : '560px',
-        right: `${pos?.right ?? (this.isDesktop ? 50 : 16)}px`,
-        bottom: `${pos?.bottom ?? (this.isDesktop ? 50 : 16)}px`,
-      })
+      if (this.isDesktop) {
+        this.updateStyle({
+          top: 'unset',
+          left: 'unset',
+          maxWidth: '100%',
+          maxHeight: '100%',
+          width: '332px',
+          height: '502px',
+          right: `${pos?.right ?? 50}px`,
+          bottom: `${pos?.bottom ?? 50}px`,
+        })
+      } else {
+        this.updateStyle({
+          top: '50%',
+          left: '50%',
+          width: 'calc(100% - 32px)',
+          height: '560px',
+          bottom: 'unset',
+          right: 'unset',
+          transform: 'translate(-50%, -50%)',
+        })
+      }
     }
     this._visible = true
   }

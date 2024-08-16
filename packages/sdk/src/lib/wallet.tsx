@@ -255,7 +255,7 @@ export class HibitIdWallet {
   }
 
   private handleControllerMove = (x: number, y: number) => {
-    if (!this._iframe) return
+    if (!this._iframe || !this._iframe.isDesktop) return
     const controllerRect = this._controller?.getBoundingRect()
     const maxRight = window.innerWidth - (controllerRect?.width ?? 0)
     const maxBottom = window.innerHeight - (controllerRect?.height ?? 0)
