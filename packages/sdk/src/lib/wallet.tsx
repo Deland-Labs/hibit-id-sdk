@@ -1,7 +1,7 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
+import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdChainId, HibitIdExposeRPCMethod } from './enums';
 import { clamp } from './utils';
 
@@ -84,11 +84,13 @@ export class HibitIdWallet {
     }
   }
 
-  public getAccount = async (): Promise<WalletAccount> => {
+  public getAccount = async (chainId?: HibitIdChainId): Promise<WalletAccount> => {
     console.debug('[sdk call GetAccount]')
     this.assertConnected()
     try {
-      const res = await this._rpc?.call<GetAccountResponse>(HibitIdExposeRPCMethod.GET_ACCOUNT, {})
+      const res = await this._rpc?.call<GetAccountResponse>(HibitIdExposeRPCMethod.GET_ACCOUNT, {
+        chainId,
+      } as GetAccountRequest)
       if (!res?.success) {
         throw new Error(res?.errMsg)
       }
@@ -112,13 +114,14 @@ export class HibitIdWallet {
     }
   }
 
-  public signMessage = async (message: string): Promise<string> => {
+  public signMessage = async (message: string, chainId?: HibitIdChainId): Promise<string> => {
     console.debug('[sdk call SignMessage]', { message })
     this.assertConnected()
     try {
       const res = await this._rpc?.call<SignMessageResponse>(HibitIdExposeRPCMethod.SIGN_MESSAGE, {
         message,
-      })
+        chainId
+      } as SignMessageRequest)
       if (!res?.success) {
         throw new Error(res?.errMsg)
       }
@@ -252,7 +255,7 @@ export class HibitIdWallet {
   }
 
   private handleControllerMove = (x: number, y: number) => {
-    if (!this._iframe) return
+    if (!this._iframe || !this._iframe.isDesktop) return
     const controllerRect = this._controller?.getBoundingRect()
     const maxRight = window.innerWidth - (controllerRect?.width ?? 0)
     const maxBottom = window.innerHeight - (controllerRect?.height ?? 0)

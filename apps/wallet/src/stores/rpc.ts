@@ -1,10 +1,9 @@
 import { RPC } from '@mixer/postmessage-rpc'
-import { AccountsChangedRequest, ChainChangedRequest, ClientExposeRPCMethod, GetBalanceRequest, GetBalanceResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from "@deland-labs/hibit-id-sdk"
+import { AccountsChangedRequest, ChainChangedRequest, ClientExposeRPCMethod, ConnectRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdAssetType, HibitIdChainId, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, SwitchChainRequest, TransferRequest, TransferResponse, WalletAccount } from "@deland-labs/hibit-id-sdk"
 import { makeAutoObservable } from 'mobx';
 import { AssetInfo } from '../utils/chain/chain-wallets/types';
 import { Chain, ChainAssetType, ChainId, ChainInfo, ChainNetwork, DecimalPlaces } from '../utils/basicTypes';
 import BigNumber from 'bignumber.js';
-import { ConnectRequest, GetAccountResponse, GetChainInfoResponse, SwitchChainRequest } from '../../../../packages/sdk/dist/lib/types';
 import { getChainByChainId } from '../utils/chain';
 import authManager from '../utils/auth';
 import { prOidc } from '../utils/oidc';
@@ -110,11 +109,15 @@ class RPCManager {
     sessionStorage.removeItem(ACTIVE_DISCONNECT_STORAGE_KEY)
   }
 
-  private onRpcGetAccount = async (): Promise<GetAccountResponse> => {
-    console.debug('[wallet on GetAccount]')
+  private onRpcGetAccount = async (input: GetAccountRequest): Promise<GetAccountResponse> => {
+    console.debug('[wallet on GetAccount]', input)
     try {
       this.checkInit()
-      const account = await this._walletPool!.getAccount(this._chainInfo!.chainId)
+      const chainId = input.chainId ? ChainId.fromString(input.chainId) : this._chainInfo!.chainId
+      if (!chainId) {
+        throw new Error('Invalid chainId')
+      }
+      const account = await this._walletPool!.getAccount(chainId)
       return {
         success: true,
         data: account
@@ -161,7 +164,11 @@ class RPCManager {
     console.debug('[wallet on SignMessage]', { input })
     try {
       this.checkInit()
-      const signature = await this._walletPool!.signMessage(input.message, this._chainInfo!.chainId)
+      const chainId = input.chainId ? ChainId.fromString(input.chainId) : this._chainInfo!.chainId
+      if (!chainId) {
+        throw new Error('Invalid chainId')
+      }
+      const signature = await this._walletPool!.signMessage(input.message, chainId)
       return {
         success: true,
         data: {
@@ -303,11 +310,6 @@ class RPCManager {
 
   private mapAssetType = (type: HibitIdAssetType): ChainAssetType => {
     return new ChainAssetType(new BigNumber(type))
-  }
-
-  private mapChainId = (id: HibitIdChainId): ChainId => {
-    const [typeStr, networkStr] = id.split('_')
-    return new ChainId(new Chain(new BigNumber(typeStr)), new ChainNetwork(new BigNumber(networkStr)))
   }
 }
 

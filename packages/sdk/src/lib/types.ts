@@ -72,6 +72,7 @@ export interface ConnectedRequest extends WalletAccount {}
 
 export interface SignMessageRequest {
   message: string
+  chainId?: HibitIdChainId
 }
 
 export type SignMessageResponse = RpcBaseResponse<{
@@ -101,6 +102,10 @@ export interface TransferRequest {
 export type TransferResponse = RpcBaseResponse<{
   txHash: string
 }>
+
+export type GetAccountRequest = {
+  chainId?: HibitIdChainId
+}
 
 export type GetAccountResponse = RpcBaseResponse<WalletAccount>
 
