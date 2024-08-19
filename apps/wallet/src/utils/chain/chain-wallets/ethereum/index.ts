@@ -70,26 +70,34 @@ export class EthereumChainWallet extends ChainWallet {
     if (!assetInfo.chain.equals(Chain.Ethereum)) {
       throw new Error('Ethereum: invalid asset chain');
     }
-    // native
-    if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
-      const tx = await this.wallet.sendTransaction({
-        to: toAddress,
-        value: parseEther(amount.toString())
-      });
-      return tx.hash;
-    }
-    // erc20
-    if (assetInfo.chainAssetType.equals(ChainAssetType.ERC20)) {
-      const chainInfo = getChainByChainId(new ChainId(assetInfo.chain, assetInfo.chainNetwork))
-      if (!chainInfo) {
-        throw new Error(`Ethereum: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`)
+    try {
+      // native
+      if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+        const tx = await this.wallet.sendTransaction({
+          to: toAddress,
+          value: parseEther(amount.toString())
+        });
+        return tx.hash;
       }
-      const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
-      const token = new Contract(assetInfo.contractAddress, erc20Abi, this.wallet.connect(provider));
-      const decimals = await token.decimals();
-      const tx = await token
-        .getFunction('transfer')(toAddress, parseUnits(amount.toString(), decimals));
-      return tx.hash;
+      // erc20
+      if (assetInfo.chainAssetType.equals(ChainAssetType.ERC20)) {
+        const chainInfo = getChainByChainId(new ChainId(assetInfo.chain, assetInfo.chainNetwork))
+        if (!chainInfo) {
+          throw new Error(`Ethereum: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`)
+        }
+        const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
+        const token = new Contract(assetInfo.contractAddress, erc20Abi, this.wallet.connect(provider));
+        const decimals = await token.decimals();
+        const tx = await token
+          .getFunction('transfer')(toAddress, parseUnits(amount.toString(), decimals));
+        return tx.hash;
+      }
+    } catch (e) {
+      console.error(e)
+      if ((e as any).code === 'INSUFFICIENT_FUNDS') {
+        throw new Error('Insufficient gas balance');
+      }
+      throw e;
     }
 
     throw new Error(`Ethereum: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
