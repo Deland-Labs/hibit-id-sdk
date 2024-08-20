@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { AssetInfo, ChainWallet } from "../types";
-import { isAddress, JsonRpcProvider, Contract, HDNodeWallet, parseEther, parseUnits } from "ethers";
+import { isAddress, JsonRpcProvider, Contract, HDNodeWallet, parseEther, parseUnits, formatEther } from "ethers";
 import { Chain, ChainAssetType, ChainId, ChainInfo } from "../../../basicTypes";
 import { erc20Abi } from "./erc20";
 import { WalletAccount } from "@deland-labs/hibit-id-sdk";
@@ -135,7 +135,7 @@ export class EthereumChainWallet extends ChainWallet {
       const estimatedGas = await token
         .getFunction('transfer')
         .estimateGas(toAddress, parseUnits(amount.toString(), decimals));
-      return new BigNumber(parseEther(new BigNumber(estimatedGas.toString()).times(price).toString()).toString())
+      return new BigNumber(formatEther(new BigNumber(estimatedGas.toString()).times(price).toString()))
     }
 
     throw new Error(`Ethereum: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
