@@ -2,7 +2,6 @@ import { observer } from "mobx-react";
 import { FC, useEffect, useMemo, useState } from "react";
 import hibitIdSession from "../../stores/session";
 import { useNavigate, useParams } from "react-router-dom";
-import SvgGo from '../../assets/right-arrow.svg?react';
 import { useTokenBalanceQuery, useTokenQuery } from "../../apis/react-query/token";
 import TokenSelect from "../../components/TokenSelect";
 import { RootAssetInfo } from "../../apis/models";
@@ -15,6 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { SYSTEM_MAX_DECIMALS } from "../../utils/formatter/numberFormatter";
 import { sendTokenStore } from "./store";
+import PageHeader from "../../components/PageHeader";
 
 const SendTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
@@ -87,18 +87,12 @@ const SendTokenPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
-      <div>
-        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate(-1)}>
-          <SvgGo className="size-6 rotate-180" />
-          <span className="text-xs">Send</span>
-        </button>
-      </div>
-
+      <PageHeader title="Send" />
       <div className="flex-1 flex flex-col gap-6">
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Send to</span>
+              <span className="label-text text-neutral text-sm font-bold">Send to</span>
             </div>
             <textarea
               placeholder="Recipient address"
@@ -115,7 +109,7 @@ const SendTokenPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Amount</span>
+              <span className="label-text text-neutral text-sm font-bold">Amount</span>
               <span className="label-text-alt text-xs">
                 <button
                   className="btn btn-link btn-xs px-0 no-underline gap-0"

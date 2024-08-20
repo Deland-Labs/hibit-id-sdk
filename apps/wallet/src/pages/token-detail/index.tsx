@@ -1,8 +1,7 @@
 import { observer } from "mobx-react";
 import { FC } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useTokenBalanceQuery, useTokenQuery } from "../../apis/react-query/token";
-import SvgGo from '../../assets/right-arrow.svg?react'
 import TokenIcon from "../../components/TokenIcon";
 import { getChainByChainId } from "../../utils/chain";
 import { ChainId } from "../../utils/basicTypes";
@@ -10,10 +9,10 @@ import SendButton from "../../components/SendButton";
 import ReceiveButton from "../../components/ReceiveButton";
 import PageLoading from "../../components/PageLoading";
 import { formatNumber } from "../../utils/formatter";
+import PageHeader from "../../components/PageHeader";
 
 const TokenDetailPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
-  const navigate = useNavigate()
   const tokenQuery = useTokenQuery(addressOrSymbol?? '')
   const balanceQuery = useTokenBalanceQuery(tokenQuery.data || undefined)
 
@@ -33,12 +32,7 @@ const TokenDetailPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 overflow-auto">
-      <div>
-        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate('/')}>
-          <SvgGo className="size-6 rotate-180" />
-          <span className="text-xs">{token.assetSymbol}</span>
-        </button>
-      </div>
+      <PageHeader title={token.assetSymbol} />
       <div className="mt-8 flex flex-col items-center gap-10">
         <div className="flex flex-col items-center">
           <TokenIcon token={token} size="lg" onlyIcon />

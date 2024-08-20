@@ -2,7 +2,6 @@ import { observer } from "mobx-react";
 import { FC, useEffect, useMemo, useState } from "react";
 import hibitIdSession from "../../stores/session";
 import { useNavigate } from "react-router-dom";
-import SvgGo from '../../assets/right-arrow.svg?react';
 import SvgLoading from '../../assets/transfer-loading.svg?react';
 import SvgSuccess from '../../assets/transfer-success.svg?react';
 import SvgExternal from '../../assets/external.svg?react';
@@ -15,6 +14,7 @@ import { sendTokenStore } from "./store";
 import { formatNumber } from "../../utils/formatter";
 import { ChainAssetType } from "../../utils/basicTypes";
 import { getChainTxLink } from "../../utils/link";
+import PageHeader from "../../components/PageHeader";
 
 const SendTokenConfirmPage: FC = observer(() => {
   const [errMsg, setErrMsg] = useState<string>('')
@@ -139,21 +139,15 @@ const SendTokenConfirmPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
-      <div>
-        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate(-1)}>
-          <SvgGo className="size-6 rotate-180" />
-          <span className="text-xs">Edit</span>
-        </button>
-      </div>
-
+      <PageHeader title="Edit" />
       <div className="flex-1 flex flex-col gap-6">
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">To</span>
+              <span className="label-text text-neutral text-sm font-bold">To</span>
             </div>
             <div className="max-w-full p-2 pr-1 flex items-center gap-2 bg-base-100 rounded-xl text-primary">
-              <span className="text-xs break-all">{state.toAddress}</span>
+              <span className="text-xs font-bold break-all">{state.toAddress}</span>
               <CopyButton copyText={state.toAddress} />
             </div>
           </label>
@@ -161,28 +155,28 @@ const SendTokenConfirmPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Amount</span>
+              <span className="label-text text-neutral text-sm font-bold">Amount</span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-primary">{formatNumber(state.amount)}</span>
-              <span>{state.token?.assetSymbol}</span>
+            <div className="flex items-center justify-between font-bold">
+              <span className="text-primary text-sm">{formatNumber(state.amount)}</span>
+              <span className="text-xs">{state.token?.assetSymbol}</span>
             </div>
           </label>
         </div>
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Network fee estimation</span>
+              <span className="label-text text-neutral text-sm font-bold">Network fee estimation</span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-primary">
+            <div className="flex items-center justify-between font-bold">
+              <span className="text-primary text-sm">
                 {!feeQuery.isFetching ? (
                   <span>~{formatNumber(feeQuery.data)}</span>
                 ) : (
                   <span className="loading loading-spinner size-4" />
                 )}
               </span>
-              <span>{nativeTokenQuery.data?.assetSymbol}</span>
+              <span className="text-xs">{nativeTokenQuery.data?.assetSymbol}</span>
             </div>
             {errMsg && (
               <div className="label">
