@@ -119,7 +119,7 @@ export class EthereumChainWallet extends ChainWallet {
         value: parseEther(amount.toString())
       }
       const estimatedGas = await this.wallet.estimateGas(req)
-      return new BigNumber(estimatedGas.toString()).times(price)
+      return new BigNumber(estimatedGas.toString()).times(price).shiftedBy(-assetInfo.decimalPlaces.value)
     }
     // erc20
     if (assetInfo.chainAssetType.equals(ChainAssetType.ERC20)) {
@@ -135,7 +135,7 @@ export class EthereumChainWallet extends ChainWallet {
       const estimatedGas = await token
         .getFunction('transfer')
         .estimateGas(toAddress, parseUnits(amount.toString(), decimals));
-      return new BigNumber(estimatedGas.toString()).times(price)
+      return new BigNumber(parseEther(new BigNumber(estimatedGas.toString()).times(price).toString()).toString())
     }
 
     throw new Error(`Ethereum: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
