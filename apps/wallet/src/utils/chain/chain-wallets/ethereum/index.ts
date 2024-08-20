@@ -102,4 +102,42 @@ export class EthereumChainWallet extends ChainWallet {
 
     throw new Error(`Ethereum: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   }
+
+  public override getEstimatedFee = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<BigNumber> => {
+    if (!isAddress(toAddress)) {
+      throw new Error('Ethereum: invalid wallet address');
+    }
+    if (!assetInfo.chain.equals(Chain.Ethereum)) {
+      throw new Error('Ethereum: invalid asset chain');
+    }
+    // native
+    if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+      const feeData = await this.wallet.provider!.getFeeData()
+      const price = new BigNumber(feeData.gasPrice!.toString())
+      const req = {
+        to: toAddress,
+        value: parseEther(amount.toString())
+      }
+      const estimatedGas = await this.wallet.estimateGas(req)
+      return new BigNumber(estimatedGas.toString()).times(price).shiftedBy(-assetInfo.decimalPlaces.value)
+    }
+    // erc20
+    if (assetInfo.chainAssetType.equals(ChainAssetType.ERC20)) {
+      const chainInfo = getChainByChainId(new ChainId(assetInfo.chain, assetInfo.chainNetwork))
+      if (!chainInfo) {
+        throw new Error(`Ethereum: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`)
+      }
+      const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
+      const feeData = await provider!.getFeeData()
+      const price = new BigNumber(feeData.gasPrice!.toString())
+      const token = new Contract(assetInfo.contractAddress, erc20Abi, this.wallet.connect(provider));
+      const decimals = await token.decimals();
+      const estimatedGas = await token
+        .getFunction('transfer')
+        .estimateGas(toAddress, parseUnits(amount.toString(), decimals));
+      return new BigNumber(parseEther(new BigNumber(estimatedGas.toString()).times(price).toString()).toString())
+    }
+
+    throw new Error(`Ethereum: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
+  }
 }

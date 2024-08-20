@@ -8,18 +8,18 @@ import TokenSelect from "../../components/TokenSelect";
 import { RootAssetInfo } from "../../apis/models";
 import BigNumber from "bignumber.js";
 import { formatNumber } from "../../utils/formatter";
-import toaster from "../../components/Toaster";
-import { useMutation } from "@tanstack/react-query";
 import LoaderButton from "../../components/LoaderButton";
 import { object, string } from "yup";
 import { walletAddressValidate } from "../../utils/validator";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { SYSTEM_MAX_DECIMALS } from "../../utils/formatter/numberFormatter";
+import { sendTokenStore } from "./store";
 
 const SendTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
   const [token, setToken] = useState<RootAssetInfo | null>(null)
+  const { state, setState } = sendTokenStore
   const navigate = useNavigate()
   
   const tokenQuery = useTokenQuery(addressOrSymbol ?? '')
@@ -60,27 +60,11 @@ const SendTokenPage: FC = observer(() => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      toAddress: '',
-      amount: ''
+      toAddress: state.toAddress || '',
+      amount: state.amount || '',
     },
     resolver: yupResolver(formSchema),
     mode: 'onChange'
-  })
-
-  const transferMutation = useMutation({
-    mutationFn: async ({ address, amount }: {
-      address: string
-      amount: string
-    }) => {
-      if (!hibitIdSession.walletPool || !token) {
-        throw new Error('Wallet or token not ready')
-      }
-      return await hibitIdSession.walletPool.transfer(
-        address,
-        new BigNumber(amount),
-        token
-      )
-    }
   })
 
   useEffect(() => {
@@ -93,17 +77,12 @@ const SendTokenPage: FC = observer(() => {
     if (!hibitIdSession.walletPool || !token) {
       return
     }
-    try {
-      const txId = await transferMutation.mutateAsync({
-        address: toAddress,
-        amount
-      })
-      console.debug('[txId]', txId)
-      toaster.success('Transfer success')
-    } catch (e) {
-      console.error(e)
-      toaster.error(e instanceof Error ? e.message : JSON.stringify(e))
-    }
+    setState({
+      toAddress,
+      token,
+      amount
+    })
+    navigate('/send/confirm')
   })
 
   return (
@@ -200,7 +179,6 @@ const SendTokenPage: FC = observer(() => {
       <LoaderButton
         className="btn btn-block btn-sm disabled:opacity-70"
         onClick={handleSend}
-        loading={transferMutation.isPending}
       >
         Send
       </LoaderButton>
