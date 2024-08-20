@@ -1,11 +1,11 @@
 import { FC } from "react";
-import SvgGo from '../../assets/right-arrow.svg?react'
 import SvgTrash from '../../assets/trash.svg?react'
 import { useNavigate } from "react-router-dom";
 import AuthenticatorLogo from "../../components/AuthenticatorLogo";
 import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 import { useTranslation } from "react-i18next";
 import { useUserLoginsQuery } from "../../apis/react-query/auth";
+import PageHeader from "../../components/PageHeader";
 
 const authProviderLogoMap: Record<string, AuthenticatorType> = {
   'telegram': AuthenticatorType.Telegram
@@ -18,12 +18,7 @@ const AccountManagePage: FC = () => {
 
   return (
     <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
-      <div className="flex items-center gap-2">
-        <button className="btn btn-ghost btn-square btn-sm items-center" onClick={() => navigate(-1)}>
-          <SvgGo className="size-6 rotate-180" />
-        </button>
-        <span className="text-xs">{t('page_account_title')}</span>
-      </div>
+      <PageHeader title={t('page_account_title')} />
       {/* // TODO: add more auth parties */}
       {/* <div className="mt-6">
 

@@ -2,7 +2,6 @@ import { observer } from "mobx-react";
 import { FC, useEffect, useMemo, useState } from "react";
 import hibitIdSession from "../../stores/session";
 import { useNavigate } from "react-router-dom";
-import SvgGo from '../../assets/right-arrow.svg?react';
 import SvgLoading from '../../assets/transfer-loading.svg?react';
 import SvgSuccess from '../../assets/transfer-success.svg?react';
 import SvgExternal from '../../assets/external.svg?react';
@@ -15,6 +14,7 @@ import { sendTokenStore } from "./store";
 import { formatNumber } from "../../utils/formatter";
 import { ChainAssetType } from "../../utils/basicTypes";
 import { getChainTxLink } from "../../utils/link";
+import PageHeader from "../../components/PageHeader";
 
 const SendTokenConfirmPage: FC = observer(() => {
   const [errMsg, setErrMsg] = useState<string>('')
@@ -139,13 +139,7 @@ const SendTokenConfirmPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
-      <div>
-        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate(-1)}>
-          <SvgGo className="size-6 rotate-180" />
-          <span className="text-xs">Edit</span>
-        </button>
-      </div>
-
+      <PageHeader title="Edit" />
       <div className="flex-1 flex flex-col gap-6">
         <div>
           <label className="form-control w-full">

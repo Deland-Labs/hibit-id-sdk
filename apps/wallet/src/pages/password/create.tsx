@@ -66,9 +66,6 @@ const CreatePasswordPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 pb-14 overflow-auto">
-      {/* <div className="text-xs">
-        Set Password
-      </div> */}
       <LogoSection />
       <div className="p-2 mt-6 rounded-lg bg-warning/15 text-warning text-xs">
         {t('page_password_create_warn')}

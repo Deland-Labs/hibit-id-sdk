@@ -1,5 +1,4 @@
 import { FC, useEffect } from "react";
-import SvgGo from '../../assets/right-arrow.svg?react'
 import { useNavigate } from "react-router-dom";
 import { object, string, ref } from 'yup'
 import { useForm } from "react-hook-form";
@@ -12,6 +11,7 @@ import LoaderButton from "../../components/LoaderButton";
 import hibitIdSession from "../../stores/session";
 import { getErrorMessage, HibitIDError, HibitIDErrorCode } from "../../utils/error-code";
 import { useTranslation } from "react-i18next";
+import PageHeader from "../../components/PageHeader";
 
 const formSchema = object({
   password: string()
@@ -75,12 +75,7 @@ const ResetPasswordPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 pb-14 overflow-auto">
-      <div className="flex items-center gap-2">
-        <button className="btn btn-ghost btn-square btn-sm items-center" onClick={() => navigate(-1)}>
-          <SvgGo className="size-6 rotate-180" />
-        </button>
-        <span className="text-xs">Change Wallet Password</span>
-      </div>
+      <PageHeader title="Change Wallet Password" />
       <form className="mt-4 flex flex-col gap-5" onSubmit={handleConfirm}>
         <div>
           <label className="form-control w-full">
