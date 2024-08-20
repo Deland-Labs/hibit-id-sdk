@@ -74,7 +74,7 @@ const CreatePasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Set Password</span>
+              <span className="label-text text-neutral text-sm font-bold">Set Password</span>
             </div>
             <input
               {...register('password')}
@@ -92,7 +92,7 @@ const CreatePasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Confirm Password</span>
+              <span className="label-text text-neutral text-sm font-bold">Confirm Password</span>
             </div>
             <input
               {...register('confirmPassword')}

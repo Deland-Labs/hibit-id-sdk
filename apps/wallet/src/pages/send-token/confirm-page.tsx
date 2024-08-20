@@ -144,10 +144,10 @@ const SendTokenConfirmPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">To</span>
+              <span className="label-text text-neutral text-sm font-bold">To</span>
             </div>
             <div className="max-w-full p-2 pr-1 flex items-center gap-2 bg-base-100 rounded-xl text-primary">
-              <span className="text-xs break-all">{state.toAddress}</span>
+              <span className="text-xs font-bold break-all">{state.toAddress}</span>
               <CopyButton copyText={state.toAddress} />
             </div>
           </label>
@@ -155,28 +155,28 @@ const SendTokenConfirmPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Amount</span>
+              <span className="label-text text-neutral text-sm font-bold">Amount</span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-primary">{formatNumber(state.amount)}</span>
-              <span>{state.token?.assetSymbol}</span>
+            <div className="flex items-center justify-between font-bold">
+              <span className="text-primary text-sm">{formatNumber(state.amount)}</span>
+              <span className="text-xs">{state.token?.assetSymbol}</span>
             </div>
           </label>
         </div>
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Network fee estimation</span>
+              <span className="label-text text-neutral text-sm font-bold">Network fee estimation</span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-primary">
+            <div className="flex items-center justify-between font-bold">
+              <span className="text-primary text-sm">
                 {!feeQuery.isFetching ? (
                   <span>~{formatNumber(feeQuery.data)}</span>
                 ) : (
                   <span className="loading loading-spinner size-4" />
                 )}
               </span>
-              <span>{nativeTokenQuery.data?.assetSymbol}</span>
+              <span className="text-xs">{nativeTokenQuery.data?.assetSymbol}</span>
             </div>
             {errMsg && (
               <div className="label">

@@ -80,7 +80,7 @@ const ResetPasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Password</span>
+              <span className="label-text text-neutral text-sm font-bold">Password</span>
             </div>
             <input
               {...register('password')}
@@ -98,7 +98,7 @@ const ResetPasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">New Password</span>
+              <span className="label-text text-neutral text-sm font-bold">New Password</span>
             </div>
             <input
               {...register('newPassword')}
@@ -115,7 +115,7 @@ const ResetPasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Confirm Password</span>
+              <span className="label-text text-neutral text-sm font-bold">Confirm Password</span>
             </div>
             <input
               {...register('confirmNewPassword')}

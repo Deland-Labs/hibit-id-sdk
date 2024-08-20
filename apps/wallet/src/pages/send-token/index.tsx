@@ -92,7 +92,7 @@ const SendTokenPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Send to</span>
+              <span className="label-text text-neutral text-sm font-bold">Send to</span>
             </div>
             <textarea
               placeholder="Recipient address"
@@ -109,7 +109,7 @@ const SendTokenPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Amount</span>
+              <span className="label-text text-neutral text-sm font-bold">Amount</span>
               <span className="label-text-alt text-xs">
                 <button
                   className="btn btn-link btn-xs px-0 no-underline gap-0"

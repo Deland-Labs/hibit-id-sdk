@@ -8,7 +8,7 @@ const PageHeader: FC<{ title: string, backable?: boolean }> = ({ title, backable
   if (backable) {
     return (
       <div className="flex-none">
-        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate('/')}>
+        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate(-1)}>
           <SvgGo className="size-6 rotate-180" />
           <span className="text-base font-bold">{title}</span>
         </button>

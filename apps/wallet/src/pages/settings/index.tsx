@@ -18,7 +18,7 @@ const SettingsPage: FC = observer(() => {
     <div className="h-full px-6 overflow-auto">
       <PageHeader title={t('page_settings_title')} />
       <div className="mt-6">
-        <p className="label-text text-neutral text-xs">
+        <p className="label-text text-neutral text-sm font-bold">
           {t('page_settings_account')}
         </p>
         <div className="mt-4 flex justify-between items-center">
@@ -35,7 +35,7 @@ const SettingsPage: FC = observer(() => {
       </div>
 
       <div className="mt-6">
-        <p className="label-text text-neutral text-xs">
+        <p className="label-text text-neutral text-sm font-bold">
           {t('page_settings_security')}
         </p>
         <button className="btn btn-link btn-xs mt-4 no-underline p-0" onClick={() => {

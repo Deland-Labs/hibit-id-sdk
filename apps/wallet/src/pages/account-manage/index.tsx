@@ -24,7 +24,7 @@ const AccountManagePage: FC = () => {
 
       </div> */}
       <div className="flex-1">
-        <p className="label-text text-neutral text-xs">{t('page_account_linked')}</p>
+        <p className="label-text text-neutral text-sm font-bold">{t('page_account_linked')}</p>
         <ul className="mt-4">
           {userLoginsQuery.data?.map((login) => (
             <li className="flex justify-between items-center" key={login.loginProvider}>
