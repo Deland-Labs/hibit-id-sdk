@@ -87,7 +87,7 @@ const SendTokenPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
-      <PageHeader title="Send" />
+      <PageHeader title="Send" onBeforeBack={() => sendTokenStore.reset()} />
       <div className="flex-1 flex flex-col gap-6">
         <div>
           <label className="form-control w-full">

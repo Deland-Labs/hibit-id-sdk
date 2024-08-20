@@ -2,13 +2,20 @@ import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import SvgGo from '../assets/right-arrow.svg?react'
 
-const PageHeader: FC<{ title: string, backable?: boolean }> = ({ title, backable = true }) => {
+const PageHeader: FC<{
+  title: string,
+  backable?: boolean
+  onBeforeBack?: () => void
+}> = ({ title, backable = true, onBeforeBack }) => {
   const navigate = useNavigate()
 
   if (backable) {
     return (
       <div className="flex-none">
-        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate(-1)}>
+        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => {
+          onBeforeBack?.()
+          navigate(-1)
+        }}>
           <SvgGo className="size-6 rotate-180" />
           <span className="text-base font-bold">{title}</span>
         </button>
