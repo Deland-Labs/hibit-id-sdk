@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import SvgGo from '../../assets/right-arrow.svg?react';
 import SvgLoading from '../../assets/transfer-loading.svg?react';
 import SvgSuccess from '../../assets/transfer-success.svg?react';
+import SvgExternal from '../../assets/external.svg?react';
 import { useTokenBalanceQuery, useTokenQuery } from "../../apis/react-query/token";
 import BigNumber from "bignumber.js";
 import toaster from "../../components/Toaster";
@@ -13,6 +14,7 @@ import CopyButton from "../../components/CopyButton";
 import { sendTokenStore } from "./store";
 import { formatNumber } from "../../utils/formatter";
 import { ChainAssetType } from "../../utils/basicTypes";
+import { getChainTxLink } from "../../utils/link";
 
 const SendTokenConfirmPage: FC = observer(() => {
   const [errMsg, setErrMsg] = useState<string>('')
@@ -92,7 +94,7 @@ const SendTokenConfirmPage: FC = observer(() => {
       })
       console.debug('[txId]', txId)
       setTransferResult({ state: 'done', txId })
-
+      sendTokenStore.reset()
     } catch (e) {
       console.error(e)
       setTransferResult({ state: 'pending', txId: '' })
@@ -112,14 +114,21 @@ const SendTokenConfirmPage: FC = observer(() => {
   }
 
   if (transferResult.state === 'done') {
+    const txLink = getChainTxLink(hibitIdSession.chainInfo.chainId, transferResult.txId)
+
     return (
       <div className="h-full px-6 flex flex-col overflow-auto">
         <div className="flex-1 flex flex-col gap-8 justify-center items-center">
           <SvgSuccess />
           <span className="text-success">Transaction finished</span>
+          {txLink && (
+            <a className="flex items-center gap-2" href={txLink} target="_blank" rel="noreferrer">
+              <span>view in explorer</span>
+              <SvgExternal />
+            </a>
+          )}
         </div>
-        <button className="btn btn-sm flex-1" onClick={() => {
-          sendTokenStore.reset()
+        <button className="btn btn-sm" onClick={() => {
           navigate('/')
         }}>
           Close
