@@ -29,7 +29,7 @@ export class TelegramAuthenticateProvider implements IAuthenticateProvider {
     // mini app
     if (launchParams) {
       // sessionStorage.removeItem('telegram-apps/launch-params')
-      window.location.href = `${AUTH_SERVER_URL}connect/custom/telegram/miniapp?tgWebAppData=${encodeURIComponent(launchParams)}&returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
+      window.location.href = `${AUTH_SERVER_URL}connect/custom/telegram/login?tgWebAppData=${encodeURIComponent(launchParams)}&returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
       return
     }
     
@@ -44,7 +44,7 @@ export class TelegramAuthenticateProvider implements IAuthenticateProvider {
           }
           const queryValue = objToQuery(data)
           // sessionStorage.removeItem('telegram-apps/launch-params')
-          window.location.href = `${AUTH_SERVER_URL}connect/custom/telegram/web?${queryValue}&returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
+          window.location.href = `${AUTH_SERVER_URL}connect/custom/telegram/login?${queryValue}&returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
           resolve(true)
         },
       );
