@@ -8,23 +8,47 @@ import hibitIdSession from "../../stores/session"
 import BigNumber from "bignumber.js"
 import { SYSTEM_MAX_DECIMALS } from "../../utils/formatter/numberFormatter";
 
-export const useTokenListQuery = (chain?: ChainInfo) => {
+export const useAllAssetListQuery = () => {
   return useQuery({
-    queryKey: [QueryCacheKey.GET_TOKEN_LIST, chain?.chainId.toString() ?? ''],
+    queryKey: [QueryCacheKey.GET_ALL_ASSET_LIST],
     queryFn: async () => {
       const res = await GetAllAssetsAsync()
       if (!res.isSuccess || !res.value) {
-        throw new Error('Get token list failed')
+        throw new Error('Get all asset list failed')
       }
+      return res.value
+    },
+    staleTime: 60 * 60 * 1000, // 1 hour
+  })
+}
+export const useTokenListQuery = (chain?: ChainInfo) => {
+  const allAssetListQuery = useAllAssetListQuery()
+  return useQuery({
+    queryKey: [QueryCacheKey.GET_TOKEN_LIST, chain?.chainId.toString() ?? ''],
+    queryFn: async () => {
       const supportedChains = getSupportedChains()
-      const chainTokens = res.value.filter((token) => {
+      const flatSubTokens: RootAssetInfo[] = []
+      allAssetListQuery.data!.forEach((token) => {
+        if (token.subAssets.length <= 0) {
+          return
+        }
+        flatSubTokens.push(...token.subAssets.map((sub) => ({
+          ...sub,
+          isBaseToken: token.isBaseToken,
+          displayName: token.displayName,
+          assetSymbol: token.assetSymbol,
+          subAssets: []
+        })))
+      })
+      const chainTokens = [...allAssetListQuery.data!, ...flatSubTokens].filter((token) => {
         return (
           !!supportedChains.find((chain) => chain.chainId.equals(new ChainId(token.chain, token.chainNetwork)))
             && (chain ? chain.chainId.equals(new ChainId(token.chain, token.chainNetwork)) : true)
         )
       })
       return chainTokens
-    }
+    },
+    enabled: !!allAssetListQuery.data
   })
 }
 
