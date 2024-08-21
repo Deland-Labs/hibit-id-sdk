@@ -1,8 +1,8 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
-import { ClientExposeRPCMethod, HibitIdChainId, HibitIdExposeRPCMethod } from './enums';
+import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdError, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
+import { ClientExposeRPCMethod, HibitIdChainId, HibitIdErrorCode, HibitIdExposeRPCMethod } from './enums';
 import { clamp } from './utils';
 
 const LOGIN_SESSION_KEY = 'hibit-id-session'
@@ -78,7 +78,7 @@ export class HibitIdWallet {
           publicKey: res.publicKey,
         }
       }
-      throw new Error('User manually canceled')
+      throw new HibitIdError(HibitIdErrorCode.USER_CANCEL_CONNECTION, 'User manually canceled')
     } catch (e: any) {
       throw new Error(`Connect failed: ${this.getRpcErrorMessage(e)}`)
     }
@@ -288,6 +288,10 @@ export class HibitIdWallet {
 
   private onRpcLoginChanged = (input: LoginChangedRequest) => {
     console.debug('[sdk on LoginChanged]', { input })
+    if (!this._connectPromise) {
+      return
+    }
+    // only show iframe during connection
     if (!input.isLogin) {
       this.showIframe(true)
     } else {

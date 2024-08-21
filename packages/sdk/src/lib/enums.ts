@@ -70,3 +70,7 @@ export enum HibitIdChainId {
   TronShastaTestnet = '195_2494104990',
   TronNileTestnet = '195_3448148188',
 }
+
+export enum HibitIdErrorCode {
+  USER_CANCEL_CONNECTION = 'USER_CANCEL_CONNECTION',
+}

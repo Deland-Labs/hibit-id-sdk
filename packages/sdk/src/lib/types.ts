@@ -1,4 +1,4 @@
-import { HibitIdAssetType, HibitIdChainId } from "./enums"
+import { HibitIdAssetType, HibitIdChainId, HibitIdErrorCode } from "./enums"
 
 export type HibitEnv = 'dev' | 'test' | 'prod'
 
@@ -29,6 +29,12 @@ export class BridgePromise<T> {
       this.resolve = resolve
       this.reject = reject
     })
+  }
+}
+
+export class HibitIdError extends Error {
+  constructor(public code: HibitIdErrorCode, message: string) {
+    super(message) 
   }
 }
 

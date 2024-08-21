@@ -1,4 +1,4 @@
-import { DeviceInfo } from "@tonconnect/protocol";
+import { ConnectEventError, DeviceInfo } from "@tonconnect/protocol";
 
 const getPlatform = (): DeviceInfo["platform"] => {
   const platform =
@@ -46,3 +46,22 @@ export const getDeviceInfo = (): DeviceInfo => {
     ],
   };
 };
+
+export function* generateEventId(): Generator<number, number, number> {
+  let nonce = 1;
+  while (true) {
+    yield nonce;
+    nonce++;
+  }
+}
+
+export const makeConnectErrorEvent = (id: number, code: number, message: string): ConnectEventError => {
+  return {
+    event: 'connect_error',
+    id,
+    payload: {
+      code,
+      message,
+    }
+  }
+}
