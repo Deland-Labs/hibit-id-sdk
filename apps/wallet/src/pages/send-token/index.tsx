@@ -2,24 +2,24 @@ import { observer } from "mobx-react";
 import { FC, useEffect, useMemo, useState } from "react";
 import hibitIdSession from "../../stores/session";
 import { useNavigate, useParams } from "react-router-dom";
-import SvgGo from '../../assets/right-arrow.svg?react';
 import { useTokenBalanceQuery, useTokenQuery } from "../../apis/react-query/token";
 import TokenSelect from "../../components/TokenSelect";
 import { RootAssetInfo } from "../../apis/models";
 import BigNumber from "bignumber.js";
 import { formatNumber } from "../../utils/formatter";
-import toaster from "../../components/Toaster";
-import { useMutation } from "@tanstack/react-query";
 import LoaderButton from "../../components/LoaderButton";
 import { object, string } from "yup";
 import { walletAddressValidate } from "../../utils/validator";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { SYSTEM_MAX_DECIMALS } from "../../utils/formatter/numberFormatter";
+import { sendTokenStore } from "./store";
+import PageHeader from "../../components/PageHeader";
 
 const SendTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
   const [token, setToken] = useState<RootAssetInfo | null>(null)
+  const { state, setState } = sendTokenStore
   const navigate = useNavigate()
   
   const tokenQuery = useTokenQuery(addressOrSymbol ?? '')
@@ -60,27 +60,11 @@ const SendTokenPage: FC = observer(() => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      toAddress: '',
-      amount: ''
+      toAddress: state.toAddress || '',
+      amount: state.amount || '',
     },
     resolver: yupResolver(formSchema),
     mode: 'onChange'
-  })
-
-  const transferMutation = useMutation({
-    mutationFn: async ({ address, amount }: {
-      address: string
-      amount: string
-    }) => {
-      if (!hibitIdSession.walletPool || !token) {
-        throw new Error('Wallet or token not ready')
-      }
-      return await hibitIdSession.walletPool.transfer(
-        address,
-        new BigNumber(amount),
-        token
-      )
-    }
   })
 
   useEffect(() => {
@@ -93,33 +77,22 @@ const SendTokenPage: FC = observer(() => {
     if (!hibitIdSession.walletPool || !token) {
       return
     }
-    try {
-      const txId = await transferMutation.mutateAsync({
-        address: toAddress,
-        amount
-      })
-      console.debug('[txId]', txId)
-      toaster.success('Transfer success')
-    } catch (e) {
-      console.error(e)
-      toaster.error(e instanceof Error ? e.message : JSON.stringify(e))
-    }
+    setState({
+      toAddress,
+      token,
+      amount
+    })
+    navigate('/send/confirm')
   })
 
   return (
     <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
-      <div>
-        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate(-1)}>
-          <SvgGo className="size-6 rotate-180" />
-          <span className="text-xs">Send</span>
-        </button>
-      </div>
-
+      <PageHeader title="Send" onBeforeBack={() => sendTokenStore.reset()} />
       <div className="flex-1 flex flex-col gap-6">
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Send to</span>
+              <span className="label-text text-neutral text-sm font-bold">Send to</span>
             </div>
             <textarea
               placeholder="Recipient address"
@@ -136,7 +109,7 @@ const SendTokenPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Amount</span>
+              <span className="label-text text-neutral text-sm font-bold">Amount</span>
               <span className="label-text-alt text-xs">
                 <button
                   className="btn btn-link btn-xs px-0 no-underline gap-0"
@@ -200,7 +173,6 @@ const SendTokenPage: FC = observer(() => {
       <LoaderButton
         className="btn btn-block btn-sm disabled:opacity-70"
         onClick={handleSend}
-        loading={transferMutation.isPending}
       >
         Send
       </LoaderButton>

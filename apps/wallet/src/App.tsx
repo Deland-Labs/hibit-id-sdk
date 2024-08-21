@@ -21,6 +21,7 @@ const LoginPage = lazy(() => import('./pages/login'));
 const OidcLoginPage = lazy(() => import('./pages/oidc-login'));
 const TokenDetailPage = lazy(() => import('./pages/token-detail'));
 const SendTokenPage = lazy(() => import('./pages/send-token'));
+const SendTokenConfirmPage = lazy(() => import('./pages/send-token/confirm-page'));
 const ReceiveTokenPage = lazy(() => import('./pages/receive-token'));
 const PasswordPage = lazy(() => import('./pages/password'));
 const SettingsPage = lazy(() => import('./pages/settings'));
@@ -103,6 +104,7 @@ const App: FC = observer(() => {
                 <Route path="/account-manage" element={<AccountManagePage />} />
                 <Route path="/token/:addressOrSymbol" element={<TokenDetailPage />} />
                 <Route path="/send/:addressOrSymbol?" element={<SendTokenPage />} />
+                <Route path="/send/confirm" element={<SendTokenConfirmPage />} />
                 <Route path="/receive" element={<ReceiveTokenPage />} />
               </>
             )}

@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
 import { FC } from "react";
-import SvgGo from '../../assets/right-arrow.svg?react';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AuthenticatorLogo from "../../components/AuthenticatorLogo";
 import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
 import hibitIdSession from "../../stores/session";
+import PageHeader from "../../components/PageHeader";
 
 const SettingsPage: FC = observer(() => {
   const navigate = useNavigate()
@@ -16,15 +16,9 @@ const SettingsPage: FC = observer(() => {
   
   return (
     <div className="h-full px-6 overflow-auto">
-      <div className="flex items-center gap-2">
-        <button className="btn btn-ghost btn-square btn-sm items-center" onClick={() => navigate(-1)}>
-          <SvgGo className="size-6 rotate-180" />
-        </button>
-        <span className="text-xs">{t('page_settings_title')}</span>
-      </div>
-
+      <PageHeader title={t('page_settings_title')} />
       <div className="mt-6">
-        <p className="label-text text-neutral text-xs">
+        <p className="label-text text-neutral text-sm font-bold">
           {t('page_settings_account')}
         </p>
         <div className="mt-4 flex justify-between items-center">
@@ -41,7 +35,7 @@ const SettingsPage: FC = observer(() => {
       </div>
 
       <div className="mt-6">
-        <p className="label-text text-neutral text-xs">
+        <p className="label-text text-neutral text-sm font-bold">
           {t('page_settings_security')}
         </p>
         <button className="btn btn-link btn-xs mt-4 no-underline p-0" onClick={() => {

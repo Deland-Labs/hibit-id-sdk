@@ -185,6 +185,51 @@ export class TonChainWallet extends ChainWallet {
     throw new Error(`Ton: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   }
 
+  public override getEstimatedFee = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<BigNumber> => {
+    if (!assetInfo.chain.equals(Chain.Ton)) {
+      throw new Error('Ton: invalid asset chain');
+    }
+    await this.readyPromise
+    const ownerAddress = (await this.getAccount()).address
+
+    // native
+    if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+      const body = internal({
+        value: toNano(amount.toString()),
+        to: Address.parse(toAddress),
+      }).body
+      const feeData = await this.client?.estimateExternalMessageFee(
+        Address.parse(ownerAddress),
+        {
+          body,
+          initCode: null,
+          initData: null,
+          ignoreSignature: true,
+        }
+      )
+      if (!feeData) {
+        throw new Error('Ton: failed to estimate fee')
+      }
+      const fee = fromNano(
+        String(
+          feeData.source_fees.fwd_fee +
+          feeData.source_fees.in_fwd_fee +
+          feeData.source_fees.storage_fee +
+          feeData.source_fees.gas_fee
+        )
+      );
+      return new BigNumber(fee)
+    }
+
+    // jetton
+    if (assetInfo.chainAssetType.equals(ChainAssetType.Jetton)) {
+      const minGas = JETTON_TRANSFER_AMOUNT.plus(JETTON_FORWARD_AMOUNT)
+      return minGas
+    }
+
+    throw new Error(`Ton: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
+  }
+
   private initWallet = async (phrase: string) => {
     const endpoint = await getHttpEndpoint({
       network: this.getIsTestNet() ? 'testnet' : 'mainnet',

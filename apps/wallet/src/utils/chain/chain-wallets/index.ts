@@ -51,4 +51,9 @@ export class ChainWalletPool {
     const chainId = new ChainId(assetInfo.chain, assetInfo.chainNetwork)
     return await this.get(chainId).transfer(toAddress, amount, assetInfo)
   }
+
+  getEstimatedFee = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<BigNumber> => {
+    const chainId = new ChainId(assetInfo.chain, assetInfo.chainNetwork)
+    return await this.get(chainId).getEstimatedFee(toAddress, amount, assetInfo)
+  }
 }

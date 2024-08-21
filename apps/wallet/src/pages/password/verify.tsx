@@ -18,6 +18,7 @@ import { useOidc } from "../../utils/oidc";
 import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV } from "../../utils/runtime";
 import { RuntimeEnv } from "../../utils/basicEnums";
 import rpcManager from "../../stores/rpc";
+import PageHeader from "../../components/PageHeader";
 
 const formSchema = object({
   password: string()
@@ -72,9 +73,7 @@ const VerifyPasswordPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 pb-14 overflow-auto">
-      <div className="text-xs">
-        Unlock wallet
-      </div>
+      <PageHeader title="Unlock wallet" backable={false} />
       <div className="mt-4">
         <LogoSection />
       </div>
@@ -98,7 +97,7 @@ const VerifyPasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Password</span>
+              <span className="label-text text-neutral text-sm font-bold">Password</span>
             </div>
             <input
               {...register('password')}

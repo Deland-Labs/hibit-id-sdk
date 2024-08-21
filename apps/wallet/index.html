@@ -4,11 +4,21 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <title>HiBit Wallet</title>
+    <title>HiBit ID</title>
+    <script type="text/javascript">
+      console.log('[host]', location.host)
+      if (location.host === 'id.hibit.app') {
+        (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "nonp35s3q2");
+        console.log('[clarity inserted]')
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script src='https://telegram.org/js/telegram-widget.js?22' ></script>
   </body>
 </html>
