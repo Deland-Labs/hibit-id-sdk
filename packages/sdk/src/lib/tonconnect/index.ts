@@ -68,7 +68,7 @@ export class TonConnect implements TonConnectBridge {
             name: 'ton_addr',
             address: account.address,
             network: this.network,
-            walletStateInit: '',
+            walletStateInit: '',  // TODO:
             publicKey: account.publicKey || '',
           })
         }
@@ -90,27 +90,52 @@ export class TonConnect implements TonConnectBridge {
   }
 
   restoreConnection = async (): Promise<ConnectEvent> => {
-    // TODO:
-    return Promise.resolve({
-      event: 'connect',
-      id: 1,
-      payload: {
-        items: [],
-        device: this.deviceInfo
+    const id = this.idGenerator.next().value;
+    try {
+      const account = await this.provider.getAccount()
+      return {
+        event: 'connect',
+        id,
+        payload: {
+          items: [{
+            name: 'ton_addr',
+            address: account.address,
+            network: this.network,
+            walletStateInit: '',  // TODO:
+            publicKey: account.publicKey || '',
+          }],
+          device: this.deviceInfo
+        }
       }
-    })
+    } catch (e) {
+      if (e instanceof HibitIdError && e.code === HibitIdErrorCode.WALLET_NOT_CONNECTED) {
+        return makeConnectErrorEvent(id, 100, 'Can not restore connection')
+      }
+      return makeConnectErrorEvent(id, 0, (e as any).message || 'Unknown error')
+    }
   }
 
   send = async (message: AppRequest<"sendTransaction" | "signData" | "disconnect">): Promise<WalletResponse<"sendTransaction" | "signData" | "disconnect">> => {
-    // TODO:
-    return Promise.resolve({
-      result: 'success',
-      id: '1'
-    })  
+    switch (message.method) {
+      case 'sendTransaction': return this.handleSendTransaction(message)
+      case 'signData': return this.handleSignData(message)
+      case 'disconnect': return this.handleDisconnect(message)
+    }
   }
 
   listen = (callback: (event: WalletEvent) => void): () => void => {
     // TODO:
     return () => {}
+  }
+
+  private handleSendTransaction = async (message: AppRequest<'sendTransaction'>): Promise<WalletResponse<'sendTransaction'>> => {
+    
+  }
+
+  private handleSignData = async (message: AppRequest<'signData'>): Promise<WalletResponse<'signData'>> => {
+
+  }
+
+  private handleDisconnect = async (message: AppRequest<'disconnect'>): Promise<WalletResponse<'disconnect'>> => {
   }
 }

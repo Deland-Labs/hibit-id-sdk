@@ -73,4 +73,5 @@ export enum HibitIdChainId {
 
 export enum HibitIdErrorCode {
   USER_CANCEL_CONNECTION = 'USER_CANCEL_CONNECTION',
+  WALLET_NOT_CONNECTED = 'WALLET_NOT_CONNECTED',
 }

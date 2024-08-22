@@ -210,7 +210,7 @@ export class HibitIdWallet {
 
   private assertConnected = () => {
     if (!this._connected) {
-      throw new Error('Wallet is not connected')
+      throw new HibitIdError(HibitIdErrorCode.WALLET_NOT_CONNECTED, 'Wallet is not connected')
     }
   }
 
