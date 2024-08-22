@@ -18,7 +18,7 @@ const TokenListItem: FC<{ token: RootAssetInfo }> = ({ token }) => {
     >
       <TokenIcon token={token} />
       <div className="flex-1 flex flex-col items-end">
-        {balanceQuery.isLoading ? (
+        {balanceQuery.isFetching ? (
           <span className="loading loading-spinner loading-sm"></span>
         ) : (
           <span className="text-sm">{balanceQuery.data?.toString() ?? '0'}</span>

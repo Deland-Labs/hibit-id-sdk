@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import SvgLoading from '../../assets/transfer-loading.svg?react';
 import SvgSuccess from '../../assets/transfer-success.svg?react';
 import SvgExternal from '../../assets/external.svg?react';
-import { useTokenBalanceQuery, useTokenQuery } from "../../apis/react-query/token";
+import { useTokenBalanceQuery, useTokenListQuery } from "../../apis/react-query/token";
 import BigNumber from "bignumber.js";
 import toaster from "../../components/Toaster";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -18,17 +18,18 @@ import PageHeader from "../../components/PageHeader";
 
 const SendTokenConfirmPage: FC = observer(() => {
   const [errMsg, setErrMsg] = useState<string>('')
-  const [transferResult, setTransferResult] = useState<{
-    state: 'pending' | 'done',
-    txId: string
-  }>({
-    state: 'pending',
-    txId: ''
-  })
+  const [resultTxId, setResultTxId] = useState('')
   const navigate = useNavigate()
   
   const { state } = sendTokenStore
-  const nativeTokenQuery = useTokenQuery(hibitIdSession.chainInfo.nativeAssetSymbol)
+  const tokenListQuery = useTokenListQuery(hibitIdSession.chainInfo)
+  const nativeTokenQuery = useQuery({
+    queryKey: ['nativeToken', hibitIdSession.chainInfo],
+    queryFn: async () => {
+      return tokenListQuery.data!.find(t => t.chainAssetType.equals(ChainAssetType.Native))
+    },
+    enabled: !!tokenListQuery.data
+  })
   const nativeBalanceQuery = useTokenBalanceQuery(nativeTokenQuery.data || undefined)
   const feeQuery = useQuery({
     queryKey: ['estimatedFee', state],
@@ -93,11 +94,11 @@ const SendTokenConfirmPage: FC = observer(() => {
         amount: state.amount,
       })
       console.debug('[txId]', txId)
-      setTransferResult({ state: 'done', txId })
+      setResultTxId(txId)
       sendTokenStore.reset()
     } catch (e) {
       console.error(e)
-      setTransferResult({ state: 'pending', txId: '' })
+      setResultTxId('')
       toaster.error(e instanceof Error ? e.message : JSON.stringify(e))
     }
   }
@@ -113,9 +114,8 @@ const SendTokenConfirmPage: FC = observer(() => {
     )
   }
 
-  if (transferResult.state === 'done') {
-    const txLink = getChainTxLink(hibitIdSession.chainInfo.chainId, transferResult.txId)
-
+  if (transferMutation.isSuccess) {
+    const txLink = getChainTxLink(hibitIdSession.chainInfo.chainId, resultTxId)
     return (
       <div className="h-full px-6 flex flex-col overflow-auto">
         <div className="flex-1 flex flex-col gap-8 justify-center items-center">
@@ -170,8 +170,13 @@ const SendTokenConfirmPage: FC = observer(() => {
             </div>
             <div className="flex items-center justify-between font-bold">
               <span className="text-primary text-sm">
-                {!feeQuery.isFetching ? (
-                  <span>~{formatNumber(feeQuery.data)}</span>
+                {!feeQuery.isPending ? (
+                  <span className="flex items-center gap-2">
+                    <span>~{formatNumber(feeQuery.data)}</span>
+                    {feeQuery.isFetching && (
+                      <span className="loading loading-spinner size-4" />  
+                    )}
+                  </span>
                 ) : (
                   <span className="loading loading-spinner size-4" />
                 )}
@@ -188,13 +193,13 @@ const SendTokenConfirmPage: FC = observer(() => {
       </div>
 
       <div className="flex items-center gap-2">
-        <button className="btn btn-sm flex-1">
+        <button className="btn btn-sm flex-1" onClick={() => navigate(-1)}>
           Cancel
         </button>
         <button
           className="btn btn-sm btn-primary flex-1 disabled:opacity-70"
           onClick={handleSend}
-          disabled={!!errMsg || feeQuery.isFetching || !nativeBalanceQuery.data}
+          disabled={!!errMsg || feeQuery.isPending || !nativeBalanceQuery.data}
         >
           Confirm
         </button>
