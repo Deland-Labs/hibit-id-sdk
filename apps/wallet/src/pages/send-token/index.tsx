@@ -118,7 +118,7 @@ const SendTokenPage: FC = observer(() => {
                   }}
                 >
                   Max:
-                  {balanceQuery.isLoading && (
+                  {balanceQuery.isFetching && (
                     <span className="loading loading-spinner loading-xs"></span>
                   )}
                   {balanceQuery.data && (

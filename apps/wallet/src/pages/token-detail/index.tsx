@@ -41,7 +41,7 @@ const TokenDetailPage: FC = observer(() => {
         </div>
         <div className="flex flex-col items-center">
           <span className="text-2xl">
-            {balanceQuery.isLoading && (
+            {balanceQuery.isFetching && (
               <span className="loading loading-spinner loading-sm"></span>
             )}
             {balanceQuery.data && (
