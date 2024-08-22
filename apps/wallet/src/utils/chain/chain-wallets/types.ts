@@ -8,7 +8,7 @@ export type AssetInfo = Pick<
   'chainAssetType' | 'chain' | 'chainNetwork' | 'contractAddress' | 'decimalPlaces'
 >;
 
-export abstract class ChainWallet {
+export abstract class BaseChainWallet {
   public readonly chainInfo: ChainInfo
   protected readonly phrase: string
 

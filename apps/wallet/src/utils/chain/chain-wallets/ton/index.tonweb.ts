@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { AssetInfo, ChainWallet } from "../types";
+import { AssetInfo, BaseChainWallet } from "../types";
 import { Chain, ChainAssetType, ChainInfo, ChainNetwork } from "../../../basicTypes";
 import { Buffer } from 'buffer';
 import TonWeb from 'tonweb';
@@ -13,7 +13,7 @@ import { WalletAccount } from "@deland-labs/hibit-id-sdk";
 const { JettonMinter, JettonWallet } = TonWeb.token.jetton
 const { Address, toNano } = TonWeb.utils
 
-export class TonChainWallet extends ChainWallet {
+export class TonChainWallet extends BaseChainWallet {
   private keyPair: KeyPair | null = null
   private tonweb: TonWeb | null = null
   private wallet: WalletV4ContractR2 | null = null

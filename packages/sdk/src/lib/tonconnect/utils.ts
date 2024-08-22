@@ -1,4 +1,4 @@
-import { ConnectEventError, DeviceInfo } from "@tonconnect/protocol";
+import { ConnectEventError, DeviceInfo, SendTransactionRpcResponseError } from "@tonconnect/protocol";
 
 const getPlatform = (): DeviceInfo["platform"] => {
   const platform =
@@ -63,5 +63,15 @@ export const makeConnectErrorEvent = (id: number, code: number, message: string)
       code,
       message,
     }
+  }
+}
+
+export const makeTransactionResponseError = (id: string, code: number, message: string): SendTransactionRpcResponseError => {
+  return {
+    error: {
+      code,
+      message,
+    },
+    id,
   }
 }

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { AssetInfo, ChainWallet } from "../types";
+import { AssetInfo, BaseChainWallet } from "../types";
 import { Chain, ChainAssetType, ChainInfo, ChainNetwork } from "../../../basicTypes";
 import { Buffer } from 'buffer';
 import { getHttpEndpoint } from "@orbs-network/ton-access";
@@ -13,7 +13,7 @@ import nacl from "tweetnacl";
 const JETTON_TRANSFER_AMOUNT = new BigNumber(0.1)
 const JETTON_FORWARD_AMOUNT = new BigNumber(0.0001)
 
-export class TonChainWallet extends ChainWallet {
+export class TonChainWallet extends BaseChainWallet {
   private keyPair: KeyPair | null = null
   private client: TonClient | null = null
   private wallet: OpenedContract<WalletContractV4> | null = null

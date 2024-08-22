@@ -1,9 +1,10 @@
 import { AppRequest, CHAIN, ConnectEvent, ConnectItemReply, ConnectRequest, DeviceInfo, WalletEvent, WalletResponse } from "@tonconnect/protocol";
-import { TonConnectBridge, TonConnectCallback, WalletInfo } from "./types";
+import { TonConnectBridge, TonConnectCallback, TransactionPayload, WalletInfo } from "./types";
 import { HibitIdWallet } from "../wallet";
-import { generateEventId, getDeviceInfo, makeConnectErrorEvent } from "./utils";
+import { generateEventId, getDeviceInfo, makeConnectErrorEvent, makeTransactionResponseError } from "./utils";
 import { HibitIdError, HibitIdWalletOptions, WalletAccount } from "../types";
 import { HibitIdChainId, HibitIdErrorCode } from "../enums";
+import { Address } from '@ton/ton';
 
 export class TonConnect implements TonConnectBridge {
   callbacks: TonConnectCallback[] = [];
@@ -129,7 +130,27 @@ export class TonConnect implements TonConnectBridge {
   }
 
   private handleSendTransaction = async (message: AppRequest<'sendTransaction'>): Promise<WalletResponse<'sendTransaction'>> => {
+    let payload: TransactionPayload | null = null
+    try {
+      payload = JSON.parse(message.params[0])
+    } catch (e) {
+      return makeTransactionResponseError(message.id, 1, 'Invalid transaction payload')
+    }
+    if (payload?.valid_until && (payload.valid_until * 1000 < Date.now())) {
+      return makeTransactionResponseError(message.id, 1, 'Transaction expired')
+    }
+    if (payload?.network && payload.network !== this.network) {
+      return makeTransactionResponseError(message.id, 1, 'Unsupported network')
+    }
+    const account = await this.provider.getAccount()
+    if (payload?.from && Address.parse(account.address).toRawString() !== payload.from) {
+      return makeTransactionResponseError(message.id, 1, 'Mismatched sender address')
+    }
+    if (payload!.messages.length < 1) {
+      return makeTransactionResponseError(message.id, 1, 'No messages in transaction')
+    }
     
+    // TODO: do transaction
   }
 
   private handleSignData = async (message: AppRequest<'signData'>): Promise<WalletResponse<'signData'>> => {
