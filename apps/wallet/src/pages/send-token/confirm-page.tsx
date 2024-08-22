@@ -170,8 +170,13 @@ const SendTokenConfirmPage: FC = observer(() => {
             </div>
             <div className="flex items-center justify-between font-bold">
               <span className="text-primary text-sm">
-                {!feeQuery.isFetching ? (
-                  <span>~{formatNumber(feeQuery.data)}</span>
+                {!feeQuery.isPending ? (
+                  <span className="flex items-center gap-2">
+                    <span>~{formatNumber(feeQuery.data)}</span>
+                    {feeQuery.isFetching && (
+                      <span className="loading loading-spinner size-4" />  
+                    )}
+                  </span>
                 ) : (
                   <span className="loading loading-spinner size-4" />
                 )}
@@ -194,7 +199,7 @@ const SendTokenConfirmPage: FC = observer(() => {
         <button
           className="btn btn-sm btn-primary flex-1 disabled:opacity-70"
           onClick={handleSend}
-          disabled={!!errMsg || feeQuery.isFetching || !nativeBalanceQuery.data}
+          disabled={!!errMsg || feeQuery.isPending || !nativeBalanceQuery.data}
         >
           Confirm
         </button>
