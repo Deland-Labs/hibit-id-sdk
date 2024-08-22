@@ -1,5 +1,5 @@
 import { AppRequest, CHAIN, ConnectEvent, ConnectItemReply, ConnectRequest, DeviceInfo, WalletEvent, WalletResponse } from "@tonconnect/protocol";
-import { TonConnectBridge, TonConnectCallback, TransactionPayload, WalletInfo } from "./types";
+import { TonConnectBridge, TonConnectCallback, TonConnectTransactionPayload, WalletInfo } from "./types";
 import { HibitIdWallet } from "../wallet";
 import { generateEventId, getDeviceInfo, makeConnectErrorEvent, makeTransactionResponseError } from "./utils";
 import { HibitIdError, HibitIdWalletOptions, WalletAccount } from "../types";
@@ -130,7 +130,7 @@ export class TonConnect implements TonConnectBridge {
   }
 
   private handleSendTransaction = async (message: AppRequest<'sendTransaction'>): Promise<WalletResponse<'sendTransaction'>> => {
-    let payload: TransactionPayload | null = null
+    let payload: TonConnectTransactionPayload | null = null
     try {
       payload = JSON.parse(message.params[0])
     } catch (e) {

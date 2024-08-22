@@ -23,3 +23,7 @@ export type {
   AccountsChangedRequest,
   LoginChangedRequest,
 } from './types'
+export type {
+  TonConnectTransactionPayload,
+  TonConnectTransactionPayloadMessage,
+} from './tonconnect/types'

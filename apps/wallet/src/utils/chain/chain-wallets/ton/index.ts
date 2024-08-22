@@ -5,9 +5,10 @@ import { Buffer } from 'buffer';
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { bytesToHex, hexToBytes } from '@openproduct/web-sdk';
 import { sleep } from "../../common";
-import { WalletAccount } from "@deland-labs/hibit-id-sdk";
-import { TonClient, WalletContractV4, internal, Address, toNano, fromNano, OpenedContract, JettonMaster, JettonWallet, beginCell, SendMode } from '@ton/ton';
+import { TonConnectTransactionPayload, WalletAccount } from "@deland-labs/hibit-id-sdk";
+import { TonClient, WalletContractV4, internal, Address, toNano, fromNano, OpenedContract, JettonMaster, JettonWallet, beginCell, SendMode, Cell, StateInit, storeMessage } from '@ton/ton';
 import { KeyPair, mnemonicToPrivateKey } from "@ton/crypto";
+import { external } from '@ton/core'
 import nacl from "tweetnacl";
 
 const JETTON_TRANSFER_AMOUNT = new BigNumber(0.1)
@@ -185,6 +186,26 @@ export class TonChainWallet extends BaseChainWallet {
     throw new Error(`Ton: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   }
 
+  public tonConnectTransfer = async (payload: TonConnectTransactionPayload): Promise<string> => {
+    const seqno = await this.wallet!.getSeqno() || 0;
+    const transfer = await this.createTonConnectTransfer(seqno, payload)
+    await this.wallet!.send(transfer)
+    const externalMessage = beginCell()
+      .storeWritable(
+        storeMessage(
+          external({
+            to: this.wallet!.address,
+            init: seqno === 0 ? this.wallet!.init : undefined,
+            body: transfer,
+          })
+        )
+      )
+      .endCell()
+      .toBoc({ idx: false })
+      .toString("base64")
+    return externalMessage
+  }
+
   public override getEstimatedFee = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<BigNumber> => {
     if (!assetInfo.chain.equals(Chain.Ton)) {
       throw new Error('Ton: invalid asset chain');
@@ -249,6 +270,23 @@ export class TonChainWallet extends BaseChainWallet {
     return this.chainInfo.chainId.network.equals(ChainNetwork.TonTestNet)
   }
 
+  private getAddressBounceable = (address: string) => {
+    return Address.isFriendly(address)
+      ? Address.parseFriendly(address).isBounceable
+      : false;
+  }
+
+  private toStateInit = (stateInit?: string): StateInit | undefined => {
+    if (!stateInit) {
+      return undefined;
+    }
+    const initSlice = Cell.fromBase64(stateInit).asSlice();
+    return {
+      code: initSlice.loadRef(),
+      data: initSlice.loadRef(),
+    };
+  };
+
   private getJettonWallet = async (ownerAddress: string, contractAddress: string) => {
     await this.readyPromise
     const jettonMaster = this.client!.open(JettonMaster.create(Address.parse(contractAddress)));
@@ -256,4 +294,23 @@ export class TonChainWallet extends BaseChainWallet {
     const jettonWallet = this.client!.open(JettonWallet.create(jettonWalletAddress))
     return jettonWallet
   }
+
+  private createTonConnectTransfer = async (seqno: number, payload: TonConnectTransactionPayload) => {
+    await this.readyPromise
+    const transfer = this.wallet!.createTransfer({
+      secretKey: this.keyPair!.secretKey,
+      seqno,
+      sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS,
+      messages: payload.messages.map((item) => {
+        return internal({
+          to: item.address,
+          value: toNano(fromNano(item.amount)),
+          bounce: this.getAddressBounceable(item.address),
+          init: this.toStateInit(item.stateInit),
+          body: item.payload ? Cell.fromBase64(item.payload) : undefined,
+        });
+      }),
+    });
+    return transfer;
+  };
 }
