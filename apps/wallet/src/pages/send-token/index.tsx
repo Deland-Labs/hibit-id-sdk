@@ -18,8 +18,8 @@ import PageHeader from "../../components/PageHeader";
 
 const SendTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
-  const [token, setToken] = useState<RootAssetInfo | null>(null)
   const { state, setState } = sendTokenStore
+  const [token, setToken] = useState<RootAssetInfo | null>(null)
   const navigate = useNavigate()
   
   const tokenQuery = useTokenQuery(addressOrSymbol ?? '')
@@ -68,10 +68,12 @@ const SendTokenPage: FC = observer(() => {
   })
 
   useEffect(() => {
-    if (tokenQuery.data) {
+    if (state.token) {
+      setToken(state.token)
+    } else if (tokenQuery.data) {
       setToken(tokenQuery.data)
     }
-  }, [tokenQuery.data])
+  }, [state.token, tokenQuery.data])
 
   const handleSend = handleSubmit(async ({ toAddress, amount }) => {
     if (!hibitIdSession.walletPool || !token) {
@@ -107,7 +109,7 @@ const SendTokenPage: FC = observer(() => {
           </label>
         </div>
         <div>
-          <label className="form-control w-full">
+          <div className="form-control w-full">
             <div className="label">
               <span className="label-text text-neutral text-sm font-bold">Amount</span>
               <span className="label-text-alt text-xs">
@@ -115,13 +117,13 @@ const SendTokenPage: FC = observer(() => {
                   className="btn btn-link btn-xs px-0 no-underline gap-0"
                   onClick={() => {
                     setValue('amount', balanceQuery.data?.toString() ?? '0')
+                    trigger('amount')
                   }}
                 >
                   Max:
-                  {balanceQuery.isLoading && (
+                  {balanceQuery.isFetching ? (
                     <span className="loading loading-spinner loading-xs"></span>
-                  )}
-                  {balanceQuery.data && (
+                  ) : (
                     <span className="mx-1">{formatNumber(balanceQuery.data || 0)}</span>
                   )}
                   {token?.assetSymbol}
@@ -166,7 +168,7 @@ const SendTokenPage: FC = observer(() => {
                 <span className="label-text-alt text-error">{errors.amount.message}</span>
               </div>
             )}
-          </label>
+          </div>
         </div>
       </div>
 

@@ -78,6 +78,6 @@ export const useTokenBalanceQuery = (token?: RootAssetInfo) => {
       return (await hibitIdSession.walletPool.balanceOf(address, token))?.dp(SYSTEM_MAX_DECIMALS, BigNumber.ROUND_FLOOR)
     },
     enabled: !!token,
-    staleTime: 10000,
+    refetchInterval: 10000,
   })
 }
