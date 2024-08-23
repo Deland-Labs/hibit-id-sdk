@@ -1,7 +1,7 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdError, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
+import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdError, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TonConnectTransferRequest, TonConnectTransferResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdChainId, HibitIdErrorCode, HibitIdExposeRPCMethod } from './enums';
 import { clamp } from './utils';
 
@@ -158,6 +158,21 @@ export class HibitIdWallet {
     } catch (e: any) {
       console.error(e, JSON.stringify(e))
       throw new Error(`Transfer failed: ${this.getRpcErrorMessage(e)}`)
+    }
+  }
+
+  public tonConnectTransfer = async (payload: TonConnectTransferRequest): Promise<string> => {
+    console.debug('[sdk call TonConnectTransfer]', { option: payload })
+    this.assertConnected()
+    try {
+      const res = await this._rpc?.call<TonConnectTransferResponse>(HibitIdExposeRPCMethod.TONCONNECT_TRANSFER, payload)
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data.message ?? null
+    } catch (e: any) {
+      console.error(e, JSON.stringify(e))
+      throw new Error(`TonConnectTransfer failed: ${this.getRpcErrorMessage(e)}`)
     }
   }
 

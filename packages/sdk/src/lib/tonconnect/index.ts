@@ -150,7 +150,15 @@ export class TonConnect implements TonConnectBridge {
       return makeTransactionResponseError(message.id, 1, 'No messages in transaction')
     }
     
-    // TODO: do transaction
+    try {
+      const result = await this.provider.tonConnectTransfer(payload!)
+      return {
+        id: message.id,
+        result,
+      }
+    } catch (e) {
+      return makeTransactionResponseError(message.id, 0, (e as any).message || 'Unknown error')
+    }
   }
 
   private handleSignData = async (message: AppRequest<'signData'>): Promise<WalletResponse<'signData'>> => {

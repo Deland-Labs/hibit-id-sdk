@@ -14,6 +14,7 @@ export enum HibitIdExposeRPCMethod {
   CONNECT = 'connect',
   GET_BALANCE = 'getBalance',
   TRANSFER = 'transfer',
+  TONCONNECT_TRANSFER = 'tonConnectTransfer',
   DISCONNECT = 'disconnect',
   SIGN_MESSAGE = 'signMessage',
   SWITCH_CHAIN = 'switchChain',

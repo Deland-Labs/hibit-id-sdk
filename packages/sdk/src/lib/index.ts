@@ -18,6 +18,8 @@ export type {
   GetBalanceResponse,
   TransferRequest,
   TransferResponse,
+  TonConnectTransferRequest,
+  TonConnectTransferResponse,
   SwitchChainRequest,
   ChainChangedRequest,
   AccountsChangedRequest,
