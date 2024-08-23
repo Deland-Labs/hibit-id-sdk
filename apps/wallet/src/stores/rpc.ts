@@ -10,7 +10,7 @@ import { prOidc } from '../utils/oidc';
 import hibitIdSession from './session';
 import { ChainWalletPool } from '../utils/chain/chain-wallets';
 import { TonChainWallet } from '../utils/chain/chain-wallets/ton';
-import { TonConnectSignDataResponse } from '../../../../packages/sdk/dist/lib/types';
+import { TonConnectGetStateInitResponse, TonConnectSignDataResponse } from '../../../../packages/sdk/dist/lib/types';
 
 const PASSIVE_DISCONNECT_STORAGE_KEY = 'hibitId-passive-disconnect'
 const ACTIVE_DISCONNECT_STORAGE_KEY = 'hibitId-active-disconnect'
@@ -49,6 +49,7 @@ class RPCManager {
     rpc.expose(HibitIdExposeRPCMethod.CONNECT, this.onRpcConnect);
     rpc.expose(HibitIdExposeRPCMethod.GET_BALANCE, this.onRpcGetBalance);
     rpc.expose(HibitIdExposeRPCMethod.TRANSFER, this.onRpcTransfer);
+    rpc.expose(HibitIdExposeRPCMethod.TONCONNECT_GET_STATE_INIT, this.onRpcTonConnectGetStateInit);
     rpc.expose(HibitIdExposeRPCMethod.TONCONNECT_TRANSFER, this.onRpcTonConnectTransfer);
     rpc.expose(HibitIdExposeRPCMethod.TONCONNECT_SIGN_DATA, this.onRpcTonConnectSignData);
     rpc.expose(HibitIdExposeRPCMethod.SWITCH_CHAIN, this.onRpcSwitchChain);
@@ -272,6 +273,29 @@ class RPCManager {
         success: true,
         data: {
           txHash
+        }
+      }
+    } catch (e: any) {
+      return {
+        success: false,
+        errMsg: e.message || String(e)
+      }
+    }
+  }
+
+  private onRpcTonConnectGetStateInit = (): TonConnectGetStateInitResponse => {
+    console.debug('[wallet on TonConnectGetStateInit]')
+    try {
+      this.checkInit()
+      const wallet = this._walletPool!.get(this._chainInfo!.chainId)
+      if (!(wallet instanceof TonChainWallet)) {
+        throw new Error('Wallet chain not a valid TON chain')
+      }
+      const base64 = wallet.tonConnectGetStateInit()
+      return {
+        success: true,
+        data: {
+          stateInitBase64: base64
         }
       }
     } catch (e: any) {

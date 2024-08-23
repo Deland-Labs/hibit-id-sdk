@@ -1,7 +1,7 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdError, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TonConnectSignDataRequest, TonConnectSignDataResponse, TonConnectTransferRequest, TonConnectTransferResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
+import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdError, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TonConnectGetStateInitResponse, TonConnectSignDataRequest, TonConnectSignDataResponse, TonConnectTransferRequest, TonConnectTransferResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdChainId, HibitIdErrorCode, HibitIdExposeRPCMethod } from './enums';
 import { clamp } from './utils';
 import { TonConnectSignDataResult } from './tonconnect/types';
@@ -159,6 +159,21 @@ export class HibitIdWallet {
     } catch (e: any) {
       console.error(e, JSON.stringify(e))
       throw new Error(`Transfer failed: ${this.getRpcErrorMessage(e)}`)
+    }
+  }
+
+  public tonConnectGetStateInit = async (): Promise<string> => {
+    console.debug('[sdk call TonConnectGetStateInit]')
+    this.assertConnected()
+    try {
+      const res = await this._rpc?.call<TonConnectGetStateInitResponse>(HibitIdExposeRPCMethod.TONCONNECT_GET_STATE_INIT, {})
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data.stateInitBase64 ?? null
+    } catch (e: any) {
+      console.error(e, JSON.stringify(e))
+      throw new Error(`TonConnectGetStateInit failed: ${this.getRpcErrorMessage(e)}`)
     }
   }
 

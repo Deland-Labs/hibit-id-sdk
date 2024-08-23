@@ -1,4 +1,4 @@
-import { ConnectEventError, DeviceInfo, SendTransactionRpcResponseError, SignDataRpcResponseError } from "@tonconnect/protocol";
+import { ConnectEventError, DeviceInfo, DisconnectEvent, DisconnectRpcResponseError, SendTransactionRpcResponseError, SignDataRpcResponseError } from "@tonconnect/protocol";
 
 const getPlatform = (): DeviceInfo["platform"] => {
   const platform =
@@ -83,5 +83,23 @@ export const makeSignDataResponseError = (id: string, code: number, message: str
       message,
     },
     id,
+  }
+}
+
+export const makeDisconnectResponseError = (id: string, code: number, message: string): DisconnectRpcResponseError => {
+  return {
+    error: {
+      code,
+      message,
+    },
+    id,
+  }
+}
+
+export const makeDisconnectEvent = (id: number): DisconnectEvent => {
+  return {
+    event: 'disconnect',
+    id,
+    payload: {},
   }
 }

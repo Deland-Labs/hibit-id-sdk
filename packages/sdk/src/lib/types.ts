@@ -110,6 +110,10 @@ export type TransferResponse = RpcBaseResponse<{
   txHash: string
 }>
 
+export type TonConnectGetStateInitResponse = RpcBaseResponse<{
+  stateInitBase64: string
+}>
+
 export type TonConnectTransferRequest = TonConnectTransactionPayload
 
 export type TonConnectTransferResponse = RpcBaseResponse<{

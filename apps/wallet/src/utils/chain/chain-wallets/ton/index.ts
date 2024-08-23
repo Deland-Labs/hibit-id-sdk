@@ -8,7 +8,7 @@ import { sleep } from "../../common";
 import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload, WalletAccount } from "@deland-labs/hibit-id-sdk";
 import { TonClient, WalletContractV4, internal, Address, toNano, fromNano, OpenedContract, JettonMaster, JettonWallet, beginCell, SendMode, Cell, StateInit, storeMessage } from '@ton/ton';
 import { KeyPair, mnemonicToPrivateKey } from "@ton/crypto";
-import { external } from '@ton/core'
+import { external, storeStateInit } from '@ton/core'
 import nacl from "tweetnacl";
 
 const JETTON_TRANSFER_AMOUNT = new BigNumber(0.1)
@@ -229,6 +229,16 @@ export class TonChainWallet extends BaseChainWallet {
     }
 
     throw new Error(`Ton: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
+  }
+
+  public tonConnectGetStateInit = (): string => {
+    const stateInit = beginCell()
+      .storeWritable(storeStateInit(this.wallet!.init))
+      .endCell();
+    const base64 = stateInit
+      .toBoc({ idx: true, crc32: true })
+      .toString("base64")
+    return base64
   }
 
   public tonConnectTransfer = async (payload: TonConnectTransactionPayload): Promise<string> => {

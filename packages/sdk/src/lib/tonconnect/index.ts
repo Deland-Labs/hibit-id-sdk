@@ -1,8 +1,8 @@
 import { AppRequest, CHAIN, ConnectEvent, ConnectItemReply, ConnectRequest, DeviceInfo, WalletEvent, WalletResponse } from "@tonconnect/protocol";
 import { TonConnectBridge, TonConnectCallback, TonConnectSignDataPayload, TonConnectTransactionPayload, WalletInfo } from "./types";
 import { HibitIdWallet } from "../wallet";
-import { generateEventId, getDeviceInfo, makeConnectErrorEvent, makeSignDataResponseError, makeTransactionResponseError } from "./utils";
-import { HibitIdError, HibitIdWalletOptions, WalletAccount } from "../types";
+import { generateEventId, getDeviceInfo, makeConnectErrorEvent, makeDisconnectEvent, makeDisconnectResponseError, makeSignDataResponseError, makeTransactionResponseError } from "./utils";
+import { HibitIdError, HibitIdWalletOptions } from "../types";
 import { HibitIdChainId, HibitIdErrorCode } from "../enums";
 import { Address } from '@ton/ton';
 
@@ -35,24 +35,33 @@ export class TonConnect implements TonConnectBridge {
       defaultChain: HibitIdChainId.TonTestnet
     }
     this.provider = new HibitIdWallet(this.providerOptions);
+    this.provider.addEventListener('accountsChanged', (account) => {
+      if (!account) {
+        const id = this.idGenerator.next().value;
+        this.notify(makeDisconnectEvent(id))
+      }
+    })
+    this.provider.addEventListener('chainChanged', () => {
+      const id = this.idGenerator.next().value;
+      this.notify(makeDisconnectEvent(id))
+    })
   }
   
   connect = async (protocolVersion: number, message: ConnectRequest): Promise<ConnectEvent> => {
     const id = this.idGenerator.next().value;
 
     if (protocolVersion > this.protocolVersion) {
-      return makeConnectErrorEvent(id, 1, 'Unsupported protocol version')
+      return this.notify(makeConnectErrorEvent(id, 1, 'Unsupported protocol version'))
     }
     if (message.items.length < 1) {
-      return makeConnectErrorEvent(id, 1, 'Invalid request items')
+      return this.notify(makeConnectErrorEvent(id, 1, 'Invalid request items'))
     }
     if (!message.manifestUrl) {
-      return makeConnectErrorEvent(id, 2, 'Invalid manifest URL')
+      return this.notify(makeConnectErrorEvent(id, 2, 'Invalid manifest URL'))
     }
     
     try {
       const replyItems: ConnectItemReply[] = []
-      let account: WalletAccount | null = null;
       for (const item of message.items) {
         if (item.name ==='ton_proof') {
           // TODO: impl ton_proof
@@ -64,29 +73,30 @@ export class TonConnect implements TonConnectBridge {
             }
           })
         } else if (item.name === 'ton_addr') {
-          account = account || (await this.provider.connect(this.providerOptions.defaultChain))
+          const account = await this.provider.connect(this.providerOptions.defaultChain)
+          const stateInitBase64 = await this.provider.tonConnectGetStateInit()
           replyItems.push({
             name: 'ton_addr',
             address: account.address,
             network: this.network,
-            walletStateInit: '',  // TODO:
+            walletStateInit: stateInitBase64,
             publicKey: account.publicKey || '',
           })
         }
       }
-      return {
+      return this.notify({
         event: 'connect',
         id,
         payload: {
           items: replyItems,
           device: this.deviceInfo
         }
-      }
+      })
     } catch (e) {
       if (e instanceof HibitIdError && e.code === HibitIdErrorCode.USER_CANCEL_CONNECTION) {
-        return makeConnectErrorEvent(id, 300, 'User canceled connection')
+        return this.notify(makeConnectErrorEvent(id, 300, 'User canceled connection'))
       }
-      return makeConnectErrorEvent(id, 0, (e as any).message || 'Unknown error')
+      return this.notify(makeConnectErrorEvent(id, 0, (e as any).message || 'Unknown error'))
     }
   }
 
@@ -94,7 +104,8 @@ export class TonConnect implements TonConnectBridge {
     const id = this.idGenerator.next().value;
     try {
       const account = await this.provider.getAccount()
-      return {
+      const stateInitBase64 = await this.provider.tonConnectGetStateInit()
+      return this.notify({
         event: 'connect',
         id,
         payload: {
@@ -102,17 +113,17 @@ export class TonConnect implements TonConnectBridge {
             name: 'ton_addr',
             address: account.address,
             network: this.network,
-            walletStateInit: '',  // TODO:
+            walletStateInit: stateInitBase64,
             publicKey: account.publicKey || '',
           }],
           device: this.deviceInfo
         }
-      }
+      })
     } catch (e) {
       if (e instanceof HibitIdError && e.code === HibitIdErrorCode.WALLET_NOT_CONNECTED) {
-        return makeConnectErrorEvent(id, 100, 'Can not restore connection')
+        return this.notify(makeConnectErrorEvent(id, 100, 'Can not restore connection'))
       }
-      return makeConnectErrorEvent(id, 0, (e as any).message || 'Unknown error')
+      return this.notify(makeConnectErrorEvent(id, 0, (e as any).message || 'Unknown error'))
     }
   }
 
@@ -125,9 +136,16 @@ export class TonConnect implements TonConnectBridge {
   }
 
   listen = (callback: (event: WalletEvent) => void): () => void => {
-    // TODO:
-    return () => {}
+    this.callbacks.push(callback);
+    return () => {
+      this.callbacks = this.callbacks.filter((item) => item != callback);
+    };
   }
+
+  private notify = <E extends WalletEvent>(event: E): E => {
+    this.callbacks.forEach((item) => item(event));
+    return event;
+  };
 
   private handleSendTransaction = async (message: AppRequest<'sendTransaction'>): Promise<WalletResponse<'sendTransaction'>> => {
     let payload: TonConnectTransactionPayload | null = null
@@ -175,5 +193,14 @@ export class TonConnect implements TonConnectBridge {
   }
 
   private handleDisconnect = async (message: AppRequest<'disconnect'>): Promise<WalletResponse<'disconnect'>> => {
+    try {
+      await this.provider.disconnect()
+      return {
+        id: message.id,
+        result: {},
+      }
+    } catch (e) {
+      return makeDisconnectResponseError(message.id, 0, (e as any).message || 'Unknown error')
+    }
   }
 }
