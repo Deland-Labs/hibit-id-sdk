@@ -1,5 +1,5 @@
 import { HibitIdAssetType, HibitIdChainId, HibitIdErrorCode } from "./enums"
-import { TonConnectTransactionPayload } from "./tonconnect/types"
+import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from "./tonconnect/types"
 
 export type HibitEnv = 'dev' | 'test' | 'prod'
 
@@ -115,6 +115,10 @@ export type TonConnectTransferRequest = TonConnectTransactionPayload
 export type TonConnectTransferResponse = RpcBaseResponse<{
   message: string
 }>
+
+export type TonConnectSignDataRequest = TonConnectSignDataPayload
+
+export type TonConnectSignDataResponse = RpcBaseResponse<TonConnectSignDataResult>
 
 export type GetAccountRequest = {
   chainId?: HibitIdChainId

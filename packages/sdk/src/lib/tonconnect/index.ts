@@ -1,7 +1,7 @@
 import { AppRequest, CHAIN, ConnectEvent, ConnectItemReply, ConnectRequest, DeviceInfo, WalletEvent, WalletResponse } from "@tonconnect/protocol";
-import { TonConnectBridge, TonConnectCallback, TonConnectTransactionPayload, WalletInfo } from "./types";
+import { TonConnectBridge, TonConnectCallback, TonConnectSignDataPayload, TonConnectTransactionPayload, WalletInfo } from "./types";
 import { HibitIdWallet } from "../wallet";
-import { generateEventId, getDeviceInfo, makeConnectErrorEvent, makeTransactionResponseError } from "./utils";
+import { generateEventId, getDeviceInfo, makeConnectErrorEvent, makeSignDataResponseError, makeTransactionResponseError } from "./utils";
 import { HibitIdError, HibitIdWalletOptions, WalletAccount } from "../types";
 import { HibitIdChainId, HibitIdErrorCode } from "../enums";
 import { Address } from '@ton/ton';
@@ -162,7 +162,16 @@ export class TonConnect implements TonConnectBridge {
   }
 
   private handleSignData = async (message: AppRequest<'signData'>): Promise<WalletResponse<'signData'>> => {
-
+    const payload: TonConnectSignDataPayload = message.params[0]
+    try {
+      const result = await this.provider.tonConnectSignData(payload)
+      return {
+        id: message.id,
+        result,
+      }
+    } catch (e) {
+      return makeSignDataResponseError(message.id, 0, (e as any).message || 'Unknown error')
+    }
   }
 
   private handleDisconnect = async (message: AppRequest<'disconnect'>): Promise<WalletResponse<'disconnect'>> => {

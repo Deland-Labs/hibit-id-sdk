@@ -1,9 +1,10 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdError, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TonConnectTransferRequest, TonConnectTransferResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
+import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdError, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TonConnectSignDataRequest, TonConnectSignDataResponse, TonConnectTransferRequest, TonConnectTransferResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
 import { ClientExposeRPCMethod, HibitIdChainId, HibitIdErrorCode, HibitIdExposeRPCMethod } from './enums';
 import { clamp } from './utils';
+import { TonConnectSignDataResult } from './tonconnect/types';
 
 const LOGIN_SESSION_KEY = 'hibit-id-session'
 
@@ -173,6 +174,21 @@ export class HibitIdWallet {
     } catch (e: any) {
       console.error(e, JSON.stringify(e))
       throw new Error(`TonConnectTransfer failed: ${this.getRpcErrorMessage(e)}`)
+    }
+  }
+
+  public tonConnectSignData = async (payload: TonConnectSignDataRequest): Promise<TonConnectSignDataResult> => {
+    console.debug('[sdk call TonConnectSignData]', { option: payload })
+    this.assertConnected()
+    try {
+      const res = await this._rpc?.call<TonConnectSignDataResponse>(HibitIdExposeRPCMethod.TONCONNECT_SIGN_DATA, payload)
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data ?? null
+    } catch (e: any) {
+      console.error(e, JSON.stringify(e))
+      throw new Error(`TonConnectSignData failed: ${this.getRpcErrorMessage(e)}`)
     }
   }
 

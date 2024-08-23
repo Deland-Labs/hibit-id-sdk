@@ -1,11 +1,11 @@
 import BigNumber from "bignumber.js";
 import { AssetInfo, BaseChainWallet } from "../types";
 import { Chain, ChainAssetType, ChainInfo, ChainNetwork } from "../../../basicTypes";
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { bytesToHex, hexToBytes } from '@openproduct/web-sdk';
 import { sleep } from "../../common";
-import { TonConnectTransactionPayload, WalletAccount } from "@deland-labs/hibit-id-sdk";
+import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload, WalletAccount } from "@deland-labs/hibit-id-sdk";
 import { TonClient, WalletContractV4, internal, Address, toNano, fromNano, OpenedContract, JettonMaster, JettonWallet, beginCell, SendMode, Cell, StateInit, storeMessage } from '@ton/ton';
 import { KeyPair, mnemonicToPrivateKey } from "@ton/crypto";
 import { external } from '@ton/core'
@@ -186,26 +186,6 @@ export class TonChainWallet extends BaseChainWallet {
     throw new Error(`Ton: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   }
 
-  public tonConnectTransfer = async (payload: TonConnectTransactionPayload): Promise<string> => {
-    const seqno = await this.wallet!.getSeqno() || 0;
-    const transfer = await this.createTonConnectTransfer(seqno, payload)
-    await this.wallet!.send(transfer)
-    const externalMessage = beginCell()
-      .storeWritable(
-        storeMessage(
-          external({
-            to: this.wallet!.address,
-            init: seqno === 0 ? this.wallet!.init : undefined,
-            body: transfer,
-          })
-        )
-      )
-      .endCell()
-      .toBoc({ idx: false })
-      .toString("base64")
-    return externalMessage
-  }
-
   public override getEstimatedFee = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<BigNumber> => {
     if (!assetInfo.chain.equals(Chain.Ton)) {
       throw new Error('Ton: invalid asset chain');
@@ -249,6 +229,39 @@ export class TonChainWallet extends BaseChainWallet {
     }
 
     throw new Error(`Ton: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
+  }
+
+  public tonConnectTransfer = async (payload: TonConnectTransactionPayload): Promise<string> => {
+    const seqno = await this.wallet!.getSeqno() || 0;
+    const transfer = await this.createTonConnectTransfer(seqno, payload)
+    await this.wallet!.send(transfer)
+    const externalMessage = beginCell()
+      .storeWritable(
+        storeMessage(
+          external({
+            to: this.wallet!.address,
+            init: seqno === 0 ? this.wallet!.init : undefined,
+            body: transfer,
+          })
+        )
+      )
+      .endCell()
+      .toBoc({ idx: false })
+      .toString("base64")
+    return externalMessage
+  }
+
+  public tonConnectSignData = async (payload: TonConnectSignDataPayload): Promise<TonConnectSignDataResult> => {
+    const timestamp = Date.now() / 1000
+    const X: Cell = Cell.fromBase64(payload.cell) // Payload cell
+    const prefix = Buffer.alloc(4 + 8); // version + timestamp
+    prefix.writeUInt32BE(payload.schema_crc, 0);
+    prefix.writeBigUInt64BE(timestamp, 4);
+    const signature = nacl.sign.detached(Buffer.concat([prefix, X.hash()]), this.keyPair!.secretKey);
+    return {
+      signature: bytesToHex(signature),
+      timestamp: timestamp.toString(),
+    }
   }
 
   private initWallet = async (phrase: string) => {

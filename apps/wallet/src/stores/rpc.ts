@@ -1,5 +1,5 @@
 import { RPC } from '@mixer/postmessage-rpc'
-import { AccountsChangedRequest, ChainChangedRequest, ClientExposeRPCMethod, ConnectRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdAssetType, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, SwitchChainRequest, TonConnectTransferRequest, TonConnectTransferResponse, TransferRequest, TransferResponse, WalletAccount } from "@deland-labs/hibit-id-sdk"
+import { AccountsChangedRequest, ChainChangedRequest, ClientExposeRPCMethod, ConnectRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdAssetType, HibitIdExposeRPCMethod, RPC_SERVICE_NAME, SignMessageRequest, SignMessageResponse, SwitchChainRequest, TonConnectSignDataPayload, TonConnectTransferRequest, TonConnectTransferResponse, TransferRequest, TransferResponse, WalletAccount } from "@deland-labs/hibit-id-sdk"
 import { makeAutoObservable } from 'mobx';
 import { AssetInfo } from '../utils/chain/chain-wallets/types';
 import { Chain, ChainAssetType, ChainId, ChainInfo, ChainNetwork, DecimalPlaces } from '../utils/basicTypes';
@@ -10,6 +10,7 @@ import { prOidc } from '../utils/oidc';
 import hibitIdSession from './session';
 import { ChainWalletPool } from '../utils/chain/chain-wallets';
 import { TonChainWallet } from '../utils/chain/chain-wallets/ton';
+import { TonConnectSignDataResponse } from '../../../../packages/sdk/dist/lib/types';
 
 const PASSIVE_DISCONNECT_STORAGE_KEY = 'hibitId-passive-disconnect'
 const ACTIVE_DISCONNECT_STORAGE_KEY = 'hibitId-active-disconnect'
@@ -49,6 +50,7 @@ class RPCManager {
     rpc.expose(HibitIdExposeRPCMethod.GET_BALANCE, this.onRpcGetBalance);
     rpc.expose(HibitIdExposeRPCMethod.TRANSFER, this.onRpcTransfer);
     rpc.expose(HibitIdExposeRPCMethod.TONCONNECT_TRANSFER, this.onRpcTonConnectTransfer);
+    rpc.expose(HibitIdExposeRPCMethod.TONCONNECT_SIGN_DATA, this.onRpcTonConnectSignData);
     rpc.expose(HibitIdExposeRPCMethod.SWITCH_CHAIN, this.onRpcSwitchChain);
     rpc.expose(HibitIdExposeRPCMethod.DISCONNECT, this.onRpcDisconnect);
 
@@ -294,6 +296,27 @@ class RPCManager {
         data: {
           message
         }
+      }
+    } catch (e: any) {
+      return {
+        success: false,
+        errMsg: e.message || String(e)
+      }
+    }
+  }
+
+  private onRpcTonConnectSignData = async (payload: TonConnectSignDataPayload): Promise<TonConnectSignDataResponse> => {
+    console.debug('[wallet on TonConnectSignData]', payload)
+    try {
+      this.checkInit()
+      const wallet = this._walletPool!.get(this._chainInfo!.chainId)
+      if (!(wallet instanceof TonChainWallet)) {
+        throw new Error('Wallet chain not a valid TON chain')
+      }
+      const result = await wallet.tonConnectSignData(payload)
+      return {
+        success: true,
+        data: result,
       }
     } catch (e: any) {
       return {

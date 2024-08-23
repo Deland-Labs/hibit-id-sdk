@@ -28,4 +28,6 @@ export type {
 export type {
   TonConnectTransactionPayload,
   TonConnectTransactionPayloadMessage,
+  TonConnectSignDataPayload,
+  TonConnectSignDataResult,
 } from './tonconnect/types'
