@@ -12,7 +12,7 @@ import { HibitIDError, HibitIDErrorCode } from "../utils/error-code";
 import { GetMnemonicResult, UpdateMnemonicInput } from "../apis/models";
 import { AES, enc, MD5 } from "crypto-js";
 import { HIBIT_ENV } from "../utils/env";
-import { getChainByChainId } from "../utils/chain";
+import { getChainByChainId, getSupportedChains } from "../utils/chain";
 
 const SESSION_CONFIG_KEY = 'hibit-id-config'
 const PASSWORD_STORAGE_KEY = 'hibit-id-p'
@@ -46,7 +46,12 @@ export class HibitIdSession {
         initialChainInfo = chainInfo
       }
     }
+    const supportedChains = getSupportedChains()
+    if (!supportedChains.find((c) => c.chainId.equals(initialChainInfo.chainId))) {
+      initialChainInfo = supportedChains[0]
+    }
     this.chainInfo = initialChainInfo
+    this.setChainInfo(initialChainInfo)
 
     if (RUNTIME_ENV === RuntimeEnv.SDK) {
       reaction(

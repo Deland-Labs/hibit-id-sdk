@@ -1,4 +1,5 @@
 import { CONTROLLER_CONTAINER_ID, IFRAME_CONTAINER_ID } from "../constants"
+import { HibitIdChainId } from "../enums"
 import { HibitEnv } from "../types"
 import { clamp, getHibitIdUrl } from "../utils"
 import './index.css'
@@ -155,7 +156,7 @@ export class HibitIdIframe {
   private container: HTMLDivElement
   private _visible = false
 
-  constructor(env: HibitEnv, urlAppendix: string = '') {
+  constructor(env: HibitEnv, chains: HibitIdChainId[] = [], urlAppendix: string = '') {
     this.isDesktop = window.innerWidth > 576
     const existed = document.getElementById(IFRAME_CONTAINER_ID)
     if (existed) {
@@ -166,7 +167,7 @@ export class HibitIdIframe {
     const container = document.createElement('div')
     container.id = IFRAME_CONTAINER_ID
     const iframe = document.createElement('iframe')
-    iframe.src = `${getHibitIdUrl(env)}${urlAppendix}`
+    iframe.src = `${getHibitIdUrl(env)}?chains=${chains.join(',')}${urlAppendix}`
     iframe.allow='clipboard-write; publickey-credentials-get *; publickey-credentials-create *'
     container.appendChild(iframe)
     document.body.appendChild(container)

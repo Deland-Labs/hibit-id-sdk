@@ -275,7 +275,7 @@ export class HibitIdWallet {
       return
     }
 
-    this._iframe = new HibitIdIframe(this._options.env, this._options.iframeUrlAppendix)
+    this._iframe = new HibitIdIframe(this._options.env, this._options.chains, this._options.iframeUrlAppendix)
     
     const rpc = new RPC({
       // The window you want to talk to:

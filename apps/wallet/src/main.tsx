@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import 'reflect-metadata'
-import { IS_IN_IFRAME, IS_TELEGRAM_MINI_APP, RUNTIME_ENV, RUNTIME_PARAMS } from './utils/runtime.ts'
+import { IS_IN_IFRAME, IS_TELEGRAM_MINI_APP, RUNTIME_ENV, RUNTIME_PARAMS, RUNTIME_SUPPORTED_CHAIN_IDS } from './utils/runtime.ts'
 import App from './App.tsx'
 import './index.css'
 import { BrowserRouter, MemoryRouter } from 'react-router-dom'
@@ -16,6 +16,7 @@ BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
 console.log('[runtime env]', RUNTIME_ENV)
 console.log('[runtime params]', RUNTIME_PARAMS)
+console.log('[runtime supported chains]', RUNTIME_SUPPORTED_CHAIN_IDS)
 // load login widget if not in tg mini app
 if (!IS_TELEGRAM_MINI_APP) {
   const tgWidgetScript = document.createElement('script')
