@@ -60,9 +60,7 @@ export class HibitIdWallet {
     }
 
     try {
-      if (this._hasSession) {
-        this.showIframe()
-      }
+      this.showIframe(!this._hasSession)
       this._connectPromise = new BridgePromise<WalletAccount | null>()
       this._rpc!.call(HibitIdExposeRPCMethod.CONNECT, {
         chainId,
@@ -334,22 +332,22 @@ export class HibitIdWallet {
 
   private onRpcLoginChanged = (input: LoginChangedRequest) => {
     console.debug('[sdk on LoginChanged]', { input })
-    if (!this._connectPromise) {
-      return
-    }
     // only show iframe during connection
+    this._hasSession = input.isLogin
     if (!input.isLogin) {
-      this.showIframe(true)
+      sessionStorage.removeItem(LOGIN_SESSION_KEY)
+      if (this._connectPromise) {
+        this.showIframe(true)
+      }
     } else {
+      sessionStorage.setItem(LOGIN_SESSION_KEY, input.sub || '')
       if (!this._controller) {
         this._controller = new HibitIdController(this.toggleIframe, this.handleControllerMove)
       }
-      if (this._hasSession) {
-        return
+      if (this._connectPromise) {
+        this.showIframe()
+        this._controller?.setOpen(true)
       }
-      this.showIframe()
-      this._controller?.setOpen(true)
-      sessionStorage.setItem(LOGIN_SESSION_KEY, input.sub || '')
     }
   }
 
