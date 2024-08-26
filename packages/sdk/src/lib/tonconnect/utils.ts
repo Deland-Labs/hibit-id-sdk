@@ -34,7 +34,7 @@ const getPlatform = (): DeviceInfo["platform"] => {
 export const getDeviceInfo = (): DeviceInfo => {
   return {
     platform: getPlatform()!,
-    appName: "HibitID",
+    appName: "hibitid",
     appVersion: import.meta.env.VITE_RELEASE_VERSION,
     maxProtocolVersion: 2,
     features: [

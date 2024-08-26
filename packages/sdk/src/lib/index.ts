@@ -31,3 +31,4 @@ export type {
   TonConnectSignDataPayload,
   TonConnectSignDataResult,
 } from './tonconnect/types'
+export { injectHibitIdTonConnect } from './tonconnect/inject'
