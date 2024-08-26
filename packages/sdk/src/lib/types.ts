@@ -1,4 +1,5 @@
-import { HibitIdAssetType, HibitIdChainId } from "./enums"
+import { HibitIdAssetType, HibitIdChainId, HibitIdErrorCode } from "./enums"
+import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from "./tonconnect/types"
 
 export type HibitEnv = 'dev' | 'test' | 'prod'
 
@@ -29,6 +30,12 @@ export class BridgePromise<T> {
       this.resolve = resolve
       this.reject = reject
     })
+  }
+}
+
+export class HibitIdError extends Error {
+  constructor(public code: HibitIdErrorCode, message: string) {
+    super(message) 
   }
 }
 
@@ -102,6 +109,20 @@ export interface TransferRequest {
 export type TransferResponse = RpcBaseResponse<{
   txHash: string
 }>
+
+export type TonConnectGetStateInitResponse = RpcBaseResponse<{
+  stateInitBase64: string
+}>
+
+export type TonConnectTransferRequest = TonConnectTransactionPayload
+
+export type TonConnectTransferResponse = RpcBaseResponse<{
+  message: string
+}>
+
+export type TonConnectSignDataRequest = TonConnectSignDataPayload
+
+export type TonConnectSignDataResponse = RpcBaseResponse<TonConnectSignDataResult>
 
 export type GetAccountRequest = {
   chainId?: HibitIdChainId

@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
-import { AssetInfo, ChainWallet } from "../types";
+import { AssetInfo, BaseChainWallet } from "../types";
 import { isAddress, JsonRpcProvider, Contract, HDNodeWallet, parseEther, parseUnits, formatEther } from "ethers";
 import { Chain, ChainAssetType, ChainId, ChainInfo } from "../../../basicTypes";
 import { erc20Abi } from "./erc20";
 import { WalletAccount } from "@deland-labs/hibit-id-sdk";
 import { getChainByChainId } from "../..";
 
-export class EthereumChainWallet extends ChainWallet {
+export class EthereumChainWallet extends BaseChainWallet {
   private provider: JsonRpcProvider
   private wallet: HDNodeWallet
 

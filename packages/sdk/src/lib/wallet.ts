@@ -1,9 +1,10 @@
 import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
-import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
-import { ClientExposeRPCMethod, HibitIdChainId, HibitIdExposeRPCMethod } from './enums';
+import { AccountsChangedRequest, BridgePromise, ChainChangedRequest, ChainInfo, ConnectedRequest, GetAccountRequest, GetAccountResponse, GetBalanceRequest, GetBalanceResponse, GetChainInfoResponse, HibitIdError, HibitIdEventHandlerMap, HibitIdWalletOptions, LoginChangedRequest, SignMessageRequest, SignMessageResponse, TonConnectGetStateInitResponse, TonConnectSignDataRequest, TonConnectSignDataResponse, TonConnectTransferRequest, TonConnectTransferResponse, TransferRequest, TransferResponse, WalletAccount } from './types';
+import { ClientExposeRPCMethod, HibitIdChainId, HibitIdErrorCode, HibitIdExposeRPCMethod } from './enums';
 import { clamp } from './utils';
+import { TonConnectSignDataResult } from './tonconnect/types';
 
 const LOGIN_SESSION_KEY = 'hibit-id-session'
 
@@ -59,9 +60,7 @@ export class HibitIdWallet {
     }
 
     try {
-      if (this._hasSession) {
-        this.showIframe()
-      }
+      this.showIframe(!this._hasSession)
       this._connectPromise = new BridgePromise<WalletAccount | null>()
       this._rpc!.call(HibitIdExposeRPCMethod.CONNECT, {
         chainId,
@@ -78,7 +77,7 @@ export class HibitIdWallet {
           publicKey: res.publicKey,
         }
       }
-      throw new Error('User manually canceled')
+      throw new HibitIdError(HibitIdErrorCode.USER_CANCEL_CONNECTION, 'User manually canceled')
     } catch (e: any) {
       throw new Error(`Connect failed: ${this.getRpcErrorMessage(e)}`)
     }
@@ -161,6 +160,51 @@ export class HibitIdWallet {
     }
   }
 
+  public tonConnectGetStateInit = async (): Promise<string> => {
+    console.debug('[sdk call TonConnectGetStateInit]')
+    this.assertConnected()
+    try {
+      const res = await this._rpc?.call<TonConnectGetStateInitResponse>(HibitIdExposeRPCMethod.TONCONNECT_GET_STATE_INIT, {})
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data.stateInitBase64 ?? null
+    } catch (e: any) {
+      console.error(e, JSON.stringify(e))
+      throw new Error(`TonConnectGetStateInit failed: ${this.getRpcErrorMessage(e)}`)
+    }
+  }
+
+  public tonConnectTransfer = async (payload: TonConnectTransferRequest): Promise<string> => {
+    console.debug('[sdk call TonConnectTransfer]', { option: payload })
+    this.assertConnected()
+    try {
+      const res = await this._rpc?.call<TonConnectTransferResponse>(HibitIdExposeRPCMethod.TONCONNECT_TRANSFER, payload)
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data.message ?? null
+    } catch (e: any) {
+      console.error(e, JSON.stringify(e))
+      throw new Error(`TonConnectTransfer failed: ${this.getRpcErrorMessage(e)}`)
+    }
+  }
+
+  public tonConnectSignData = async (payload: TonConnectSignDataRequest): Promise<TonConnectSignDataResult> => {
+    console.debug('[sdk call TonConnectSignData]', { option: payload })
+    this.assertConnected()
+    try {
+      const res = await this._rpc?.call<TonConnectSignDataResponse>(HibitIdExposeRPCMethod.TONCONNECT_SIGN_DATA, payload)
+      if (!res?.success) {
+        throw new Error(res?.errMsg)
+      }
+      return res.data ?? null
+    } catch (e: any) {
+      console.error(e, JSON.stringify(e))
+      throw new Error(`TonConnectSignData failed: ${this.getRpcErrorMessage(e)}`)
+    }
+  }
+
   public disconnect = async () => {
     console.debug('[sdk call Disconnect]')
     this._connected = false
@@ -210,7 +254,7 @@ export class HibitIdWallet {
 
   private assertConnected = () => {
     if (!this._connected) {
-      throw new Error('Wallet is not connected')
+      throw new HibitIdError(HibitIdErrorCode.WALLET_NOT_CONNECTED, 'Wallet is not connected')
     }
   }
 
@@ -229,7 +273,7 @@ export class HibitIdWallet {
       return
     }
 
-    this._iframe = new HibitIdIframe(this._options.env, this._options.iframeUrlAppendix)
+    this._iframe = new HibitIdIframe(this._options.env, this._options.chains, this._options.iframeUrlAppendix)
     
     const rpc = new RPC({
       // The window you want to talk to:
@@ -288,18 +332,22 @@ export class HibitIdWallet {
 
   private onRpcLoginChanged = (input: LoginChangedRequest) => {
     console.debug('[sdk on LoginChanged]', { input })
+    // only show iframe during connection
+    this._hasSession = input.isLogin
     if (!input.isLogin) {
-      this.showIframe(true)
+      sessionStorage.removeItem(LOGIN_SESSION_KEY)
+      if (this._connectPromise) {
+        this.showIframe(true)
+      }
     } else {
+      sessionStorage.setItem(LOGIN_SESSION_KEY, input.sub || '')
       if (!this._controller) {
         this._controller = new HibitIdController(this.toggleIframe, this.handleControllerMove)
       }
-      if (this._hasSession) {
-        return
+      if (this._connectPromise) {
+        this.showIframe()
+        this._controller?.setOpen(true)
       }
-      this.showIframe()
-      this._controller?.setOpen(true)
-      sessionStorage.setItem(LOGIN_SESSION_KEY, input.sub || '')
     }
   }
 

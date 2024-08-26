@@ -3,8 +3,11 @@ import { getChainByChainId } from ".."
 import { ChainId, Chain } from "../../basicTypes"
 import { EthereumChainWallet } from "./ethereum"
 import { TonChainWallet } from "./ton"
-import { AssetInfo, ChainWallet } from "./types"
+import { AssetInfo } from "./types"
 import BigNumber from "bignumber.js"
+
+// TODO: expand as supported chains grow
+export type ChainWallet = EthereumChainWallet | TonChainWallet
 
 export class ChainWalletPool {
   private walletMap: Record<string, ChainWallet>

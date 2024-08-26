@@ -3,6 +3,7 @@ import { Chain, ChainId } from '../basicTypes';
 import { Ethereum, EthereumAvalanche, EthereumAvalancheFuji, EthereumBase, EthereumBaseSepolia, EthereumBsc, EthereumBscTestnet, EthereumScroll, EthereumScrollSepolia, EthereumSepolia, EthereumBitlayer, EthereumBitlayerTestnet, Ton, TonTestnet } from './chain-list';
 import { ChainInfo } from '../basicTypes';
 import { BLOCK_NETWORK } from '../env';
+import { RUNTIME_SUPPORTED_CHAIN_IDS } from '../runtime';
 
 // TODO: should update when we support more chains
 const SupportedChainsForMainnet = [
@@ -37,10 +38,15 @@ export function getChainByChainId(chainId: ChainId | null): ChainInfo | null {
 }
 
 export function getSupportedChains(chainTypes?: Chain[]): ChainInfo[] {
-  const supported =
+  let supported =
     BLOCK_NETWORK === BlockNetwork.Mainnet
       ? SupportedChainsForMainnet
       : SupportedChainsForTestnet;
+  if (RUNTIME_SUPPORTED_CHAIN_IDS.length > 0) {
+    supported = supported.filter(
+      c => RUNTIME_SUPPORTED_CHAIN_IDS.find((id) => id.equals(c.chainId))
+    );
+  }
   return supported.filter(
     c => !chainTypes || !!chainTypes.find(type => type.equals(c.chainId.type))
   );
