@@ -10,7 +10,6 @@ const LOGIN_SESSION_KEY = 'hibit-id-session'
 
 export class HibitIdWallet {
   private _options: HibitIdWalletOptions
-  private _initPromise: BridgePromise<boolean>
   private _hasSession = false
   private _connected = false
   private _rpc: RPC | null = null
@@ -29,14 +28,12 @@ export class HibitIdWallet {
 
   constructor(options: HibitIdWalletOptions) {
     this._options = options
-    this._initPromise = new BridgePromise<boolean>()
 
     const sessionString = sessionStorage.getItem(LOGIN_SESSION_KEY)
     if (sessionString) {
       this._hasSession = true
     }
     this.prepareIframe().then(() => {
-      this._initPromise.resolve(true)
       if (this._hasSession) {
         this._controller = new HibitIdController(this.toggleIframe, this.handleControllerMove)
       }
@@ -49,7 +46,7 @@ export class HibitIdWallet {
 
   public connect = async (chainId: HibitIdChainId) => {
     console.debug('[sdk call Connect]', { chainId })
-    await this._initPromise.promise
+    await this._iframeReadyPromise.promise
     
     if (this._connected) {
       const currentChain = await this.getChainInfo()
@@ -85,6 +82,7 @@ export class HibitIdWallet {
 
   public getAccount = async (chainId?: HibitIdChainId): Promise<WalletAccount> => {
     console.debug('[sdk call GetAccount]')
+    await this._iframeReadyPromise.promise
     this.assertConnected()
     try {
       const res = await this._rpc?.call<GetAccountResponse>(HibitIdExposeRPCMethod.GET_ACCOUNT, {
@@ -101,6 +99,7 @@ export class HibitIdWallet {
 
   public getChainInfo = async (): Promise<ChainInfo> => {
     console.debug('[sdk call GetChainInfo]')
+    await this._iframeReadyPromise.promise
     this.assertConnected()
     try {
       const res = await this._rpc?.call<GetChainInfoResponse>(HibitIdExposeRPCMethod.GET_CHAIN_INFO, {})
@@ -115,6 +114,7 @@ export class HibitIdWallet {
 
   public signMessage = async (message: string, chainId?: HibitIdChainId): Promise<string> => {
     console.debug('[sdk call SignMessage]', { message })
+    await this._iframeReadyPromise.promise
     this.assertConnected()
     try {
       const res = await this._rpc?.call<SignMessageResponse>(HibitIdExposeRPCMethod.SIGN_MESSAGE, {
@@ -133,6 +133,7 @@ export class HibitIdWallet {
   public getBalance = async (option?: GetBalanceRequest): Promise<string> => {
     const request: GetBalanceRequest = option || {}
     console.debug('[sdk call GetBalance]', { request })
+    await this._iframeReadyPromise.promise
     this.assertConnected()
     try {
       const res = await this._rpc?.call<GetBalanceResponse>(HibitIdExposeRPCMethod.GET_BALANCE, request)
@@ -147,6 +148,7 @@ export class HibitIdWallet {
 
   public transfer = async (option: TransferRequest): Promise<string> => {
     console.debug('[sdk call Transfer]', { option })
+    await this._iframeReadyPromise.promise
     this.assertConnected()
     try {
       const res = await this._rpc?.call<TransferResponse>(HibitIdExposeRPCMethod.TRANSFER, option)
@@ -162,6 +164,7 @@ export class HibitIdWallet {
 
   public tonConnectGetStateInit = async (): Promise<string> => {
     console.debug('[sdk call TonConnectGetStateInit]')
+    await this._iframeReadyPromise.promise
     this.assertConnected()
     try {
       const res = await this._rpc?.call<TonConnectGetStateInitResponse>(HibitIdExposeRPCMethod.TONCONNECT_GET_STATE_INIT, {})
@@ -177,6 +180,7 @@ export class HibitIdWallet {
 
   public tonConnectTransfer = async (payload: TonConnectTransferRequest): Promise<string> => {
     console.debug('[sdk call TonConnectTransfer]', { option: payload })
+    await this._iframeReadyPromise.promise
     this.assertConnected()
     try {
       const res = await this._rpc?.call<TonConnectTransferResponse>(HibitIdExposeRPCMethod.TONCONNECT_TRANSFER, payload)
@@ -192,6 +196,7 @@ export class HibitIdWallet {
 
   public tonConnectSignData = async (payload: TonConnectSignDataRequest): Promise<TonConnectSignDataResult> => {
     console.debug('[sdk call TonConnectSignData]', { option: payload })
+    await this._iframeReadyPromise.promise
     this.assertConnected()
     try {
       const res = await this._rpc?.call<TonConnectSignDataResponse>(HibitIdExposeRPCMethod.TONCONNECT_SIGN_DATA, payload)
@@ -207,6 +212,7 @@ export class HibitIdWallet {
 
   public disconnect = async () => {
     console.debug('[sdk call Disconnect]')
+    await this._iframeReadyPromise.promise
     this._connected = false
     // this._disconnectedPromise = new BridgePromise<boolean>()
     // this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
@@ -230,11 +236,13 @@ export class HibitIdWallet {
   }
 
   public switchToChain = async (chainId: HibitIdChainId) => {
+    console.debug('[sdk call SwitchToChain]', { chainId })
+    await this._iframeReadyPromise.promise
+    this.assertConnected()
     const currentChain = await this.getChainInfo()
     const currentChainId = `${currentChain.chainId.type}_${currentChain.chainId.network}`
     if (currentChainId === chainId) return
 
-    console.debug('[sdk call SwitchToChain]', { chainId })
     await this._rpc?.call(HibitIdExposeRPCMethod.SWITCH_CHAIN, { chainId })
   }
 
