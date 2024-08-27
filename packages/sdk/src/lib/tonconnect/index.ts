@@ -161,7 +161,7 @@ export class TonConnect implements TonConnectBridge {
       return makeTransactionResponseError(message.id, 1, 'Unsupported network')
     }
     const account = await this.provider.getAccount()
-    if (payload?.from && Address.parse(account.address).toRawString() !== payload.from) {
+    if (payload?.from && Address.parse(account.address).toRawString() !== Address.parse(payload.from).toRawString()) {
       return makeTransactionResponseError(message.id, 1, 'Mismatched sender address')
     }
     if (payload!.messages.length < 1) {
