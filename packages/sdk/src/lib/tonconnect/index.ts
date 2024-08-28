@@ -11,9 +11,9 @@ export class TonConnect implements TonConnectBridge {
 
   deviceInfo: DeviceInfo = getDeviceInfo();
   walletInfo: WalletInfo = {
-    name: "Hibit ID",
-    image: "https://id.hibit.app/logo.png",
-    about_url: "https://www.hibit.one/",
+    name: "HiBit ID",
+    image: "https://raw.githubusercontent.com/Deland-Labs/hibit-id-examples/main/public/logo_288.png",
+    about_url: "https://github.com/Deland-Labs/hibit-id-examples",
   };
   protocolVersion = 2;
   isWalletBrowser = false;
