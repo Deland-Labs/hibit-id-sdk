@@ -1,15 +1,17 @@
 import { observer } from "mobx-react";
 import { FC } from "react";
-import { useTokenBalanceQuery, useTokenListQuery } from "../apis/react-query/token";
+import { useTokenBalanceQuery, useTokenListQuery, useTokenFiatValueQuery } from "../apis/react-query/token";
 import TokenIcon from "./TokenIcon";
 import SvgGo from '../assets/right-arrow.svg?react'
 import { useNavigate } from "react-router-dom";
 import { RootAssetInfo } from "../apis/models";
 import hibitIdSession from "../stores/session";
+import BigNumber from "bignumber.js";
 
 const TokenListItem: FC<{ token: RootAssetInfo }> = ({ token }) => {
   const navigate = useNavigate()
   const balanceQuery = useTokenBalanceQuery(token)
+  const usdValueQuery = useTokenFiatValueQuery(token, balanceQuery.data)
 
   return (
     <li
@@ -23,7 +25,7 @@ const TokenListItem: FC<{ token: RootAssetInfo }> = ({ token }) => {
         ) : (
           <span className="text-sm">{balanceQuery.data?.toString() ?? '0'}</span>
         )}
-        <span className="text-xs text-neutral">$ 0.00</span>
+        <span className="text-xs text-neutral">$ {(usdValueQuery.data ?? new BigNumber(0)).toFixed(2)}</span>
       </div>
       <SvgGo />
     </li>
