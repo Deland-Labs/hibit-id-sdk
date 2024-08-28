@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { FC } from "react";
 import { useParams } from "react-router-dom";
-import { useTokenBalanceQuery, useTokenQuery } from "../../apis/react-query/token";
+import { useTokenBalanceQuery, useTokenQuery, useTokenFiatValueQuery } from "../../apis/react-query/token";
 import TokenIcon from "../../components/TokenIcon";
 import { getChainByChainId } from "../../utils/chain";
 import { ChainId } from "../../utils/basicTypes";
@@ -10,11 +10,13 @@ import ReceiveButton from "../../components/ReceiveButton";
 import PageLoading from "../../components/PageLoading";
 import { formatNumber } from "../../utils/formatter";
 import PageHeader from "../../components/PageHeader";
+import BigNumber from "bignumber.js";
 
 const TokenDetailPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
   const tokenQuery = useTokenQuery(addressOrSymbol?? '')
   const balanceQuery = useTokenBalanceQuery(tokenQuery.data || undefined)
+  const usdValueQuery = useTokenFiatValueQuery(tokenQuery.data || undefined, balanceQuery.data)
 
   if (tokenQuery.isLoading || typeof tokenQuery.data === 'undefined') {
     return <PageLoading />
@@ -47,7 +49,7 @@ const TokenDetailPage: FC = observer(() => {
               <span>{`${formatNumber(balanceQuery.data)} ${token.assetSymbol}`}</span>
             )}
           </span>
-          <span className="text-xs text-neutral">$0.00</span>
+          <span className="text-xs text-neutral">$ {(usdValueQuery.data ?? new BigNumber(0)).toFixed(2)}</span>
         </div>
         <div className="flex items-center gap-10">
           <SendButton token={token} />

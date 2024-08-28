@@ -81,3 +81,18 @@ export const useTokenBalanceQuery = (token?: RootAssetInfo) => {
     refetchInterval: 10000,
   })
 }
+
+export const useTokenFiatValueQuery = (token?: RootAssetInfo, balance?: BigNumber) => {
+  return useQuery({
+    queryKey: [QueryCacheKey.GET_TOKEN_FIAT_VALUE, token?.assetId.toString(), balance],
+    queryFn: async () => {
+      let value = new BigNumber(0)
+      if (token!.assetSymbol === 'USDT') {
+        value = balance!.dp(2, BigNumber.ROUND_FLOOR)
+      }
+      // TODO: other tokens
+      return value
+    },
+    enabled: !!token && !!balance,
+  })
+}
