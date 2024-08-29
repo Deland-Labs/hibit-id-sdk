@@ -14,6 +14,11 @@ It supports a variety of popular third-party login methods which links user's We
 
 # Supported Chains
 - [x] Ethereum
+- [x] BNB Smart Chain
+- [x] Base
+- [x] Avalanche
+- [x] Scroll
+- [x] Bitlayer
 - [x] Ton
 - [ ] Solana
 - [ ] Bitcoin
