@@ -183,13 +183,11 @@ export class HibitIdSession {
     const newPwd = MD5(`${newPasswordRaw}${this.userId}`).toString()
     const phrase = AES.decrypt(this._mnemonic.mnemonicContent, oldPwd).toString(enc.Utf8);
     const encryptedContent = AES.encrypt(phrase, newPwd).toString()
-    await UpdateMnemonicAsync(new UpdateMnemonicInput({
-      aesKey: '',  // TODO:
-      oldMnemonicContent: this._mnemonic.mnemonicContent,
-      oldVersion: 0,  // TODO:
-      newMnemonicContent: encryptedContent,
-      newVersion: 0,  // TODO:
-    }))
+    await MnemonicManager.instance.updateAsync(
+      this._mnemonic.version,
+      this._mnemonic.mnemonicContent,
+      encryptedContent,
+    )
     await this.fetchMnemonic()
     this._password = newPwd
   }
