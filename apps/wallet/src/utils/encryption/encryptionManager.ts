@@ -1,4 +1,4 @@
-import {Buffer} from "buffer";
+import { Buffer } from 'buffer';
 
 export class EncryptionManager {
   private aesProvider: IAesProvider = new AesProviderImpl();
@@ -6,17 +6,17 @@ export class EncryptionManager {
   public async generateKeys(): Promise<{ publicKeyBase64: string, privateKeyBase64: string }> {
     const keys = await crypto.subtle.generateKey(
       {
-        name: "RSA-OAEP",
+        name: 'RSA-OAEP',
         modulusLength: 2048,
         publicExponent: new Uint8Array([1, 0, 1]),
-        hash: "SHA-1"
+        hash: 'SHA-1'
       },
       true,
-      ["encrypt", "decrypt"]
+      ['encrypt', 'decrypt']
     );
 
-    const publicKeyBuffer = await crypto.subtle.exportKey("spki", keys.publicKey);
-    const privateKeyBuffer = await crypto.subtle.exportKey("pkcs8", keys.privateKey);
+    const publicKeyBuffer = await crypto.subtle.exportKey('spki', keys.publicKey);
+    const privateKeyBuffer = await crypto.subtle.exportKey('pkcs8', keys.privateKey);
 
     return {
       publicKeyBase64: Buffer.from(publicKeyBuffer).toString('base64'),
@@ -27,19 +27,19 @@ export class EncryptionManager {
   private async encryptRSA(publicKeyBase64: string, data: ArrayBuffer): Promise<ArrayBuffer> {
     const publicKeyBuffer = Buffer.from(publicKeyBase64, 'base64');
     const publicKey = await crypto.subtle.importKey(
-      "spki",
+      'spki',
       publicKeyBuffer,
       {
-        name: "RSA-OAEP",
-        hash: "SHA-1"
+        name: 'RSA-OAEP',
+        hash: 'SHA-1'
       },
       true,
-      ["encrypt"]
+      ['encrypt']
     );
 
     return await crypto.subtle.encrypt(
       {
-        name: "RSA-OAEP"
+        name: 'RSA-OAEP'
       },
       publicKey,
       data
@@ -49,19 +49,19 @@ export class EncryptionManager {
   private async decryptRSA(privateKeyBase64: string, data: ArrayBuffer): Promise<ArrayBuffer> {
     const privateKeyBuffer = Buffer.from(privateKeyBase64, 'base64');
     const privateKey = await crypto.subtle.importKey(
-      "pkcs8",
+      'pkcs8',
       privateKeyBuffer,
       {
-        name: "RSA-OAEP",
-        hash: "SHA-1"
+        name: 'RSA-OAEP',
+        hash: 'SHA-1'
       },
       true,
-      ["decrypt"]
+      ['decrypt']
     );
 
     return await crypto.subtle.decrypt(
       {
-        name: "RSA-OAEP",
+        name: 'RSA-OAEP'
       },
       privateKey,
       data
@@ -72,9 +72,9 @@ export class EncryptionManager {
     encryptedAesKeyAndIvBase64: string,
     encryptedDataBase64: string
   }> {
-    const aesKey = await this.aesProvider.generateKey()
+    const aesKey = await this.aesProvider.generateKey();
     const iv = crypto.getRandomValues(new Uint8Array(16));
-    const aesKeyBuffer = await crypto.subtle.exportKey("raw", aesKey);
+    const aesKeyBuffer = await crypto.subtle.exportKey('raw', aesKey);
     const encryptedAesKeyBuffer = await this.encryptRSA(publicKeyBase64, aesKeyBuffer);
     const encryptedIv = await this.encryptRSA(publicKeyBase64, iv);
     const encryptedAesKeyBase64 = Buffer.from(encryptedAesKeyBuffer).toString('base64');
@@ -83,7 +83,8 @@ export class EncryptionManager {
     const encryptedDataBuffer = await this.aesProvider.encrypt(data, aesKey, iv);
     return {
       encryptedAesKeyAndIvBase64: `${encryptedAesKeyBase64}:${encryptedIvBase64}`,
-      encryptedDataBase64: Buffer.from(encryptedDataBuffer).toString('base64')
+      encryptedDataBase64: Buffer.from(encryptedDataBuffer).toString('base64'),
+      aesKey
     };
   }
 
@@ -112,7 +113,7 @@ class AesProviderImpl implements IAesProvider {
   async encrypt(data: string, key: CryptoKey, iv: ArrayBuffer): Promise<ArrayBuffer> {
     return await crypto.subtle.encrypt(
       {
-        name: "AES-CBC",
+        name: 'AES-CBC',
         iv: iv
       },
       key,
@@ -123,7 +124,7 @@ class AesProviderImpl implements IAesProvider {
   async decrypt(data: ArrayBuffer, key: CryptoKey, iv: ArrayBuffer): Promise<string> {
     const decryptedData = await crypto.subtle.decrypt(
       {
-        name: "AES-CBC",
+        name: 'AES-CBC',
         iv: iv
       },
       key,
@@ -135,23 +136,23 @@ class AesProviderImpl implements IAesProvider {
   generateKey(): Promise<CryptoKey> {
     return crypto.subtle.generateKey(
       {
-        name: "AES-CBC",
+        name: 'AES-CBC',
         length: 256
       },
       true,
-      ["encrypt", "decrypt"]
+      ['encrypt', 'decrypt']
     );
   }
 
   createKey(key: ArrayBuffer): Promise<CryptoKey> {
     return crypto.subtle.importKey(
-      "raw",
+      'raw',
       key,
       {
-        name: "AES-CBC",
+        name: 'AES-CBC'
       },
       true,
-      ["encrypt", "decrypt"]
+      ['encrypt', 'decrypt']
     );
   }
 
