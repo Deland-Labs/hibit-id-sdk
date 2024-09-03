@@ -3,11 +3,11 @@ import daisyui from 'daisyui'
 const hibitDarkTheme = {
   'primary': '#0099E5',
   'secondary': '#14C394',
-  'accent': '#262D40',  // for border
-  'neutral': '#5F7195',
-  'base-100': '#20263C',
-  'base-200': '#273049',
-  "base-300": '#354159',
+  'accent': '#2d3137',  // for border
+  'neutral': '#848e9c',
+  'base-100': 'rgba(27, 29, 34, 1)',
+  'base-200': 'rgba(31, 35, 40, 1)',
+  "base-300": 'rgb(45, 49, 55)',
   // "info": "#00b1d1",
   success: '#14C394',
   "warning": "#FFC349",

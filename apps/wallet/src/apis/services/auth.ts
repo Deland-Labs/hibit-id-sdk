@@ -31,6 +31,22 @@ export class MnemonicManager {
     return mnemonicContent;
   }
 
+  public async updateAsync(oldVersion: number, oldMnemonicContent: string, newMnemonicContent: string): Promise<string> {
+    const publicKey = await GetPublicKeyAsync();
+    const key = publicKey.publicKeyBase64;
+    const encryptionManager = new EncryptionManager();
+    const encryptedOld = await encryptionManager.encrypt(key, oldMnemonicContent);
+    const encryptedNew = await encryptionManager.encrypt(key, newMnemonicContent);
+    await UpdateMnemonicAsync(new UpdateMnemonicInput({
+      aesKey: encryptedNew.encryptedAesKeyAndIvBase64,
+      oldMnemonicContent: encryptedOld.encryptedDataBase64,
+      oldVersion,
+      newMnemonicContent: encryptedNew.encryptedDataBase64,
+      newVersion: MnemonicVersion.V1RsaSha1Aes,
+    }))
+    return newMnemonicContent
+  }
+
   public async getAsync(): Promise<GetMnemonicResult> {
     const encryptionManager = new EncryptionManager();
     const { publicKeyBase64, privateKeyBase64 } = await encryptionManager.generateKeys();

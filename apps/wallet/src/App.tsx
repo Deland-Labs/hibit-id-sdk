@@ -84,7 +84,7 @@ const App: FC = observer(() => {
   }, [isUserLoggedIn])
 
   return (
-    <main className={twMerge('h-full', (hibitIdSession.isLoggedIn || !isDesktop) && 'max-w-[576px] mx-auto py-6 bg-base-200')}>
+    <main className={twMerge('h-full relative', (hibitIdSession.isLoggedIn || !isDesktop) && 'max-w-[576px] mx-auto py-6 bg-base-200')}>
       {!ready && <PageLoading />}
 
       {ready && (
