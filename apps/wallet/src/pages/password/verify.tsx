@@ -115,7 +115,7 @@ const VerifyPasswordPage: FC = observer(() => {
 
         <PasswordWarnings />
 
-        <div className="w-full p-6 pt-4 fixed left-0 bottom-0 bg-base-200">
+        <div className="w-full p-6 pt-4 absolute left-0 bottom-0 bg-base-200">
           <LoaderButton
             className="btn btn-block btn-sm"
             type="submit"
