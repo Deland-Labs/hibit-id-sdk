@@ -2,7 +2,7 @@ import { FC } from "react";
 import SvgTrash from '../../assets/trash.svg?react'
 import { useNavigate } from "react-router-dom";
 import AuthenticatorLogo from "../../components/AuthenticatorLogo";
-import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
+import { AuthenticatorType } from "@delandlabs/hibit-id-sdk";
 import { useTranslation } from "react-i18next";
 import { useUserLoginsQuery } from "../../apis/react-query/auth";
 import PageHeader from "../../components/PageHeader";

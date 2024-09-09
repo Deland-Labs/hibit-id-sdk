@@ -8,7 +8,7 @@ import PageLoading from './components/PageLoading';
 import { useOidc } from './utils/oidc';
 import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV, RUNTIME_PARAMS_RAW } from './utils/runtime';
 import { HibitEnv, RuntimeEnv } from './utils/basicEnums';
-import { AuthenticatorType } from '@deland-labs/hibit-id-sdk';
+import { AuthenticatorType } from '@delandlabs/hibit-id-sdk';
 import authManager from './utils/auth';
 import toaster from './components/Toaster';
 import rpcManager from './stores/rpc';

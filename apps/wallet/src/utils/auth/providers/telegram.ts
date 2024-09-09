@@ -1,6 +1,6 @@
 import { objToQuery } from "../../url";
 import { IAuthenticateProvider } from "../types";
-import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
+import { AuthenticatorType } from "@delandlabs/hibit-id-sdk";
 
 declare global {
   interface Window {

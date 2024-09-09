@@ -1,4 +1,4 @@
-import { WalletAccount } from "@deland-labs/hibit-id-sdk"
+import { WalletAccount } from "@delandlabs/hibit-id-sdk"
 import { getChainByChainId } from ".."
 import { ChainId, Chain } from "../../basicTypes"
 import { EthereumChainWallet } from "./ethereum"
