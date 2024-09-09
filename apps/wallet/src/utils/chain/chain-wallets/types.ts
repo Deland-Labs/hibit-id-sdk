@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { RootAssetInfo } from "../../../apis/models";
 import { ChainInfo } from "../../basicTypes";
-import { WalletAccount } from "@deland-labs/hibit-id-sdk";
+import { WalletAccount } from "@delandlabs/hibit-id-sdk";
 
 export type AssetInfo = Pick<
   RootAssetInfo,

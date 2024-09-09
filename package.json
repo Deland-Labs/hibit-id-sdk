@@ -1,14 +1,14 @@
 {
-  "name": "@deland-labs/hibit-id",
+  "name": "@delandlabs/hibit-id",
   "private": true,
   "scripts": {
-    "dev:wallet": "turbo run dev --filter=@deland-labs/hibit-id-wallet",
-    "build:wallet": "turbo run @deland-labs/hibit-id-wallet#build",
-    "preview:wallet": "turbo run @deland-labs/hibit-id-wallet#preview",
-    "test:wallet": "turbo run test --filter=@deland-labs/hibit-id-wallet",
-    "test:watch:wallet": "turbo run test:watch --filter=@deland-labs/hibit-id-wallet",
-    "dev:sdk": "turbo run dev --filter=@deland-labs/hibit-id-sdk",
-    "build:sdk": "turbo run @deland-labs/hibit-id-sdk#build",
+    "dev:wallet": "turbo run dev --filter=@delandlabs/hibit-id-wallet",
+    "build:wallet": "turbo run @delandlabs/hibit-id-wallet#build",
+    "preview:wallet": "turbo run @delandlabs/hibit-id-wallet#preview",
+    "test:wallet": "turbo run test --filter=@delandlabs/hibit-id-wallet",
+    "test:watch:wallet": "turbo run test:watch --filter=@delandlabs/hibit-id-wallet",
+    "dev:sdk": "turbo run dev --filter=@delandlabs/hibit-id-sdk",
+    "build:sdk": "turbo run @delandlabs/hibit-id-sdk#build",
     "prepare": "husky install"
   },
   "workspaces": [

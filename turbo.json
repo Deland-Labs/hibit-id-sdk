@@ -1,17 +1,17 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
-    "@deland-labs/hibit-id-sdk#build": {
+    "@delandlabs/hibit-id-sdk#build": {
       "env": ["VITE_*"],
       "outputs": ["dist/**"]
     },
-    "@deland-labs/hibit-id-wallet#build": {
+    "@delandlabs/hibit-id-wallet#build": {
       "env": ["VITE_*"],
-      "dependsOn": ["@deland-labs/hibit-id-sdk#build"],
+      "dependsOn": ["@delandlabs/hibit-id-sdk#build"],
       "outputs": ["dist/**"]
     },
-    "@deland-labs/hibit-id-wallet#preview": {
-      "dependsOn": ["@deland-labs/hibit-id-wallet#build"]
+    "@delandlabs/hibit-id-wallet#preview": {
+      "dependsOn": ["@delandlabs/hibit-id-wallet#build"]
     },
     "lint": {},
     "dev": {

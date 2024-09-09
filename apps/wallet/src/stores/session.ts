@@ -5,7 +5,7 @@ import { Ethereum, EthereumSepolia, Ton, TonTestnet } from "../utils/chain/chain
 import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV } from "../utils/runtime";
 import { HibitEnv, RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
-import { WalletAccount } from "@deland-labs/hibit-id-sdk";
+import { WalletAccount } from "@delandlabs/hibit-id-sdk";
 import { Oidc } from '../utils/oidc/lib/oidc-spa-4.11.1/src';
 import { MnemonicManager, UpdateMnemonicAsync } from '../apis/services/auth';
 import { HibitIDError, HibitIDErrorCode } from "../utils/error-code";

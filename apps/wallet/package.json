@@ -1,5 +1,5 @@
 {
-  "name": "@deland-labs/hibit-id-wallet",
+  "name": "@delandlabs/hibit-id-wallet",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,7 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@deland-labs/hibit-id-sdk": "*",
+    "@delandlabs/hibit-id-sdk": "*",
     "@floating-ui/react": "^0.26.19",
     "@hookform/resolvers": "^3.9.0",
     "@mixer/postmessage-rpc": "^1.1.4",

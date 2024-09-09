@@ -1,6 +1,6 @@
 import { IAuthenticateProvider } from "./types";
 import { TelegramAuthenticateProvider } from "./providers/telegram";
-import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
+import { AuthenticatorType } from "@delandlabs/hibit-id-sdk";
 import { prOidc } from "../oidc";
 
 export class AuthManager {

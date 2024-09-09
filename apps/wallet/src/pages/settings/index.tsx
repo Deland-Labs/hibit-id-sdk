@@ -3,7 +3,7 @@ import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AuthenticatorLogo from "../../components/AuthenticatorLogo";
-import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
+import { AuthenticatorType } from "@delandlabs/hibit-id-sdk";
 import hibitIdSession from "../../stores/session";
 import PageHeader from "../../components/PageHeader";
 

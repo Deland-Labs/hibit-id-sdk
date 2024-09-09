@@ -8,7 +8,7 @@ import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { bytesToHex, hexToBytes } from '@openproduct/web-sdk';
 import { WalletV4ContractR2 } from "tonweb/dist/types/contract/wallet/v4/wallet-v4-contract-r2";
 import { sleep } from "../../common";
-import { WalletAccount } from "@deland-labs/hibit-id-sdk";
+import { WalletAccount } from "@delandlabs/hibit-id-sdk";
 
 const { JettonMinter, JettonWallet } = TonWeb.token.jetton
 const { Address, toNano } = TonWeb.utils
