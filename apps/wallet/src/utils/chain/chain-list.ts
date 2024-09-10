@@ -13,7 +13,7 @@ export const Ethereum: ChainInfo = {
   nativeAssetDecimals: 18,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://etherscan.io',
-  rpcUrls: ['https://endpoints.omniatech.io/v1/eth/mainnet/public']
+  rpcUrls: ['https://ethereum.blockpi.network/v1/rpc/public']
 };
 export const EthereumSepolia: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmSepoliaNet),
@@ -24,7 +24,7 @@ export const EthereumSepolia: ChainInfo = {
   nativeAssetDecimals: 18,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://sepolia.etherscan.io',
-  rpcUrls: ['https://rpc-sepolia.rockx.com']
+  rpcUrls: ['https://ethereum-sepolia.blockpi.network/v1/rpc/public	']
 };
 
 export const EthereumBsc: ChainInfo = {

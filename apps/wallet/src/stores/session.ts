@@ -7,24 +7,29 @@ import { HibitEnv, RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
 import { WalletAccount } from "@delandlabs/hibit-id-sdk";
 import { Oidc } from '../utils/oidc/lib/oidc-spa-4.11.1/src';
-import { MnemonicManager, UpdateMnemonicAsync } from '../apis/services/auth';
+import { MnemonicManager } from '../apis/services/auth';
 import { HibitIDError, HibitIDErrorCode } from "../utils/error-code";
-import { GetMnemonicResult, UpdateMnemonicInput } from "../apis/models";
+import { GetMnemonicResult } from "../apis/models";
 import { AES, enc, MD5 } from "crypto-js";
 import { HIBIT_ENV } from "../utils/env";
-import { getChainByChainId, getSupportedChains } from "../utils/chain";
+import { getChainByChainId, getDevModeSwitchChain, getSupportedChains } from "../utils/chain";
 
 const SESSION_CONFIG_KEY = 'hibit-id-config'
 const PASSWORD_STORAGE_KEY = 'hibit-id-p'
 
 interface SessionConfig {
   lastChainId: string
+  devMode: boolean
 }
 
 export class HibitIdSession {
   public walletPool: ChainWalletPool | null = null
   public auth: Oidc.Tokens | null = null
   public chainInfo: ChainInfo
+  public config: SessionConfig = {
+    lastChainId: '',
+    devMode: false
+  }
 
   private _mnemonic: GetMnemonicResult | null = null
   private _password: string | null = null
@@ -37,16 +42,17 @@ export class HibitIdSession {
     let initialChainInfo = IS_TELEGRAM_MINI_APP
       ? HIBIT_ENV === HibitEnv.PROD ? Ton : TonTestnet
       : HIBIT_ENV === HibitEnv.PROD ? Ethereum : EthereumSepolia
-    const config = localStorage.getItem(SESSION_CONFIG_KEY)
-    if (config) {
-      const { lastChainId } = JSON.parse(config) as SessionConfig
-      const chainId = ChainId.fromString(lastChainId)
-      const chainInfo = getChainByChainId(chainId)
+    const configString = localStorage.getItem(SESSION_CONFIG_KEY)
+    if (configString) {
+      const config = JSON.parse(configString) as SessionConfig
+      this.config = config
+      const chainId = ChainId.fromString(config.lastChainId)
+      const chainInfo = getChainByChainId(chainId, config.devMode)
       if (chainInfo) {
         initialChainInfo = chainInfo
       }
     }
-    const supportedChains = getSupportedChains()
+    const supportedChains = getSupportedChains(this.config.devMode)
     if (!supportedChains.find((c) => c.chainId.equals(initialChainInfo.chainId))) {
       initialChainInfo = supportedChains[0]
     }
@@ -96,9 +102,18 @@ export class HibitIdSession {
 
   public setChainInfo = (chainInfo: ChainInfo) => {
     this.chainInfo = chainInfo
-    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify({
-      lastChainId: chainInfo.chainId.toString(),
-    } as SessionConfig))
+    this.config.lastChainId = chainInfo.chainId.toString()
+    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.config))
+  }
+
+  public setDevMode = (devMode: boolean) => {
+    if (this.config.devMode === devMode) return
+    this.config.devMode = devMode
+    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.config))
+    setTimeout(() => {
+      const newChain = getDevModeSwitchChain(!devMode, this.chainInfo.chainId)
+      this.switchChain(newChain)
+    })
   }
 
   public getValidAddress = async () => {

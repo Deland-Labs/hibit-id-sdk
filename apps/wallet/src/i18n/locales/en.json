@@ -59,6 +59,8 @@
   "page_settings_title": "Settings",
   "page_settings_security": "Security",
   "page_settings_changePassword": "Change wallet password",
+  "page_settings_developerMode": "Developer Mode",
+  "page_settings_devModeField": "Enable internal testnet",
   "page_settings_account": "Account",
   "page_settings_linkMore": "Link more",
 
