@@ -9,11 +9,6 @@ export enum RuntimeEnv {
   SDK = 'sdk',
 }
 
-export enum BlockNetwork {
-  Mainnet = 'mainnet',
-  Testnet = 'testnet'
-}
-
 /**
  * ex3 key signature schema
  */

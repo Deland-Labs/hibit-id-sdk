@@ -56,6 +56,8 @@
   "page_settings_title": "設置",
   "page_settings_security": "安全性",
   "page_settings_changePassword": "更改錢包密碼",
+  "page_settings_developerMode": "開發者模式",
+  "page_settings_devModeField": "啟用內部測試網",
   "page_settings_account": "帳戶",
   "page_settings_linkMore": "連結更多",
   "page_account_title": "連結更多",

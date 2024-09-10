@@ -56,6 +56,8 @@
   "page_settings_title": "Настройки",
   "page_settings_security": "Безопасность",
   "page_settings_changePassword": "Изменить пароль кошелька",
+  "page_settings_developerMode": "Режим разработчика",
+  "page_settings_devModeField": "Активировать внутреннюю тестовую сеть",
   "page_settings_account": "Аккаунт",
   "page_settings_linkMore": "Подключить больше",
   "page_account_title": "Подключить больше",
