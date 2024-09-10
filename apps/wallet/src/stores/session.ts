@@ -28,7 +28,7 @@ export class HibitIdSession {
   public chainInfo: ChainInfo
   public config: SessionConfig = {
     lastChainId: '',
-    devMode: false
+    devMode: HIBIT_ENV === HibitEnv.PROD ? false : true,
   }
 
   private _mnemonic: GetMnemonicResult | null = null
@@ -45,9 +45,9 @@ export class HibitIdSession {
     const configString = localStorage.getItem(SESSION_CONFIG_KEY)
     if (configString) {
       const config = JSON.parse(configString) as SessionConfig
-      this.config = config
-      const chainId = ChainId.fromString(config.lastChainId)
-      const chainInfo = getChainByChainId(chainId, config.devMode)
+      this.config = { ...this.config, ...config }
+      const chainId = ChainId.fromString(this.config.lastChainId)
+      const chainInfo = getChainByChainId(chainId, this.config.devMode)
       if (chainInfo) {
         initialChainInfo = chainInfo
       }
