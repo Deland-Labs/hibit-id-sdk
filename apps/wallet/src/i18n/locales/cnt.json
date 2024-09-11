@@ -51,6 +51,7 @@
   "common_addressCopied": "地址已複製",
   "common_native": "本地",
   "common_ecosystem": "生態",
+  "testnet_banner": "這是測試網絡，交易的代幣無價值",
   "page_password_create_warn": "您設定的密碼是您進入web3世界和財富增長的唯一密碼 - 請妥善保管。",
   "page_password_info": "密碼是您解鎖HiBit寶藏箱的唯一鑰匙。您的密碼不會被HiBit存儲。如果您丟失了密碼，您的錢包將無法恢復。",
   "page_settings_title": "設置",
