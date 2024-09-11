@@ -14,6 +14,7 @@ import toaster from './components/Toaster';
 import rpcManager from './stores/rpc';
 import VConsole from 'vconsole';
 import { HIBIT_ENV } from './utils/env';
+import { useTranslation } from 'react-i18next';
 
 const MainPage = lazy(() => import('./pages/main'));
 const SelectNetworkPage = lazy(() => import('./pages/select-network'));
@@ -32,6 +33,7 @@ const App: FC = observer(() => {
   const { isUserLoggedIn, oidcTokens } = useOidc()
   const isDesktop = useIsDesktop()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const vConsoleRef = useRef<VConsole>();
 
   // show vConsole if is mobile and test env
@@ -88,30 +90,40 @@ const App: FC = observer(() => {
       {!ready && <PageLoading />}
 
       {ready && (
-        <Suspense fallback={<PageLoading />}>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/oidc-login" element={<OidcLoginPage />} />
+        <div className='h-full relative flex flex-col'>
+          {hibitIdSession.isLoggedIn && hibitIdSession.config.devMode && (
+            <div className='px-6 pb-4'>
+              <p className='mx-auto p-2 text-xs text-[#354159] bg-[#FFC349] rounded-lg'>
+                {t('testnet_banner')}
+              </p>
+            </div>
+          )}
 
-            {hibitIdSession.isLoggedIn && (
-              <>
-                <Route path="/" element={<MainPage />} />
-                <Route path="/network-select" element={<SelectNetworkPage />} />
-                <Route path="/verify-password" element={<PasswordPage type="verify" />} />
-                <Route path="/create-password" element={<PasswordPage type="create" />} />
-                <Route path="/change-password" element={<PasswordPage type="change" />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/account-manage" element={<AccountManagePage />} />
-                <Route path="/token/:addressOrSymbol" element={<TokenDetailPage />} />
-                <Route path="/send/:addressOrSymbol?" element={<SendTokenPage />} />
-                <Route path="/send/confirm" element={<SendTokenConfirmPage />} />
-                <Route path="/receive" element={<ReceiveTokenPage />} />
-              </>
-            )}
+          <Suspense fallback={<PageLoading />}>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/oidc-login" element={<OidcLoginPage />} />
 
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </Suspense>
+              {hibitIdSession.isLoggedIn && (
+                <>
+                  <Route path="/" element={<MainPage />} />
+                  <Route path="/network-select" element={<SelectNetworkPage />} />
+                  <Route path="/verify-password" element={<PasswordPage type="verify" />} />
+                  <Route path="/create-password" element={<PasswordPage type="create" />} />
+                  <Route path="/change-password" element={<PasswordPage type="change" />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/account-manage" element={<AccountManagePage />} />
+                  <Route path="/token/:addressOrSymbol" element={<TokenDetailPage />} />
+                  <Route path="/send/:addressOrSymbol?" element={<SendTokenPage />} />
+                  <Route path="/send/confirm" element={<SendTokenConfirmPage />} />
+                  <Route path="/receive" element={<ReceiveTokenPage />} />
+                </>
+              )}
+
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </Suspense>
+        </div>
       )}
     </main>
   );

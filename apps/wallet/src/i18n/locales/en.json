@@ -53,6 +53,8 @@
   "common_native": "Native",
   "common_ecosystem": "Ecosystem",
 
+  "testnet_banner": "This is a test network, the tokens traded have no value",
+  
   "page_password_create_warn": "The password you set is your unique secret code to the web3 world and wealth growth - please keep it properly.",
   "page_password_info": "Password is your only key to unlocking the Hibit treasure chest. Your password will not be stored by Hibit. If you lose your password, your wallet cannot be recovered.",
 

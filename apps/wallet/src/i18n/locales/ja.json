@@ -51,6 +51,7 @@
   "common_addressCopied": "アドレスをコピーしました",
   "common_native": "ネイティブ",
   "common_ecosystem": "エコシステム",
+  "testnet_banner": "これはテストネットワークであり、取引されたトークンには価値がありません",
   "page_password_create_warn": "設定するパスワードは、ウェブ3の世界と財産の成長に対するあなたのユニークで秘密のコードです - 適切に保管してください。",
   "page_password_info": "パスワードはHiBitの宝箱を開ける唯一の鍵です。あなたのパスワードはHiBitによって保存されません。パスワードを失った場合、ウォレットは回復できません。",
   "page_settings_title": "設定",
