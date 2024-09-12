@@ -52,11 +52,28 @@
   "common_addressCopied": "Address copied",
   "common_native": "Native",
   "common_ecosystem": "Ecosystem",
+  "common_logout": "Logout",
+  "common_unlock": "Unlock",
 
   "testnet_banner": "This is a test network, the tokens traded have no value",
-  
+  "logo_section_desc": "Unlocking <Web3Span>Web3.0</Web3Span> Wealth",
+
   "page_password_create_warn": "The password you set is your unique secret code to the web3 world and wealth growth - please keep it properly.",
   "page_password_info": "Password is your only key to unlocking the Hibit treasure chest. Your password will not be stored by Hibit. If you lose your password, your wallet cannot be recovered.",
+  "page_password_current_login": "Wallet authenticated via {{authName}}",
+  "page_password_password": "Password",
+  "page_password_newPassword": "New Password",
+  "page_password_setPassword": "Set Password",
+  "page_password_unlockWallet": "Unlock Wallet",
+  "page_password_changeWalletPassword": "Change Wallet Password",
+  "page_password_confirmPassword": "Confirm Password",
+  "page_password_passwordChanged": "Password changed",
+  "page_password_errorPwdCharNumber": "Password must be at least 8 characters",
+  "page_password_errorPwdRequired": "Password is required",
+  "page_password_errorNewPwdRequired": "New password is required",
+  "page_password_errorPwdMatch": "Passwords must match",
+  "page_password_errorConfirmPwdRequired": "Confirm password is required",
+  "page_password_errorPwdIncorrect": "Password is incorrect",
 
   "page_settings_title": "Settings",
   "page_settings_security": "Security",
@@ -65,7 +82,10 @@
   "page_settings_devModeField": "Enable internal testnet",
   "page_settings_account": "Account",
   "page_settings_linkMore": "Link more",
+  "page_settings_language": "Language",
 
   "page_account_title": "Link more",
-  "page_account_linked": "Linked"
+  "page_account_linked": "Linked",
+
+  "page_lang_title": "Language"
 }

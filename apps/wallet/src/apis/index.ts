@@ -5,7 +5,15 @@ import { AuthServerErrorResponse } from './models';
 import toaster from '../components/Toaster';
 import { prOidc } from '../utils/oidc';
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      retryDelay: 3000,
+      refetchOnWindowFocus: false,
+    }
+  }
+});
 
 interface ServiceRequestConfig<T> extends AxiosRequestConfig {
   method: 'GET' | 'POST';

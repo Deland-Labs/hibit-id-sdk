@@ -13,6 +13,8 @@ import { GetMnemonicResult } from "../apis/models";
 import { AES, enc, MD5 } from "crypto-js";
 import { HIBIT_ENV } from "../utils/env";
 import { getChainByChainId, getDevModeSwitchChain, getSupportedChains } from "../utils/chain";
+import { getSystemLang, Language } from "../utils/lang";
+import i18n from "../i18n";
 
 const SESSION_CONFIG_KEY = 'hibit-id-config'
 const PASSWORD_STORAGE_KEY = 'hibit-id-p'
@@ -20,6 +22,7 @@ const PASSWORD_STORAGE_KEY = 'hibit-id-p'
 interface SessionConfig {
   lastChainId: string
   devMode: boolean
+  lang: Language
 }
 
 export class HibitIdSession {
@@ -29,6 +32,7 @@ export class HibitIdSession {
   public config: SessionConfig = {
     lastChainId: '',
     devMode: HIBIT_ENV === HibitEnv.PROD ? false : true,
+    lang: getSystemLang(),
   }
 
   private _mnemonic: GetMnemonicResult | null = null
@@ -46,6 +50,7 @@ export class HibitIdSession {
     if (configString) {
       const config = JSON.parse(configString) as SessionConfig
       this.config = { ...this.config, ...config }
+      i18n.changeLanguage(this.config.lang)
       const chainId = ChainId.fromString(this.config.lastChainId)
       const chainInfo = getChainByChainId(chainId, this.config.devMode)
       if (chainInfo) {
@@ -114,6 +119,13 @@ export class HibitIdSession {
       const newChain = getDevModeSwitchChain(!devMode, this.chainInfo.chainId)
       this.switchChain(newChain)
     })
+  }
+
+  public switchLanguage = async (lang: Language) => {
+    if (this.config.lang === lang) return
+    await i18n.changeLanguage(lang)
+    this.config.lang = lang
+    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.config))
   }
 
   public getValidAddress = async () => {
