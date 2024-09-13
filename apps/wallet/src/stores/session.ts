@@ -2,7 +2,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import { ChainWalletPool } from "../utils/chain/chain-wallets";
 import { ChainId, ChainInfo } from "../utils/basicTypes";
 import { Ethereum, EthereumSepolia, Ton, TonTestnet } from "../utils/chain/chain-list";
-import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV } from "../utils/runtime";
+import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV, RUNTIME_LANG } from "../utils/runtime";
 import { HibitEnv, RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
 import { WalletAccount } from "@delandlabs/hibit-id-sdk";
@@ -49,7 +49,11 @@ export class HibitIdSession {
     const configString = localStorage.getItem(SESSION_CONFIG_KEY)
     if (configString) {
       const config = JSON.parse(configString) as SessionConfig
-      this.config = { ...this.config, ...config }
+      this.config = {
+        ...this.config,
+        ...config,
+        lang: RUNTIME_LANG || config.lang,
+      }
       i18n.changeLanguage(this.config.lang)
       const chainId = ChainId.fromString(this.config.lastChainId)
       const chainInfo = getChainByChainId(chainId, this.config.devMode)

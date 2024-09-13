@@ -3,10 +3,13 @@ import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransact
 
 export type HibitEnv = 'dev' | 'test' | 'prod'
 
+export type Language = 'en' | 'cnt' | 'ja' | 'ru'
+
 export interface HibitIdWalletOptions {
   env: HibitEnv
   chains: HibitIdChainId[]
   defaultChain: HibitIdChainId
+  lang?: Language
   iframeUrlAppendix?: string
 }
 
