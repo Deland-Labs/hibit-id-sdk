@@ -4,9 +4,11 @@ import hibitIdSession from "../../stores/session";
 import QRCode from 'qrcode'
 import CopyButton from "../../components/CopyButton";
 import PageHeader from "../../components/PageHeader";
+import { useTranslation } from "react-i18next";
 
 const ReceiveTokenPage: FC = observer(() => {
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
+  const { t } = useTranslation()
 
   const address = hibitIdSession.account?.address ?? ''
   const chainInfo = hibitIdSession.chainInfo
@@ -20,9 +22,9 @@ const ReceiveTokenPage: FC = observer(() => {
   
   return (
     <div className="h-full px-6 overflow-auto">
-      <PageHeader title="Receive" />
+      <PageHeader title={t('page_receive_title')} />
       <div className="mt-6 flex flex-col items-center gap-6">
-        <p>{`Receive Assets on ${chainInfo?.name ?? '--'}`}</p>
+        <p>{t('page_receive_desc', { chainName: chainInfo?.name ?? '--' })}</p>
         <div className="size-[180px] p-2 bg-base-100 rounded-xl">
           <canvas ref={setCanvas} className="size-full rounded-lg" />
         </div>

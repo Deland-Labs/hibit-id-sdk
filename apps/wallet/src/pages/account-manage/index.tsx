@@ -47,7 +47,7 @@ const AccountManagePage: FC = () => {
         className="btn btn-block btn-sm"
         onClick={() => navigate('/')}
       >
-        Confirm
+        {t('common_confirm')}
       </button>
     </div>
   )

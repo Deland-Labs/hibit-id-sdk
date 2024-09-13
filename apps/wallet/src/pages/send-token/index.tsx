@@ -15,12 +15,14 @@ import { Controller, useForm } from "react-hook-form";
 import { SYSTEM_MAX_DECIMALS } from "../../utils/formatter/numberFormatter";
 import { sendTokenStore } from "./store";
 import PageHeader from "../../components/PageHeader";
+import { useTranslation } from "react-i18next";
 
 const SendTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
   const { state, setState } = sendTokenStore
   const [token, setToken] = useState<RootAssetInfo | null>(null)
   const navigate = useNavigate()
+  const { t } = useTranslation()
   
   const tokenQuery = useTokenQuery(addressOrSymbol ?? '')
   const balanceQuery = useTokenBalanceQuery(token || undefined)
@@ -28,21 +30,21 @@ const SendTokenPage: FC = observer(() => {
   const formSchema = useMemo(() => {
     return object({
       toAddress: string()
-        .required('Address is required')
-        .test('address', 'Invalid address', (value) => {
+        .required(t('page_send_errAddressRequired'))
+        .test('address', t('page_send_errInvalidAddress'), (value) => {
           if (!token) return true
           return walletAddressValidate(token.chain, value)
         }),
       amount: string()
-        .required('Amount is required')
+        .required(t('page_send_errAmountRequired'))
         .test({
-          message: 'Amount must be greater than 0',
+          message: t('page_send_errAmountTooSmall'),
           test: (value) => {
             return !!value && new BigNumber(value).gt(0)
           },
         })
         .test({
-          message: 'Insufficient balance',
+          message: t('page_send_errInsufficientBalance'),
           test: (value) => {
             if (!balanceQuery.data) return true
             return !!value && new BigNumber(value).lte(balanceQuery.data)
@@ -89,15 +91,17 @@ const SendTokenPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
-      <PageHeader title="Send" onBeforeBack={() => sendTokenStore.reset()} />
+      <PageHeader title={t('page_send_title')} onBeforeBack={() => sendTokenStore.reset()} />
       <div className="flex-1 flex flex-col gap-6">
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-sm font-bold">Send to</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_send_field_sendTo')}
+              </span>
             </div>
             <textarea
-              placeholder="Recipient address"
+              placeholder={t('page_send_field_sendTo_placeholder')}
               className="textarea w-full h-16 text-xs"
               {...register('toAddress')}
             />
@@ -111,7 +115,9 @@ const SendTokenPage: FC = observer(() => {
         <div>
           <div className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-sm font-bold">Amount</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_send_field_amount')}
+              </span>
               <span className="label-text-alt text-xs">
                 <button
                   className="btn btn-link btn-xs px-0 no-underline gap-0"
@@ -120,7 +126,7 @@ const SendTokenPage: FC = observer(() => {
                     trigger('amount')
                   }}
                 >
-                  Max:
+                  {t('common_max')}:
                   {balanceQuery.isFetching ? (
                     <span className="loading loading-spinner loading-xs"></span>
                   ) : (
@@ -176,7 +182,7 @@ const SendTokenPage: FC = observer(() => {
         className="btn btn-block btn-sm disabled:opacity-70"
         onClick={handleSend}
       >
-        Send
+        {t('common_send')}
       </LoaderButton>
     </div>
   )

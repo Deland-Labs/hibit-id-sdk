@@ -13,9 +13,12 @@ import SvgSettings from '../../assets/setting.svg?react';
 import { Link, useNavigate } from "react-router-dom";
 import ChainIcon from "../../components/ChainIcon";
 import SvgCaret from '../../assets/caret-down.svg?react'
+import { useTranslation } from "react-i18next";
 
 const WalletMainPage: FC = observer(() => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
+
   const tokenListQuery = useTokenListQuery(hibitIdSession.chainInfo)
   const defaultTokenQuery = useQuery({
     queryKey: ['getDefaultToken', tokenListQuery.data],
@@ -52,7 +55,7 @@ const WalletMainPage: FC = observer(() => {
           <CopyButton copyText={address} />
         </h1>
         <div className="flex flex-col items-center">
-          <span className="text-xs text-neutral">Net Worth</span>
+          <span className="text-xs text-neutral">{t('page_home_netWorth')}</span>
           <span className="text-2xl">$ 0.00</span>
         </div>
         <div className="flex gap-10">
@@ -62,7 +65,7 @@ const WalletMainPage: FC = observer(() => {
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <p className="text-neutral">Tokens</p>
+        <p className="text-neutral">{t('page_home_tokens')}</p>
         <div className="mt-6 flex-1 overflow-auto">
           <TokenList />
         </div>

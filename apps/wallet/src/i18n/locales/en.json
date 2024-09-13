@@ -54,9 +54,39 @@
   "common_ecosystem": "Ecosystem",
   "common_logout": "Logout",
   "common_unlock": "Unlock",
+  "common_copySuccess": "Copy success",
+  "common_copyFailed": "Copy failed",
+  "common_send": "Send",
+  "common_receive": "Receive",
+  "common_close": "Close",
 
   "testnet_banner": "This is a test network, the tokens traded have no value",
   "logo_section_desc": "Unlocking <Web3Span>Web3.0</Web3Span> Wealth",
+
+  "page_login_loginBy": "Login by",
+
+  "page_home_netWorth": "Net Worth",
+  "page_home_tokens": "Tokens",
+
+  "page_network_title": "Select Network",
+
+  "page_send_title": "Send",
+  "page_send_field_sendTo": "Send to",
+  "page_send_field_sendTo_placeholder": "Recipient address",
+  "page_send_field_amount": "Amount",
+  "page_send_field_fee": "Network fee estimation",
+  "page_send_errAddressRequired": "Address is required",
+  "page_send_errInvalidAddress": "Invalid address",
+  "page_send_errAmountRequired": "Amount is required",
+  "page_send_errAmountTooSmall": "Amount must be greater than 0",
+  "page_send_errInsufficientBalance": "Insufficient balance",
+  "page_send_errInsufficientGas": "Insufficient gas in your wallet (at least {{atLeast}})",
+  "page_send_awaitConfirmation": "Awaiting confirmation",
+  "page_send_finished": "Transaction finished",
+  "page_send_viewExplorer": "view in explorer",
+
+  "page_receive_title": "Receive",
+  "page_receive_desc": "Receive Assets on {{chainName}}",
 
   "page_password_create_warn": "The password you set is your unique secret code to the web3 world and wealth growth - please keep it properly.",
   "page_password_info": "Password is your only key to unlocking the Hibit treasure chest. Your password will not be stored by Hibit. If you lose your password, your wallet cannot be recovered.",
