@@ -27,6 +27,7 @@ const ReceiveTokenPage = lazy(() => import('./pages/receive-token'));
 const PasswordPage = lazy(() => import('./pages/password'));
 const SettingsPage = lazy(() => import('./pages/settings'));
 const AccountManagePage = lazy(() => import('./pages/account-manage'));
+const SelectLangPage = lazy(() => import('./pages/select-lang'));
 
 const App: FC = observer(() => {
   const [ready, setReady] = useState(false)
@@ -113,6 +114,7 @@ const App: FC = observer(() => {
                   <Route path="/change-password" element={<PasswordPage type="change" />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/account-manage" element={<AccountManagePage />} />
+                  <Route path="/lang-select" element={<SelectLangPage />} />
                   <Route path="/token/:addressOrSymbol" element={<TokenDetailPage />} />
                   <Route path="/send/:addressOrSymbol?" element={<SendTokenPage />} />
                   <Route path="/send/confirm" element={<SendTokenConfirmPage />} />

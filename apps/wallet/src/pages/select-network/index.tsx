@@ -26,7 +26,7 @@ const SelectNetworkPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 overflow-auto flex flex-col gap-6">
-      <PageHeader title="Select Network" />
+      <PageHeader title={t('page_network_title')} />
       <div className="-mx-1 px-1.5 flex-1 flex flex-col gap-6 overflow-auto">
         {Object.entries(chains).map(([chainName, chainList]) => (
           <div key={chainName}>

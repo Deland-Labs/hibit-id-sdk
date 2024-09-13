@@ -15,11 +15,13 @@ import { formatNumber } from "../../utils/formatter";
 import { ChainAssetType } from "../../utils/basicTypes";
 import { getChainTxLink } from "../../utils/link";
 import PageHeader from "../../components/PageHeader";
+import { useTranslation } from "react-i18next";
 
 const SendTokenConfirmPage: FC = observer(() => {
   const [errMsg, setErrMsg] = useState<string>('')
   const [resultTxId, setResultTxId] = useState('')
   const navigate = useNavigate()
+  const { t } = useTranslation()
   
   const { state } = sendTokenStore
   const tokenListQuery = useTokenListQuery(hibitIdSession.chainInfo)
@@ -62,7 +64,9 @@ const SendTokenConfirmPage: FC = observer(() => {
       return
     }
     if (nativeBalanceQuery.data.lt(minNativeBalance)) {
-      setErrMsg(`Insufficient gas in your wallet (at least ${formatNumber(minNativeBalance)} ${nativeTokenQuery.data?.assetSymbol})`)
+      setErrMsg(t('page_send_errInsufficientGas', {
+        atLeast: `${formatNumber(minNativeBalance)} ${nativeTokenQuery.data?.assetSymbol}`,
+      }))
     } else {
       setErrMsg('')
     }
@@ -108,7 +112,7 @@ const SendTokenConfirmPage: FC = observer(() => {
       <div className="h-full px-6 flex justify-center items-center">
         <div className="flex flex-col items-center">
           <SvgLoading />
-          <span>Await confirmation</span>
+          <span>{t('page_send_awaitConfirmation')}</span>
         </div>
       </div>
     )
@@ -120,10 +124,10 @@ const SendTokenConfirmPage: FC = observer(() => {
       <div className="h-full px-6 flex flex-col overflow-auto">
         <div className="flex-1 flex flex-col gap-8 justify-center items-center">
           <SvgSuccess />
-          <span className="text-success">Transaction finished</span>
+          <span className="text-success">{t('page_send_finished')}</span>
           {txLink && (
             <a className="flex items-center gap-2" href={txLink} target="_blank" rel="noreferrer">
-              <span>view in explorer</span>
+              <span>{t('page_send_viewExplorer')}</span>
               <SvgExternal />
             </a>
           )}
@@ -131,7 +135,7 @@ const SendTokenConfirmPage: FC = observer(() => {
         <button className="btn btn-sm" onClick={() => {
           navigate('/')
         }}>
-          Close
+          {t('common_close')}
         </button>
       </div>
     )
@@ -139,12 +143,14 @@ const SendTokenConfirmPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
-      <PageHeader title="Edit" />
+      <PageHeader title={t('common_edit')} />
       <div className="flex-1 flex flex-col gap-6">
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-sm font-bold">To</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_send_field_sendTo')}
+              </span>
             </div>
             <div className="max-w-full p-2 pr-1 flex items-center gap-2 bg-base-100 rounded-xl text-primary">
               <span className="text-xs font-bold break-all">{state.toAddress}</span>
@@ -155,7 +161,9 @@ const SendTokenConfirmPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-sm font-bold">Amount</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_send_field_amount')}
+              </span>
             </div>
             <div className="flex items-center justify-between font-bold">
               <span className="text-primary text-sm">{formatNumber(state.amount)}</span>
@@ -166,7 +174,9 @@ const SendTokenConfirmPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-sm font-bold">Network fee estimation</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_send_field_fee')}
+              </span>
             </div>
             <div className="flex items-center justify-between font-bold">
               <span className="text-primary text-sm">
@@ -194,14 +204,14 @@ const SendTokenConfirmPage: FC = observer(() => {
 
       <div className="flex items-center gap-2">
         <button className="btn btn-sm flex-1" onClick={() => navigate(-1)}>
-          Cancel
+          {t('common_cancel')}
         </button>
         <button
           className="btn btn-sm btn-primary flex-1 disabled:opacity-70"
           onClick={handleSend}
           disabled={!!errMsg || feeQuery.isPending || !nativeBalanceQuery.data}
         >
-          Confirm
+          {t('common_confirm')}
         </button>
       </div>
     </div>

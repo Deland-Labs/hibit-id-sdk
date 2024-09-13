@@ -13,20 +13,21 @@ import { getErrorMessage, HibitIDError, HibitIDErrorCode } from "../../utils/err
 import { useTranslation } from "react-i18next";
 import PageHeader from "../../components/PageHeader";
 
-const formSchema = object({
-  password: string()
-    .required('Password is required'),
-  newPassword: string()
-    .min(8, 'Password must be at least 8 characters')
-    .required('New password is required'),
-  confirmNewPassword: string()
-    .oneOf([ref('newPassword'), ''], 'Passwords must match')
-    .required('Confirm password is required'),
-})
 
 const ResetPasswordPage: FC = observer(() => {
   const navigate = useNavigate()
   const { t } = useTranslation()
+
+  const formSchema = object({
+    password: string()
+      .required(t('page_password_errorPwdRequired')),
+    newPassword: string()
+      .min(8, t('page_password_errorPwdCharNumber'))
+      .required(t('page_password_errorNewPwdRequired')),
+    confirmNewPassword: string()
+      .oneOf([ref('newPassword'), ''], t('page_password_errorPwdMatch'))
+      .required(t('page_password_errorConfirmPwdRequired')),
+  })
   const {
     setError,
     register,
@@ -54,11 +55,11 @@ const ResetPasswordPage: FC = observer(() => {
     }) => {
       try {
         await hibitIdSession.updatePassword(oldPassword, newPassword)
-        toaster.success('Password changed')
+        toaster.success(t('page_password_passwordChanged'))
         navigate('/')
       } catch (e) {
         if (e instanceof HibitIDError && e.code === HibitIDErrorCode.INVALID_PASSWORD) {
-          setError('password', { message: 'Password incorrect' })
+          setError('password', { message: t('page_password_errorPwdIncorrect') })
         } else {
           toaster.error(getErrorMessage(e, t))
         }
@@ -75,12 +76,14 @@ const ResetPasswordPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 pb-14 overflow-auto">
-      <PageHeader title="Change Wallet Password" />
+      <PageHeader title={t('page_password_changeWalletPassword')} />
       <form className="mt-4 flex flex-col gap-5" onSubmit={handleConfirm}>
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-sm font-bold">Password</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_password_password')}
+              </span>
             </div>
             <input
               {...register('password')}
@@ -98,7 +101,9 @@ const ResetPasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-sm font-bold">New Password</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_password_newPassword')}
+              </span>
             </div>
             <input
               {...register('newPassword')}
@@ -115,7 +120,9 @@ const ResetPasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-sm font-bold">Confirm Password</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_password_confirmPassword')}
+              </span>
             </div>
             <input
               {...register('confirmNewPassword')}
@@ -138,7 +145,7 @@ const ResetPasswordPage: FC = observer(() => {
             loading={submitMutation.isPending}
             type="submit"
           >
-            Confirm
+            {t('common_confirm')}
           </LoaderButton>
         </div>
       </form>

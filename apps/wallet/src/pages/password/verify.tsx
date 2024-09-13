@@ -19,17 +19,20 @@ import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV } from "../../utils/runtime";
 import { RuntimeEnv } from "../../utils/basicEnums";
 import rpcManager from "../../stores/rpc";
 import PageHeader from "../../components/PageHeader";
+import { useTranslation } from "react-i18next";
 
-const formSchema = object({
-  password: string()
-    .min(8, 'Password must be at least 8 characters')
-    .required('Password is required'),
-})
 
 const VerifyPasswordPage: FC = observer(() => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { isUserLoggedIn } = useOidc()
   const userLoginsQuery = useUserLoginsQuery()
+
+  const formSchema = object({
+    password: string()
+      .min(8, t('page_password_errorPwdCharNumber'))
+      .required(t('page_password_errorPwdRequired')),
+  })
   const {
     setError,
     register,
@@ -60,7 +63,7 @@ const VerifyPasswordPage: FC = observer(() => {
         if (e instanceof HibitIDError && e.code === HibitIDErrorCode.INVALID_PASSWORD) {
           setError('password', {
             type: 'manual',
-            message: 'Password is incorrect',
+            message: t('page_password_errorPwdIncorrect'),
           })
         }
       }
@@ -73,13 +76,13 @@ const VerifyPasswordPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 pb-14 overflow-auto">
-      <PageHeader title="Unlock wallet" backable={false} />
+      <PageHeader title={t('page_password_unlockWallet')} backable={false} />
       <div className="mt-4">
         <LogoSection />
       </div>
       {(isUserLoggedIn && !IS_TELEGRAM_MINI_APP) && (
         <div className="text-xs mt-4">
-          <span>Wallet authenticated via {userLoginsQuery.data?.[0]?.providerDisplayName ?? '--'}</span>
+          <span>{t('page_password_current_login', { authName: userLoginsQuery.data?.[0]?.providerDisplayName ?? '--' })}</span>
           <button
             className="btn btn-link btn-xs p-0 outline-none"
             onClick={() => {
@@ -89,7 +92,7 @@ const VerifyPasswordPage: FC = observer(() => {
               authManager.logout()
             }}
           >
-            [logout]
+            [{t('common_logout')}]
           </button>
         </div>
       )}
@@ -97,7 +100,9 @@ const VerifyPasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-sm font-bold">Password</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_password_password')}
+              </span>
             </div>
             <input
               {...register('password')}
@@ -121,7 +126,7 @@ const VerifyPasswordPage: FC = observer(() => {
             type="submit"
             loading={submitMutation.isPending}
           >
-            Unlock
+            {t('common_unlock')}
           </LoaderButton>
         </div>
       </form>
