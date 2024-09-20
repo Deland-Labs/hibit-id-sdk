@@ -1,5 +1,5 @@
 import { Chain, ChainId } from '../basicTypes';
-import { Ethereum, EthereumAvalanche, EthereumAvalancheFuji, EthereumBase, EthereumBaseSepolia, EthereumBsc, EthereumBscTestnet, EthereumScroll, EthereumScrollSepolia, EthereumSepolia, EthereumBitlayer, EthereumBitlayerTestnet, Ton, TonTestnet } from './chain-list';
+import { Ethereum, EthereumAvalanche, EthereumAvalancheFuji, EthereumBase, EthereumBaseSepolia, EthereumBsc, EthereumBscTestnet, EthereumScroll, EthereumScrollSepolia, EthereumSepolia, EthereumBitlayer, EthereumBitlayerTestnet, Ton, TonTestnet, Dfinity } from './chain-list';
 import { ChainInfo } from '../basicTypes';
 import { RUNTIME_SUPPORTED_CHAIN_IDS } from '../runtime';
 import hibitIdSession from '../../stores/session';
@@ -15,7 +15,8 @@ const SupportedChainsForMainnet = [
   // Bitcoin,
   // Solana,
   Ton,
-  // Tron
+  // Tron,
+  Dfinity,
 ];
 const SupportedChainsForTestnet = [
   EthereumSepolia,
@@ -28,6 +29,7 @@ const SupportedChainsForTestnet = [
   // SolanaTestnet,
   TonTestnet,
   // TronNile,
+  // TODO: Dfinity testnet
 ];
 
 export function getChainByChainId(chainId: ChainId | null, devMode?: boolean): ChainInfo | null {

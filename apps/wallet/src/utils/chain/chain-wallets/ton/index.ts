@@ -72,7 +72,7 @@ export class TonChainWallet extends BaseChainWallet {
       throw new Error('Ton: invalid wallet address')
     }
     if (!assetInfo.chain.equals(Chain.Ton)) {
-      throw new Error('Ethereum: invalid asset chain');
+      throw new Error('Ton: invalid asset chain');
     }
     await this.readyPromise
 

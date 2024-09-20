@@ -13,6 +13,13 @@
   },
   "dependencies": {
     "@delandlabs/hibit-id-sdk": "*",
+    "@dfinity/agent": "^2.1.1",
+    "@dfinity/candid": "^2.1.1",
+    "@dfinity/identity-secp256k1": "^2.1.1",
+    "@dfinity/ledger-icp": "^2.5.0",
+    "@dfinity/ledger-icrc": "^2.5.0",
+    "@dfinity/principal": "^2.1.1",
+    "@dfinity/utils": "^2.5.0",
     "@floating-ui/react": "^0.26.19",
     "@hookform/resolvers": "^3.9.0",
     "@mixer/postmessage-rpc": "^1.1.4",
