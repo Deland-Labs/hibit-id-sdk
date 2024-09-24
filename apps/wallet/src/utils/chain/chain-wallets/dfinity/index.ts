@@ -135,6 +135,7 @@ export class DfinityChainWallet extends BaseChainWallet {
     this.identity = Secp256k1KeyIdentity.fromSeedPhrase(phrase)
     this.agent = await createAgent({
       identity: this.identity,
+      host: 'https://ic0.app',
     })
   }
 
