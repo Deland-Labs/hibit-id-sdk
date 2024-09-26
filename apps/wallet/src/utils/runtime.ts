@@ -2,6 +2,7 @@ import { RuntimeEnv } from "./basicEnums";
 import { retrieveLaunchParams } from '@telegram-apps/sdk';
 import { ChainId } from "./basicTypes";
 import { Language } from "./lang";
+import { Dfinity } from "./chain/chain-list";
 
 export const IS_IN_IFRAME = window.top !== window.self;
 
@@ -10,6 +11,8 @@ let runtimeParamsRaw: string | undefined = undefined;
 let runtimeParams: unknown = undefined;
 let runtimeSupportedChainIds: ChainId[] = [];
 let runtimeLang: Language | undefined = undefined;
+
+const urlParams = new URLSearchParams(window.location.search);
 
 if (!IS_IN_IFRAME) {
   runtimeEnv = RuntimeEnv.WEB
@@ -25,7 +28,12 @@ try {
   }
 } catch (e) { /* empty */ }
 
-const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('is_icrc') || sessionStorage.getItem('is_icrc')) {
+  runtimeEnv = RuntimeEnv.ICRC_POSTMESSAGE
+  runtimeSupportedChainIds = [Dfinity.chainId]
+  sessionStorage.setItem('is_icrc', '1')
+}
+
 urlParams.get('chains')?.split(',').forEach((idStr) => {
   const chainId = ChainId.fromString(idStr)
   if (chainId) {

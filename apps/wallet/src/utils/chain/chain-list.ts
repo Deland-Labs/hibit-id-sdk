@@ -372,3 +372,28 @@ export const TronNile: ChainInfo = {
     return `https://nile.tronscan.org/#/address/${address}`
   },
 }
+
+export const Dfinity: ChainInfo = {
+  chainId: new ChainId(Chain.Dfinity, ChainNetwork.DfinityMainNet),
+  name: 'Dfinity',
+  fullName: 'Dfinity Mainnet',
+  icon: '/chain-icons/IC.svg',
+  nativeAssetSymbol: 'ICP',
+  nativeAssetDecimals: 8,
+  supportedSignaturesSchemas: [WalletSignatureSchema.IcpEddsa],
+  explorer: 'https://dashboard.internetcomputer.org',
+  rpcUrls: [],
+  getTxLink: (txId: string) => {
+    if (typeof txId !== 'string') {
+      return ''
+    }
+    const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
+    return `https://dashboard.internetcomputer.org/transaction/${hash}`
+  },
+  getAddressLink: (address: string) => {
+    if (typeof address !== 'string') {
+      return ''
+    }
+    return `https://dashboard.internetcomputer.org/account/${address}`
+  },
+};

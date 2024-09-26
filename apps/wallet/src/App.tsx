@@ -15,6 +15,7 @@ import rpcManager from './stores/rpc';
 import VConsole from 'vconsole';
 import { HIBIT_ENV } from './utils/env';
 import { useTranslation } from 'react-i18next';
+import { useDfinityIcrcPostMessageTransport } from './utils/chain/chain-wallets/dfinity/post-message-transport-hook';
 
 const MainPage = lazy(() => import('./pages/main'));
 const SelectNetworkPage = lazy(() => import('./pages/select-network'));
@@ -85,6 +86,9 @@ const App: FC = observer(() => {
       setReady(true)
     })()
   }, [isUserLoggedIn])
+
+  // register ICRC post message transport
+  useDfinityIcrcPostMessageTransport(ready)
 
   return (
     <main className={twMerge('h-full relative', (hibitIdSession.isLoggedIn || !isDesktop) && 'max-w-[576px] mx-auto py-6 bg-base-200')}>
