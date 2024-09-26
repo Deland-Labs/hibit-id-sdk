@@ -44,10 +44,10 @@ export type JsonRpcRequest = {
   params?: unknown[];
 };
 
-export type JsonRpcResponseSuccess = {
+export type JsonRpcResponseSuccess<TResult> = {
   id: number;
   jsonrpc: '2.0';
-  result: unknown;
+  result: TResult
 };
 
 export type JsonRpcResponseError = {
@@ -126,3 +126,19 @@ export type Icrc32SignChallengeResult = {
   publicKey: string
   signature: string
 };
+
+export type Icrc49CallCanisterRequest = JsonRpcRequest & {
+  method: IcrcMethods.ICRC49_CALL_CANISTER
+  params: {
+    canisterId: string
+    sender: string
+    method: string
+    arg: string // base64 encoded
+    nonce?: string // base64 encoded
+  }
+}
+
+export type Icrc49CallCanisterResult = {
+  contentMap: string  // base64 encoded
+  certificate: string // base64 encoded
+}

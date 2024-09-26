@@ -7,6 +7,7 @@ export enum HibitEnv {
 export enum RuntimeEnv {
   WEB = 'web',
   SDK = 'sdk',
+  ICRC_POSTMESSAGE = 'icrc_postmessage',
 }
 
 /**

@@ -1,8 +1,11 @@
 import { useEffect, useRef } from "react"
-import { Icrc25PermissionsResult, Icrc25RequestPermissionsRequest, Icrc25RequestPermissionsResult, Icrc25SupportedStandardsResult, Icrc27AccountsResult, Icrc29StatusResult, Icrc32SignChallengeRequest, Icrc32SignChallengeResult, IcrcErrorCode, IcrcErrorCodeMessages, IcrcMethods, IcrcPermissionState, JsonRpcRequest } from "./types"
+import { Icrc25PermissionsResult, Icrc25RequestPermissionsRequest, Icrc25RequestPermissionsResult, Icrc25SupportedStandardsResult, Icrc27AccountsResult, Icrc29StatusResult, Icrc32SignChallengeRequest, Icrc32SignChallengeResult, Icrc49CallCanisterRequest, IcrcErrorCode, IcrcErrorCodeMessages, IcrcMethods, IcrcPermissionState, JsonRpcRequest } from "./types"
 import { buildJsonRpcError, buildJsonRpcResponse, getIcrc29Session, NEED_PERMISSION_METHODS, parseJsonRpcRequest, setIcrc29Session, SUPPORTED_STANDARDS } from "./utils"
-import hibitIdSession from "../../../../../stores/session"
-import { Dfinity } from "../../../chain-list"
+import hibitIdSession from "../../../../stores/session"
+import { Dfinity } from "../../chain-list"
+import { DfinityChainWallet } from "."
+import { RUNTIME_ENV } from "../../../runtime"
+import { RuntimeEnv } from "../../../basicEnums"
 
 const ICRC_CHAIN_ID = Dfinity.chainId
 
@@ -160,11 +163,37 @@ export const useDfinityIcrcPostMessageTransport = (isReady: boolean) => {
     }
 
     if (request.method === IcrcMethods.ICRC49_CALL_CANISTER) {
-      // TODO:
+      if (!hibitIdSession.walletPool || session.permissions[IcrcMethods.ICRC49_CALL_CANISTER] !== IcrcPermissionState.GRANTED) {
+        window.postMessage(
+          buildJsonRpcError(request.id, IcrcErrorCode.PermissionNotGranted, IcrcErrorCodeMessages[IcrcErrorCode.PermissionNotGranted]),
+          event.origin,
+        )
+        return
+      }
+      try {
+        const wallet = hibitIdSession.walletPool.get(ICRC_CHAIN_ID) as DfinityChainWallet
+        const req = request as Icrc49CallCanisterRequest
+        const res = await wallet.Icrc49CallCanister(req)
+        window.postMessage(res, event.origin)
+      } catch (e: any) {
+        window.postMessage(
+          buildJsonRpcError(
+            request.id,
+            IcrcErrorCode.GenericError,
+            IcrcErrorCodeMessages[IcrcErrorCode.GenericError],
+            e.message ?? JSON.stringify(e),
+          ),
+          event.origin,
+        )
+      }
+      return
     }
   })
 
   useEffect(() => {
+    if (RUNTIME_ENV !== RuntimeEnv.ICRC_POSTMESSAGE) {
+      return
+    }
     const handleMessage = handleMessageRef.current
     window.addEventListener("message", handleMessage)
     return () => {

@@ -9,6 +9,10 @@ import { HttpAgent } from "@dfinity/agent";
 import { AccountIdentifier, LedgerCanister } from '@dfinity/ledger-icp'
 import { IcrcLedgerCanister } from "@dfinity/ledger-icrc";
 import { Principal } from "@dfinity/principal";
+import { Icrc49CallCanisterRequest, Icrc49CallCanisterResult, IcrcErrorCode, JsonRpcResponseError, JsonRpcResponseSuccess } from "./types";
+import { buildJsonRpcError, buildJsonRpcResponse } from "./utils";
+// @ts-ignore
+import cbor from 'borc';
 
 const ICP_LEDGER_CANISTER_ID = Principal.fromText('ryjl3-tyaaa-aaaaa-aaaba-cai');
 
@@ -129,6 +133,27 @@ export class DfinityChainWallet extends BaseChainWallet {
     }
 
     throw new Error(`Dfinity: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
+  }
+
+  public Icrc49CallCanister = async (request: Icrc49CallCanisterRequest): Promise<JsonRpcResponseSuccess<Icrc49CallCanisterResult> | JsonRpcResponseError> => {
+    await this.readyPromise
+    try {
+      const params = request.params
+      const response = await this.agent!.call(
+        params.canisterId,
+        {
+          methodName: params.method,
+          arg: Buffer.from(params.arg, 'base64'),
+          callSync: true,
+        }
+      )
+      return buildJsonRpcResponse(request.id, {
+        contentMap: cbor.encode(response.requestDetails),
+        certificate: Buffer.from(response.response.body?.certificate!).toString('base64'),
+      })
+    } catch (e: any) {
+      return buildJsonRpcError(request.id, IcrcErrorCode.GenericError, e.message ?? JSON.stringify(e))
+    }
   }
 
   private initWallet = async (phrase: string) => {

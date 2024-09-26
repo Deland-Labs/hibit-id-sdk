@@ -57,7 +57,7 @@ export const parseJsonRpcRequest = (data: any): JsonRpcRequest => {
   return data as JsonRpcRequest
 }
 
-export const buildJsonRpcResponse = <TResult>(id: number, result: TResult): JsonRpcResponseSuccess & { result: TResult } => {
+export const buildJsonRpcResponse = <TResult>(id: number, result: TResult): JsonRpcResponseSuccess<TResult> => {
   return {
     id,
     jsonrpc: '2.0',
