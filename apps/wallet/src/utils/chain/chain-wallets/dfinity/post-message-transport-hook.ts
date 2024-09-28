@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { Icrc25PermissionsResult, Icrc25RequestPermissionsRequest, Icrc25RequestPermissionsResult, Icrc25SupportedStandardsResult, Icrc27AccountsResult, Icrc29StatusResult, Icrc32SignChallengeRequest, Icrc32SignChallengeResult, Icrc49CallCanisterRequest, IcrcErrorCode, IcrcErrorCodeMessages, IcrcMethods, IcrcPermissionState, JsonRpcRequest } from "./types"
 import { buildJsonRpcError, buildJsonRpcResponse, getIcrc29Session, NEED_PERMISSION_METHODS, parseJsonRpcRequest, setIcrc29Session, SUPPORTED_STANDARDS } from "./utils"
 import hibitIdSession from "../../../../stores/session"
@@ -6,10 +6,14 @@ import { Dfinity } from "../../chain-list"
 import { DfinityChainWallet } from "."
 import { RUNTIME_ENV } from "../../../runtime"
 import { RuntimeEnv } from "../../../basicEnums"
+import { BridgePromise } from "@delandlabs/hibit-id-sdk"
+import { ChainWalletPool } from ".."
 
 const ICRC_CHAIN_ID = Dfinity.chainId
 
 export const useDfinityIcrcPostMessageTransport = (isReady: boolean) => {
+  const walletPoolRef = useRef<BridgePromise<ChainWalletPool>>(new BridgePromise())
+
   const handleMessage = useCallback(async (event: MessageEvent) => {
     let request: JsonRpcRequest | null = null
     try {
@@ -89,7 +93,7 @@ export const useDfinityIcrcPostMessageTransport = (isReady: boolean) => {
     }
 
     if (request.method === IcrcMethods.ICRC27_ACCOUNTS) {
-      if (!hibitIdSession.walletPool || session.permissions[IcrcMethods.ICRC27_ACCOUNTS] !== IcrcPermissionState.GRANTED) {
+      if (session.permissions[IcrcMethods.ICRC27_ACCOUNTS] !== IcrcPermissionState.GRANTED) {
         event.source?.postMessage(
           buildJsonRpcError(request.id, IcrcErrorCode.PermissionNotGranted, IcrcErrorCodeMessages[IcrcErrorCode.PermissionNotGranted]),
           { targetOrigin: event.origin },
@@ -97,7 +101,8 @@ export const useDfinityIcrcPostMessageTransport = (isReady: boolean) => {
         return
       }
       try {
-        const account = await hibitIdSession.walletPool.getAccount(ICRC_CHAIN_ID)
+        const walletPool = await walletPoolRef.current.promise
+        const account = await walletPool.getAccount(ICRC_CHAIN_ID)
         event.source?.postMessage(
           buildJsonRpcResponse<Icrc27AccountsResult>(request.id, {
             accounts: [
@@ -123,7 +128,7 @@ export const useDfinityIcrcPostMessageTransport = (isReady: boolean) => {
     }
 
     if (request.method === IcrcMethods.ICRC32_SIGN_CHALLENGE) {
-      if (!hibitIdSession.walletPool || session.permissions[IcrcMethods.ICRC32_SIGN_CHALLENGE] !== IcrcPermissionState.GRANTED) {
+      if (session.permissions[IcrcMethods.ICRC32_SIGN_CHALLENGE] !== IcrcPermissionState.GRANTED) {
         event.source?.postMessage(
           buildJsonRpcError(request.id, IcrcErrorCode.PermissionNotGranted, IcrcErrorCodeMessages[IcrcErrorCode.PermissionNotGranted]),
           { targetOrigin: event.origin },
@@ -131,7 +136,8 @@ export const useDfinityIcrcPostMessageTransport = (isReady: boolean) => {
         return
       }
       try {
-        const account = await hibitIdSession.walletPool.getAccount(ICRC_CHAIN_ID)
+        const walletPool = await walletPoolRef.current.promise
+        const account = await walletPool.getAccount(ICRC_CHAIN_ID)
         const req = request as Icrc32SignChallengeRequest
         if (account.address !== req.params.principal) {
           event.source?.postMessage(
@@ -140,7 +146,7 @@ export const useDfinityIcrcPostMessageTransport = (isReady: boolean) => {
           )
           return
         }
-        const signature = await hibitIdSession.walletPool.signMessage(req.params.challenge, ICRC_CHAIN_ID)
+        const signature = await walletPool.signMessage(req.params.challenge, ICRC_CHAIN_ID)
         event.source?.postMessage(
           buildJsonRpcResponse<Icrc32SignChallengeResult>(request.id, {
             publicKey: account.publicKey!,
@@ -163,7 +169,7 @@ export const useDfinityIcrcPostMessageTransport = (isReady: boolean) => {
     }
 
     if (request.method === IcrcMethods.ICRC49_CALL_CANISTER) {
-      if (!hibitIdSession.walletPool || session.permissions[IcrcMethods.ICRC49_CALL_CANISTER] !== IcrcPermissionState.GRANTED) {
+      if (session.permissions[IcrcMethods.ICRC49_CALL_CANISTER] !== IcrcPermissionState.GRANTED) {
         event.source?.postMessage(
           buildJsonRpcError(request.id, IcrcErrorCode.PermissionNotGranted, IcrcErrorCodeMessages[IcrcErrorCode.PermissionNotGranted]),
           { targetOrigin: event.origin },
@@ -171,7 +177,8 @@ export const useDfinityIcrcPostMessageTransport = (isReady: boolean) => {
         return
       }
       try {
-        const wallet = hibitIdSession.walletPool.get(ICRC_CHAIN_ID) as DfinityChainWallet
+        const walletPool = await walletPoolRef.current.promise
+        const wallet = walletPool.get(ICRC_CHAIN_ID) as DfinityChainWallet
         const req = request as Icrc49CallCanisterRequest
         const res = await wallet.Icrc49CallCanister(req)
         event.source?.postMessage(res, { targetOrigin: event.origin })
@@ -188,7 +195,13 @@ export const useDfinityIcrcPostMessageTransport = (isReady: boolean) => {
       }
       return
     }
-  }, [isReady, hibitIdSession.walletPool])
+  }, [isReady])
+
+  useEffect(() => {
+    if (hibitIdSession.walletPool) {
+      walletPoolRef.current.resolve(hibitIdSession.walletPool)
+    }
+  }, [hibitIdSession.walletPool])
 
   useEffect(() => {
     if (RUNTIME_ENV !== RuntimeEnv.ICRC_POSTMESSAGE) {
