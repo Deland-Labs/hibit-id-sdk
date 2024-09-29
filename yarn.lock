@@ -1904,6 +1904,11 @@ caniuse-lite@^1.0.30001646:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001659.tgz#f370c311ffbc19c4965d8ec0064a3625c8aaa7af"
   integrity sha512-Qxxyfv3RdHAfJcXelgf0hU4DFUVXBGTjqrBUZLUh8AtlGnsDo+CnncYtTd95+ZKfnANUOzxyIQCuU/UeBZBYoA==
 
+cborg@^4.2.4:
+  version "4.2.4"
+  resolved "https://registry.npmmirror.com/cborg/-/cborg-4.2.4.tgz#33f5c18bda7cae33fb0c7e84d329bce2e51e1789"
+  integrity sha512-ns2xY95zViHIVy4lq+qdLmfXTpnT3XjmKradz4RJxxbr5jc/A5gS5FiFLcPGhSdHVlSeeoizT1fuKdI1Kcd6oA==
+
 chai@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/chai/-/chai-5.1.1.tgz#f035d9792a22b481ead1c65908d14bb62ec1c82c"

@@ -30,6 +30,7 @@ const SupportedChainsForTestnet = [
   TonTestnet,
   // TronNile,
   // TODO: Dfinity testnet
+  Dfinity,
 ];
 
 export function getChainByChainId(chainId: ChainId | null, devMode?: boolean): ChainInfo | null {
