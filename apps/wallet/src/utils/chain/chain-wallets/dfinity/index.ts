@@ -11,8 +11,8 @@ import { IcrcLedgerCanister } from "@dfinity/ledger-icrc";
 import { Principal } from "@dfinity/principal";
 import { Icrc49CallCanisterRequest, Icrc49CallCanisterResult, IcrcErrorCode, JsonRpcResponseError, JsonRpcResponseSuccess } from "./types";
 import { buildJsonRpcError, buildJsonRpcResponse } from "./utils";
-// @ts-ignore
-import cbor from 'borc';
+import * as cbor from 'cborg';
+import { RUNTIME_ICRC_DEV, RUNTIME_ICRC_HOST } from "../../../runtime";
 
 const ICP_LEDGER_CANISTER_ID = Principal.fromText('ryjl3-tyaaa-aaaaa-aaaba-cai');
 
@@ -148,7 +148,7 @@ export class DfinityChainWallet extends BaseChainWallet {
         }
       )
       return buildJsonRpcResponse(request.id, {
-        contentMap: cbor.encode(response.requestDetails),
+        contentMap: Buffer.from(cbor.encode(response.requestDetails)).toString('base64'),
         certificate: Buffer.from(response.response.body?.certificate!).toString('base64'),
       })
     } catch (e: any) {
@@ -160,7 +160,8 @@ export class DfinityChainWallet extends BaseChainWallet {
     this.identity = Secp256k1KeyIdentity.fromSeedPhrase(phrase)
     this.agent = await createAgent({
       identity: this.identity,
-      host: 'https://ic0.app',
+      host: RUNTIME_ICRC_HOST || 'https://ic0.app',
+      fetchRootKey: RUNTIME_ICRC_DEV,
     })
   }
 
