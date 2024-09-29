@@ -147,6 +147,9 @@ export class DfinityChainWallet extends BaseChainWallet {
           callSync: true,
         }
       )
+      if (response.response.status > 202) {
+        throw new Error(`ICRC49 call failed with http status ${response.response.status}`)
+      }
       return buildJsonRpcResponse(request.id, {
         contentMap: Buffer.from(cbor.encode(response.requestDetails)).toString('base64'),
         certificate: Buffer.from(response.response.body?.certificate!).toString('base64'),
