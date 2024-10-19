@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { QueryCacheKey } from "./query-keys"
 import { GetAllAssetsAsync } from "../services/token"
 import { getSupportedChains } from "../../utils/chain"
-import { ChainId, ChainInfo } from "../../utils/basicTypes"
+import { AssetId, Chain, ChainAssetType, ChainId, ChainInfo, ChainNetwork, DecimalPlaces } from "../../utils/basicTypes"
 import { RootAssetInfo } from "../models"
 import hibitIdSession from "../../stores/session"
 import BigNumber from "bignumber.js"
@@ -16,7 +16,35 @@ export const useAllAssetListQuery = () => {
       if (!res.isSuccess || !res.value) {
         throw new Error('Get all asset list failed')
       }
-      return res.value
+      return [
+        ...res.value,
+        {
+          assetId: AssetId.fromString('90000'),  // ICP temp id
+          chain: Chain.Dfinity,
+          chainNetwork: ChainNetwork.DfinityMainNet,
+          chainAssetType: ChainAssetType.Native,
+          contractAddress: '',
+          decimalPlaces: DecimalPlaces.fromNumber(8),
+          isBaseToken: true,
+          icon: '',
+          displayName: 'ICP',
+          assetSymbol: 'ICP',
+          subAssets: [],
+        },
+        {
+          assetId: AssetId.fromString('90001'),  // DOD temp id
+          chain: Chain.Dfinity,
+          chainNetwork: ChainNetwork.DfinityMainNet,
+          chainAssetType: ChainAssetType.ICRC1,
+          contractAddress: 'cp4zx-yiaaa-aaaah-aqzea-cai',
+          decimalPlaces: null, // decimal needs to be queried at runtime
+          isBaseToken: true,
+          icon: '',
+          displayName: 'Doge On Doge',
+          assetSymbol: 'DOD',
+          subAssets: [],
+        },
+      ]
     },
     staleTime: 60 * 60 * 1000, // 1 hour
   })

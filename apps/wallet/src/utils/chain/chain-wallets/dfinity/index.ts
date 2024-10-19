@@ -7,7 +7,7 @@ import { Secp256k1KeyIdentity } from '@dfinity/identity-secp256k1';
 import { createAgent } from '@dfinity/utils'
 import { HttpAgent } from "@dfinity/agent";
 import { AccountIdentifier, LedgerCanister } from '@dfinity/ledger-icp'
-import { IcrcLedgerCanister } from "@dfinity/ledger-icrc";
+import { IcrcLedgerCanister, IcrcMetadataResponseEntries } from "@dfinity/ledger-icrc";
 import { Principal } from "@dfinity/principal";
 import { Icrc49CallCanisterRequest, Icrc49CallCanisterResult, IcrcErrorCode, JsonRpcResponseError, JsonRpcResponseSuccess } from "./types";
 import { buildJsonRpcError, buildJsonRpcResponse } from "./utils";
@@ -71,7 +71,8 @@ export class DfinityChainWallet extends BaseChainWallet {
       const balance = await ledger.balance({
         owner: Principal.fromText(address)
       })
-      return new BigNumber(String(balance)).shiftedBy(-assetInfo.decimalPlaces.value)
+      const decimals = assetInfo.decimalPlaces?.value ?? (await this.getIcrcDecimals(ledger))
+      return new BigNumber(String(balance)).shiftedBy(-decimals)
     }
 
     throw new Error(`Dfinity: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
@@ -98,12 +99,13 @@ export class DfinityChainWallet extends BaseChainWallet {
     // ICRC
     if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC1)) {
       const ledger = this.getIcrcLedger(assetInfo.contractAddress)
+      const decimals = assetInfo.decimalPlaces?.value ?? (await this.getIcrcDecimals(ledger))
       const blockIndex = await ledger.transfer({
         to: {
           owner: Principal.fromText(toAddress),
           subaccount: [],
         },
-        amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
+        amount: BigInt(amount.shiftedBy(decimals).toString()),
       })
       console.debug(`Dfinity: ICRC transfer blockIndex ${blockIndex}`)
       return ''
@@ -129,7 +131,8 @@ export class DfinityChainWallet extends BaseChainWallet {
     if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC1)) {
       const ledger = this.getIcrcLedger(assetInfo.contractAddress)
       const fee = await ledger.transactionFee({})
-      return new BigNumber(String(fee)).shiftedBy(-assetInfo.decimalPlaces.value)
+      const decimals = assetInfo.decimalPlaces?.value ?? (await this.getIcrcDecimals(ledger))
+      return new BigNumber(String(fee)).shiftedBy(-decimals)
     }
 
     throw new Error(`Dfinity: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
@@ -163,7 +166,7 @@ export class DfinityChainWallet extends BaseChainWallet {
     this.identity = Secp256k1KeyIdentity.fromSeedPhrase(phrase)
     this.agent = await createAgent({
       identity: this.identity,
-      host: RUNTIME_ICRC_HOST || 'https://ic0.app',
+      host: RUNTIME_ICRC_HOST || this.chainInfo.rpcUrls[0],
       fetchRootKey: RUNTIME_ICRC_DEV,
     })
   }
@@ -180,5 +183,17 @@ export class DfinityChainWallet extends BaseChainWallet {
       agent: this.agent!,
       canisterId: Principal.fromText(canisterId),
     })
+  }
+
+  private getIcrcDecimals = async (ledger: IcrcLedgerCanister) => {
+    let decimals = 8
+    const metaData = await ledger.metadata({})
+    for (const entry of metaData) {
+      if (entry[0] === IcrcMetadataResponseEntries.DECIMALS) {
+        decimals = Number(String((entry[1] as any).Nat))
+        break;
+      }
+    }
+    return decimals
   }
 }
