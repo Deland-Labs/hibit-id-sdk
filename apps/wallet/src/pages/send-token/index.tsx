@@ -159,7 +159,7 @@ const SendTokenPage: FC = observer(() => {
                     onChange={(e) => {
                       const value = e.target.value
                       const [, decimals] = value.split('.')
-                      if (decimals?.length > Math.min(SYSTEM_MAX_DECIMALS, token?.decimalPlaces.value ?? Infinity)) {
+                      if (decimals?.length > Math.min(SYSTEM_MAX_DECIMALS, token?.decimalPlaces?.value ?? Infinity)) {
                         return
                       }
                       setValue('amount', value)
