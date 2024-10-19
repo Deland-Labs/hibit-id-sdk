@@ -382,7 +382,7 @@ export const Dfinity: ChainInfo = {
   nativeAssetDecimals: 8,
   supportedSignaturesSchemas: [WalletSignatureSchema.IcpEddsa],
   explorer: 'https://dashboard.internetcomputer.org',
-  rpcUrls: [],
+  rpcUrls: ['https://ic0.app'],
   getTxLink: (txId: string) => {
     if (typeof txId !== 'string') {
       return ''
