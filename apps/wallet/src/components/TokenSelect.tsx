@@ -19,7 +19,7 @@ const TokenSelect: FC<TokenSelectProps> = observer(({ value, onChange }) => {
     <Dropdown
       triggerContent={(
         <>
-          <TokenIcon token={value} hideChain size="sm" />
+          <TokenIcon token={value} hideName size="sm" />
           <CaretSvg />
         </>
       )}

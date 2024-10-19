@@ -383,6 +383,7 @@ export const Dfinity: ChainInfo = {
   supportedSignaturesSchemas: [WalletSignatureSchema.IcpEddsa],
   explorer: 'https://dashboard.internetcomputer.org',
   rpcUrls: ['https://ic0.app'],
+  feeTokenType: 'token',
   getTxLink: (txId: string) => {
     if (typeof txId !== 'string') {
       return ''

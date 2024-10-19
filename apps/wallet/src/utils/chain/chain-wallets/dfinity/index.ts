@@ -94,7 +94,7 @@ export class DfinityChainWallet extends BaseChainWallet {
         amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString())
       })
       console.debug(`Dfinity: ICP transfer blockHeight ${blockHeight}`)
-      return ''
+      return String(blockHeight)
     }
     // ICRC
     if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC1)) {
@@ -108,7 +108,7 @@ export class DfinityChainWallet extends BaseChainWallet {
         amount: BigInt(amount.shiftedBy(decimals).toString()),
       })
       console.debug(`Dfinity: ICRC transfer blockIndex ${blockIndex}`)
-      return ''
+      return String(blockIndex)
     }
 
     throw new Error(`Dfinity: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
