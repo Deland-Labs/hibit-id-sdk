@@ -1,5 +1,6 @@
 import TonWeb from 'tonweb';
 import { Chain } from './basicTypes';
+import { isAddressPrincipal } from './chain/chain-wallets/dfinity/utils';
 
 export const walletAddressValidate = (chainType: Chain, address: string) => {
   if (!chainType || !address) {
@@ -26,6 +27,8 @@ export const walletAddressValidate = (chainType: Chain, address: string) => {
       return false
     }
     // return /^[a-zA-Z0-9-_]{48}$/.test(address);
+  } else if (chainType.equals(Chain.Dfinity)) {
+    return isAddressPrincipal(address)
   }
   // TODO: add more rules when supporting new chains
   return false;
