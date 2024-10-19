@@ -191,7 +191,9 @@ const SendTokenConfirmPage: FC = observer(() => {
                   <span className="loading loading-spinner size-4" />
                 )}
               </span>
-              <span className="text-xs">{nativeTokenQuery.data?.assetSymbol}</span>
+              <span className="text-xs">
+                {hibitIdSession.chainInfo.feeTokenType === 'token' ? state.token?.assetSymbol : nativeTokenQuery.data?.assetSymbol}
+              </span>
             </div>
             {errMsg && (
               <div className="label">
