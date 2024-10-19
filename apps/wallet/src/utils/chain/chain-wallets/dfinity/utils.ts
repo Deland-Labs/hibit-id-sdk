@@ -1,4 +1,6 @@
+import { Principal } from "@dfinity/principal"
 import { IcrcMethods, IcrcPermissionState, JsonRpcRequest, JsonRpcResponseError, JsonRpcResponseSuccess } from "./types"
+import { AccountIdentifier } from "@dfinity/ledger-icp"
 
 const ICRC_SESSION_KEY = 'icrc29_session'
 
@@ -75,4 +77,29 @@ export const buildJsonRpcError = (id: number, code: number, message: string, des
       description: desc,
     },
   }
+}
+
+export const isAddressPrincipal = (address: string): boolean => {
+  try {
+    Principal.fromText(address)
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
+export const isAddressAccountIdentifier = (address: string): boolean => {
+  return /^[a-fA-F0-9]{64}$/i.test(address)
+}
+
+export const getAccountIdentifierByAddress = (address: string): AccountIdentifier | null => {
+  if (isAddressPrincipal(address)) {
+    return AccountIdentifier.fromPrincipal({
+      principal: Principal.fromText(address),
+    })
+  }
+  if (isAddressAccountIdentifier(address)) {
+    return AccountIdentifier.fromHex(address)
+  }
+  return null
 }
