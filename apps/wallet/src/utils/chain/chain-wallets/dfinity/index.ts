@@ -57,7 +57,7 @@ export class DfinityChainWallet extends BaseChainWallet {
 
     await this.readyPromise
     // native
-    if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+    if (assetInfo.chainAssetType.equals(ChainAssetType.ICP)) {
       const ledger = this.getIcpLedger();
       const balance = await ledger.accountBalance({
         accountIdentifier: AccountIdentifier.fromPrincipal({
@@ -67,7 +67,7 @@ export class DfinityChainWallet extends BaseChainWallet {
       return new BigNumber(String(balance)).shiftedBy(-assetInfo.decimalPlaces.value)
     }
     // ICRC
-    if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC1)) {
+    if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC3)) {
       const ledger = this.getIcrcLedger(assetInfo.contractAddress)
       const balance = await ledger.balance({
         owner: Principal.fromText(address)
@@ -86,7 +86,7 @@ export class DfinityChainWallet extends BaseChainWallet {
     await this.readyPromise
 
     // native
-    if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+    if (assetInfo.chainAssetType.equals(ChainAssetType.ICP)) {
       const ledger = this.getIcpLedger()
       const blockHeight = await ledger.transfer({
         to: AccountIdentifier.fromPrincipal({
@@ -98,7 +98,7 @@ export class DfinityChainWallet extends BaseChainWallet {
       return String(blockHeight)
     }
     // ICRC
-    if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC1)) {
+    if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC3)) {
       const ledger = this.getIcrcLedger(assetInfo.contractAddress)
       const decimals = assetInfo.decimalPlaces?.value ?? (await this.getIcrcDecimals(ledger))
       const blockIndex = await ledger.transfer({
@@ -122,7 +122,7 @@ export class DfinityChainWallet extends BaseChainWallet {
     await this.readyPromise
 
     // native
-    if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+    if (assetInfo.chainAssetType.equals(ChainAssetType.ICP)) {
       if (this.feeCache['native']) {
         return this.feeCache['native']
       }
@@ -134,7 +134,7 @@ export class DfinityChainWallet extends BaseChainWallet {
     }
 
     // ICRC
-    if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC1)) {
+    if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC3)) {
       if (this.feeCache[assetInfo.contractAddress]) {
         return this.feeCache[assetInfo.contractAddress]
       }

@@ -36,7 +36,7 @@ export const useAllAssetListQuery = () => {
           assetId: new AssetId(new BigNumber(90001)),  // DOD temp id
           chain: Chain.Dfinity,
           chainNetwork: ChainNetwork.DfinityMainNet,
-          chainAssetType: ChainAssetType.ICRC1,
+          chainAssetType: ChainAssetType.ICRC3,
           contractAddress: 'cp4zx-yiaaa-aaaah-aqzea-cai',
           decimalPlaces: null, // decimal needs to be queried at runtime
           isBaseToken: true,
