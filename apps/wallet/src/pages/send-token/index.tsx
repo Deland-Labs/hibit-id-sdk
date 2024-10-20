@@ -127,7 +127,7 @@ const SendTokenPage: FC = observer(() => {
                   }}
                 >
                   {t('common_max')}:
-                  {balanceQuery.isFetching ? (
+                  {balanceQuery.isLoading ? (
                     <span className="loading loading-spinner loading-xs"></span>
                   ) : (
                     <span className="mx-1">{formatNumber(balanceQuery.data || 0)}</span>
