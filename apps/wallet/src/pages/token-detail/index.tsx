@@ -43,7 +43,7 @@ const TokenDetailPage: FC = observer(() => {
         </div>
         <div className="flex flex-col items-center">
           <span className="text-2xl">
-            {balanceQuery.isFetching ? (
+            {balanceQuery.isLoading ? (
               <span className="loading loading-spinner loading-sm"></span>
             ) : (
               <span>{`${formatNumber(balanceQuery.data)} ${token.assetSymbol}`}</span>
