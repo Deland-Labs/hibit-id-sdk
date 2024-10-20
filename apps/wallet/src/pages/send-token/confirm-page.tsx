@@ -10,7 +10,7 @@ import BigNumber from "bignumber.js";
 import toaster from "../../components/Toaster";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import CopyButton from "../../components/CopyButton";
-import { sendTokenStore } from "./store";
+import { sendTokenStore, useFeeQuery } from "./store";
 import { formatNumber } from "../../utils/formatter";
 import { ChainAssetType } from "../../utils/basicTypes";
 import { getChainTxLink } from "../../utils/link";
@@ -33,20 +33,7 @@ const SendTokenConfirmPage: FC = observer(() => {
     enabled: !!tokenListQuery.data
   })
   const nativeBalanceQuery = useTokenBalanceQuery(nativeTokenQuery.data || undefined)
-  const feeQuery = useQuery({
-    queryKey: ['estimatedFee', state],
-    queryFn: async () => {
-      if (!hibitIdSession.walletPool || !state.token) {
-        return null
-      }
-      return await hibitIdSession.walletPool.getEstimatedFee(
-        state.toAddress,
-        new BigNumber(state.amount),
-        state.token,
-      )
-    },
-    refetchInterval: 5000,
-  })
+  const feeQuery = useFeeQuery(state.toAddress, state.amount, state.token)
 
   const minNativeBalance = useMemo(() => {
     if (!feeQuery.data || !state.token) {
@@ -55,7 +42,7 @@ const SendTokenConfirmPage: FC = observer(() => {
     if (state.token.chainAssetType.equals(ChainAssetType.Native)) {
       return new BigNumber(state.amount).plus(feeQuery.data)
     } else {
-      return feeQuery.data
+      return hibitIdSession.chainInfo.feeTokenType === 'native' ? feeQuery.data : new BigNumber(0)
     }
   }, [state, feeQuery.data])
 
@@ -180,12 +167,9 @@ const SendTokenConfirmPage: FC = observer(() => {
             </div>
             <div className="flex items-center justify-between font-bold">
               <span className="text-primary text-sm">
-                {!feeQuery.isPending ? (
+                {!feeQuery.isLoading ? (
                   <span className="flex items-center gap-2">
                     <span>~{formatNumber(feeQuery.data)}</span>
-                    {feeQuery.isFetching && (
-                      <span className="loading loading-spinner size-4" />  
-                    )}
                   </span>
                 ) : (
                   <span className="loading loading-spinner size-4" />

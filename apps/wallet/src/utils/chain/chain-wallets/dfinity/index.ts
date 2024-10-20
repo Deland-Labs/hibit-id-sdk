@@ -20,6 +20,7 @@ export class DfinityChainWallet extends BaseChainWallet {
   private identity: Secp256k1KeyIdentity | null = null
   private agent: HttpAgent | null = null
   private readyPromise: Promise<void>
+  private feeCache: Record<string | 'native', BigNumber> = {}
 
   constructor(chainInfo: ChainInfo, phrase: string) {
     if (!chainInfo.chainId.type.equals(Chain.Dfinity)) {
@@ -122,17 +123,27 @@ export class DfinityChainWallet extends BaseChainWallet {
 
     // native
     if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+      if (this.feeCache['native']) {
+        return this.feeCache['native']
+      }
       const ledger = this.getIcpLedger()
       const fee = await ledger.transactionFee()
-      return new BigNumber(String(fee)).shiftedBy(-assetInfo.decimalPlaces.value)
+      const result = new BigNumber(String(fee)).shiftedBy(-assetInfo.decimalPlaces.value)
+      this.feeCache['native'] = result
+      return result
     }
 
     // ICRC
     if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC1)) {
+      if (this.feeCache[assetInfo.contractAddress]) {
+        return this.feeCache[assetInfo.contractAddress]
+      }
       const ledger = this.getIcrcLedger(assetInfo.contractAddress)
       const fee = await ledger.transactionFee({})
       const decimals = assetInfo.decimalPlaces?.value ?? (await this.getIcrcDecimals(ledger))
-      return new BigNumber(String(fee)).shiftedBy(-decimals)
+      const result = new BigNumber(String(fee)).shiftedBy(-decimals)
+      this.feeCache[assetInfo.contractAddress] = result
+      return result
     }
 
     throw new Error(`Dfinity: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);

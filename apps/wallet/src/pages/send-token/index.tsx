@@ -13,7 +13,7 @@ import { walletAddressValidate } from "../../utils/validator";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { SYSTEM_MAX_DECIMALS } from "../../utils/formatter/numberFormatter";
-import { sendTokenStore } from "./store";
+import { sendTokenStore, useFeeQuery } from "./store";
 import PageHeader from "../../components/PageHeader";
 import { useTranslation } from "react-i18next";
 
@@ -60,6 +60,7 @@ const SendTokenPage: FC = observer(() => {
     control,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm({
     defaultValues: {
       toAddress: state.toAddress || '',
@@ -68,6 +69,9 @@ const SendTokenPage: FC = observer(() => {
     resolver: yupResolver(formSchema),
     mode: 'onChange'
   })
+  const values = watch()
+
+  useFeeQuery(values.toAddress, values.amount, token)
 
   useEffect(() => {
     if (state.token) {
@@ -84,7 +88,7 @@ const SendTokenPage: FC = observer(() => {
     setState({
       toAddress,
       token,
-      amount
+      amount,
     })
     navigate('/send/confirm')
   })
