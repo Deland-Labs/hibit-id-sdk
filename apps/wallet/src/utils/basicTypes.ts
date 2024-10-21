@@ -323,6 +323,7 @@ export class ChainAssetType {
   static ICRC3 = new ChainAssetType(new BigNumber(6));
   static BRC20 = new ChainAssetType(new BigNumber(7));
   static SPL = new ChainAssetType(new BigNumber(8));
+  static TRC20 = new ChainAssetType(new BigNumber(9));
   static Jetton = new ChainAssetType(new BigNumber(10));
 
   static fromString(value: string): ChainAssetType | null {
