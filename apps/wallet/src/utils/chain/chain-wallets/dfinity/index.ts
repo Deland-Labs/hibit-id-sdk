@@ -9,10 +9,11 @@ import { HttpAgent } from "@dfinity/agent";
 import { AccountIdentifier, LedgerCanister } from '@dfinity/ledger-icp'
 import { IcrcLedgerCanister, IcrcMetadataResponseEntries } from "@dfinity/ledger-icrc";
 import { Principal } from "@dfinity/principal";
-import { Icrc49CallCanisterRequest, Icrc49CallCanisterResult, IcrcErrorCode, JsonRpcResponseError, JsonRpcResponseSuccess } from "./types";
+import { Icrc25SupportedStandardsResult, Icrc49CallCanisterRequest, Icrc49CallCanisterResult, IcrcErrorCode, JsonRpcResponseError, JsonRpcResponseSuccess } from "./types";
 import { buildJsonRpcError, buildJsonRpcResponse } from "./utils";
 import * as cbor from 'cborg';
 import { RUNTIME_ICRC_DEV, RUNTIME_ICRC_HOST } from "../../../runtime";
+import ic from 'ic0'
 
 const ICP_LEDGER_CANISTER_ID = Principal.fromText('ryjl3-tyaaa-aaaaa-aaaba-cai');
 
@@ -56,7 +57,7 @@ export class DfinityChainWallet extends BaseChainWallet {
     }
 
     await this.readyPromise
-    // native
+    // ICP
     if (assetInfo.chainAssetType.equals(ChainAssetType.ICP)) {
       const ledger = this.getIcpLedger();
       const balance = await ledger.accountBalance({
@@ -68,6 +69,7 @@ export class DfinityChainWallet extends BaseChainWallet {
     }
     // ICRC
     if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC3)) {
+      await this.assertIcrc3Support(assetInfo.contractAddress)
       const ledger = this.getIcrcLedger(assetInfo.contractAddress)
       const balance = await ledger.balance({
         owner: Principal.fromText(address)
@@ -85,7 +87,7 @@ export class DfinityChainWallet extends BaseChainWallet {
     }
     await this.readyPromise
 
-    // native
+    // ICP
     if (assetInfo.chainAssetType.equals(ChainAssetType.ICP)) {
       const ledger = this.getIcpLedger()
       const blockHeight = await ledger.transfer({
@@ -99,6 +101,7 @@ export class DfinityChainWallet extends BaseChainWallet {
     }
     // ICRC
     if (assetInfo.chainAssetType.equals(ChainAssetType.ICRC3)) {
+      await this.assertIcrc3Support(assetInfo.contractAddress)
       const ledger = this.getIcrcLedger(assetInfo.contractAddress)
       const decimals = assetInfo.decimalPlaces?.value ?? (await this.getIcrcDecimals(ledger))
       const blockIndex = await ledger.transfer({
@@ -121,7 +124,7 @@ export class DfinityChainWallet extends BaseChainWallet {
     }
     await this.readyPromise
 
-    // native
+    // ICP
     if (assetInfo.chainAssetType.equals(ChainAssetType.ICP)) {
       if (this.feeCache['native']) {
         return this.feeCache['native']
@@ -138,6 +141,7 @@ export class DfinityChainWallet extends BaseChainWallet {
       if (this.feeCache[assetInfo.contractAddress]) {
         return this.feeCache[assetInfo.contractAddress]
       }
+      await this.assertIcrc3Support(assetInfo.contractAddress)
       const ledger = this.getIcrcLedger(assetInfo.contractAddress)
       const fee = await ledger.transactionFee({})
       const decimals = assetInfo.decimalPlaces?.value ?? (await this.getIcrcDecimals(ledger))
@@ -206,5 +210,20 @@ export class DfinityChainWallet extends BaseChainWallet {
       }
     }
     return decimals
+  }
+
+  private assertIcrc3Support = async (canisterId: string) => {
+    try {
+      const ledger = ic(canisterId)
+      const response: Icrc25SupportedStandardsResult['supportedStandards']
+        = await ledger.call('icrc1_supported_standards')
+      
+      console.debug('icrc1_supported_standards',canisterId, response)
+      if (!Array.isArray(response) || !response.find((standard) => standard?.name.toUpperCase() === 'ICRC-3')) {
+        throw new Error(`Dfinity: token(${canisterId}) does not support ICRC-3`)
+      }
+    } catch (e) {
+      throw new Error(`Dfinity: failed to check ICRC-3 support of token(${canisterId})`)
+    }
   }
 }
