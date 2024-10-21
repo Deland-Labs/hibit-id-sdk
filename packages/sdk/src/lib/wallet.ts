@@ -303,12 +303,12 @@ export class HibitIdWallet {
     rpc.expose(ClientExposeRPCMethod.LOGIN_CHANGED, this.onRpcLoginChanged);
     rpc.expose(ClientExposeRPCMethod.CHAIN_CHANGED, this.onRpcChainChanged);
     rpc.expose(ClientExposeRPCMethod.ACCOUNTS_CHANGED, this.onRpcAccountsChanged);
+    this._rpc = rpc
     
     console.debug('[sdk rpc init]')
     await rpc.isReady
     await this._iframeReadyPromise.promise
     console.debug('[sdk rpc ready]')
-    this._rpc = rpc
   }
 
   private handleControllerMove = (x: number, y: number) => {
