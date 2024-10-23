@@ -19,7 +19,9 @@ const SettingsPage: FC = observer(() => {
   return (
     <div className="h-full px-6 overflow-auto">
       <PageHeader title={t('page_settings_title')} />
-      <div className="mt-6">
+
+      {/* // TODO: TEMP HIDE */}
+      {/* <div className="mt-6">
         <p className="label-text text-neutral text-sm font-bold">
           {t('page_settings_account')}
         </p>
@@ -34,7 +36,7 @@ const SettingsPage: FC = observer(() => {
             {t('page_settings_linkMore')}
           </button>
         </div>
-      </div>
+      </div> */}
 
       <div className="mt-6">
         <p className="label-text text-neutral text-sm font-bold">
