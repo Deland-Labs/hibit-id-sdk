@@ -17,12 +17,12 @@ export class MnemonicVersion {
 
 export class MnemonicManager {
   public static readonly instance = new MnemonicManager();
+  private static readonly encryptionManager = new EncryptionManager();
 
   public async createAsync(mnemonicContent: string): Promise<string> {
     const publicKey = await GetPublicKeyAsync();
     const key = publicKey.publicKeyBase64;
-    const encryptionManager = new EncryptionManager();
-    const encrypted = await encryptionManager.encrypt(key, mnemonicContent);
+    const encrypted = await MnemonicManager.encryptionManager.encrypt(key, mnemonicContent);
     await CreateMnemonicAsync({
       aesKey: encrypted.encryptedAesKeyAndIvBase64,
       mnemonicContent: encrypted.encryptedDataBase64,
@@ -31,16 +31,31 @@ export class MnemonicManager {
     return mnemonicContent;
   }
 
+  public async updateAsync(oldVersion: number, oldMnemonicContent: string, newMnemonicContent: string): Promise<string> {
+    const publicKey = await GetPublicKeyAsync();
+    const key = publicKey.publicKeyBase64;
+    const encryptedOld = await MnemonicManager.encryptionManager.encrypt(key, oldMnemonicContent);
+    const encryptedNew = await MnemonicManager.encryptionManager.encrypt(key, newMnemonicContent);
+    await UpdateMnemonicAsync(new UpdateMnemonicInput({
+      oldAesKey: encryptedOld.encryptedAesKeyAndIvBase64,
+      oldMnemonicContent: encryptedOld.encryptedDataBase64,
+      oldVersion,
+      newAesKey: encryptedNew.encryptedAesKeyAndIvBase64,
+      newMnemonicContent: encryptedNew.encryptedDataBase64,
+      newVersion: MnemonicVersion.V1RsaSha1Aes
+    }));
+    return newMnemonicContent;
+  }
+
   public async getAsync(): Promise<GetMnemonicResult> {
-    const encryptionManager = new EncryptionManager();
-    const { publicKeyBase64, privateKeyBase64 } = await encryptionManager.generateKeys();
+    const { publicKeyBase64, privateKeyBase64 } = await MnemonicManager.encryptionManager.generateKeys();
     const mnemonic = await GetMnemonicAsync(new GetMnemonicInput({
       publicKey: publicKeyBase64
     }));
     if (mnemonic.version === MnemonicVersion.V0PlainText) {
       return mnemonic;
     } else if (mnemonic.version === MnemonicVersion.V1RsaSha1Aes) {
-      const decryptedResult = await encryptionManager.decrypt(privateKeyBase64, mnemonic.aesKey, mnemonic.mnemonicContent);
+      const decryptedResult = await MnemonicManager.encryptionManager.decrypt(privateKeyBase64, mnemonic.aesKey, mnemonic.mnemonicContent);
       return new GetMnemonicResult({
         ...mnemonic,
         mnemonicContent: decryptedResult
@@ -89,9 +104,8 @@ export const UpdateMnemonicAsync = async (input: UpdateMnemonicInput) => {
 };
 
 export const GetUserLoginsAsync = async () => {
-  const result = await sendApiRequest<null, GetUserLoginsResult>(
+  return await sendApiRequest<null, GetUserLoginsResult>(
     null,
-    '/api/app/user-login/get-user-logins',
-  )
-  return result
-}
+    '/api/app/user-login/get-user-logins'
+  );
+};

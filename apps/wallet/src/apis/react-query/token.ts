@@ -2,29 +2,89 @@ import { useQuery } from "@tanstack/react-query"
 import { QueryCacheKey } from "./query-keys"
 import { GetAllAssetsAsync } from "../services/token"
 import { getSupportedChains } from "../../utils/chain"
-import { ChainId, ChainInfo } from "../../utils/basicTypes"
+import { AssetId, Chain, ChainAssetType, ChainId, ChainInfo, ChainNetwork, DecimalPlaces } from "../../utils/basicTypes"
 import { RootAssetInfo } from "../models"
 import hibitIdSession from "../../stores/session"
 import BigNumber from "bignumber.js"
 import { SYSTEM_MAX_DECIMALS } from "../../utils/formatter/numberFormatter";
 
-export const useTokenListQuery = (chain?: ChainInfo) => {
+export const useAllAssetListQuery = () => {
   return useQuery({
-    queryKey: [QueryCacheKey.GET_TOKEN_LIST, chain?.chainId.toString() ?? ''],
+    queryKey: [QueryCacheKey.GET_ALL_ASSET_LIST],
     queryFn: async () => {
       const res = await GetAllAssetsAsync()
       if (!res.isSuccess || !res.value) {
-        throw new Error('Get token list failed')
+        throw new Error('Get all asset list failed')
       }
+      const result = [...res.value]
+      if (!res.value.find((asset) => asset.assetSymbol === 'ICP')) {
+        console.debug('ICP not found, add temp ICP')
+        result.unshift({
+          assetId: new AssetId(new BigNumber(90000)),  // ICP temp id
+          chain: Chain.Dfinity,
+          chainNetwork: ChainNetwork.DfinityMainNet,
+          chainAssetType: ChainAssetType.ICP,
+          contractAddress: '',
+          decimalPlaces: DecimalPlaces.fromNumber(8),
+          isBaseToken: true,
+          orderNo: 999,
+          icon: '',
+          displayName: 'ICP',
+          assetSymbol: 'ICP',
+          subAssets: [],
+        })
+      }
+      return result as RootAssetInfo[]
+
+      // return [
+      //   ...res.value,
+      //   {
+      //     assetId: new AssetId(new BigNumber(90001)),  // DOD temp id
+      //     chain: Chain.Dfinity,
+      //     chainNetwork: ChainNetwork.DfinityMainNet,
+      //     chainAssetType: ChainAssetType.ICRC3,
+      //     contractAddress: 'cp4zx-yiaaa-aaaah-aqzea-cai',
+      //     decimalPlaces: null, // decimal needs to be queried at runtime
+      //     isBaseToken: true,
+      //     orderNo: 999,
+      //     icon: '',
+      //     displayName: 'Doge On Doge',
+      //     assetSymbol: 'DOD',
+      //     subAssets: [],
+      //   },
+      // ] as RootAssetInfo[]
+    },
+    staleTime: 60 * 60 * 1000, // 1 hour
+  })
+}
+export const useTokenListQuery = (chain?: ChainInfo) => {
+  const allAssetListQuery = useAllAssetListQuery()
+  return useQuery({
+    queryKey: [QueryCacheKey.GET_TOKEN_LIST, chain?.chainId.toString() ?? ''],
+    queryFn: async () => {
       const supportedChains = getSupportedChains()
-      const chainTokens = res.value.filter((token) => {
+      const flatSubTokens: RootAssetInfo[] = []
+      allAssetListQuery.data!.forEach((token) => {
+        if (token.subAssets.length <= 0) {
+          return
+        }
+        flatSubTokens.push(...token.subAssets.map((sub) => ({
+          ...sub,
+          isBaseToken: token.isBaseToken,
+          displayName: token.displayName,
+          assetSymbol: token.assetSymbol,
+          subAssets: []
+        })))
+      })
+      const chainTokens = [...allAssetListQuery.data!, ...flatSubTokens].filter((token) => {
         return (
           !!supportedChains.find((chain) => chain.chainId.equals(new ChainId(token.chain, token.chainNetwork)))
             && (chain ? chain.chainId.equals(new ChainId(token.chain, token.chainNetwork)) : true)
         )
       })
       return chainTokens
-    }
+    },
+    enabled: !!allAssetListQuery.data
   })
 }
 
@@ -54,6 +114,21 @@ export const useTokenBalanceQuery = (token?: RootAssetInfo) => {
       return (await hibitIdSession.walletPool.balanceOf(address, token))?.dp(SYSTEM_MAX_DECIMALS, BigNumber.ROUND_FLOOR)
     },
     enabled: !!token,
-    staleTime: 10000,
+    refetchInterval: 10000,
+  })
+}
+
+export const useTokenFiatValueQuery = (token?: RootAssetInfo, balance?: BigNumber) => {
+  return useQuery({
+    queryKey: [QueryCacheKey.GET_TOKEN_FIAT_VALUE, token?.assetId.toString(), balance],
+    queryFn: async () => {
+      let value = new BigNumber(0)
+      if (token!.assetSymbol === 'USDT') {
+        value = balance!.dp(2, BigNumber.ROUND_FLOOR)
+      }
+      // TODO: other tokens
+      return value
+    },
+    enabled: !!token && !!balance,
   })
 }

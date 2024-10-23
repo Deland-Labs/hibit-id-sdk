@@ -13,7 +13,7 @@ export const Ethereum: ChainInfo = {
   nativeAssetDecimals: 18,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://etherscan.io',
-  rpcUrls: ['https://endpoints.omniatech.io/v1/eth/mainnet/public']
+  rpcUrls: ['https://ethereum.blockpi.network/v1/rpc/public']
 };
 export const EthereumSepolia: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmSepoliaNet),
@@ -24,7 +24,7 @@ export const EthereumSepolia: ChainInfo = {
   nativeAssetDecimals: 18,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://sepolia.etherscan.io',
-  rpcUrls: ['https://rpc-sepolia.rockx.com']
+  rpcUrls: ['https://ethereum-sepolia.blockpi.network/v1/rpc/public	']
 };
 
 export const EthereumBsc: ChainInfo = {
@@ -372,3 +372,29 @@ export const TronNile: ChainInfo = {
     return `https://nile.tronscan.org/#/address/${address}`
   },
 }
+
+export const Dfinity: ChainInfo = {
+  chainId: new ChainId(Chain.Dfinity, ChainNetwork.DfinityMainNet),
+  name: 'Dfinity',
+  fullName: 'Dfinity Mainnet',
+  icon: '/chain-icons/IC.svg',
+  nativeAssetSymbol: 'ICP',
+  nativeAssetDecimals: 8,
+  supportedSignaturesSchemas: [WalletSignatureSchema.IcpEddsa],
+  explorer: 'https://dashboard.internetcomputer.org',
+  rpcUrls: ['https://ic0.app'],
+  feeTokenType: 'token',
+  getTxLink: (txId: string) => {
+    if (typeof txId !== 'string') {
+      return ''
+    }
+    const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
+    return `https://dashboard.internetcomputer.org/transaction/${hash}`
+  },
+  getAddressLink: (address: string) => {
+    if (typeof address !== 'string') {
+      return ''
+    }
+    return `https://dashboard.internetcomputer.org/account/${address}`
+  },
+};

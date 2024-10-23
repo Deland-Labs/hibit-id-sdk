@@ -19,10 +19,13 @@ const fmtConfig = {
 };
 
 export const formatNumber = (
-  number: bigint | number | string | BigNumber,
+  number: bigint | number | string | BigNumber | undefined | null,
   decimals?: number,
   decimalsAutoPlacement: boolean = true
 ) => {
+  if (typeof number === 'undefined' || number === null) {
+    return '--'
+  }
   const x = new BigNumber(number?.toString());
   if (x.isNaN()) {
     return number?.toString();

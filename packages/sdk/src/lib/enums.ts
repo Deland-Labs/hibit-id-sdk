@@ -14,6 +14,9 @@ export enum HibitIdExposeRPCMethod {
   CONNECT = 'connect',
   GET_BALANCE = 'getBalance',
   TRANSFER = 'transfer',
+  TONCONNECT_GET_STATE_INIT = 'tonConnectGetStateInit',
+  TONCONNECT_TRANSFER = 'tonConnectTransfer',
+  TONCONNECT_SIGN_DATA = 'tonConnectSignData',
   DISCONNECT = 'disconnect',
   SIGN_MESSAGE = 'signMessage',
   SWITCH_CHAIN = 'switchChain',
@@ -69,4 +72,9 @@ export enum HibitIdChainId {
   TronMainnet = '195_728126428',
   TronShastaTestnet = '195_2494104990',
   TronNileTestnet = '195_3448148188',
+}
+
+export enum HibitIdErrorCode {
+  USER_CANCEL_CONNECTION = 'USER_CANCEL_CONNECTION',
+  WALLET_NOT_CONNECTED = 'WALLET_NOT_CONNECTED',
 }

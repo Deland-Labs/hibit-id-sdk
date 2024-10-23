@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { AssetInfo, ChainWallet } from "../types";
+import { AssetInfo, BaseChainWallet } from "../types";
 import { Chain, ChainAssetType, ChainInfo, ChainNetwork } from "../../../basicTypes";
 import { Buffer } from 'buffer';
 import TonWeb from 'tonweb';
@@ -8,12 +8,12 @@ import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { bytesToHex, hexToBytes } from '@openproduct/web-sdk';
 import { WalletV4ContractR2 } from "tonweb/dist/types/contract/wallet/v4/wallet-v4-contract-r2";
 import { sleep } from "../../common";
-import { WalletAccount } from "@deland-labs/hibit-id-sdk";
+import { WalletAccount } from "@delandlabs/hibit-id-sdk";
 
 const { JettonMinter, JettonWallet } = TonWeb.token.jetton
 const { Address, toNano } = TonWeb.utils
 
-export class TonChainWallet extends ChainWallet {
+export class TonChainWallet extends BaseChainWallet {
   private keyPair: KeyPair | null = null
   private tonweb: TonWeb | null = null
   private wallet: WalletV4ContractR2 | null = null

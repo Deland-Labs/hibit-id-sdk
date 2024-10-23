@@ -15,18 +15,19 @@ import {MnemonicManager} from "../../apis/services/auth";
 import LogoSection from "../../components/LogoSection";
 import { useTranslation } from "react-i18next";
 
-const formSchema = object({
-  password: string()
-    .min(8, 'Password must be at least 8 characters')
-    .required('Password is required'),
-  confirmPassword: string()
-    .oneOf([ref('password'), ''], 'Passwords must match')
-    .required('Confirm password is required'),
-})
 
 const CreatePasswordPage: FC = observer(() => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+
+  const formSchema = object({
+    password: string()
+      .min(8, t('page_password_errorPwdCharNumber'))
+      .required(t('page_password_errorPwdRequired')),
+    confirmPassword: string()
+      .oneOf([ref('password'), ''], t('page_password_errorPwdMatch'))
+      .required(t('page_password_errorConfirmPwdRequired')),
+  })
   const {
     register,
     handleSubmit,
@@ -66,9 +67,6 @@ const CreatePasswordPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 pb-14 overflow-auto">
-      {/* <div className="text-xs">
-        Set Password
-      </div> */}
       <LogoSection />
       <div className="p-2 mt-6 rounded-lg bg-warning/15 text-warning text-xs">
         {t('page_password_create_warn')}
@@ -77,7 +75,9 @@ const CreatePasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Set Password</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_password_setPassword')}
+              </span>
             </div>
             <input
               {...register('password')}
@@ -95,7 +95,9 @@ const CreatePasswordPage: FC = observer(() => {
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Confirm Password</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_password_confirmPassword')}
+              </span>
             </div>
             <input
               {...register('confirmPassword')}
@@ -112,13 +114,13 @@ const CreatePasswordPage: FC = observer(() => {
 
         <PasswordWarnings />
 
-        <div className="w-full p-6 pt-4 fixed left-0 bottom-0 bg-base-200">
+        <div className="w-full p-6 pt-4 absolute left-0 bottom-0 bg-base-200">
           <LoaderButton
             className="btn btn-block btn-sm"
             loading={submitMutation.isPending}
             type="submit"
           >
-            Confirm
+            {t('common_confirm')}
           </LoaderButton>
         </div>
       </form>

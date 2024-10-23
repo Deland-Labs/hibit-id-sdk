@@ -1,7 +1,7 @@
 {
-  "name": "@deland-labs/hibit-id-sdk",
+  "name": "@delandlabs/hibit-id-sdk",
   "private": false,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "files": [
     "dist"
@@ -34,6 +34,10 @@
   "dependencies": {
     "@mixer/postmessage-rpc": "^1.1.4",
     "@passwordless-id/webauthn": "^1.6.1",
+    "@ton/core": "^0.57.0",
+    "@ton/crypto": "^3.3.0",
+    "@ton/ton": "^15.0.0",
+    "@tonconnect/protocol": "^2.2.6",
     "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",

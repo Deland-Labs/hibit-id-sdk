@@ -1,8 +1,7 @@
 import { observer } from "mobx-react";
 import { FC } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useTokenBalanceQuery, useTokenQuery } from "../../apis/react-query/token";
-import SvgGo from '../../assets/right-arrow.svg?react'
+import { useParams } from "react-router-dom";
+import { useTokenBalanceQuery, useTokenQuery, useTokenFiatValueQuery } from "../../apis/react-query/token";
 import TokenIcon from "../../components/TokenIcon";
 import { getChainByChainId } from "../../utils/chain";
 import { ChainId } from "../../utils/basicTypes";
@@ -10,12 +9,14 @@ import SendButton from "../../components/SendButton";
 import ReceiveButton from "../../components/ReceiveButton";
 import PageLoading from "../../components/PageLoading";
 import { formatNumber } from "../../utils/formatter";
+import PageHeader from "../../components/PageHeader";
+import BigNumber from "bignumber.js";
 
 const TokenDetailPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
-  const navigate = useNavigate()
   const tokenQuery = useTokenQuery(addressOrSymbol?? '')
   const balanceQuery = useTokenBalanceQuery(tokenQuery.data || undefined)
+  const usdValueQuery = useTokenFiatValueQuery(tokenQuery.data || undefined, balanceQuery.data)
 
   if (tokenQuery.isLoading || typeof tokenQuery.data === 'undefined') {
     return <PageLoading />
@@ -33,12 +34,7 @@ const TokenDetailPage: FC = observer(() => {
 
   return (
     <div className="h-full px-6 overflow-auto">
-      <div>
-        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate('/')}>
-          <SvgGo className="size-6 rotate-180" />
-          <span className="text-xs">{token.assetSymbol}</span>
-        </button>
-      </div>
+      <PageHeader title={token.assetSymbol} />
       <div className="mt-8 flex flex-col items-center gap-10">
         <div className="flex flex-col items-center">
           <TokenIcon token={token} size="lg" onlyIcon />
@@ -47,14 +43,13 @@ const TokenDetailPage: FC = observer(() => {
         </div>
         <div className="flex flex-col items-center">
           <span className="text-2xl">
-            {balanceQuery.isLoading && (
+            {balanceQuery.isLoading ? (
               <span className="loading loading-spinner loading-sm"></span>
-            )}
-            {balanceQuery.data && (
+            ) : (
               <span>{`${formatNumber(balanceQuery.data)} ${token.assetSymbol}`}</span>
             )}
           </span>
-          <span className="text-xs text-neutral">$0.00</span>
+          <span className="text-xs text-neutral">$ {(usdValueQuery.data ?? new BigNumber(0)).toFixed(2)}</span>
         </div>
         <div className="flex items-center gap-10">
           <SendButton token={token} />

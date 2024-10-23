@@ -1,6 +1,6 @@
 import { objToQuery } from "../../url";
 import { IAuthenticateProvider } from "../types";
-import { AuthenticatorType } from "@deland-labs/hibit-id-sdk";
+import { AuthenticatorType } from "@delandlabs/hibit-id-sdk";
 
 declare global {
   interface Window {
@@ -29,7 +29,7 @@ export class TelegramAuthenticateProvider implements IAuthenticateProvider {
     // mini app
     if (launchParams) {
       // sessionStorage.removeItem('telegram-apps/launch-params')
-      window.location.href = `${AUTH_SERVER_URL}Telegram/Login?tgWebAppData=${encodeURIComponent(launchParams)}&returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
+      window.location.href = `${AUTH_SERVER_URL}connect/custom/telegram/login?tgWebAppData=${encodeURIComponent(launchParams)}&returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
       return
     }
     
@@ -44,14 +44,10 @@ export class TelegramAuthenticateProvider implements IAuthenticateProvider {
           }
           const queryValue = objToQuery(data)
           // sessionStorage.removeItem('telegram-apps/launch-params')
-          window.location.href = `${AUTH_SERVER_URL}Telegram/WebLogin?${queryValue}&returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
+          window.location.href = `${AUTH_SERVER_URL}connect/custom/telegram/login?${queryValue}&returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
           resolve(true)
         },
       );
     })
-
-    // const data = {"id":6910684932,"first_name":"Rustin","last_name":"Chi","auth_date":1722478423,"hash":"46b0a8a1cae9d379c96896546bf37b05b5e8c088c51da9feaa675b2b878c79ae"}
-    // const queryValue = objToQuery(data)
-    // window.location.href = `${AUTH_SERVER_URL}Telegram/WebLogin?${queryValue}&returnUrl=${encodeURIComponent(`${location.origin}`)}`
   }
 }

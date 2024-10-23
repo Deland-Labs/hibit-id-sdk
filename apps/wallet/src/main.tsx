@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import 'reflect-metadata'
-import { IS_IN_IFRAME, RUNTIME_ENV, RUNTIME_PARAMS } from './utils/runtime.ts'
+import { IS_IN_IFRAME, IS_TELEGRAM_MINI_APP } from './utils/runtime.ts'
 import App from './App.tsx'
 import './index.css'
 import { BrowserRouter, MemoryRouter } from 'react-router-dom'
@@ -14,8 +14,12 @@ import { OidcProvider } from './utils/oidc/index.ts'
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
-console.log('[runtime env]', RUNTIME_ENV)
-console.log('[runtime params]', RUNTIME_PARAMS)
+// load login widget if not in tg mini app
+if (!IS_TELEGRAM_MINI_APP) {
+  const tgWidgetScript = document.createElement('script')
+  tgWidgetScript.src = 'https://telegram.org/js/telegram-widget.js?22'
+  document.body.appendChild(tgWidgetScript)
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

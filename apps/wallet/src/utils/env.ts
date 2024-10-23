@@ -1,4 +1,4 @@
-import { BlockNetwork, HibitEnv } from "./basicEnums";
+import { HibitEnv } from "./basicEnums";
 
 let env: HibitEnv = HibitEnv.DEV
 switch (import.meta.env.VITE_APP_ENV.toLowerCase()) {
@@ -12,4 +12,3 @@ switch (import.meta.env.VITE_APP_ENV.toLowerCase()) {
   }
 }
 export const HIBIT_ENV = env
-export const BLOCK_NETWORK = HIBIT_ENV === HibitEnv.PROD? BlockNetwork.Mainnet : BlockNetwork.Testnet

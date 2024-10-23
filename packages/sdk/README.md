@@ -1,30 +1,94 @@
-# React + TypeScript + Vite
+# Introduction
+HiBit ID is a web-based multi-chain crypto wallet, with SDK for DApp integration.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+It supports a variety of popular third-party login methods which links user's Web2 accounts seamlessly to the Web3 world.
 
-Currently, two official plugins are available:
+# Supported Third-party Login Methods
+- [x] Telegram
+- [ ] Google
+- [ ] Facebook
+- [ ] X
+- [ ] Apple
+- [ ] Github
+- and more...
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Supported Chains
+- [x] Ethereum
+- [x] BNB Smart Chain
+- [x] Base
+- [x] Avalanche
+- [x] Scroll
+- [x] Bitlayer
+- [x] Ton
+- [ ] Solana
+- [ ] Bitcoin
+- [ ] Tron
+- and more...
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
+# Integration
+## Install SDK
+```bash
+yarn add @delandlabs/hibit-id-sdk
+```
+## Usage
 ```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+import {
+  HibitIdWallet,
+  HibitIdChainId,
+  WalletAccount,
+  HibitIdAssetType,
+} from "@delandlabs/hibit-id-sdk"
+// remember to import styles for the wallet
+import '@delandlabs/hibit-id-sdk/dist/style.css';
+
+// init hibitid wallet
+const hibitId = new HibitIdWallet({
+  env: 'prod',  // 'prod' or 'test'
+  chains: [
+    HibitIdChainId.Ethereum,
+    HibitIdChainId.Ton,
+  ],
+  defaultChain: HibitIdChainId.Ethereum,
+})
+
+// connect
+const walletAccount: WalletAccount = await hibitId.connect(HibitIdChainId.Ethereum)
+
+// sign
+const signature: string = await hibitId.signMessage(msg)
+
+// get balance
+const balance: string = await hibitId.getBalance({
+  assetType: HibitIdAssetType.ERC20,
+  chainId: HibitIdChainId.Ethereum,
+  contractAddress: '0x......',  // required for non-native tokens
+  decimalPlaces: 18,
+})
+
+// transfer
+const txId: string = await hibitId.transfer({
+  toAddress: '0x......',
+  amount: '0.1',
+  assetType: HibitIdAssetType.ERC20,
+  contractAddress: '0x......',  // required for non-native tokens
+  decimalPlaces: 18,
+})
+
+// switch chain
+await hibitId.switchToChain(HibitIdChainId.TonMainnet)
+
+// listen to events
+hibitId.addEventListener('chainChanged', (chainId: HibitIdChainId) => {
+  console.log(chainId)
+});
+hibitId.addEventListener('accountsChanged', (account: WalletAccount | null) => {
+  console.log(account)
+});
+
+// remove event listeners
+hibitId.removeEventListener('chainChanged', chainChangedHandler);
+hibitId.removeEventListener('accountsChanged', accountsChangedHandler);
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## TonConnect integration
+Please refer to [hibit-id-examples](https://github.com/Deland-Labs/hibit-id-examples) for TonConnect integration.

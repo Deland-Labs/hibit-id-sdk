@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { Trans } from "react-i18next";
 
 const LogoSection: FC = () => {
   return (
@@ -9,7 +10,12 @@ const LogoSection: FC = () => {
       </div> */}
       <h1 className="mt-2 text-neutral">Hibit ID</h1>
       <p className="mt-2 font-bold text-xl">
-        Unlocking <span className="text-primary">Web3.0</span> Wealth
+        <Trans
+          i18nKey="logo_section_desc"
+          components={{
+            Web3Span: <span className="text-primary">Web3.0</span>,
+          }}
+        />
       </p>
     </section>
   )

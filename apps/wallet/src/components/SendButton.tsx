@@ -3,6 +3,7 @@ import { FC } from "react"
 import SvgSend from '../assets/send.svg?react'
 import { useNavigate } from "react-router-dom"
 import { RootAssetInfo } from "../apis/models"
+import { useTranslation } from "react-i18next"
 
 export interface SendButtonProps {
   token?: RootAssetInfo
@@ -10,6 +11,7 @@ export interface SendButtonProps {
 
 const SendButton: FC<SendButtonProps> = observer(({ token }) => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   return (
     <div className="flex flex-col items-center gap-1">
@@ -21,7 +23,7 @@ const SendButton: FC<SendButtonProps> = observer(({ token }) => {
       >
         <SvgSend />
       </button>
-      <span className="text-neutral text-xs">Send</span>
+      <span className="text-neutral text-xs">{t('common_send')}</span>
     </div>
   )
 })

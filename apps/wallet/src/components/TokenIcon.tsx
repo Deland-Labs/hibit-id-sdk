@@ -1,21 +1,19 @@
 import { FC } from 'react';
 import { RootAssetInfo } from '../apis/models';
 import { twMerge } from 'tailwind-merge';
-import { getChainByChainId } from '../utils/chain';
-import { ChainId } from '../utils/basicTypes';
 
 interface TokenIconProps {
   token: RootAssetInfo | null
   size?: 'sm' | 'md' | 'lg'
   onlyIcon?: boolean
-  hideChain?: boolean
+  hideName?: boolean
 }
 
 const TokenIcon: FC<TokenIconProps> = ({
   token,
   size = 'md',
   onlyIcon = false,
-  hideChain = false,
+  hideName = false,
 }) => {
   let srcUrl = token?.icon || '';
   if (!srcUrl && token?.assetSymbol) {
@@ -23,7 +21,6 @@ const TokenIcon: FC<TokenIconProps> = ({
       `/token-icons/${token.assetSymbol.toUpperCase()}.svg` ||
       `/token-icons-png/${token.assetSymbol.toUpperCase()}.png`;
   }
-  const chainInfo = token ? getChainByChainId(new ChainId(token.chain, token.chainNetwork)) : null
 
   return (
     <div className="flex items-center gap-2">
@@ -38,8 +35,8 @@ const TokenIcon: FC<TokenIconProps> = ({
       {!onlyIcon && (
         <div className='flex flex-col'>
           <span className='text-sm text-base-content'>{token?.assetSymbol ?? '--'}</span>
-          {!hideChain && (
-            <span className='text-xs text-neutral'>{chainInfo?.name ?? '--'}</span>
+          {!hideName && (
+            <span className='text-xs text-neutral'>{token?.displayName ?? '--'}</span>
           )}
         </div>
       )}

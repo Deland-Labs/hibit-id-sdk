@@ -1,14 +1,14 @@
 import BigNumber from "bignumber.js";
 import { RootAssetInfo } from "../../../apis/models";
 import { ChainInfo } from "../../basicTypes";
-import { WalletAccount } from "@deland-labs/hibit-id-sdk";
+import { WalletAccount } from "@delandlabs/hibit-id-sdk";
 
 export type AssetInfo = Pick<
   RootAssetInfo,
   'chainAssetType' | 'chain' | 'chainNetwork' | 'contractAddress' | 'decimalPlaces'
 >;
 
-export abstract class ChainWallet {
+export abstract class BaseChainWallet {
   public readonly chainInfo: ChainInfo
   protected readonly phrase: string
 
@@ -21,4 +21,5 @@ export abstract class ChainWallet {
   public abstract signMessage: (message: string) => Promise<string>
   public abstract balanceOf: (address: string, assetInfo: AssetInfo) => Promise<BigNumber>
   public abstract transfer: (toAddress: string, amount: BigNumber, assetInfo: AssetInfo) => Promise<string>
+  public abstract getEstimatedFee: (toAddress: string, amount: BigNumber, assetInfo: AssetInfo) => Promise<BigNumber>
 }

@@ -7,11 +7,7 @@ export enum HibitEnv {
 export enum RuntimeEnv {
   WEB = 'web',
   SDK = 'sdk',
-}
-
-export enum BlockNetwork {
-  Mainnet = 'mainnet',
-  Testnet = 'testnet'
+  ICRC_POSTMESSAGE = 'icrc_postmessage',
 }
 
 /**

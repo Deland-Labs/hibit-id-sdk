@@ -2,25 +2,27 @@ import { observer } from "mobx-react";
 import { FC, useEffect, useMemo, useState } from "react";
 import hibitIdSession from "../../stores/session";
 import { useNavigate, useParams } from "react-router-dom";
-import SvgGo from '../../assets/right-arrow.svg?react';
 import { useTokenBalanceQuery, useTokenQuery } from "../../apis/react-query/token";
 import TokenSelect from "../../components/TokenSelect";
 import { RootAssetInfo } from "../../apis/models";
 import BigNumber from "bignumber.js";
 import { formatNumber } from "../../utils/formatter";
-import toaster from "../../components/Toaster";
-import { useMutation } from "@tanstack/react-query";
 import LoaderButton from "../../components/LoaderButton";
 import { object, string } from "yup";
 import { walletAddressValidate } from "../../utils/validator";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { SYSTEM_MAX_DECIMALS } from "../../utils/formatter/numberFormatter";
+import { sendTokenStore, useFeeQuery } from "./store";
+import PageHeader from "../../components/PageHeader";
+import { useTranslation } from "react-i18next";
 
 const SendTokenPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
+  const { state, setState } = sendTokenStore
   const [token, setToken] = useState<RootAssetInfo | null>(null)
   const navigate = useNavigate()
+  const { t } = useTranslation()
   
   const tokenQuery = useTokenQuery(addressOrSymbol ?? '')
   const balanceQuery = useTokenBalanceQuery(token || undefined)
@@ -28,21 +30,21 @@ const SendTokenPage: FC = observer(() => {
   const formSchema = useMemo(() => {
     return object({
       toAddress: string()
-        .required('Address is required')
-        .test('address', 'Invalid address', (value) => {
+        .required(t('page_send_errAddressRequired'))
+        .test('address', t('page_send_errInvalidAddress'), (value) => {
           if (!token) return true
           return walletAddressValidate(token.chain, value)
         }),
       amount: string()
-        .required('Amount is required')
+        .required(t('page_send_errAmountRequired'))
         .test({
-          message: 'Amount must be greater than 0',
+          message: t('page_send_errAmountTooSmall'),
           test: (value) => {
             return !!value && new BigNumber(value).gt(0)
           },
         })
         .test({
-          message: 'Insufficient balance',
+          message: t('page_send_errInsufficientBalance'),
           test: (value) => {
             if (!balanceQuery.data) return true
             return !!value && new BigNumber(value).lte(balanceQuery.data)
@@ -58,71 +60,52 @@ const SendTokenPage: FC = observer(() => {
     control,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm({
     defaultValues: {
-      toAddress: '',
-      amount: ''
+      toAddress: state.toAddress || '',
+      amount: state.amount || '',
     },
     resolver: yupResolver(formSchema),
     mode: 'onChange'
   })
+  const values = watch()
 
-  const transferMutation = useMutation({
-    mutationFn: async ({ address, amount }: {
-      address: string
-      amount: string
-    }) => {
-      if (!hibitIdSession.walletPool || !token) {
-        throw new Error('Wallet or token not ready')
-      }
-      return await hibitIdSession.walletPool.transfer(
-        address,
-        new BigNumber(amount),
-        token
-      )
-    }
-  })
+  useFeeQuery(values.toAddress, values.amount, token)
 
   useEffect(() => {
-    if (tokenQuery.data) {
+    if (state.token) {
+      setToken(state.token)
+    } else if (tokenQuery.data) {
       setToken(tokenQuery.data)
     }
-  }, [tokenQuery.data])
+  }, [state.token, tokenQuery.data])
 
   const handleSend = handleSubmit(async ({ toAddress, amount }) => {
     if (!hibitIdSession.walletPool || !token) {
       return
     }
-    try {
-      const txId = await transferMutation.mutateAsync({
-        address: toAddress,
-        amount
-      })
-      console.debug('[txId]', txId)
-      toaster.success('Transfer success')
-    } catch (e) {
-      console.error(e)
-      toaster.error(e instanceof Error ? e.message : JSON.stringify(e))
-    }
+    setState({
+      toAddress,
+      token,
+      amount,
+    })
+    navigate('/send/confirm')
   })
 
   return (
     <div className="h-full px-6 flex flex-col gap-6 overflow-auto">
-      <div>
-        <button className="btn btn-ghost btn-sm gap-2 items-center pl-0" onClick={() => navigate(-1)}>
-          <SvgGo className="size-6 rotate-180" />
-          <span className="text-xs">Send</span>
-        </button>
-      </div>
-
+      <PageHeader title={t('page_send_title')} onBeforeBack={() => sendTokenStore.reset()} />
       <div className="flex-1 flex flex-col gap-6">
         <div>
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Send to</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_send_field_sendTo')}
+              </span>
             </div>
             <textarea
-              placeholder="Recipient address"
+              placeholder={t('page_send_field_sendTo_placeholder')}
               className="textarea w-full h-16 text-xs"
               {...register('toAddress')}
             />
@@ -134,21 +117,23 @@ const SendTokenPage: FC = observer(() => {
           </label>
         </div>
         <div>
-          <label className="form-control w-full">
+          <div className="form-control w-full">
             <div className="label">
-              <span className="label-text text-neutral text-xs">Amount</span>
+              <span className="label-text text-neutral text-sm font-bold">
+                {t('page_send_field_amount')}
+              </span>
               <span className="label-text-alt text-xs">
                 <button
                   className="btn btn-link btn-xs px-0 no-underline gap-0"
                   onClick={() => {
                     setValue('amount', balanceQuery.data?.toString() ?? '0')
+                    trigger('amount')
                   }}
                 >
-                  Max:
-                  {balanceQuery.isLoading && (
+                  {t('common_max')}:
+                  {balanceQuery.isLoading ? (
                     <span className="loading loading-spinner loading-xs"></span>
-                  )}
-                  {balanceQuery.data && (
+                  ) : (
                     <span className="mx-1">{formatNumber(balanceQuery.data || 0)}</span>
                   )}
                   {token?.assetSymbol}
@@ -178,7 +163,7 @@ const SendTokenPage: FC = observer(() => {
                     onChange={(e) => {
                       const value = e.target.value
                       const [, decimals] = value.split('.')
-                      if (decimals?.length > Math.min(SYSTEM_MAX_DECIMALS, token?.decimalPlaces.value ?? Infinity)) {
+                      if (decimals?.length > Math.min(SYSTEM_MAX_DECIMALS, token?.decimalPlaces?.value ?? Infinity)) {
                         return
                       }
                       setValue('amount', value)
@@ -193,16 +178,15 @@ const SendTokenPage: FC = observer(() => {
                 <span className="label-text-alt text-error">{errors.amount.message}</span>
               </div>
             )}
-          </label>
+          </div>
         </div>
       </div>
 
       <LoaderButton
         className="btn btn-block btn-sm disabled:opacity-70"
         onClick={handleSend}
-        loading={transferMutation.isPending}
       >
-        Send
+        {t('common_send')}
       </LoaderButton>
     </div>
   )

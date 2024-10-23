@@ -393,9 +393,10 @@ export class GetPublicKeyResult {
 }
 
 export class UpdateMnemonicInput {
-  aesKey!: string;
+  newAesKey!: string;
   oldMnemonicContent!: string;
   oldVersion!: number;
+  oldAesKey!: string;
   newMnemonicContent!: string;
   newVersion!: number;
 

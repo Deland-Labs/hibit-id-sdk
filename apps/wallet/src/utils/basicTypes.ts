@@ -279,6 +279,7 @@ export class ChainInfo {
   explorer!: string;
   rpcUrls!: string[];
   caseSensitiveAddress?: boolean;
+  feeTokenType?: 'native' | 'token' = 'native'
   getServerFormatAddress?: (address: string) => string | null
   getTxLink?: (txId: string) => string
   getAddressLink?: (address: string) => string
@@ -318,10 +319,11 @@ export class ChainAssetType {
   static NativeGas = new ChainAssetType(new BigNumber(1));
   static ERC20 = new ChainAssetType(new BigNumber(3));
   static ERC721 = new ChainAssetType(new BigNumber(4));
-  static DFT = new ChainAssetType(new BigNumber(5));
-  static ICRC1 = new ChainAssetType(new BigNumber(6));
+  static ICP = new ChainAssetType(new BigNumber(5));
+  static ICRC3 = new ChainAssetType(new BigNumber(6));
   static BRC20 = new ChainAssetType(new BigNumber(7));
   static SPL = new ChainAssetType(new BigNumber(8));
+  static TRC20 = new ChainAssetType(new BigNumber(9));
   static Jetton = new ChainAssetType(new BigNumber(10));
 
   static fromString(value: string): ChainAssetType | null {
