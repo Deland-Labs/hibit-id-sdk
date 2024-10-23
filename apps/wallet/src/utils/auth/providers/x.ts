@@ -8,7 +8,7 @@ export class XAuthenticateProvider implements IAuthenticateProvider {
   
   public authenticate: (launchParams?: any) => Promise<any> = async (launchParams?: string) => {
     window.location.href = 
-      `${AUTH_SERVER_URL}id/login/x?returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
+      `${AUTH_SERVER_URL}id/login/twitter?returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
     return
   }
 }
