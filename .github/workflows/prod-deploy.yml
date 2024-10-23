@@ -2,9 +2,9 @@ name: deploy mainnet website
 on:
   release:
     types: [ published ]
-  push:
-    branches:
-      - 'release'
+  # push:
+  #   branches:
+  #     - 'release'
 
 jobs:
   deploy:
