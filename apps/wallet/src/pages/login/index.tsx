@@ -20,7 +20,11 @@ const LoginPage: FC = observer(() => {
 
   const loginContent = useMemo(() => {
     if (loginSuccess && !hibitIdSession.isLoggedIn) {
-      return <PageLoading />
+      return (
+        <div className="h-full py-8">
+          <PageLoading />
+        </div>
+      )
     }
     return (
       <div className="h-full flex flex-col items-center py-4">

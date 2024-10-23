@@ -2,9 +2,15 @@ import { IAuthenticateProvider } from "./types";
 import { TelegramAuthenticateProvider } from "./providers/telegram";
 import { AuthenticatorType } from "@delandlabs/hibit-id-sdk";
 import { prOidc } from "../oidc";
+import { GoogleAuthenticateProvider } from "./providers/google";
+import { XAuthenticateProvider } from "./providers/x";
 
 export class AuthManager {
-  public static readonly supportedAuthenticators: AuthenticatorType[] = [AuthenticatorType.Telegram]
+  public static readonly supportedAuthenticators: AuthenticatorType[] = [
+    AuthenticatorType.Telegram,
+    AuthenticatorType.Google,
+    AuthenticatorType.X,
+  ]
 
   private _provider: IAuthenticateProvider | null = null
 
@@ -20,6 +26,14 @@ export class AuthManager {
     switch (type) {
       case AuthenticatorType.Telegram: {
         this._provider = new TelegramAuthenticateProvider()
+        break
+      }
+      case AuthenticatorType.Google: {
+        this._provider = new GoogleAuthenticateProvider()
+        break
+      }
+      case AuthenticatorType.X: {
+        this._provider = new XAuthenticateProvider()
         break
       }
       default: {
