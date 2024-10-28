@@ -8,7 +8,17 @@ export const getSupportedAuthParties = (env: HibitEnv): AuthParty[] => {
       key: 'telegram',
       name: 'Telegram',
       icon: `${url}/auth-icons/Telegram.svg`,
-    }
+    },
+    {
+      key: 'google',
+      name: 'Google',
+      icon: `${url}/auth-icons/Google.svg`,
+    },
+    {
+      key: 'x',
+      name: 'X',
+      icon: `${url}/auth-icons/X.svg`,
+    },
   ]
 }
 
