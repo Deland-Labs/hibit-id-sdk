@@ -12,7 +12,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import CopyButton from "../../components/CopyButton";
 import { sendTokenStore, useFeeQuery } from "./store";
 import { formatNumber } from "../../utils/formatter";
-import { ChainAssetType } from "../../utils/basicTypes";
+import { Chain, ChainAssetType } from "../../utils/basicTypes";
 import { getChainTxLink } from "../../utils/link";
 import PageHeader from "../../components/PageHeader";
 import { useTranslation } from "react-i18next";
@@ -112,7 +112,8 @@ const SendTokenConfirmPage: FC = observer(() => {
         <div className="flex-1 flex flex-col gap-8 justify-center items-center">
           <SvgSuccess />
           <span className="text-success">{t('page_send_finished')}</span>
-          {txLink && (
+          {/* hide link for Dfinity */}
+          {txLink && !hibitIdSession.chainInfo.chainId.type.equals(Chain.Dfinity) && (
             <a className="flex items-center gap-2" href={txLink} target="_blank" rel="noreferrer">
               <span>{t('page_send_viewExplorer')}</span>
               <SvgExternal />
