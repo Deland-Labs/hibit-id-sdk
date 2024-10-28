@@ -63,8 +63,8 @@ export class HibitIdWallet {
         chainId,
       })
       const res = await this._connectPromise?.promise
-      this._iframe!.hide()
-      this._controller?.setOpen(false)
+      // this._iframe!.hide()
+      // this._controller?.setOpen(false)
       if (res?.address) {
         this._connected = true
         console.debug('[sdk connected]')
