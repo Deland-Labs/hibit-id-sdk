@@ -1,3 +1,4 @@
+import OAuth2OidcWindow from "../oauth2-oidc-window";
 import { IAuthenticateProvider } from "../types";
 import { AuthenticatorType } from "@delandlabs/hibit-id-sdk";
 
@@ -7,8 +8,17 @@ export class XAuthenticateProvider implements IAuthenticateProvider {
   public readonly type = AuthenticatorType.X
   
   public authenticate: (launchParams?: any) => Promise<any> = async (launchParams?: string) => {
-    window.location.href = 
-      `${AUTH_SERVER_URL}id/login/twitter?returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
-    return
+    const loginUrl = `${AUTH_SERVER_URL}id/login/twitter?returnUrl=${encodeURIComponent(`${location.origin}/oidc-login`)}`
+    await new Promise((resolve, reject) => {
+      OAuth2OidcWindow
+        .open(loginUrl, location.origin)
+        .then(() => {
+          location.href = `${location.origin}/oidc-login`
+          resolve(true)
+        })
+        ?.catch((reason) => {
+          reject(reason)
+        })
+    })
   }
 }
