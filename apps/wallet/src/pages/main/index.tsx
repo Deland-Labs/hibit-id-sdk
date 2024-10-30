@@ -3,7 +3,7 @@ import { FC } from "react";
 import SendButton from "../../components/SendButton";
 import ReceiveButton from "../../components/ReceiveButton";
 import TokenList from "../../components/TokenList";
-import { useTokenListQuery } from "../../apis/react-query/token";
+import { useChainTokenNetWorthQuery, useTokenListQuery } from "../../apis/react-query/token";
 import hibitIdSession from "../../stores/session";
 import { useQuery } from "@tanstack/react-query";
 import { ChainAssetType } from "../../utils/basicTypes";
@@ -20,6 +20,7 @@ const WalletMainPage: FC = observer(() => {
   const navigate = useNavigate()
 
   const tokenListQuery = useTokenListQuery(hibitIdSession.chainInfo)
+  const netWorthQuery = useChainTokenNetWorthQuery(hibitIdSession.chainInfo)
   const defaultTokenQuery = useQuery({
     queryKey: ['getDefaultToken', tokenListQuery.data],
     queryFn: async () => {
@@ -56,7 +57,7 @@ const WalletMainPage: FC = observer(() => {
         </h1>
         <div className="flex flex-col items-center">
           <span className="text-xs text-neutral">{t('page_home_netWorth')}</span>
-          <span className="text-2xl">$ 0.00</span>
+          <span className="text-2xl">{`$ ${netWorthQuery.data?.toFixed(2) || '0.00'}`}</span>
         </div>
         <div className="flex gap-10">
           <SendButton token={defaultTokenQuery.data || undefined} />

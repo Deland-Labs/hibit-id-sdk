@@ -16,7 +16,7 @@ const TokenDetailPage: FC = observer(() => {
   const { addressOrSymbol } = useParams()
   const tokenQuery = useTokenQuery(addressOrSymbol?? '')
   const balanceQuery = useTokenBalanceQuery(tokenQuery.data || undefined)
-  const usdValueQuery = useTokenFiatValueQuery(tokenQuery.data || undefined, balanceQuery.data)
+  const usdValueQuery = useTokenFiatValueQuery(tokenQuery.data || undefined)
 
   if (tokenQuery.isLoading || typeof tokenQuery.data === 'undefined') {
     return <PageLoading />
