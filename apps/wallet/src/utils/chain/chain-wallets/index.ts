@@ -41,25 +41,45 @@ export class ChainWalletPool {
   }
 
   getAccount = async (chainId: ChainId): Promise<WalletAccount> => {
-    return await this.get(chainId).getAccount()
+    try {
+      return await this.get(chainId).getAccount()
+    } catch (e) {
+      throw e
+    }
   }
 
   signMessage = async (message: string, chainId: ChainId): Promise<string> => {
-    return await this.get(chainId).signMessage(message)
+    try {
+      return await this.get(chainId).signMessage(message)
+    } catch (e) {
+      throw e
+    }
   }
 
   balanceOf = async (address: string, assetInfo: AssetInfo): Promise<BigNumber> => {
-    const chainId = new ChainId(assetInfo.chain, assetInfo.chainNetwork)
-    return await this.get(chainId).balanceOf(address, assetInfo)
+    try {
+      const chainId = new ChainId(assetInfo.chain, assetInfo.chainNetwork)
+      return await this.get(chainId).balanceOf(address, assetInfo)
+    } catch (e) {
+      throw e
+    }
   }
   
   transfer = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<string> => {
-    const chainId = new ChainId(assetInfo.chain, assetInfo.chainNetwork)
-    return await this.get(chainId).transfer(toAddress, amount, assetInfo)
+    try {
+      const chainId = new ChainId(assetInfo.chain, assetInfo.chainNetwork)
+      return await this.get(chainId).transfer(toAddress, amount, assetInfo)
+    } catch (e) {
+      throw e
+    }
   }
 
   getEstimatedFee = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<BigNumber> => {
-    const chainId = new ChainId(assetInfo.chain, assetInfo.chainNetwork)
-    return await this.get(chainId).getEstimatedFee(toAddress, amount, assetInfo)
+    try {
+      const chainId = new ChainId(assetInfo.chain, assetInfo.chainNetwork)
+      return await this.get(chainId).getEstimatedFee(toAddress, amount, assetInfo)
+    } catch (e) {
+      throw e
+    }
   }
 }

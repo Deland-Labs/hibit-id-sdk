@@ -11,6 +11,7 @@ export const Ethereum: ChainInfo = {
   icon: '/chain-icons/Ethereum.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://etherscan.io',
   rpcUrls: ['https://ethereum.blockpi.network/v1/rpc/public']
@@ -22,6 +23,7 @@ export const EthereumSepolia: ChainInfo = {
   icon: '/chain-icons/Ethereum.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://sepolia.etherscan.io',
   rpcUrls: ['https://ethereum-sepolia.blockpi.network/v1/rpc/public	']
@@ -34,6 +36,7 @@ export const EthereumBsc: ChainInfo = {
   icon: '/chain-icons/BNB.svg',
   nativeAssetSymbol: 'BNB',
   nativeAssetDecimals: 18,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://bscscan.com',
   rpcUrls: ['https://bsc-dataseed.binance.org']
@@ -45,6 +48,7 @@ export const EthereumBscTestnet: ChainInfo = {
   icon: '/chain-icons/BNB.svg',
   nativeAssetSymbol: 'tBNB',
   nativeAssetDecimals: 18,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://testnet.bscscan.com',
   rpcUrls: ['https://bsc-testnet.publicnode.com']
@@ -57,6 +61,7 @@ export const EthereumScroll: ChainInfo = {
   icon: '/chain-icons/Scroll.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://scroll.l2scan.co',
   rpcUrls: ['https://rpc.scroll.io']
@@ -68,6 +73,7 @@ export const EthereumScrollSepolia: ChainInfo = {
   icon: '/chain-icons/Scroll.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://scroll-sepolia.l2scan.co',
   rpcUrls: ['https://sepolia-rpc.scroll.io']
@@ -80,6 +86,7 @@ export const EthereumBase: ChainInfo = {
   icon: '/chain-icons/Base.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://basescan.org',
   rpcUrls: ['https://mainnet.base.org']
@@ -91,6 +98,7 @@ export const EthereumBaseSepolia: ChainInfo = {
   icon: '/chain-icons/Base.svg',
   nativeAssetSymbol: 'ETH',
   nativeAssetDecimals: 18,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://sepolia.basescan.org',
   rpcUrls: ['https://sepolia.base.org']
@@ -103,6 +111,7 @@ export const EthereumAvalanche: ChainInfo = {
   icon: '/chain-icons/Avalanche.svg',
   nativeAssetSymbol: 'AVAX',
   nativeAssetDecimals: 18,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://snowtrace.io',
   rpcUrls: ['https://api.avax.network/ext/bc/C/rpc']
@@ -114,6 +123,7 @@ export const EthereumAvalancheFuji: ChainInfo = {
   icon: '/chain-icons/Avalanche.svg',
   nativeAssetSymbol: 'AVAX',
   nativeAssetDecimals: 18,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://subnets-test.avax.network/c-chain',
   rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc']
@@ -126,6 +136,7 @@ export const EthereumBitlayer: ChainInfo = {
   icon: '/chain-icons/Bitlayer.png',
   nativeAssetSymbol: 'BTC',
   nativeAssetDecimals: 18,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://btrscan.com',
   rpcUrls: ['https://rpc.bitlayer.org']
@@ -137,6 +148,7 @@ export const EthereumBitlayerTestnet: ChainInfo = {
   icon: '/chain-icons/Bitlayer.png',
   nativeAssetSymbol: 'BTC',
   nativeAssetDecimals: 18,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://testnet.btrscan.com',
   rpcUrls: ['https://testnet-rpc.bitlayer.org']
@@ -149,6 +161,7 @@ export const Bitcoin: ChainInfo = {
   icon: '/chain-icons/Bitcoin.svg',
   nativeAssetSymbol: 'BTC',
   nativeAssetDecimals: 8,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.BtcEcdsa],
   explorer: 'https://blockstream.info',
   rpcUrls: []
@@ -160,6 +173,7 @@ export const BitcoinTestnet: ChainInfo = {
   icon: '/chain-icons/Bitcoin.svg',
   nativeAssetSymbol: 'BTC',
   nativeAssetDecimals: 8,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.BtcEcdsa],
   explorer: 'https://blockstream.info/testnet',
   rpcUrls: []
@@ -172,6 +186,7 @@ export const Solana: ChainInfo = {
   icon: '/chain-icons/Solana.svg',
   nativeAssetSymbol: 'SOL',
   nativeAssetDecimals: 9,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.SolanaEddsa],
   explorer: 'https://explorer.solana.com',
   rpcUrls: [clusterApiUrl('mainnet-beta')],
@@ -184,6 +199,7 @@ export const SolanaTestnet: ChainInfo = {
   icon: '/chain-icons/Solana.svg',
   nativeAssetSymbol: 'SOL',
   nativeAssetDecimals: 9,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.SolanaEddsa],
   explorer: 'https://explorer.solana.com?cluster=testnet',
   rpcUrls: [clusterApiUrl('testnet')],
@@ -197,6 +213,7 @@ export const Ton: ChainInfo = {
   icon: '/chain-icons/Ton.svg',
   nativeAssetSymbol: 'TON',
   nativeAssetDecimals: 9,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.TonEddsaOpenMask],
   explorer: 'https://tonviewer.com',
   rpcUrls: [],
@@ -246,6 +263,7 @@ export const TonTestnet: ChainInfo = {
   icon: '/chain-icons/Ton.svg',
   nativeAssetSymbol: 'TON',
   nativeAssetDecimals: 9,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.TonEddsaOpenMask],
   explorer: 'https://testnet.tonviewer.com',
   rpcUrls: [],
@@ -304,6 +322,7 @@ export const Tron: ChainInfo = {
   icon: '/chain-icons/Tron.svg',
   nativeAssetSymbol: 'TRX',
   nativeAssetDecimals: 6,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.TronEcdsa],
   explorer: 'https://tronscan.org',
   rpcUrls: ['https://rpc.trongrid.io'],
@@ -329,6 +348,7 @@ export const TronShasta: ChainInfo = {
   icon: '/chain-icons/Tron.svg',
   nativeAssetSymbol: 'TRX',
   nativeAssetDecimals: 6,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.TronEcdsa],
   explorer: 'https://shasta.tronscan.org',
   rpcUrls: ['https://api.shasta.trongrid.io'],
@@ -354,6 +374,7 @@ export const TronNile: ChainInfo = {
   icon: '/chain-icons/Tron.svg',
   nativeAssetSymbol: 'TRX',
   nativeAssetDecimals: 6,
+  isMainnet: false,
   supportedSignaturesSchemas: [WalletSignatureSchema.TronEcdsa],
   explorer: 'https://nile.tronscan.org',
   rpcUrls: ['https://api.nileex.io'],
@@ -380,6 +401,7 @@ export const Dfinity: ChainInfo = {
   icon: '/chain-icons/IC.svg',
   nativeAssetSymbol: 'ICP',
   nativeAssetDecimals: 8,
+  isMainnet: true,
   supportedSignaturesSchemas: [WalletSignatureSchema.IcpEddsa],
   explorer: 'https://dashboard.internetcomputer.org',
   rpcUrls: ['https://ic0.app'],

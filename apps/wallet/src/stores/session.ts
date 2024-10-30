@@ -15,6 +15,8 @@ import { HIBIT_ENV } from "../utils/env";
 import { getChainByChainId, getDevModeSwitchChain, getSupportedChains } from "../utils/chain";
 import { getSystemLang, Language } from "../utils/lang";
 import i18n from "../i18n";
+import toaster from "../components/Toaster";
+import { t } from "i18next";
 
 const SESSION_CONFIG_KEY = 'hibit-id-config'
 const PASSWORD_STORAGE_KEY = 'hibit-id-p'
@@ -118,10 +120,17 @@ export class HibitIdSession {
   public setDevMode = (devMode: boolean) => {
     if (this.config.devMode === devMode) return
     this.config.devMode = devMode
-    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.config))
-    setTimeout(() => {
-      const newChain = getDevModeSwitchChain(!devMode, this.chainInfo.chainId)
-      this.switchChain(newChain)
+    setTimeout(async () => {
+      try {
+        const newChain = getDevModeSwitchChain(!devMode, this.chainInfo.chainId)
+        await this.switchChain(newChain)
+      } catch (e) {
+        console.error(e)
+        toaster.error(devMode ? t('page_settings_devModeOnlyMainnet') : t('page_settings_devModeOnlyTestnet'))
+        this.config.devMode = !devMode
+      } finally {
+        localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.config))
+      }
     })
   }
 
@@ -184,9 +193,13 @@ export class HibitIdSession {
     if (!this.walletPool) {
       throw new HibitIDError(HibitIDErrorCode.WALLET_LOCKED)
     }
-    this.setChainInfo(chain)
     const oldAddress = this._account?.address
-    this._account = await this.walletPool.getAccount(chain.chainId)
+    try {
+      this._account = await this.walletPool.getAccount(chain.chainId)
+      this.setChainInfo(chain)
+    } catch (e) {
+      throw e
+    }
     if (RUNTIME_ENV === RuntimeEnv.SDK) {
       rpcManager.notifyChainChanged(chain)
       if (oldAddress !== this._account.address) {
