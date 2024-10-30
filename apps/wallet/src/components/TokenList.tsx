@@ -11,7 +11,7 @@ import BigNumber from "bignumber.js";
 const TokenListItem: FC<{ token: RootAssetInfo }> = ({ token }) => {
   const navigate = useNavigate()
   const balanceQuery = useTokenBalanceQuery(token)
-  const usdValueQuery = useTokenFiatValueQuery(token, balanceQuery.data)
+  const usdValueQuery = useTokenFiatValueQuery(token)
 
   return (
     <li
