@@ -2,14 +2,10 @@ import { FC } from "react";
 import SvgTrash from '../../assets/trash.svg?react'
 import { useNavigate } from "react-router-dom";
 import AuthenticatorLogo from "../../components/AuthenticatorLogo";
-import { AuthenticatorType } from "@delandlabs/hibit-id-sdk";
 import { useTranslation } from "react-i18next";
 import { useUserLoginsQuery } from "../../apis/react-query/auth";
 import PageHeader from "../../components/PageHeader";
-
-const authProviderLogoMap: Record<string, AuthenticatorType> = {
-  'telegram': AuthenticatorType.Telegram
-}
+import { authProviderTypeMap } from "../../utils/auth";
 
 const AccountManagePage: FC = () => {
   const { t } = useTranslation()
@@ -29,8 +25,8 @@ const AccountManagePage: FC = () => {
           {userLoginsQuery.data?.map((login) => (
             <li className="flex justify-between items-center" key={login.loginProvider}>
               <div className="flex items-center gap-4">
-                <AuthenticatorLogo type={authProviderLogoMap[login.loginProvider]} className="size-6" />
-                <span className="text-xs">{login.providerKey}</span>
+                <AuthenticatorLogo type={authProviderTypeMap[login.loginProvider]} className="size-6" />
+                <span className="text-xs">{login.userDisplayName}</span>
               </div>
               {/* // TODO: delete api */}
               {userLoginsQuery.data?.length > 1 && (

@@ -5,7 +5,16 @@ import { prOidc } from "../oidc";
 import { GoogleAuthenticateProvider } from "./providers/google";
 import { XAuthenticateProvider } from "./providers/x";
 
+// TODO: add more auth parties
+export const authProviderTypeMap: Record<string, AuthenticatorType> = {
+  'telegram': AuthenticatorType.Telegram,
+  'google': AuthenticatorType.Google,
+  'x': AuthenticatorType.X,
+  'twitter': AuthenticatorType.X,
+}
+
 export class AuthManager {
+  // TODO: add more auth parties
   public static readonly supportedAuthenticators: AuthenticatorType[] = [
     AuthenticatorType.Telegram,
     AuthenticatorType.Google,
