@@ -1,42 +1,52 @@
 import { observer } from "mobx-react";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AuthenticatorLogo from "../../components/AuthenticatorLogo";
-import { AuthenticatorType } from "@delandlabs/hibit-id-sdk";
 import hibitIdSession from "../../stores/session";
 import PageHeader from "../../components/PageHeader";
 import SvgGo from '../../assets/right-arrow.svg?react'
 import { languages } from "../../utils/lang";
+import { useUserLoginsQuery } from "../../apis/react-query/auth";
+import { authProviderTypeMap } from "../../utils/auth";
 
 const SettingsPage: FC = observer(() => {
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const userLoginsQuery = useUserLoginsQuery()
 
-  const userName: string = (hibitIdSession.auth?.decodedIdToken?.preferred_username
-    || hibitIdSession.auth?.decodedIdToken?.unique_name) as string
-  
+  const loginInfo = useMemo(() => {
+    if (!userLoginsQuery.data?.length) {
+      return null
+    }
+    return userLoginsQuery.data[0]
+  }, [userLoginsQuery.data])
+
   return (
     <div className="h-full px-6 overflow-auto">
       <PageHeader title={t('page_settings_title')} />
 
-      {/* // TODO: TEMP HIDE */}
-      {/* <div className="mt-6">
+      <div className="mt-6">
         <p className="label-text text-neutral text-sm font-bold">
           {t('page_settings_account')}
         </p>
         <div className="mt-2 flex justify-between items-center">
-          <div className="flex items-center gap-2 text-xs">
-            <AuthenticatorLogo type={AuthenticatorType.Telegram} className="size-6" />
-            <span>{userName}</span>
-          </div>
-          <button className="btn btn-link btn-sm no-underline p-0" onClick={() => {
+          {!loginInfo ? (
+            <span className="loading loading-spinner"></span>
+          ) : (
+            <div className="flex items-center gap-2 text-xs">
+              <AuthenticatorLogo type={authProviderTypeMap[loginInfo.loginProvider]} className="size-6" />
+              <span>{loginInfo.userDisplayName}</span>
+            </div>
+          )}
+          {/* // TODO: TEMP HIDE */}
+          {/* <button className="btn btn-link btn-sm no-underline p-0" onClick={() => {
             navigate('/account-manage')
           }}>
             {t('page_settings_linkMore')}
-          </button>
+          </button> */}
         </div>
-      </div> */}
+      </div>
 
       <div className="mt-6">
         <p className="label-text text-neutral text-sm font-bold">

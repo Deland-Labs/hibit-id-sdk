@@ -409,9 +409,10 @@ export class UpdateMnemonicResult extends GetMnemonicResult {
 }
 
 export class GetUserLoginsResultItem {
-  providerKey!: string
-  loginProvider!: string
-  providerDisplayName!: string
+  providerKey!: string  // user id
+  loginProvider!: string  // provider id, eg. 'telegram', 'google', 'twitter'
+  providerDisplayName!: string  // provider name
+  userDisplayName!: string  // user name
 }
 
 export type GetUserLoginsResult = GetUserLoginsResultItem[]
