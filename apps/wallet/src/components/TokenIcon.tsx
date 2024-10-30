@@ -17,9 +17,10 @@ const TokenIcon: FC<TokenIconProps> = ({
 }) => {
   let srcUrl = token?.icon || '';
   if (!srcUrl && token?.assetSymbol) {
+    const symbol = encodeURIComponent(token.assetSymbol);
     srcUrl =
-      `/token-icons/${token.assetSymbol.toUpperCase()}.svg` ||
-      `/token-icons-png/${token.assetSymbol.toUpperCase()}.png`;
+      `/token-icons/${symbol}.svg` ||
+      `/token-icons-png/${symbol}.png`;
   }
 
   return (

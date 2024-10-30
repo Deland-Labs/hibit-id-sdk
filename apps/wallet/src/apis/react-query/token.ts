@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { QueryCacheKey } from "./query-keys"
 import { GetAllAssetsAsync } from "../services/token"
 import { getSupportedChains } from "../../utils/chain"
@@ -118,17 +118,40 @@ export const useTokenBalanceQuery = (token?: RootAssetInfo) => {
   })
 }
 
-export const useTokenFiatValueQuery = (token?: RootAssetInfo, balance?: BigNumber) => {
+export const useTokenFiatValueQuery = (token?: RootAssetInfo) => {
+  const balanceQuery = useTokenBalanceQuery(token)
   return useQuery({
-    queryKey: [QueryCacheKey.GET_TOKEN_FIAT_VALUE, token?.assetId.toString(), balance],
+    queryKey: [QueryCacheKey.GET_TOKEN_FIAT_VALUE, token?.assetId.toString()],
     queryFn: async () => {
       let value = new BigNumber(0)
       if (token!.assetSymbol === 'USDT') {
-        value = balance!.dp(2, BigNumber.ROUND_FLOOR)
+        value = balanceQuery.data!.dp(2, BigNumber.ROUND_FLOOR)
       }
       // TODO: other tokens
       return value
     },
-    enabled: !!token && !!balance,
+    enabled: !!token && !!balanceQuery.data,
+  })
+}
+
+export const useChainTokenNetWorthQuery = (chain: ChainInfo) => {
+  const queryClient = useQueryClient()
+  const tokenListQuery = useTokenListQuery(chain)
+  return useQuery({
+    queryKey: [QueryCacheKey.GET_CHAIN_NET_WORTH, chain.chainId.toString()],
+    queryFn: async () => {
+      let total = new BigNumber(0)
+      tokenListQuery.data!.forEach((token) => {
+        const fiatValueCache = queryClient.getQueryData<BigNumber>(
+          [QueryCacheKey.GET_TOKEN_FIAT_VALUE, token.assetId.toString()]
+        )
+        if (fiatValueCache) {
+          total = total.plus(fiatValueCache)
+        }
+      })
+      return total
+    },
+    enabled: !!tokenListQuery.data,
+    refetchInterval: 2000,
   })
 }
