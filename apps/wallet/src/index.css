@@ -12,8 +12,7 @@ html, body, #root {
   @apply w-[2px] h-[4px] bg-transparent;
 }
 *::-webkit-scrollbar-thumb {
-  @apply rounded-full;
-  background-color: color-mix(in oklch, currentColor 35%, transparent) transparent;
+  @apply rounded-full bg-white/50;
 }
 
 @layer components {
