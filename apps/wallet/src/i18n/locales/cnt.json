@@ -105,6 +105,8 @@
   "page_settings_changePassword": "更改錢包密碼",
   "page_settings_developerMode": "開發者模式",
   "page_settings_devModeField": "啟用內部測試網",
+  "page_settings_devModeOnlyMainnet": "仅支持主網鏈",
+  "page_settings_devModeOnlyTestnet": "仅支持測試網鏈",
   "page_settings_account": "帳戶",
   "page_settings_linkMore": "連結更多",
   "page_settings_language": "語言",

@@ -278,6 +278,7 @@ export class ChainInfo {
   supportedSignaturesSchemas!: WalletSignatureSchema[];
   explorer!: string;
   rpcUrls!: string[];
+  isMainnet!: boolean
   caseSensitiveAddress?: boolean;
   feeTokenType?: 'native' | 'token' = 'native'
   getServerFormatAddress?: (address: string) => string | null

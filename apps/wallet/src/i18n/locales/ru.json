@@ -105,6 +105,8 @@
   "page_settings_changePassword": "Изменить пароль кошелька",
   "page_settings_developerMode": "Режим разработчика",
   "page_settings_devModeField": "Активировать внутреннюю тестовую сеть",
+  "page_settings_devModeOnlyMainnet": "Поддерживаются только основные сети",
+  "page_settings_devModeOnlyTestnet": "Поддерживаются только тестовые сети",
   "page_settings_account": "Аккаунт",
   "page_settings_linkMore": "Подключить больше",
   "page_settings_language": "Язык",
