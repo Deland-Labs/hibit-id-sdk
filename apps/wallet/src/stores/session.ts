@@ -45,9 +45,10 @@ export class HibitIdSession {
     makeAutoObservable(this)
     console.debug('[wallet session constructor called]')
 
-    let initialChainInfo = IS_TELEGRAM_MINI_APP
+    const defaultChainInfo = IS_TELEGRAM_MINI_APP
       ? HIBIT_ENV === HibitEnv.PROD ? Ton : TonTestnet
       : HIBIT_ENV === HibitEnv.PROD ? Ethereum : EthereumSepolia
+    let initialChainInfo = defaultChainInfo
     const configString = localStorage.getItem(SESSION_CONFIG_KEY)
     if (configString) {
       const config = JSON.parse(configString) as SessionConfig
@@ -66,6 +67,10 @@ export class HibitIdSession {
     const supportedChains = getSupportedChains(this.config.devMode)
     if (!supportedChains.find((c) => c.chainId.equals(initialChainInfo.chainId))) {
       initialChainInfo = supportedChains[0]
+    }
+    if (!initialChainInfo) {
+      initialChainInfo = defaultChainInfo
+      this.config.devMode = !initialChainInfo.isMainnet
     }
     this.chainInfo = initialChainInfo
     this.setChainInfo(initialChainInfo)
