@@ -20,6 +20,7 @@ import { RuntimeEnv } from "../../utils/basicEnums";
 import rpcManager from "../../stores/rpc";
 import PageHeader from "../../components/PageHeader";
 import { useTranslation } from "react-i18next";
+import PasswordInput from "../../components/PasswordInput";
 
 
 const VerifyPasswordPage: FC = observer(() => {
@@ -104,12 +105,7 @@ const VerifyPasswordPage: FC = observer(() => {
                 {t('page_password_password')}
               </span>
             </div>
-            <input
-              {...register('password')}
-              className="input input-sm w-full h-8 text-xs"
-              type="password"
-              autoFocus
-            />
+            <PasswordInput {...register('password')} autoFocus />
             {errors.password && (
               <div className="label">
                 <span className="label-text-alt text-error">{errors.password.message}</span>

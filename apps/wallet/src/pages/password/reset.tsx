@@ -12,6 +12,7 @@ import hibitIdSession from "../../stores/session";
 import { getErrorMessage, HibitIDError, HibitIDErrorCode } from "../../utils/error-code";
 import { useTranslation } from "react-i18next";
 import PageHeader from "../../components/PageHeader";
+import PasswordInput from "../../components/PasswordInput";
 
 
 const ResetPasswordPage: FC = observer(() => {
@@ -85,12 +86,7 @@ const ResetPasswordPage: FC = observer(() => {
                 {t('page_password_password')}
               </span>
             </div>
-            <input
-              {...register('password')}
-              className="input input-sm w-full h-8 text-xs"
-              type="password"
-              autoFocus
-            />
+            <PasswordInput {...register('password')} autoFocus />
             {errors.password && (
               <div className="label">
                 <span className="label-text-alt text-error">{errors.password.message}</span>
@@ -105,11 +101,7 @@ const ResetPasswordPage: FC = observer(() => {
                 {t('page_password_newPassword')}
               </span>
             </div>
-            <input
-              {...register('newPassword')}
-              className="input input-sm w-full h-8 text-xs"
-              type="password"
-            />
+            <PasswordInput {...register('newPassword')} />
             {errors.newPassword && (
               <div className="label">
                 <span className="label-text-alt text-error">{errors.newPassword.message}</span>
@@ -124,11 +116,7 @@ const ResetPasswordPage: FC = observer(() => {
                 {t('page_password_confirmPassword')}
               </span>
             </div>
-            <input
-              {...register('confirmNewPassword')}
-              className="input input-sm w-full h-8 text-xs"
-              type="password"
-            />
+            <PasswordInput {...register('confirmNewPassword')} />
             {errors.confirmNewPassword && (
               <div className="label">
                 <span className="label-text-alt text-error">{errors.confirmNewPassword.message}</span>
