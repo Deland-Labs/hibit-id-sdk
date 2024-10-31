@@ -124,14 +124,17 @@ export class HibitIdSession {
 
   public setDevMode = (devMode: boolean) => {
     if (this.config.devMode === devMode) return
+    const newChain = getDevModeSwitchChain(!devMode, this.chainInfo.chainId)
+    if (!newChain) {
+      toaster.error(devMode ? t('page_settings_devModeOnlyMainnet') : t('page_settings_devModeOnlyTestnet'))
+      return
+    }
     this.config.devMode = devMode
     setTimeout(async () => {
       try {
-        const newChain = getDevModeSwitchChain(!devMode, this.chainInfo.chainId)
         await this.switchChain(newChain)
       } catch (e) {
         console.error(e)
-        toaster.error(devMode ? t('page_settings_devModeOnlyMainnet') : t('page_settings_devModeOnlyTestnet'))
         this.config.devMode = !devMode
       } finally {
         localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.config))
