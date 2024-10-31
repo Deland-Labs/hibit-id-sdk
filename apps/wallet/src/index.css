@@ -8,6 +8,14 @@ html, body, #root {
   padding: 0;
 }
 
+*::-webkit-scrollbar {
+  @apply w-[2px] h-[4px] bg-transparent;
+}
+*::-webkit-scrollbar-thumb {
+  @apply rounded-full;
+  background-color: color-mix(in oklch, currentColor 35%, transparent) transparent;
+}
+
 @layer components {
   .btn {
     @apply font-bold disabled:opacity-70 disabled:cursor-not-allowed;
