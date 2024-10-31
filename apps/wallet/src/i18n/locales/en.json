@@ -110,6 +110,8 @@
   "page_settings_changePassword": "Change wallet password",
   "page_settings_developerMode": "Developer Mode",
   "page_settings_devModeField": "Enable internal testnet",
+  "page_settings_devModeOnlyMainnet": "Only mainnet chains are supported",
+  "page_settings_devModeOnlyTestnet": "Only testnet chains are supported",
   "page_settings_account": "Account",
   "page_settings_linkMore": "Link more",
   "page_settings_language": "Language",

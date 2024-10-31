@@ -105,6 +105,8 @@
   "page_settings_changePassword": "ウォレットパスワードの変更",
   "page_settings_developerMode": "開発者モード",
   "page_settings_devModeField": "内部テストネットを有効化",
+  "page_settings_devModeOnlyMainnet": "メインネットのチェーンのみをサポート",
+  "page_settings_devModeOnlyTestnet": "テストネットのチェーンのみをサポート",
   "page_settings_account": "アカウント",
   "page_settings_linkMore": "さらにリンク",
   "page_settings_language": "言語",

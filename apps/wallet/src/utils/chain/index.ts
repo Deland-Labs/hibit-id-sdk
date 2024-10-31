@@ -3,6 +3,8 @@ import { Ethereum, EthereumAvalanche, EthereumAvalancheFuji, EthereumBase, Ether
 import { ChainInfo } from '../basicTypes';
 import { RUNTIME_SUPPORTED_CHAIN_IDS } from '../runtime';
 import hibitIdSession from '../../stores/session';
+import { HIBIT_ENV } from '../env';
+import { HibitEnv } from '../basicEnums';
 
 // TODO: should update when we support more chains
 const SupportedChainsForMainnet = [
@@ -29,8 +31,10 @@ const SupportedChainsForTestnet = [
   // SolanaTestnet,
   TonTestnet,
   // TronNile,
-  Dfinity,
 ];
+if (HIBIT_ENV !== HibitEnv.PROD) {
+  SupportedChainsForTestnet.push(Dfinity)
+}
 
 export function getChainByChainId(chainId: ChainId | null, devMode?: boolean): ChainInfo | null {
   if (!chainId) return null;
@@ -51,9 +55,9 @@ export function getSupportedChains(devMode?: boolean, chainTypes?: Chain[]): Cha
 }
 
 export function getDevModeSwitchChain(isCurrentDevMode: boolean, chainId: ChainId): ChainInfo {
-  const [currentList, mappingList] = isCurrentDevMode
-    ? [SupportedChainsForTestnet, SupportedChainsForMainnet]
-    : [SupportedChainsForMainnet, SupportedChainsForTestnet];
-  const index = currentList.findIndex(c => c.chainId.equals(chainId));
-  return index < 0 ? mappingList[0] : mappingList[index];
+  const devModeChains = getSupportedChains(true)
+  const nonDevModeChains = getSupportedChains(false)
+  const mappingList = isCurrentDevMode ? nonDevModeChains : devModeChains;
+  const newChain = mappingList.find(c => c.chainId.type.equals(chainId.type) && c.isMainnet === !isCurrentDevMode);
+  return !newChain ? mappingList[0] : newChain;
 }
