@@ -45,9 +45,10 @@ export class HibitIdSession {
     makeAutoObservable(this)
     console.debug('[wallet session constructor called]')
 
-    let initialChainInfo = IS_TELEGRAM_MINI_APP
+    const defaultChainInfo = IS_TELEGRAM_MINI_APP
       ? HIBIT_ENV === HibitEnv.PROD ? Ton : TonTestnet
       : HIBIT_ENV === HibitEnv.PROD ? Ethereum : EthereumSepolia
+    let initialChainInfo = defaultChainInfo
     const configString = localStorage.getItem(SESSION_CONFIG_KEY)
     if (configString) {
       const config = JSON.parse(configString) as SessionConfig
@@ -66,6 +67,10 @@ export class HibitIdSession {
     const supportedChains = getSupportedChains(this.config.devMode)
     if (!supportedChains.find((c) => c.chainId.equals(initialChainInfo.chainId))) {
       initialChainInfo = supportedChains[0]
+    }
+    if (!initialChainInfo) {
+      initialChainInfo = defaultChainInfo
+      this.config.devMode = !initialChainInfo.isMainnet
     }
     this.chainInfo = initialChainInfo
     this.setChainInfo(initialChainInfo)
@@ -119,14 +124,17 @@ export class HibitIdSession {
 
   public setDevMode = (devMode: boolean) => {
     if (this.config.devMode === devMode) return
+    const newChain = getDevModeSwitchChain(!devMode, this.chainInfo.chainId)
+    if (!newChain) {
+      toaster.error(devMode ? t('page_settings_devModeOnlyMainnet') : t('page_settings_devModeOnlyTestnet'))
+      return
+    }
     this.config.devMode = devMode
     setTimeout(async () => {
       try {
-        const newChain = getDevModeSwitchChain(!devMode, this.chainInfo.chainId)
         await this.switchChain(newChain)
       } catch (e) {
         console.error(e)
-        toaster.error(devMode ? t('page_settings_devModeOnlyMainnet') : t('page_settings_devModeOnlyTestnet'))
         this.config.devMode = !devMode
       } finally {
         localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.config))

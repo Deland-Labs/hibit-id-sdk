@@ -14,6 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import {MnemonicManager} from "../../apis/services/auth";
 import LogoSection from "../../components/LogoSection";
 import { useTranslation } from "react-i18next";
+import PasswordInput from "../../components/PasswordInput";
 
 
 const CreatePasswordPage: FC = observer(() => {
@@ -79,12 +80,7 @@ const CreatePasswordPage: FC = observer(() => {
                 {t('page_password_setPassword')}
               </span>
             </div>
-            <input
-              {...register('password')}
-              className="input input-sm w-full h-8 text-xs"
-              type="password"
-              autoFocus
-            />
+            <PasswordInput {...register('password')} autoFocus />
             {errors.password && (
               <div className="label">
                 <span className="label-text-alt text-error">{errors.password.message}</span>
@@ -99,11 +95,7 @@ const CreatePasswordPage: FC = observer(() => {
                 {t('page_password_confirmPassword')}
               </span>
             </div>
-            <input
-              {...register('confirmPassword')}
-              className="input input-sm w-full h-8 text-xs"
-              type="password"
-            />
+            <PasswordInput {...register('confirmPassword')} />
             {errors.confirmPassword && (
               <div className="label">
                 <span className="label-text-alt text-error">{errors.confirmPassword.message}</span>

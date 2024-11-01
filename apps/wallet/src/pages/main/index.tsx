@@ -52,7 +52,7 @@ const WalletMainPage: FC = observer(() => {
 
       <div className="flex-none flex flex-col items-center gap-8 pb-6 border-b border-base-300">
         <h1 title={address} className="h-5 -mr-7 leading-5 text-xs flex items-center gap-1">
-          <span>{formatAddress(address)}</span>
+          <span>{formatAddress(address, hibitIdSession.chainInfo.chainId.type)}</span>
           <CopyButton copyText={address} />
         </h1>
         <div className="flex flex-col items-center">
