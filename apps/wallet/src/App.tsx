@@ -1,4 +1,4 @@
-import { FC, Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { FC, Suspense, lazy, useEffect, useState } from 'react';
 import { observer } from 'mobx-react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import hibitIdSession from './stores/session';
@@ -7,13 +7,11 @@ import { useIsDesktop } from './utils/hooks';
 import PageLoading from './components/PageLoading';
 import { useOidc } from './utils/oidc';
 import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV, RUNTIME_PARAMS_RAW } from './utils/runtime';
-import { HibitEnv, RuntimeEnv } from './utils/basicEnums';
+import { RuntimeEnv } from './utils/basicEnums';
 import { AuthenticatorType } from '@delandlabs/hibit-id-sdk';
 import authManager from './utils/auth';
 import toaster from './components/Toaster';
 import rpcManager from './stores/rpc';
-import VConsole from 'vconsole';
-import { HIBIT_ENV } from './utils/env';
 import { useTranslation } from 'react-i18next';
 import { useDfinityIcrcPostMessageTransport } from './utils/chain/chain-wallets/dfinity/post-message-transport-hook';
 
@@ -36,18 +34,6 @@ const App: FC = observer(() => {
   const isDesktop = useIsDesktop()
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const vConsoleRef = useRef<VConsole>();
-
-  // show vConsole if is mobile and test env
-  useEffect(() => {
-    if (isDesktop && vConsoleRef.current) {
-      vConsoleRef.current.destroy();
-      vConsoleRef.current = undefined;
-    }
-    if (!isDesktop && !vConsoleRef.current && HIBIT_ENV !== HibitEnv.PROD) {
-      vConsoleRef.current = new VConsole();
-    }
-  }, [isDesktop]);
 
   useEffect(() => {
     (async () => {
