@@ -11,6 +11,7 @@ import './i18n'
 import HibitToastContainer from './components/Toaster/Container.tsx'
 import BigNumber from 'bignumber.js'
 import { OidcProvider } from './utils/oidc/index.ts'
+import VConsoleInvisibleTrigger from './components/VConsoleInvisibleTrigger.tsx'
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
@@ -36,6 +37,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <HibitToastContainer />
           </BrowserRouter>
         )}
+        <VConsoleInvisibleTrigger />
       </QueryClientProvider>
     </OidcProvider>
   </React.StrictMode>
