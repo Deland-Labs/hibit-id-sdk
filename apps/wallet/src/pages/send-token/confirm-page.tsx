@@ -37,7 +37,7 @@ const SendTokenConfirmPage: FC = observer(() => {
   const feeQuery = useFeeQuery(state.toAddress, state.amount, state.token)
 
   useEffect(() => {
-    if (hibitIdSession.chainInfo.isNativeFee) {
+    if (hibitIdSession.chainInfo.isNativeGas) {
       // native fee
       if (!nativeBalanceQuery.data || !feeQuery.data || !state.token) {
         return
@@ -189,7 +189,7 @@ const SendTokenConfirmPage: FC = observer(() => {
                 )}
               </span>
               <span className="text-xs">
-                {hibitIdSession.chainInfo.isNativeFee
+                {hibitIdSession.chainInfo.isNativeGas
                   ? nativeTokenQuery.data?.assetSymbol
                   : state.token?.assetSymbol
                 }
