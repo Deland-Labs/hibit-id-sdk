@@ -279,8 +279,8 @@ export class ChainInfo {
   explorer!: string;
   rpcUrls!: string[];
   isMainnet!: boolean
+  isNativeGas!: boolean;
   caseSensitiveAddress?: boolean;
-  feeTokenType?: 'native' | 'token' = 'native'
   getServerFormatAddress?: (address: string) => string | null
   getTxLink?: (txId: string) => string
   getAddressLink?: (address: string) => string
