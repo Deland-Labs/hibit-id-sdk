@@ -20,6 +20,7 @@ It supports a variety of popular third-party login methods which links user's We
 - [x] Scroll
 - [x] Bitlayer
 - [x] Ton
+- [x] Internet Computer
 - [ ] Solana
 - [ ] Bitcoin
 - [ ] Tron
