@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import hibitIdSession from "../../stores/session";
 import { useNavigate } from "react-router-dom";
 import SvgLoading from '../../assets/transfer-loading.svg?react';
@@ -33,31 +33,43 @@ const SendTokenConfirmPage: FC = observer(() => {
     enabled: !!tokenListQuery.data
   })
   const nativeBalanceQuery = useTokenBalanceQuery(nativeTokenQuery.data || undefined)
+  const balanceQuery = useTokenBalanceQuery(state.token || undefined)
   const feeQuery = useFeeQuery(state.toAddress, state.amount, state.token)
 
-  const minNativeBalance = useMemo(() => {
-    if (!feeQuery.data || !state.token) {
-      return null
-    }
-    if (state.token.chainAssetType.equals(ChainAssetType.Native)) {
-      return new BigNumber(state.amount).plus(feeQuery.data)
-    } else {
-      return hibitIdSession.chainInfo.feeTokenType === 'native' ? feeQuery.data : new BigNumber(0)
-    }
-  }, [state, feeQuery.data])
-
   useEffect(() => {
-    if (!nativeBalanceQuery.data || !minNativeBalance) {
+    if (hibitIdSession.chainInfo.isNativeFee) {
+      // native fee
+      if (!nativeBalanceQuery.data || !feeQuery.data || !state.token) {
+        return
+      }
+      let minNativeBalance = new BigNumber(0)
+      if (state.token.chainAssetType.equals(ChainAssetType.Native)) {
+        minNativeBalance = new BigNumber(state.amount).plus(feeQuery.data)
+      } else {
+        minNativeBalance = feeQuery.data
+      }
+      console.debug('[minNativeBalance]', minNativeBalance.toString())
+      if (nativeBalanceQuery.data.lt(minNativeBalance)) {
+        setErrMsg(t('page_send_errInsufficientGas', {
+          atLeast: `${formatNumber(minNativeBalance)} ${nativeTokenQuery.data?.assetSymbol}`,
+        }))
+      }
+      return
+    } else {
+      // token fee
+      if (!balanceQuery.data || !feeQuery.data || !state.token) {
+        return
+      }
+      const minTokenBalance = new BigNumber(state.amount).plus(feeQuery.data)
+      console.debug('[minTokenBalance]', minTokenBalance.toString())
+      if (balanceQuery.data.lt(minTokenBalance)) {
+        setErrMsg(t('page_send_errInsufficientGas', {
+          atLeast: `${formatNumber(minTokenBalance)} ${state.token.assetSymbol}`,
+        }))
+      }
       return
     }
-    if (nativeBalanceQuery.data.lt(minNativeBalance)) {
-      setErrMsg(t('page_send_errInsufficientGas', {
-        atLeast: `${formatNumber(minNativeBalance)} ${nativeTokenQuery.data?.assetSymbol}`,
-      }))
-    } else {
-      setErrMsg('')
-    }
-  }, [nativeBalanceQuery.data, feeQuery.data, nativeTokenQuery.data])
+  }, [nativeBalanceQuery.data, balanceQuery.data, hibitIdSession.chainInfo, feeQuery.data, nativeTokenQuery.data, state])
 
   const transferMutation = useMutation({
     mutationFn: async ({ address, amount }: {
@@ -177,7 +189,10 @@ const SendTokenConfirmPage: FC = observer(() => {
                 )}
               </span>
               <span className="text-xs">
-                {hibitIdSession.chainInfo.feeTokenType === 'token' ? state.token?.assetSymbol : nativeTokenQuery.data?.assetSymbol}
+                {hibitIdSession.chainInfo.isNativeFee
+                  ? nativeTokenQuery.data?.assetSymbol
+                  : state.token?.assetSymbol
+                }
               </span>
             </div>
             {errMsg && (
@@ -196,7 +211,7 @@ const SendTokenConfirmPage: FC = observer(() => {
         <button
           className="btn btn-sm btn-primary flex-1 disabled:opacity-70"
           onClick={handleSend}
-          disabled={!!errMsg || feeQuery.isPending || !nativeBalanceQuery.data}
+          disabled={!!errMsg || feeQuery.isPending || nativeBalanceQuery.isLoading || balanceQuery.isLoading}
         >
           {t('common_confirm')}
         </button>
