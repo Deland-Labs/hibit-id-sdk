@@ -5,9 +5,9 @@ It supports a variety of popular third-party login methods which links user's We
 
 # Supported Third-party Login Methods
 - [x] Telegram
-- [ ] Google
+- [x] Google
 - [ ] Facebook
-- [ ] X
+- [x] X
 - [ ] Apple
 - [ ] Github
 - and more...
