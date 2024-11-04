@@ -417,8 +417,8 @@ export const TronNile: ChainInfo = {
 
 export const Dfinity: ChainInfo = {
   chainId: new ChainId(Chain.Dfinity, ChainNetwork.DfinityMainNet),
-  name: 'Dfinity',
-  fullName: 'Dfinity Mainnet',
+  name: 'InternetComputer',
+  fullName: 'InternetComputer Mainnet',
   icon: '/chain-icons/IC.svg',
   nativeAssetSymbol: 'ICP',
   nativeAssetDecimals: 8,
