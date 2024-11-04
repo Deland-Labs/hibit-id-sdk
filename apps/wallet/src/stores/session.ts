@@ -2,7 +2,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import { ChainWalletPool } from "../utils/chain/chain-wallets";
 import { ChainId, ChainInfo } from "../utils/basicTypes";
 import { Ethereum, EthereumSepolia, Ton, TonTestnet } from "../utils/chain/chain-list";
-import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV, RUNTIME_LANG } from "../utils/runtime";
+import { IS_TELEGRAM_MINI_APP, RUNTIME_ENV, RUNTIME_FIX_DEV_MODE, RUNTIME_LANG } from "../utils/runtime";
 import { HibitEnv, RuntimeEnv } from "../utils/basicEnums";
 import rpcManager from "./rpc";
 import { WalletAccount } from "@delandlabs/hibit-id-sdk";
@@ -33,13 +33,20 @@ export class HibitIdSession {
   public chainInfo: ChainInfo
   public config: SessionConfig = {
     lastChainId: '',
-    devMode: HIBIT_ENV === HibitEnv.PROD ? false : true,
+    devMode: RUNTIME_FIX_DEV_MODE === 'on'
+    ? true
+    : RUNTIME_FIX_DEV_MODE === 'off'
+      ? false
+      : HIBIT_ENV === HibitEnv.PROD
+        ? false
+        : true,
     lang: getSystemLang(),
   }
 
   private _mnemonic: GetMnemonicResult | null = null
   private _password: string | null = null
   private _account: WalletAccount | null = null
+  private _initialStoredDevMode: boolean = this.config.devMode
 
   constructor() {
     makeAutoObservable(this)
@@ -52,10 +59,16 @@ export class HibitIdSession {
     const configString = localStorage.getItem(SESSION_CONFIG_KEY)
     if (configString) {
       const config = JSON.parse(configString) as SessionConfig
+      this._initialStoredDevMode = config.devMode
       this.config = {
         ...this.config,
         ...config,
         lang: RUNTIME_LANG || config.lang,
+        devMode: RUNTIME_FIX_DEV_MODE === 'on'
+          ? true
+          : RUNTIME_FIX_DEV_MODE === 'off'
+            ? false
+            : config.devMode
       }
       i18n.changeLanguage(this.config.lang)
       const chainId = ChainId.fromString(this.config.lastChainId)
@@ -119,11 +132,19 @@ export class HibitIdSession {
   public setChainInfo = (chainInfo: ChainInfo) => {
     this.chainInfo = chainInfo
     this.config.lastChainId = chainInfo.chainId.toString()
-    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.config))
+    this.persistConfig(this.config)
   }
 
   public setDevMode = (devMode: boolean) => {
     if (this.config.devMode === devMode) return
+    if (RUNTIME_FIX_DEV_MODE === 'on' && !devMode) {
+      toaster.error(t('page_settings_devModeOnlyTestnet'))
+      return
+    }
+    if (RUNTIME_FIX_DEV_MODE === 'off' && devMode) {
+      toaster.error(t('page_settings_devModeOnlyMainnet'))
+      return
+    }
     const newChain = getDevModeSwitchChain(!devMode, this.chainInfo.chainId)
     if (!newChain) {
       toaster.error(devMode ? t('page_settings_devModeOnlyMainnet') : t('page_settings_devModeOnlyTestnet'))
@@ -137,7 +158,7 @@ export class HibitIdSession {
         console.error(e)
         this.config.devMode = !devMode
       } finally {
-        localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.config))
+        this.persistConfig(this.config)
       }
     })
   }
@@ -146,7 +167,7 @@ export class HibitIdSession {
     if (this.config.lang === lang) return
     await i18n.changeLanguage(lang)
     this.config.lang = lang
-    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.config))
+    this.persistConfig(this.config)
   }
 
   public getValidAddress = async () => {
@@ -254,6 +275,15 @@ export class HibitIdSession {
     }
     const pool = new ChainWalletPool(phrase)
     return pool
+  }
+
+  private persistConfig = (config: SessionConfig) => {
+    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify({
+      ...config,
+      devMode: RUNTIME_ENV !== RuntimeEnv.WEB
+        ? this._initialStoredDevMode
+        : config.devMode
+    } as SessionConfig))
   }
 }
 

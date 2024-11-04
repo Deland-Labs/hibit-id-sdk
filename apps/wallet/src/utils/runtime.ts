@@ -3,6 +3,7 @@ import { retrieveLaunchParams } from '@telegram-apps/sdk';
 import { ChainId } from "./basicTypes";
 import { Language } from "./lang";
 import { Dfinity } from "./chain/chain-list";
+import { FixDevMode } from "@delandlabs/hibit-id-sdk";
 
 export const IS_IN_IFRAME = window.top !== window.self;
 
@@ -13,6 +14,7 @@ let runtimeParamsRaw: string | undefined = undefined;
 let runtimeParams: unknown = undefined;
 let runtimeSupportedChainIds: ChainId[] = [];
 let runtimeLang: Language | undefined = undefined;
+let runtimeFixDevMode: FixDevMode | undefined = undefined;
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -56,6 +58,8 @@ urlParams.get('chains')?.split(',').forEach((idStr) => {
   }
 })
 runtimeLang = urlParams.get('lang') as Language || undefined
+runtimeFixDevMode = urlParams.get('fixDevMode') as FixDevMode || undefined
+
 
 export const IS_TELEGRAM_MINI_APP = isTelegramMiniApp;
 export const RUNTIME_ENV = runtimeEnv
@@ -65,6 +69,7 @@ export const RUNTIME_PARAMS_RAW = runtimeParamsRaw
 export const RUNTIME_PARAMS = runtimeParams
 export const RUNTIME_SUPPORTED_CHAIN_IDS = runtimeSupportedChainIds
 export const RUNTIME_LANG = runtimeLang
+export const RUNTIME_FIX_DEV_MODE = runtimeFixDevMode
 
 console.debug('[runtime env]', RUNTIME_ENV)
 console.debug('[runtime icrc host]', RUNTIME_ICRC_HOST)
@@ -72,3 +77,4 @@ console.debug('[runtime icrc dev]', RUNTIME_ICRC_DEV)
 console.debug('[runtime params]', RUNTIME_PARAMS)
 console.debug('[runtime supported chains]', RUNTIME_SUPPORTED_CHAIN_IDS)
 console.debug('[runtime lang]', RUNTIME_LANG)
+console.debug('[runtime fixDevMode]', RUNTIME_FIX_DEV_MODE)

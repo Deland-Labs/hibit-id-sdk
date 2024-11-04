@@ -4,12 +4,14 @@ import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransact
 export type HibitEnv = 'dev' | 'test' | 'prod'
 
 export type Language = 'en' | 'cnt' | 'ja' | 'ru'
+export type FixDevMode = 'on' | 'off' | 'unset'
 
 export interface HibitIdWalletOptions {
   env: HibitEnv
   chains: HibitIdChainId[]
   defaultChain: HibitIdChainId
   lang?: Language
+  fixDevMode?: FixDevMode
   iframeUrlAppendix?: string
 }
 
