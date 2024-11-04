@@ -1,6 +1,6 @@
 import { CONTROLLER_CONTAINER_ID, IFRAME_CONTAINER_ID } from "../constants"
 import { HibitIdChainId } from "../enums"
-import { HibitEnv, Language } from "../types"
+import { FixDevMode, HibitEnv, Language } from "../types"
 import { clamp, getHibitIdUrl } from "../utils"
 import './index.css'
 
@@ -156,7 +156,7 @@ export class HibitIdIframe {
   private container: HTMLDivElement
   private _visible = false
 
-  constructor(env: HibitEnv, chains: HibitIdChainId[] = [], urlAppendix: string = '', lang: Language | '' = '') {
+  constructor(env: HibitEnv, chains: HibitIdChainId[] = [], urlAppendix: string = '', lang: Language | '' = '', fixDevMode: FixDevMode = 'unset' ) {
     this.isDesktop = window.innerWidth > 576
     const existed = document.getElementById(IFRAME_CONTAINER_ID)
     if (existed) {
@@ -167,7 +167,7 @@ export class HibitIdIframe {
     const container = document.createElement('div')
     container.id = IFRAME_CONTAINER_ID
     const iframe = document.createElement('iframe')
-    iframe.src = `${getHibitIdUrl(env)}?chains=${chains.join(',')}&lang=${lang}${urlAppendix}`
+    iframe.src = `${getHibitIdUrl(env)}?chains=${chains.join(',')}&lang=${lang}&fixDevMode=${fixDevMode}${urlAppendix}`
     iframe.allow='clipboard-write; publickey-credentials-get *; publickey-credentials-create *'
     container.appendChild(iframe)
     document.body.appendChild(container)

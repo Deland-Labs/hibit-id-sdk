@@ -6,6 +6,7 @@ export { BridgePromise } from './types'
 export type {
   HibitEnv,
   Language,
+  FixDevMode,
   HibitIdWalletOptions,
   WalletAccount,
   ConnectRequest,

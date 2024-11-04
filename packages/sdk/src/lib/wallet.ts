@@ -286,6 +286,7 @@ export class HibitIdWallet {
       this._options.chains,
       this._options.iframeUrlAppendix,
       this._options.lang,
+      this._options.fixDevMode ?? 'unset',
     )
     
     const rpc = new RPC({
