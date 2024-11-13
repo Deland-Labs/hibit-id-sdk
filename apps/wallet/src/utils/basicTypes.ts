@@ -193,6 +193,8 @@ export class ChainNetwork {
   static EvmScrollSepoliaNet = new ChainNetwork(new BigNumber(534351));
   static EvmBitlayerNet = new ChainNetwork(new BigNumber(200901));
   static EvmBitlayerTestNet = new ChainNetwork(new BigNumber(200810));
+  static EvmSwanNet = new ChainNetwork(new BigNumber(254));
+  static EvmSwanTestNet = new ChainNetwork(new BigNumber(20241133));
 
   static SolanaMainNet = new ChainNetwork(new BigNumber(0x3));
   static SolanaTestNet = new ChainNetwork(new BigNumber(0x2));

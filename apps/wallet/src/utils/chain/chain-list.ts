@@ -166,6 +166,33 @@ export const EthereumBitlayerTestnet: ChainInfo = {
   rpcUrls: ['https://testnet-rpc.bitlayer.org']
 };
 
+export const EthereumSwan: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmSwanNet),
+  name: 'Swan',
+  fullName: 'Swan Mainnet',
+  icon: '/chain-icons/Swan.svg',
+  nativeAssetSymbol: 'ETH',
+  nativeAssetDecimals: 18,
+  isMainnet: true,
+  isNativeGas: true,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'https://swanscan.io',
+  rpcUrls: ['https://mainnet-rpc.swanchain.org']
+};
+export const EthereumSwanTestnet: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmSwanTestNet),
+  name: 'Swan Testnet',
+  fullName: 'Swan Proxima Testnet',
+  icon: '/chain-icons/Swan.svg',
+  nativeAssetSymbol: 'ETH',
+  nativeAssetDecimals: 18,
+  isMainnet: false,
+  isNativeGas: true,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'https://proxima-explorer.swanchain.io',
+  rpcUrls: ['https://rpc-proxima.swanchain.io']
+};
+
 export const Bitcoin: ChainInfo = {
   chainId: new ChainId(Chain.Bitcoin, ChainNetwork.BtcMainNet),
   name: 'Bitcoin',
