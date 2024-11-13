@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { Transform, Type } from 'class-transformer';
 import { WalletSignatureSchema } from './basicEnums';
+import { Ecosystem } from './basicEnums';
 
 export class AssetId {
   value: BigNumber;
@@ -282,6 +283,7 @@ export class ChainInfo {
   rpcUrls!: string[];
   isMainnet!: boolean
   isNativeGas!: boolean;
+  ecosystem!: Ecosystem;
   caseSensitiveAddress?: boolean;
   getServerFormatAddress?: (address: string) => string | null
   getTxLink?: (txId: string) => string
