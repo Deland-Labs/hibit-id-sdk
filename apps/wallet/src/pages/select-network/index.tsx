@@ -16,10 +16,10 @@ const SelectNetworkPage: FC = observer(() => {
     const chainsMap: Record<string, ChainInfo[]> = {}
     const supportedChains = getSupportedChains()
     supportedChains.forEach((chain) => {
-      if (!chainsMap[chain.chainId.type.name]) {
-        chainsMap[chain.chainId.type.name] = []
+      if (!chainsMap[chain.ecosystem]) {
+        chainsMap[chain.ecosystem] = []
       }
-      chainsMap[chain.chainId.type.name].push(chain)
+      chainsMap[chain.ecosystem].push(chain)
     })
     return chainsMap
   }, [])

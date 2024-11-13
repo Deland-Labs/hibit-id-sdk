@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { Transform, Type } from 'class-transformer';
 import { WalletSignatureSchema } from './basicEnums';
+import { Ecosystem } from './basicEnums';
 
 export class AssetId {
   value: BigNumber;
@@ -193,6 +194,8 @@ export class ChainNetwork {
   static EvmScrollSepoliaNet = new ChainNetwork(new BigNumber(534351));
   static EvmBitlayerNet = new ChainNetwork(new BigNumber(200901));
   static EvmBitlayerTestNet = new ChainNetwork(new BigNumber(200810));
+  static EvmSwanNet = new ChainNetwork(new BigNumber(254));
+  static EvmSwanTestNet = new ChainNetwork(new BigNumber(20241133));
 
   static SolanaMainNet = new ChainNetwork(new BigNumber(0x3));
   static SolanaTestNet = new ChainNetwork(new BigNumber(0x2));
@@ -280,6 +283,7 @@ export class ChainInfo {
   rpcUrls!: string[];
   isMainnet!: boolean
   isNativeGas!: boolean;
+  ecosystem!: Ecosystem;
   caseSensitiveAddress?: boolean;
   getServerFormatAddress?: (address: string) => string | null
   getTxLink?: (txId: string) => string

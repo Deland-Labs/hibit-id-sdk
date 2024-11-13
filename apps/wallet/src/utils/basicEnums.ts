@@ -25,3 +25,13 @@ export enum WalletSignatureSchema {
   SolanaEddsa = '0x7da',
   IcpEddsa = '0x7e4'
 }
+
+// TODO: Add support for other ecosystems
+export enum Ecosystem {
+  EVM = 'EVM',
+  Bitcoin = 'Bitcoin',
+  Solana = 'Solana',
+  Tron = 'Tron',
+  Ton = 'Ton',
+  IC = 'Internet Computer'
+}

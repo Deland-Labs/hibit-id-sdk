@@ -1,4 +1,4 @@
-import { WalletSignatureSchema } from "../basicEnums";
+import { Ecosystem, WalletSignatureSchema } from "../basicEnums";
 import { ChainInfo, ChainId, Chain, ChainNetwork } from "../basicTypes";
 import { clusterApiUrl } from '@solana/web3.js';
 import { getHttpEndpoint } from "@orbs-network/ton-access";
@@ -13,6 +13,7 @@ export const Ethereum: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: true,
   isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://etherscan.io',
   rpcUrls: ['https://ethereum.blockpi.network/v1/rpc/public']
@@ -26,6 +27,7 @@ export const EthereumSepolia: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://sepolia.etherscan.io',
   rpcUrls: ['https://ethereum-sepolia.blockpi.network/v1/rpc/public	']
@@ -40,6 +42,7 @@ export const EthereumBsc: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: true,
   isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://bscscan.com',
   rpcUrls: ['https://bsc-dataseed.binance.org']
@@ -53,6 +56,7 @@ export const EthereumBscTestnet: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://testnet.bscscan.com',
   rpcUrls: ['https://bsc-testnet.publicnode.com']
@@ -67,6 +71,7 @@ export const EthereumScroll: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: true,
   isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://scroll.l2scan.co',
   rpcUrls: ['https://rpc.scroll.io']
@@ -80,6 +85,7 @@ export const EthereumScrollSepolia: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://scroll-sepolia.l2scan.co',
   rpcUrls: ['https://sepolia-rpc.scroll.io']
@@ -94,6 +100,7 @@ export const EthereumBase: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: true,
   isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://basescan.org',
   rpcUrls: ['https://mainnet.base.org']
@@ -107,6 +114,7 @@ export const EthereumBaseSepolia: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://sepolia.basescan.org',
   rpcUrls: ['https://sepolia.base.org']
@@ -121,6 +129,7 @@ export const EthereumAvalanche: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: true,
   isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://snowtrace.io',
   rpcUrls: ['https://api.avax.network/ext/bc/C/rpc']
@@ -134,6 +143,7 @@ export const EthereumAvalancheFuji: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://subnets-test.avax.network/c-chain',
   rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc']
@@ -148,6 +158,7 @@ export const EthereumBitlayer: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: true,
   isNativeGas: true,
+  ecosystem: Ecosystem.Bitcoin,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://btrscan.com',
   rpcUrls: ['https://rpc.bitlayer.org']
@@ -161,9 +172,39 @@ export const EthereumBitlayerTestnet: ChainInfo = {
   nativeAssetDecimals: 18,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.Bitcoin,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://testnet.btrscan.com',
   rpcUrls: ['https://testnet-rpc.bitlayer.org']
+};
+
+export const EthereumSwan: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmSwanNet),
+  name: 'Swan',
+  fullName: 'Swan Mainnet',
+  icon: '/chain-icons/Swan.svg',
+  nativeAssetSymbol: 'ETH',
+  nativeAssetDecimals: 18,
+  isMainnet: true,
+  isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'https://swanscan.io',
+  rpcUrls: ['https://mainnet-rpc.swanchain.org']
+};
+export const EthereumSwanTestnet: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmSwanTestNet),
+  name: 'Swan Testnet',
+  fullName: 'Swan Proxima Testnet',
+  icon: '/chain-icons/Swan.svg',
+  nativeAssetSymbol: 'ETH',
+  nativeAssetDecimals: 18,
+  isMainnet: false,
+  isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'https://proxima-explorer.swanchain.io',
+  rpcUrls: ['https://rpc-proxima.swanchain.io']
 };
 
 export const Bitcoin: ChainInfo = {
@@ -175,6 +216,7 @@ export const Bitcoin: ChainInfo = {
   nativeAssetDecimals: 8,
   isMainnet: true,
   isNativeGas: true,
+  ecosystem: Ecosystem.Bitcoin,
   supportedSignaturesSchemas: [WalletSignatureSchema.BtcEcdsa],
   explorer: 'https://blockstream.info',
   rpcUrls: []
@@ -188,6 +230,7 @@ export const BitcoinTestnet: ChainInfo = {
   nativeAssetDecimals: 8,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.Bitcoin,
   supportedSignaturesSchemas: [WalletSignatureSchema.BtcEcdsa],
   explorer: 'https://blockstream.info/testnet',
   rpcUrls: []
@@ -202,6 +245,7 @@ export const Solana: ChainInfo = {
   nativeAssetDecimals: 9,
   isMainnet: true,
   isNativeGas: true,
+  ecosystem: Ecosystem.Solana,
   supportedSignaturesSchemas: [WalletSignatureSchema.SolanaEddsa],
   explorer: 'https://explorer.solana.com',
   rpcUrls: [clusterApiUrl('mainnet-beta')],
@@ -216,6 +260,7 @@ export const SolanaTestnet: ChainInfo = {
   nativeAssetDecimals: 9,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.Solana,
   supportedSignaturesSchemas: [WalletSignatureSchema.SolanaEddsa],
   explorer: 'https://explorer.solana.com?cluster=testnet',
   rpcUrls: [clusterApiUrl('testnet')],
@@ -231,6 +276,7 @@ export const Ton: ChainInfo = {
   nativeAssetDecimals: 9,
   isMainnet: true,
   isNativeGas: true,
+  ecosystem: Ecosystem.Ton,
   supportedSignaturesSchemas: [WalletSignatureSchema.TonEddsaOpenMask],
   explorer: 'https://tonviewer.com',
   rpcUrls: [],
@@ -282,6 +328,7 @@ export const TonTestnet: ChainInfo = {
   nativeAssetDecimals: 9,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.Ton,
   supportedSignaturesSchemas: [WalletSignatureSchema.TonEddsaOpenMask],
   explorer: 'https://testnet.tonviewer.com',
   rpcUrls: [],
@@ -342,6 +389,7 @@ export const Tron: ChainInfo = {
   nativeAssetDecimals: 6,
   isMainnet: true,
   isNativeGas: true,
+  ecosystem: Ecosystem.Tron,
   supportedSignaturesSchemas: [WalletSignatureSchema.TronEcdsa],
   explorer: 'https://tronscan.org',
   rpcUrls: ['https://rpc.trongrid.io'],
@@ -369,6 +417,7 @@ export const TronShasta: ChainInfo = {
   nativeAssetDecimals: 6,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.Tron,
   supportedSignaturesSchemas: [WalletSignatureSchema.TronEcdsa],
   explorer: 'https://shasta.tronscan.org',
   rpcUrls: ['https://api.shasta.trongrid.io'],
@@ -396,6 +445,7 @@ export const TronNile: ChainInfo = {
   nativeAssetDecimals: 6,
   isMainnet: false,
   isNativeGas: true,
+  ecosystem: Ecosystem.Tron,
   supportedSignaturesSchemas: [WalletSignatureSchema.TronEcdsa],
   explorer: 'https://nile.tronscan.org',
   rpcUrls: ['https://api.nileex.io'],
@@ -424,6 +474,7 @@ export const Dfinity: ChainInfo = {
   nativeAssetDecimals: 8,
   isMainnet: true,
   isNativeGas: false,
+  ecosystem: Ecosystem.IC,
   supportedSignaturesSchemas: [WalletSignatureSchema.IcpEddsa],
   explorer: 'https://dashboard.internetcomputer.org',
   rpcUrls: ['https://ic0.app'],
