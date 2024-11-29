@@ -1,26 +1,17 @@
-import { base, signUtil } from '@okxweb3/crypto-lib';
-import { Address, AddressVersion } from './Address';
-import { NetworkType, NetworkTypeHelper } from './Network.ts';
+import { base, signUtil } from "@okxweb3/crypto-lib";
+import { Address, AddressVersion } from "./Address";
+import { NetworkType, NetworkTypeHelper } from "./Network.ts";
 
 // const TransactionSigningHashKey = Buffer.from("TransactionSigningHash");
 // const TransactionIDKey = Buffer.from("TransactionID");
-const PersonalMessageSigningHashKey = Buffer.from('PersonalMessageSigningHash');
+const PersonalMessageSigningHashKey = Buffer.from("PersonalMessageSigningHash");
 
-/**
- * Represents a keypair with methods for address generation and message signing.
- */
 class Keypair {
-  public readonly privateKey?: string; // hex string
-  public readonly publicKey?: string;
-  public readonly xOnlyPublicKey?: string;
+  public privateKey?: string; // hex string
+  public publicKey?: string;
+  public xOnlyPublicKey?: string;
 
-  /**
-   * Constructs a Keypair instance.
-   * @param privateKey - The private key as a hex string.
-   * @param publicKey - The public key as a hex string.
-   * @param xOnlyPublicKey - The x-only public key as a hex string.
-   */
-  private constructor(
+  constructor(
     privateKey?: string,
     publicKey?: string,
     xOnlyPublicKey?: string
@@ -30,16 +21,10 @@ class Keypair {
     this.xOnlyPublicKey = xOnlyPublicKey;
   }
 
-  /**
-   * Generates an address from the x-only public key.
-   * @param network - The network type.
-   * @returns The generated address.
-   * @throws If the x-only public key is not available.
-   */
   public toAddress(network: NetworkType): Address {
     if (!this.xOnlyPublicKey) {
       throw new Error(
-        'X-only public key is not available for address generation'
+        "X-only public key is not available for address generation"
       );
     }
     const payload = base.fromHex(this.xOnlyPublicKey!);
@@ -50,16 +35,10 @@ class Keypair {
     );
   }
 
-  /**
-   * Generates an ECDSA address from the public key.
-   * @param network - The network type.
-   * @returns The generated ECDSA address.
-   * @throws If the public key is not available.
-   */
   public toAddressECDSA(network: NetworkType): Address {
     if (!this.publicKey) {
       throw new Error(
-        'Ecdsa public key is not available for ECDSA address generation'
+        "Ecdsa public key is not available for ECDSA address generation"
       );
     }
     const payload = base.fromHex(this.publicKey!);
@@ -70,11 +49,6 @@ class Keypair {
     );
   }
 
-  /**
-   * Creates a Keypair instance from a private key hex string.
-   * @param key - The private key as a hex string.
-   * @returns The created Keypair instance.
-   */
   public static fromPrivateKeyHex(key: string): Keypair {
     return new Keypair(
       key,
@@ -85,11 +59,6 @@ class Keypair {
     );
   }
 
-  /**
-   * Creates a Keypair instance from a public key hex string.
-   * @param pubKey - The public key as a hex string.
-   * @returns The created Keypair instance.
-   */
   public static fromPublicKeyHex(pubKey: string): Keypair {
     // Extract the x-coordinate from the public key
     const x = signUtil.schnorr.secp256k1.schnorr.utils.bytesToNumberBE(
@@ -102,28 +71,16 @@ class Keypair {
     return new Keypair(undefined, pubKey, base.toHex(xOnlyPubKey));
   }
 
-  /**
-   * Creates a Keypair instance from an x-only public key hex string.
-   * @param xOnlyPublicKeyHex - The x-only public key as a hex string.
-   * @returns The created Keypair instance.
-   */
   public static fromXOnlyPublicKeyHex(xOnlyPublicKeyHex: string): Keypair {
     return new Keypair(undefined, undefined, xOnlyPublicKeyHex);
   }
 
-  /**
-   * Signs a message with auxiliary data using the private key.
-   * @param message - The message to sign.
-   * @param auxData32 - The auxiliary data.
-   * @returns The signature as a Uint8Array.
-   * @throws If the private key is not available.
-   */
   public signMessageWithAuxData(
     message: Uint8Array,
     auxData32: Uint8Array
   ): Uint8Array {
     if (!this.privateKey) {
-      throw new Error('Secret key is not available for signing');
+      throw new Error("Secret key is not available for signing");
     }
 
     const hash = base.blake2(
@@ -138,12 +95,6 @@ class Keypair {
     );
   }
 
-  /**
-   * Verifies a message signature using the x-only public key.
-   * @param signature - The signature to verify.
-   * @param message - The message that was signed.
-   * @returns True if the signature is valid, false otherwise.
-   */
   public verifyMessage(signature: Uint8Array, message: Uint8Array): boolean {
     const hashedMsg = base.blake2(
       Buffer.from(message),
