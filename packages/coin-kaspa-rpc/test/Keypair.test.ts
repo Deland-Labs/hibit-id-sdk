@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {Keypair} from '../src/lib/Keypair';
-import {base} from '@delandlabs/crypto-lib';
+import {base} from '@okxweb3/crypto-lib';
 import {NetworkType} from "../src/lib/Network";
 
 describe('Keypair Tests', () => {
@@ -75,7 +75,7 @@ describe('Keypair Tests', () => {
         const keypair = Keypair.fromPrivateKeyHex(privkeyHex);
         const signature = keypair.signMessageWithAuxData(message, auxRand);
 
-        expect(signature).toEqual(expectedSig);
+        expect(signature).toEqual(new Uint8Array(expectedSig));
         expect(keypair.verifyMessage(signature, message)).toBe(true);
     });
 
@@ -91,7 +91,7 @@ describe('Keypair Tests', () => {
         const keypair = Keypair.fromPrivateKeyHex(privkeyHex);
         const signature = keypair.signMessageWithAuxData(message, auxRand);
 
-        expect(signature).toEqual(expectedSig);
+        expect(signature).toEqual(new Uint8Array(expectedSig));
         expect(keypair.verifyMessage(signature, message)).toBe(true);
     });
 
@@ -101,13 +101,13 @@ describe('Keypair Tests', () => {
         const auxRand = new Uint8Array(32).fill(0);
         auxRand[31] = 1;
         const expectedSig = base.fromHex(
-            '810653d5f80206db519672362add6c98dad378844e5ba4d89a22c9f0c7092e8cecba734fff7922b656b4be3f4b1f098899c95cb5c1023dce3519208afaf59bc'
+            '810653d5f80206db519672362add6c98dad378844e5ba4d89a22c9f0c7092e8cecba734fff7922b656b4be3f4b1f098899c95cb5c1023dce3519208afafb59bc'
         );
 
         const keypair = Keypair.fromPrivateKeyHex(privkeyHex);
         const signature = keypair.signMessageWithAuxData(message, auxRand);
 
-        expect(signature).toEqual(expectedSig);
+        expect(signature).toEqual(new Uint8Array(expectedSig));
         expect(keypair.verifyMessage(signature, message)).toBe(true);
     });
 
