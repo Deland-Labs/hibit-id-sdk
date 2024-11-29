@@ -9,9 +9,12 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'CoinKaspaRpc',
+      name: 'CryptoLib',
       // the proper extensions will be added
-      fileName: 'coin-kaspa-rpc',
+      fileName: 'index',
+    },
+    commonjsOptions: {
+      transformMixedEsModules: true,
     },
     rollupOptions: {
       plugins: [
