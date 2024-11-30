@@ -4,7 +4,7 @@ import {
   ScriptBuilder,
   OpCodes,
   ScriptBuilderError
-} from '../src/lib/TxScript';
+} from '../src/lib/txScript';
 
 describe('ScriptBuilder', () => {
   it.each([

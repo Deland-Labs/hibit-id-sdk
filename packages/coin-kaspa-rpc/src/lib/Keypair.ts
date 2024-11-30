@@ -1,5 +1,5 @@
 import { base, signUtil } from '@delandlabs/crypto-lib';
-import { Address, AddressVersion } from './Address';
+import { Address, AddressVersion } from './address';
 import { NetworkType, NetworkTypeHelper } from './Network.ts';
 
 // const TransactionSigningHashKey = Buffer.from("TransactionSigningHash");

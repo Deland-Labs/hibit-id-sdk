@@ -1,5 +1,5 @@
 import {describe, it, expect} from "vitest";
-import {Address, AddressPrefix, AddressVersion} from "../src/lib/Address";
+import {Address, AddressPrefix, AddressVersion} from "../src/lib/address";
 
 describe("Address Tests", () => {
     const addressCases = [

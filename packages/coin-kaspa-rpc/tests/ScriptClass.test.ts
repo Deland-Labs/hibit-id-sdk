@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { Constants, ScriptClass, ScriptClassHelper } from '../src/lib/TxScript';
-import { ScriptPublicKey } from '../src/lib/TxScript/ScriptPublicKey';
+import { Constants, ScriptClass, ScriptClassHelper } from '../src/lib/txScript';
+import { ScriptPublicKey } from '../src/lib/txScript/ScriptPublicKey';
 
 describe('ScriptClassTests', () => {
   const testCases = [

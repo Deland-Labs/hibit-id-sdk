@@ -1,5 +1,5 @@
 import { ScriptBuilderError } from './Errors';
-import { SizedEncodeInt } from './DataStack/SizedEncodeInt';
+import { SizedEncodeInt } from './dataStack/SizedEncodeInt';
 import { checkOpcodeRange, OpCodes } from './OpCodes.ts';
 import * as C from './Constants.ts';
 

@@ -1,4 +1,4 @@
-import { AddressVersion } from '../Address';
+import { AddressVersion } from '../address';
 import { ScriptPublicKey } from './ScriptPublicKey.ts';
 import { OpCodes } from './OpCodes.ts';
 import { MAX_SCRIPT_PUBLIC_KEY_VERSION } from './Constants.ts';

@@ -1,4 +1,4 @@
-import { AddressPrefix } from './Address';
+import { AddressPrefix } from './address';
 
 /**
  * Enum representing different network types.
