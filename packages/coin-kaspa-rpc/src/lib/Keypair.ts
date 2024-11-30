@@ -1,4 +1,4 @@
-import { base, signUtil } from '@okxweb3/crypto-lib';
+import { base, signUtil } from '@delandlabs/crypto-lib';
 import { Address, AddressVersion } from './Address';
 import { NetworkType, NetworkTypeHelper } from './Network.ts';
 

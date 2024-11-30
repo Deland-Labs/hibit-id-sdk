@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {Keypair} from '../src/lib/Keypair';
-import {base} from '@okxweb3/crypto-lib';
+import {base} from '@delandlabs/crypto-lib';
 import {NetworkType} from "../src/lib/Network";
 
 describe('Keypair Tests', () => {
