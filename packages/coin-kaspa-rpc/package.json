@@ -28,6 +28,9 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "@delandlabs/crypto-lib": "*"
+  },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
     "@rollup/plugin-typescript": "^12.1.1",
