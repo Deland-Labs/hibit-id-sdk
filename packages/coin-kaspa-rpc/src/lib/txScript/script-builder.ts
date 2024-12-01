@@ -2,6 +2,9 @@ import { ScriptBuilderError } from './error';
 import { SizedEncodeInt } from './dataStack/sized-encode-int';
 import { checkOpcodeRange, OpCodes } from './op-codes';
 import * as C from './constants';
+import { ScriptPublicKey } from '../tx';
+import { payToScriptHashScript, payToScriptHashSignatureScript } from './standard';
+import { base } from '@delandlabs/crypto-lib';
 
 /**
  * ScriptBuilder provides a facility for building custom scripts. It allows
@@ -175,6 +178,33 @@ class ScriptBuilder {
    */
   addSequence(sequence: bigint): ScriptBuilder {
     return this.addU64(sequence);
+  }
+
+  /**
+   * Converts the script to a hex string.
+   * @returns {string} The hex string representation of the script.
+   */
+  toString(): string {
+    return base.toHex(this.script);
+  }
+  /**
+   * Creates an equivalent pay-to-script-hash script.
+   * Can be used to create a P2SH address.
+   * @returns {ScriptPublicKey} The script public key for the transaction output.
+   */
+  createPayToScriptHashScript(): ScriptPublicKey {
+    return payToScriptHashScript(this.script);
+  }
+
+  /**
+   * Generates a signature script that fits a pay-to-script-hash script.
+   * @param {Uint8Array} signature - The signature.
+   * @returns {string} The hex string representation of the generated script.
+   */
+  encodePayToScriptHashSignatureScript(signature: Uint8Array): string {
+    const script = this.script;
+    const generatedScript = payToScriptHashSignatureScript(script, signature);
+    return base.toHex(generatedScript);
   }
 
   /**
