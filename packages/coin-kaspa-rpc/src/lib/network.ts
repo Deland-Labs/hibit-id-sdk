@@ -47,10 +47,7 @@ class NetworkId {
    * @param {number} suffix - The suffix for the network.
    * @returns {NetworkId} The new NetworkId instance.
    */
-  public static withSuffix(
-    networkType: NetworkType,
-    suffix: number
-  ): NetworkId {
+  public static withSuffix(networkType: NetworkType, suffix: number): NetworkId {
     return new NetworkId(networkType, suffix);
   }
 
@@ -132,9 +129,7 @@ class NetworkId {
    * @returns {boolean} True if the NetworkIds are equal, otherwise false.
    */
   public equals(other: NetworkId): boolean {
-    return (
-      this.networkType === other.networkType && this.suffix === other.suffix
-    );
+    return this.networkType === other.networkType && this.suffix === other.suffix;
   }
 }
 

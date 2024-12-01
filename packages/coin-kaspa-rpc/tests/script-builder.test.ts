@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  Constants as C,
-  ScriptBuilder,
-  OpCodes,
-  ScriptBuilderError
-} from '../src/lib/txScript';
+import { Constants as C, ScriptBuilder, OpCodes, ScriptBuilderError } from '../src/lib';
 
 describe('ScriptBuilder', () => {
   it.each([
@@ -12,12 +7,8 @@ describe('ScriptBuilder', () => {
     ['push OP_TRUE', [OpCodes.OpTrue], [OpCodes.OpTrue]],
     ['push OP_0', [OpCodes.Op0], [OpCodes.Op0]],
     ['push OP_1 OP_2', [OpCodes.Op1, OpCodes.Op2], [OpCodes.Op1, OpCodes.Op2]],
-    [
-      'push OP_BLAKE2B OP_EQUAL',
-      [OpCodes.OpBlake2b, OpCodes.OpEqual],
-      [OpCodes.OpBlake2b, OpCodes.OpEqual]
-    ]
-  ])('AddOp_ShouldAddOpCorrectly %s', (name, opcodes, expected) => {
+    ['push OP_BLAKE2B OP_EQUAL', [OpCodes.OpBlake2b, OpCodes.OpEqual], [OpCodes.OpBlake2b, OpCodes.OpEqual]]
+  ])('AddOp_ShouldAddOpCorrectly %s', (_name, opcodes, expected) => {
     const builder1 = new ScriptBuilder();
     opcodes.forEach((opcode) => builder1.addOp(opcode));
     expect(builder1.script).toEqual(new Uint8Array(expected));
@@ -71,7 +62,7 @@ describe('ScriptBuilder', () => {
       9223372036854775807n,
       [OpCodes.OpData8, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f]
     ]
-  ])('AddI64_ShouldAddI64Correctly %s', (name, val, expected) => {
+  ])('AddI64_ShouldAddI64Correctly %s', (_name, val, expected) => {
     const builder = new ScriptBuilder();
     builder.addI64(BigInt(val));
     expect(builder.script).toEqual(new Uint8Array(expected));
@@ -232,49 +223,25 @@ describe('ScriptBuilder', () => {
     {
       name: 'push data len 32767 (canonical)',
       data: new Uint8Array(32767).fill(0x49),
-      expected: [
-        OpCodes.OpPushData2,
-        255,
-        127,
-        ...new Uint8Array(32767).fill(0x49)
-      ],
+      expected: [OpCodes.OpPushData2, 255, 127, ...new Uint8Array(32767).fill(0x49)],
       unchecked: true
     },
     {
       name: 'push data len 65536 (canonical)',
       data: new Uint8Array(65536).fill(0x49),
-      expected: [
-        OpCodes.OpPushData4,
-        0,
-        0,
-        1,
-        0,
-        ...new Uint8Array(65536).fill(0x49)
-      ],
+      expected: [OpCodes.OpPushData4, 0, 0, 1, 0, ...new Uint8Array(65536).fill(0x49)],
       unchecked: true
     },
     {
       name: 'push data len 32767 (non-canonical)',
       data: new Uint8Array(32767).fill(0x49),
-      expected: [
-        OpCodes.OpPushData2,
-        255,
-        127,
-        ...new Uint8Array(32767).fill(0x49)
-      ],
+      expected: [OpCodes.OpPushData2, 255, 127, ...new Uint8Array(32767).fill(0x49)],
       unchecked: true
     },
     {
       name: 'push data len 65536 (non-canonical)',
       data: new Uint8Array(65536).fill(0x49),
-      expected: [
-        OpCodes.OpPushData4,
-        0,
-        0,
-        1,
-        0,
-        ...new Uint8Array(65536).fill(0x49)
-      ],
+      expected: [OpCodes.OpPushData4, 0, 0, 1, 0, ...new Uint8Array(65536).fill(0x49)],
       unchecked: true
     }
   ];
@@ -298,41 +265,15 @@ describe('ScriptBuilder', () => {
     ['0xffee', 0xffeen, [OpCodes.OpData2, 0xee, 0xff]],
     ['0xffeedd', 0xffeeddn, [OpCodes.OpData3, 0xdd, 0xee, 0xff]],
     ['0xffeeddcc', 0xffeeddccn, [OpCodes.OpData4, 0xcc, 0xdd, 0xee, 0xff]],
-    [
-      '0xffeeddccbb',
-      0xffeeddccbbn,
-      [OpCodes.OpData5, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
-    ],
-    [
-      '0xffeeddccbbaa',
-      0xffeeddccbbaan,
-      [OpCodes.OpData6, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
-    ],
-    [
-      '0xffeeddccbbaa99',
-      0xffeeddccbbaa99n,
-      [OpCodes.OpData7, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
-    ],
-    [
-      '0xffeeddccbbaa9988',
-      0xffeeddccbbaa9988n,
-      [OpCodes.OpData8, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
-    ],
-    [
-      '0xffffffffffffffff',
-      0xffffffffffffffffn,
-      [OpCodes.OpData8, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]
-    ]
-  ])('AddU64_ShouldAddU64Correctly %s', (name, value, expected) => {
-    expect(new ScriptBuilder().addU64(value).script).toEqual(
-      new Uint8Array(expected)
-    );
-    expect(new ScriptBuilder().addLockTime(value).script).toEqual(
-      new Uint8Array(expected)
-    );
-    expect(new ScriptBuilder().addSequence(value).script).toEqual(
-      new Uint8Array(expected)
-    );
+    ['0xffeeddccbb', 0xffeeddccbbn, [OpCodes.OpData5, 0xbb, 0xcc, 0xdd, 0xee, 0xff]],
+    ['0xffeeddccbbaa', 0xffeeddccbbaan, [OpCodes.OpData6, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]],
+    ['0xffeeddccbbaa99', 0xffeeddccbbaa99n, [OpCodes.OpData7, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]],
+    ['0xffeeddccbbaa9988', 0xffeeddccbbaa9988n, [OpCodes.OpData8, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]],
+    ['0xffffffffffffffff', 0xffffffffffffffffn, [OpCodes.OpData8, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]]
+  ])('AddU64_ShouldAddU64Correctly %s', (_name, value, expected) => {
+    expect(new ScriptBuilder().addU64(value).script).toEqual(new Uint8Array(expected));
+    expect(new ScriptBuilder().addLockTime(value).script).toEqual(new Uint8Array(expected));
+    expect(new ScriptBuilder().addSequence(value).script).toEqual(new Uint8Array(expected));
   });
 
   it.each([
@@ -366,12 +307,9 @@ describe('ScriptBuilder', () => {
       new Uint8Array([0x00]),
       ScriptBuilderError
     ]
-  ])(
-    'ExceedMaxScriptSize_ShouldThrowException %s',
-    (name, data, expectedException) => {
-      const builder = new ScriptBuilder();
-      builder.addDataUnchecked(new Uint8Array(C.MAX_SCRIPTS_SIZE - 3));
-      expect(() => builder.addData(data)).toThrow(expectedException);
-    }
-  );
+  ])('ExceedMaxScriptSize_ShouldThrowException %s', (_name, data, expectedException) => {
+    const builder = new ScriptBuilder();
+    builder.addDataUnchecked(new Uint8Array(C.MAX_SCRIPTS_SIZE - 3));
+    expect(() => builder.addData(data)).toThrow(expectedException);
+  });
 });

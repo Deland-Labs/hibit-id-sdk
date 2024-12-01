@@ -1,8 +1,21 @@
+import { Buffer } from 'buffer';
+
 /**
  * Class representing a ScriptPublicKey.
  */
 class ScriptPublicKey {
+  /**
+   * The version of the script.
+   * @type {number}
+   * @remarks This is a 16-bit unsigned integer.
+   */
   public version: number;
+
+  /**
+   * The script as a Uint8Array.
+   * @type {Uint8Array}
+   * @remarks This is a max length of 36 bytes.
+   */
   public script: Uint8Array;
 
   /**
@@ -38,10 +51,7 @@ class ScriptPublicKey {
    * @returns {string} The hex string representation.
    */
   toHex(): string {
-    const versionBytes = new Uint8Array([
-      this.version & 0xff,
-      (this.version >> 8) & 0xff
-    ]);
+    const versionBytes = new Uint8Array([this.version & 0xff, (this.version >> 8) & 0xff]);
     const combined = new Uint8Array([...versionBytes, ...this.script]);
     return Buffer.from(combined).toString('hex');
   }

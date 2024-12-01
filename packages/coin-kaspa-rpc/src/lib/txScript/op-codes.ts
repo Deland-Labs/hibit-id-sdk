@@ -1,4 +1,4 @@
-import { ScriptBuilderError } from './Errors.ts';
+import { ScriptBuilderError } from './error';
 
 /**
  * Class representing the opcodes used in the script.
@@ -275,9 +275,7 @@ class OpCodes {
  */
 function checkOpcodeRange(opcode: number): void {
   if (opcode < 0 || opcode > 255) {
-    throw new ScriptBuilderError(
-      `Opcode ${opcode} is out of range. Must be between 0 and 255.`
-    );
+    throw new ScriptBuilderError(`Opcode ${opcode} is out of range. Must be between 0 and 255.`);
   }
 }
 

@@ -1,2 +1,2 @@
-export type * from './types'
-export * from './krc20'
+export type * from './types';
+export * from './krc20';

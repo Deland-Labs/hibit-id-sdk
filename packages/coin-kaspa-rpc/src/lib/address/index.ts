@@ -1,5 +1,5 @@
-import { AddressPrefix, AddressPrefixHelper } from './Prefix';
-import { AddressVersion, AddressVersionHelper } from './Version';
+import { AddressPrefix, AddressPrefixHelper } from './prefix';
+import { AddressVersion, AddressVersionHelper } from './version';
 
 /**
  * Class representing a Kaspa Address.
@@ -7,7 +7,7 @@ import { AddressVersion, AddressVersionHelper } from './Version';
 class Address {
   public prefix: AddressPrefix;
   public version: AddressVersion;
-  public array: Uint8Array;
+  public payload: Uint8Array;
 
   /**
    * Create an Address.
@@ -15,11 +15,7 @@ class Address {
    * @param {AddressVersion} version - The address version.
    * @param {Uint8Array} payload - The address payload.
    */
-  constructor(
-    prefix: AddressPrefix,
-    version: AddressVersion,
-    payload: Uint8Array
-  ) {
+  constructor(prefix: AddressPrefix, version: AddressVersion, payload: Uint8Array) {
     if (!AddressPrefixHelper.isTest(prefix)) {
       if (payload.length !== AddressVersionHelper.publicKeyLen(version)) {
         throw new Error('Invalid payload length for the given version.');
@@ -28,7 +24,7 @@ class Address {
 
     this.prefix = prefix;
     this.version = version;
-    this.array = payload;
+    this.payload = payload;
   }
 
   /**
@@ -42,7 +38,7 @@ class Address {
       throw new Error('Invalid address format');
     }
 
-    return Address.decodePayload(AddressPrefixHelper.parse(parts[0]), parts[1]);
+    return this.decodePayload(AddressPrefixHelper.parse(parts[0]), parts[1]);
   }
 
   /**
@@ -52,7 +48,7 @@ class Address {
    */
   public static validate(addressStr: string): boolean {
     try {
-      Address.fromString(addressStr);
+      this.fromString(addressStr);
       return true;
     } catch {
       return false;
@@ -123,7 +119,7 @@ class Address {
     return (
       this.prefix === other.prefix &&
       this.version === other.version &&
-      this.array.every((value, index) => value === other.array[index])
+      this.payload.every((value, index) => value === other.payload[index])
     );
   }
 
@@ -132,22 +128,13 @@ class Address {
    * @returns {string} The encoded payload string.
    */
   private encodePayload(): string {
-    const fiveBitPayload = Address.conv8to5(
-      new Uint8Array([this.version, ...this.array])
-    );
-    const fiveBitPrefix = Array.from(this.prefix).map(
-      (c) => c.charCodeAt(0) & 0x1f
-    );
+    const fiveBitPayload = Address.conv8to5(new Uint8Array([this.version, ...this.payload]));
+    const fiveBitPrefix = Array.from(this.prefix).map((c) => c.charCodeAt(0) & 0x1f);
     const checksum = Address.checksum(fiveBitPayload, fiveBitPrefix);
     // big endian
-    const checksumBytes = new Uint8Array(
-      new BigUint64Array([checksum]).buffer
-    ).reverse();
+    const checksumBytes = new Uint8Array(new BigUint64Array([checksum]).buffer).reverse();
 
-    const combined = new Uint8Array([
-      ...fiveBitPayload,
-      ...Address.conv8to5(new Uint8Array(checksumBytes.slice(3)))
-    ]);
+    const combined = new Uint8Array([...fiveBitPayload, ...Address.conv8to5(new Uint8Array(checksumBytes.slice(3)))]);
 
     const bytes = Array.from(combined).map((c) => Charset[c]);
     return String.fromCharCode(...bytes);
@@ -159,10 +146,7 @@ class Address {
    * @param {string} address - The address string.
    * @returns {Address} The Address instance.
    */
-  private static decodePayload(
-    prefix: AddressPrefix,
-    address: string
-  ): Address {
+  private static decodePayload(prefix: AddressPrefix, address: string): Address {
     const addressU5 = Array.from(address).map((c) => {
       const index = c.charCodeAt(0);
       if (index >= RevCharset.length) {
@@ -177,24 +161,15 @@ class Address {
     const payloadU5 = new Uint8Array(addressU5.slice(0, address.length - 8));
     const checksumU5 = new Uint8Array(addressU5.slice(address.length - 8));
     const fiveBitPrefix = Array.from(prefix).map((c) => c.charCodeAt(0) & 0x1f);
-    const checksumBytes = new Uint8Array([
-      0,
-      0,
-      0,
-      ...Address.conv5to8(new Uint8Array(checksumU5))
-    ]);
+    const checksumBytes = new Uint8Array([0, 0, 0, ...this.conv5to8(new Uint8Array(checksumU5))]);
     const checksum = new DataView(checksumBytes.buffer).getBigUint64(0, false);
 
-    if (Address.checksum(payloadU5, fiveBitPrefix) !== checksum) {
+    if (this.checksum(payloadU5, fiveBitPrefix) !== checksum) {
       throw new Error('Bad checksum');
     }
 
-    const payloadU8 = Address.conv5to8(payloadU5);
-    return new Address(
-      prefix,
-      payloadU8[0] as AddressVersion,
-      payloadU8.slice(1)
-    );
+    const payloadU8 = this.conv5to8(payloadU5);
+    return new Address(prefix, payloadU8[0] as AddressVersion, payloadU8.slice(1));
   }
 
   /**
@@ -224,9 +199,7 @@ class Address {
    * @returns {bigint} The checksum.
    */
   private static checksum(payload: Uint8Array, prefix: number[]): bigint {
-    return Address.polymod(
-      new Uint8Array([...prefix, 0, ...payload, ...new Uint8Array(8)])
-    );
+    return this.polymod(new Uint8Array([...prefix, 0, ...payload, ...new Uint8Array(8)]));
   }
 
   /**
@@ -277,25 +250,14 @@ class Address {
   }
 }
 
-const Charset = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l'
-  .split('')
-  .map((c) => c.charCodeAt(0));
+const Charset = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l'.split('').map((c) => c.charCodeAt(0));
 
 const RevCharset = [
-  100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-  100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-  100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-  100, 100, 100, 15, 100, 10, 17, 21, 20, 26, 30, 7, 5, 100, 100, 100, 100, 100,
-  100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-  100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-  100, 100, 100, 100, 29, 100, 24, 13, 25, 9, 8, 23, 100, 18, 22, 31, 27, 19,
-  100, 1, 0, 3, 16, 11, 28, 12, 14, 6, 4, 2
+  100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+  100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+  100, 100, 15, 100, 10, 17, 21, 20, 26, 30, 7, 5, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+  100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+  100, 100, 29, 100, 24, 13, 25, 9, 8, 23, 100, 18, 22, 31, 27, 19, 100, 1, 0, 3, 16, 11, 28, 12, 14, 6, 4, 2
 ];
 
-export {
-  Address,
-  AddressPrefix,
-  AddressPrefixHelper,
-  AddressVersion,
-  AddressVersionHelper
-};
+export { Address, AddressPrefix, AddressPrefixHelper, AddressVersion, AddressVersionHelper };

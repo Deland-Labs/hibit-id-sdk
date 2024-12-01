@@ -26,10 +26,12 @@
     "test": "vitest",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write ."
   },
   "dependencies": {
-    "@delandlabs/crypto-lib": "*"
+    "@delandlabs/crypto-lib": "*",
+    "buffer": "^6.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

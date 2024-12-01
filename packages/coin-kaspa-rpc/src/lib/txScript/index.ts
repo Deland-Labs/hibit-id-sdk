@@ -1,9 +1,6 @@
-export * as Constants from './Constants.ts';
-export { ScriptClass, ScriptClassHelper } from './ScriptClass.ts';
-export { ScriptBuilder } from './ScriptBuilder.ts';
-export { OpCodes, checkOpcodeRange } from './OpCodes.ts';
-export {
-  TxScriptError,
-  SerializationError,
-  ScriptBuilderError
-} from './Errors.ts';
+export * as Constants from './constants';
+export { ScriptClass, ScriptClassHelper } from './script-class';
+export { ScriptBuilder } from './script-builder';
+export * from './op-codes';
+export * from './standard';
+export * from './error';

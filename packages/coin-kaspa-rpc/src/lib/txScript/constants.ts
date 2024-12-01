@@ -1,4 +1,4 @@
-import { OpCodes } from './OpCodes.ts';
+import { OpCodes } from './op-codes';
 
 /**
  * Maximum version of the script public key.

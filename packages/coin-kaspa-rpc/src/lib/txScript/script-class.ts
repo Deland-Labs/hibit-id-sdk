@@ -1,7 +1,7 @@
 import { AddressVersion } from '../address';
-import { ScriptPublicKey } from './ScriptPublicKey.ts';
-import { OpCodes } from './OpCodes.ts';
-import { MAX_SCRIPT_PUBLIC_KEY_VERSION } from './Constants.ts';
+import { OpCodes } from './op-codes';
+import { MAX_SCRIPT_PUBLIC_KEY_VERSION } from './constants';
+import { ScriptPublicKey } from '../tx';
 
 /**
  * Enum representing different script classes.
@@ -149,6 +149,19 @@ class ScriptClassHelper {
         return ScriptClass.ScriptHash;
       default:
         throw new Error(`Invalid address version: ${version}`);
+    }
+  }
+
+  static versionOf(scriptClass: ScriptClass): number {
+    switch (scriptClass) {
+      case ScriptClass.NonStandard:
+        return 0;
+      case ScriptClass.PubKey:
+      case ScriptClass.PubKeyECDSA:
+      case ScriptClass.ScriptHash:
+        return MAX_SCRIPT_PUBLIC_KEY_VERSION;
+      default:
+        throw new Error(`Invalid script class: ${scriptClass}`);
     }
   }
 

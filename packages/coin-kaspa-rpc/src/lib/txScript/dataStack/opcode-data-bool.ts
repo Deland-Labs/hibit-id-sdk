@@ -14,10 +14,7 @@ class OpcodeDataBool {
     }
 
     // Negative 0 is also considered false
-    return (
-      (data[data.length - 1] & 0x7f) !== 0x0 ||
-      Array.from(data.slice(0, -1)).some((b) => b !== 0x0)
-    );
+    return (data[data.length - 1] & 0x7f) !== 0x0 || Array.from(data.slice(0, -1)).some((b) => b !== 0x0);
   }
 
   /**

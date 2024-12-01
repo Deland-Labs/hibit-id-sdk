@@ -1,16 +1,13 @@
-import { ScriptBuilderError } from './Errors';
-import { SizedEncodeInt } from './dataStack/SizedEncodeInt';
-import { checkOpcodeRange, OpCodes } from './OpCodes.ts';
-import * as C from './Constants.ts';
+import { ScriptBuilderError } from './error';
+import { SizedEncodeInt } from './dataStack/sized-encode-int';
+import { checkOpcodeRange, OpCodes } from './op-codes';
+import * as C from './constants';
 
 /**
  * ScriptBuilder provides a facility for building custom scripts. It allows
  * you to push opcodes, ints, and data while respecting canonical encoding.
  */
 class ScriptBuilder {
-  /**
-   * List to hold the script bytes.
-   */
   private _script: Uint8Array[];
 
   /**
@@ -220,16 +217,12 @@ class ScriptBuilder {
     } else if (dataLen <= 0xffff) {
       this._script.push(new Uint8Array([OpCodes.OpPushData2]));
       this._script.push(
-        ...Array.from(new Uint8Array(new Uint16Array([dataLen]).buffer)).map(
-          (b) => new Uint8Array([b])
-        )
+        ...Array.from(new Uint8Array(new Uint16Array([dataLen]).buffer)).map((b) => new Uint8Array([b]))
       );
     } else {
       this._script.push(new Uint8Array([OpCodes.OpPushData4]));
       this._script.push(
-        ...Array.from(new Uint8Array(new Uint32Array([dataLen]).buffer)).map(
-          (b) => new Uint8Array([b])
-        )
+        ...Array.from(new Uint8Array(new Uint32Array([dataLen]).buffer)).map((b) => new Uint8Array([b]))
       );
     }
 
@@ -244,11 +237,7 @@ class ScriptBuilder {
   private canonicalDataSize(data: Uint8Array): number {
     const dataLen = data.length;
 
-    if (
-      dataLen === 0 ||
-      (dataLen === 1 &&
-        (data[0] <= C.OP_SMALL_INT_MAX_VAL || data[0] === C.OP_1_NEGATE_VAL))
-    ) {
+    if (dataLen === 0 || (dataLen === 1 && (data[0] <= C.OP_SMALL_INT_MAX_VAL || data[0] === C.OP_1_NEGATE_VAL))) {
       return 1;
     }
 

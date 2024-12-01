@@ -1,5 +1,7 @@
-import { SizedEncodeInt } from './SizedEncodeInt.ts';
-import { TxScriptError } from '../Errors.ts';
+import { SizedEncodeInt } from './sized-encode-int';
+import { TxScriptError } from '../error';
+
+export { OpcodeDataBool } from './opcode-data-bool';
 
 /**
  * IDataStack defines the interface for a data stack.
@@ -29,20 +31,16 @@ export interface IDataStack {
 /**
  * DataStack provides a stack implementation for byte arrays.
  */
-export class DataStack extends Array<Uint8Array> implements IDataStack {
+class DataStack extends Array<Uint8Array> implements IDataStack {
   /**
    * Pops the specified number of items from the stack.
    */
   popItems(size: number): SizedEncodeInt[] {
     if (this.length < size) {
-      throw new TxScriptError(
-        `Invalid stack operation: ${size} items requested, but only ${this.length} available.`
-      );
+      throw new TxScriptError(`Invalid stack operation: ${size} items requested, but only ${this.length} available.`);
     }
 
-    const items = this.slice(this.length - size).map(
-      SizedEncodeInt.deserialize
-    );
+    const items = this.slice(this.length - size).map(SizedEncodeInt.deserialize);
     this.splice(this.length - size, size);
     return items;
   }
@@ -52,9 +50,7 @@ export class DataStack extends Array<Uint8Array> implements IDataStack {
    */
   peekItems(size: number): SizedEncodeInt[] {
     if (this.length < size) {
-      throw new TxScriptError(
-        `Invalid stack operation: ${size} items requested, but only ${this.length} available.`
-      );
+      throw new TxScriptError(`Invalid stack operation: ${size} items requested, but only ${this.length} available.`);
     }
 
     return this.slice(this.length - size).map(SizedEncodeInt.deserialize);
@@ -65,9 +61,7 @@ export class DataStack extends Array<Uint8Array> implements IDataStack {
    */
   popRaw(size: number): Uint8Array[] {
     if (this.length < size) {
-      throw new TxScriptError(
-        `Invalid stack operation: ${size} items requested, but only ${this.length} available.`
-      );
+      throw new TxScriptError(`Invalid stack operation: ${size} items requested, but only ${this.length} available.`);
     }
 
     const items = this.slice(this.length - size);
@@ -80,9 +74,7 @@ export class DataStack extends Array<Uint8Array> implements IDataStack {
    */
   peekRaw(size: number): Uint8Array[] {
     if (this.length < size) {
-      throw new TxScriptError(
-        `Invalid stack operation: ${size} items requested, but only ${this.length} available.`
-      );
+      throw new TxScriptError(`Invalid stack operation: ${size} items requested, but only ${this.length} available.`);
     }
 
     return this.slice(this.length - size);
@@ -100,9 +92,7 @@ export class DataStack extends Array<Uint8Array> implements IDataStack {
    */
   dropItems(size: number): void {
     if (this.length < size) {
-      throw new TxScriptError(
-        `Invalid stack operation: ${size} items requested, but only ${this.length} available.`
-      );
+      throw new TxScriptError(`Invalid stack operation: ${size} items requested, but only ${this.length} available.`);
     }
 
     this.splice(this.length - size, size);
@@ -113,9 +103,7 @@ export class DataStack extends Array<Uint8Array> implements IDataStack {
    */
   dupItems(size: number): void {
     if (this.length < size) {
-      throw new TxScriptError(
-        `Invalid stack operation: ${size} items requested, but only ${this.length} available.`
-      );
+      throw new TxScriptError(`Invalid stack operation: ${size} items requested, but only ${this.length} available.`);
     }
 
     const items = this.slice(this.length - size);
@@ -163,11 +151,8 @@ export class DataStack extends Array<Uint8Array> implements IDataStack {
 
     const firstItems = this.slice(this.length - 2 * size, this.length - size);
     const secondItems = this.slice(this.length - size);
-    this.splice(
-      this.length - 2 * size,
-      2 * size,
-      ...secondItems,
-      ...firstItems
-    );
+    this.splice(this.length - 2 * size, 2 * size, ...secondItems, ...firstItems);
   }
 }
+
+export { DataStack };
