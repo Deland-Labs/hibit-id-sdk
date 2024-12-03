@@ -1,11 +1,66 @@
-import { SubnetworkId, SUBNETWORK_ID_COINBASE } from './';
-import { TransactionId, UtxoEntry, TransactionInput, TransactionOutput, TransactionMass } from './entities';
-import { TransactionHashing } from '../hashing';
+import { SubnetworkId, SUBNETWORK_ID_COINBASE } from '../consensus';
+import { TransactionId, UtxoEntry, TransactionInput, TransactionOutput, TransactionMass } from './model';
+import { TransactionHashing } from './hashing';
+
+/**
+ * Interface for verifiable transactions.
+ */
+export interface IVerifiableTransaction {
+  /**
+   * Gets the transaction.
+   * @returns The transaction.
+   */
+  tx(): Transaction;
+
+  /**
+   * Gets the populated input at the specified index.
+   * @param index - The index of the input.
+   * @returns A tuple containing the transaction input and UTXO entry.
+   */
+  populatedInput(index: number): [TransactionInput, UtxoEntry];
+
+  /**
+   * Gets all populated inputs.
+   * @returns An iterable of tuples containing the transaction inputs and UTXO entries.
+   */
+  populatedInputs(): Array<[TransactionInput, UtxoEntry]>;
+
+  /**
+   * Gets the inputs of the transaction.
+   * @returns The transaction inputs.
+   */
+  inputs(): TransactionInput[];
+
+  /**
+   * Gets the outputs of the transaction.
+   * @returns The transaction outputs.
+   */
+  outputs(): TransactionOutput[];
+
+  /**
+   * Checks if the transaction is a coinbase transaction.
+   * @returns True if the transaction is a coinbase transaction, otherwise false.
+   */
+  isCoinbase(): boolean;
+
+  /**
+   * Gets the ID of the transaction.
+   * @returns The transaction ID.
+   */
+  id(): TransactionId;
+
+  /**
+   * Gets the UTXO entry at the specified index.
+   * @param index - The index of the UTXO entry.
+   * @returns The UTXO entry, or undefined if not found.
+   */
+  utxo(index: number): UtxoEntry | undefined;
+}
 
 /**
  * Represents a transaction.
  */
-export class Transaction {
+class Transaction {
   /**
    * The version of the transaction.
    * @remarks This is a 16-bit unsigned integer.
@@ -117,57 +172,76 @@ export class Transaction {
   }
 }
 
-/**
- * Interface for verifiable transactions.
- */
-export interface IVerifiableTransaction {
-  /**
-   * Gets the transaction.
-   * @returns The transaction.
-   */
-  tx(): Transaction;
+class PopulatedTransaction implements IVerifiableTransaction {
+  private _tx: Transaction;
+  private _utxos: UtxoEntry[];
 
-  /**
-   * Gets the populated input at the specified index.
-   * @param index - The index of the input.
-   * @returns A tuple containing the transaction input and UTXO entry.
-   */
-  populatedInput(index: number): [TransactionInput, UtxoEntry];
+  constructor(tx: Transaction, utxos: UtxoEntry[]) {
+    this._tx = tx;
+    this._utxos = utxos;
+  }
 
-  /**
-   * Gets all populated inputs.
-   * @returns An iterable of tuples containing the transaction inputs and UTXO entries.
-   */
-  populatedInputs(): Iterable<[TransactionInput, UtxoEntry]>;
+  tx(): Transaction {
+    return this._tx;
+  }
 
-  /**
-   * Gets the inputs of the transaction.
-   * @returns The transaction inputs.
-   */
-  inputs(): TransactionInput[];
+  populatedInput(index: number): [TransactionInput, UtxoEntry] {
+    return [this._tx.inputs[index], this._utxos[index]];
+  }
 
-  /**
-   * Gets the outputs of the transaction.
-   * @returns The transaction outputs.
-   */
-  outputs(): TransactionOutput[];
+  populatedInputs(): Array<[TransactionInput, UtxoEntry]> {
+    return this._tx.inputs.map((input, index) => [input, this._utxos[index]]);
+  }
 
-  /**
-   * Checks if the transaction is a coinbase transaction.
-   * @returns True if the transaction is a coinbase transaction, otherwise false.
-   */
-  isCoinbase(): boolean;
+  inputs(): TransactionInput[] {
+    return this._tx.inputs;
+  }
 
-  /**
-   * Gets the ID of the transaction.
-   * @returns The transaction ID.
-   */
-  id(): TransactionId;
+  outputs(): TransactionOutput[] {
+    return this._tx.outputs;
+  }
 
-  /**
-   * Gets the UTXO entry at the specified index.
-   * @param index - The index of the UTXO entry.
-   * @returns The UTXO entry, or undefined if not found.
-   */
-  utxo(index: number): UtxoEntry | undefined;
+  isCoinbase(): boolean {
+    return this._tx.isCoinbase();
+  }
+
+  id(): TransactionId {
+    return this._tx.id;
+  }
+
+  utxo(index: number): UtxoEntry | undefined {
+    return this._utxos[index];
+  }
 }
+
+/**
+ * Represents a validated transaction with populated UTXO entry data and a calculated fee.
+ */
+class ValidatedTransaction {
+  tx: Transaction;
+  entries: UtxoEntry[];
+  calculatedFee: number;
+
+  constructor(tx: Transaction, entries: UtxoEntry[], calculatedFee: number) {
+    this.tx = tx;
+    this.entries = entries;
+    this.calculatedFee = calculatedFee;
+  }
+
+  static new(populatedTx: PopulatedTransaction, calculatedFee: number): ValidatedTransaction {
+    return new ValidatedTransaction(
+      populatedTx.tx(),
+      Array.from(populatedTx.populatedInputs(), ([, entry]) => entry),
+      calculatedFee
+    );
+  }
+
+  static newCoinbase(tx: Transaction): ValidatedTransaction {
+    if (!tx.isCoinbase()) {
+      throw new Error('Transaction is not a coinbase transaction');
+    }
+    return new ValidatedTransaction(tx, [], 0);
+  }
+}
+
+export { Transaction, PopulatedTransaction, ValidatedTransaction };

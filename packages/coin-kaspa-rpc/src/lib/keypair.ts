@@ -1,8 +1,8 @@
 import { base, signUtil } from '@delandlabs/crypto-lib';
 import { Address, AddressVersion } from './address';
-import { NetworkType, NetworkTypeHelper } from './network';
+import { NetworkType, NetworkTypeHelper } from 'src/lib/consensus/network.ts';
 import { randomBytes } from '@delandlabs/crypto-lib/dist/base';
-import { Blake2bHashKey } from './hashing';
+import { Blake2bHashKey } from './tx/hashing';
 
 /**
  * Represents a keypair with methods for address generation and message signing.

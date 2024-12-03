@@ -1,4 +1,4 @@
-import { NetworkType } from '../network';
+import { NetworkType } from 'src/lib/consensus/network.ts';
 
 /**
  * Enum representing different address prefixes for various network types.
