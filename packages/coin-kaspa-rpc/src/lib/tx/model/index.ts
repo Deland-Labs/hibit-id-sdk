@@ -4,6 +4,7 @@ export { TransactionOutpoint } from './tx-outpoint';
 export { UtxoEntry } from './utxo-entry';
 export { TransactionInput } from './tx-input';
 export { TransactionOutput } from './tx-output';
+export * from './fees';
 export * from './client';
 
 /**
