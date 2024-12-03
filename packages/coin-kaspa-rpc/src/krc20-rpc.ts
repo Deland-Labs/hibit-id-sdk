@@ -1,7 +1,7 @@
 import { HttpRequest } from "./http-request";
 import { GetKrc20AddressTokenListResponse, GetKrc20BalanceResponse, GetKrc20TokenInfoResponse, KaspaNetwork } from "./types";
 
-export class Krc20RPC {
+export class Krc20RpcClient {
   public readonly network: KaspaNetwork
   private endpoint: string
   private httpRequest: HttpRequest
@@ -10,13 +10,16 @@ export class Krc20RPC {
     this.network = network
     switch (network) {
       case 'mainnet':
-        this.endpoint = import.meta.env.VITE_KASPA_MAINNET_ENDPOINT
+        this.endpoint = import.meta.env.VITE_KASPLEX_MAINNET_ENDPOINT
         break
       case 'testnet-10':
-        this.endpoint = import.meta.env.VITE_KASPA_TESTNET_10_ENDPOINT
+        this.endpoint = import.meta.env.VITE_KASPLEX_TESTNET_10_ENDPOINT
         break
       case 'testnet-11':
-        this.endpoint = import.meta.env.VITE_KASPA_TESTNET_11_ENDPOINT
+        this.endpoint = import.meta.env.VITE_KASPLEX_TESTNET_11_ENDPOINT
+        break
+      default:  // default to testnet 10
+        this.endpoint = import.meta.env.VITE_KASPLEX_TESTNET_10_ENDPOINT
         break
     }
     this.httpRequest = new HttpRequest(this.endpoint)
