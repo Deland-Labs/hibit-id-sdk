@@ -4,8 +4,10 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "run-s clean build:main",
-    "build:main": "tsc -p tsconfig.json",
+    "build:esm": "run-s clean tsc:esm",
+    "build:common": "run-s clean tsc:common",
+    "tsc:esm": "tsc -p tsconfig-esm.json",
+    "tsc:common": "tsc -p tsconfig.json",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "test": "jest"
   },

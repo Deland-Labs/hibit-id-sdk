@@ -9,6 +9,8 @@
     "test:watch:wallet": "turbo run test:watch --filter=@delandlabs/hibit-id-wallet",
     "dev:sdk": "turbo run dev --filter=@delandlabs/hibit-id-sdk",
     "build:sdk": "turbo run @delandlabs/hibit-id-sdk#build",
+    "test:kaspa-rpc": "turbo run @delandlabs/coin-kaspa-rpc#test",
+    "build:kaspa-rpc": "turbo run @delandlabs/coin-kaspa-rpc#build",
     "prepare": "husky install"
   },
   "workspaces": [
