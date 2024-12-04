@@ -1,5 +1,5 @@
 import { Chain, ChainId } from '../basicTypes';
-import { Ethereum, EthereumAvalanche, EthereumAvalancheFuji, EthereumBase, EthereumBaseSepolia, EthereumBsc, EthereumBscTestnet, EthereumScroll, EthereumScrollSepolia, EthereumSepolia, EthereumBitlayer, EthereumBitlayerTestnet, Ton, TonTestnet, Dfinity, EthereumSwan, EthereumSwanTestnet } from './chain-list';
+import { Ethereum, EthereumAvalanche, EthereumAvalancheFuji, EthereumBase, EthereumBaseSepolia, EthereumBsc, EthereumBscTestnet, EthereumScroll, EthereumScrollSepolia, EthereumSepolia, EthereumBitlayer, EthereumBitlayerTestnet, Ton, TonTestnet, Dfinity, EthereumSwan, EthereumSwanTestnet, Kaspa, KaspaTestnet } from './chain-list';
 import { ChainInfo } from '../basicTypes';
 import { RUNTIME_SUPPORTED_CHAIN_IDS } from '../runtime';
 import hibitIdSession from '../../stores/session';
@@ -20,6 +20,7 @@ const SupportedChainsForMainnet = [
   Ton,
   // Tron,
   Dfinity,
+  Kaspa,
 ];
 const SupportedChainsForTestnet = [
   EthereumSepolia,
@@ -33,6 +34,7 @@ const SupportedChainsForTestnet = [
   // SolanaTestnet,
   TonTestnet,
   // TronNile,
+  KaspaTestnet,
 ];
 if (HIBIT_ENV !== HibitEnv.PROD) {
   SupportedChainsForTestnet.push(Dfinity)

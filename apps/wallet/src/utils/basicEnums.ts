@@ -23,7 +23,8 @@ export enum WalletSignatureSchema {
   TronEcdsa = '0x3ea',
   TonEddsaOpenMask = '0x7d0',
   SolanaEddsa = '0x7da',
-  IcpEddsa = '0x7e4'
+  IcpEddsa = '0x7e4',
+  KaspaSchnorr = '0xbc2',
 }
 
 // TODO: Add support for other ecosystems
@@ -33,5 +34,6 @@ export enum Ecosystem {
   Solana = 'Solana',
   Tron = 'Tron',
   Ton = 'Ton',
-  IC = 'Internet Computer'
+  IC = 'Internet Computer',
+  Kaspa = 'Kaspa',
 }

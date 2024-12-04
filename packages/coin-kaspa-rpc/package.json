@@ -8,7 +8,7 @@
   ],
   "main": "./dist/coin-kaspa-rpc.umd.cjs",
   "module": "./dist/coin-kaspa-rpc.js",
-  "types": "dist/lib/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": {

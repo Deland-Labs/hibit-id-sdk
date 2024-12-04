@@ -136,19 +136,18 @@ export class TransactionType {
 
 export class Chain {
   value: BigNumber;
-  name: string
 
-  constructor(value: BigNumber, name = '') {
+  constructor(value: BigNumber) {
     this.value = value;
-    this.name = name;
   }
 
-  static Bitcoin = new Chain(new BigNumber(0), 'Bitcoin');
-  static Ethereum = new Chain(new BigNumber(60), 'EVM');
-  static Solana = new Chain(new BigNumber(501), 'Solana');
-  static Dfinity = new Chain(new BigNumber(223), 'InternetComputer');
-  static Ton = new Chain(new BigNumber(607), 'Ton');
-  static Tron = new Chain(new BigNumber(195), 'Tron');
+  static Bitcoin = new Chain(new BigNumber(0));
+  static Ethereum = new Chain(new BigNumber(60));
+  static Solana = new Chain(new BigNumber(501));
+  static Dfinity = new Chain(new BigNumber(223));
+  static Ton = new Chain(new BigNumber(607));
+  static Tron = new Chain(new BigNumber(195));
+  static Kaspa = new Chain(new BigNumber(111111));
 
   static fromString(value: string): Chain | null {
     if (!value) {
@@ -208,6 +207,9 @@ export class ChainNetwork {
   static TronNileTestNet = new ChainNetwork(new BigNumber(0xcd8690dc));
 
   static DfinityMainNet = new ChainNetwork(new BigNumber(1));
+
+  static KaspaMainNet = new ChainNetwork(new BigNumber(0));
+  static KaspaTestNet = new ChainNetwork(new BigNumber(1));
 
   static fromString(value: string): ChainNetwork | null {
     if (!value) {
@@ -330,6 +332,7 @@ export class ChainAssetType {
   static SPL = new ChainAssetType(new BigNumber(8));
   static TRC20 = new ChainAssetType(new BigNumber(9));
   static Jetton = new ChainAssetType(new BigNumber(10));
+  static KRC20 = new ChainAssetType(new BigNumber(11));
 
   static fromString(value: string): ChainAssetType | null {
     if (!value) {
