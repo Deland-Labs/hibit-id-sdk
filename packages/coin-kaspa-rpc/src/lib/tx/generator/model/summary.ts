@@ -1,5 +1,5 @@
-import { TransactionId } from 'src/lib/tx';
-import { validateU64 } from 'src/lib/validator';
+import { TransactionId } from 'src/lib/tx/index.ts';
+import { validateU64 } from 'src/lib/validator.ts';
 import { NetworkId } from 'src/lib/consensus';
 
 class GeneratorSummary {

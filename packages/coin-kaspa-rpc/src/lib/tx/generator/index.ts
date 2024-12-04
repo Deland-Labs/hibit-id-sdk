@@ -1,2 +1,2 @@
-export { GeneratorSettings } from './settings';
-export { GeneratorSummary } from './summary';
+export { GeneratorSummary, GeneratorSettings } from './model';
+export { Generator } from './genrator';

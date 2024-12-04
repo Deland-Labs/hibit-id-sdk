@@ -4,4 +4,5 @@ export * from './mass';
 export * from './error';
 export * from './tx';
 export * from './constants';
+export * from './generator';
 export type { IVerifiableTransaction } from './tx';
