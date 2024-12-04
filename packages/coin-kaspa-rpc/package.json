@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "long": "^5.2.3",
+    "nice-grpc-web": "^3.3.5",
     "protobufjs": "^7.4.0",
     "websocket-heartbeat-js": "^1.1.3"
   }

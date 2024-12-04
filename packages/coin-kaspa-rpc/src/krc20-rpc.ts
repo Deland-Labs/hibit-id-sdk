@@ -18,9 +18,6 @@ export class Krc20RpcClient {
       case 'testnet-11':
         this.endpoint = import.meta.env.VITE_KASPLEX_TESTNET_11_ENDPOINT
         break
-      default:  // default to testnet 10
-        this.endpoint = import.meta.env.VITE_KASPLEX_TESTNET_10_ENDPOINT
-        break
     }
     this.httpRequest = new HttpRequest(this.endpoint)
   }
