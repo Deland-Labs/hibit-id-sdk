@@ -1,13 +1,8 @@
 import { Transaction, TransactionId } from '../';
-import {
-  Blake2bHashKey,
-  Hash,
-  TransactionSerializer,
-  TX_ENCODING_EXCLUDE_SIGNATURE_SCRIPT,
-  TX_ENCODING_FULL
-} from './';
-
+import { Blake2bHashKey, Hash } from './';
+import { TransactionSerializer } from './tx-serializer';
 import { base } from '@delandlabs/crypto-lib';
+import { TX_ENCODING_EXCLUDE_SIGNATURE_SCRIPT, TX_ENCODING_FULL } from './data-writer';
 
 /**
  * Class providing hashing utilities for transactions.

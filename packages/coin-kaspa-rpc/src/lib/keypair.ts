@@ -2,7 +2,7 @@ import { base, signUtil } from '@delandlabs/crypto-lib';
 import { Address, AddressVersion } from './address';
 import { NetworkType, NetworkTypeHelper } from 'src/lib/consensus/network.ts';
 import { randomBytes } from '@delandlabs/crypto-lib/dist/base';
-import { Blake2bHashKey } from './tx/hashing';
+import { Blake2bHashKey } from 'src/lib/tx';
 
 /**
  * Represents a keypair with methods for address generation and message signing.
@@ -44,6 +44,7 @@ class Keypair {
    * @returns The generated ECDSA address.
    * @throws If the public key is not available.
    */
+  //@ts-ignore
   public toAddressECDSA(network: NetworkType): Address {
     if (!this.publicKey) {
       throw new Error('Ecdsa public key is not available for ECDSA address generation');
@@ -52,6 +53,10 @@ class Keypair {
     return new Address(NetworkTypeHelper.toAddressPrefix(network), AddressVersion.PubKeyECDSA, payload);
   }
 
+  /**
+   * Generates a random Keypair instance.
+   * @returns A new Keypair instance with randomly generated private and public keys.
+   */
   public static random(): Keypair {
     const privateKeyBytes = randomBytes(32);
     const privateKeyHex = base.toHex(privateKeyBytes);
@@ -96,6 +101,15 @@ class Keypair {
    */
   public static fromXOnlyPublicKeyHex(xOnlyPublicKeyHex: string): Keypair {
     return new Keypair(undefined, undefined, xOnlyPublicKeyHex);
+  }
+
+  public sign(data: Uint8Array): Uint8Array {
+    if (!this.privateKey) {
+      throw new Error('Secret key is not available for signing');
+    }
+
+    if (data.length !== 32) throw new Error('Invalid data length');
+    return signUtil.schnorr.secp256k1.schnorr.sign(data, this.privateKey, undefined);
   }
 
   /**

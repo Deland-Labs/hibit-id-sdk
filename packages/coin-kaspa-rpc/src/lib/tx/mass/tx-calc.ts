@@ -1,6 +1,7 @@
-import { Transaction, HASH_SIZE, TransactionInput, TransactionOutput } from '../';
+import { Transaction, TransactionInput, TransactionOutput } from '../';
 import { MAX_SOMPI, MINIMUM_RELAY_TRANSACTION_FEE, SCRIPT_VECTOR_SIZE } from '../constants';
 import { SUBNETWORK_ID_SIZE } from 'src/lib/consensus';
+import { HASH_SIZE } from 'src/lib/tx/hashing';
 
 /**
  * Class responsible for transaction-related calculations.

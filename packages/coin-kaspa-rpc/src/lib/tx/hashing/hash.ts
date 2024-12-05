@@ -126,4 +126,6 @@ class Hash {
   }
 }
 
-export { Hash, HASH_SIZE };
+const ZERO_HASH = new Hash(new Uint8Array(HASH_SIZE).fill(0));
+
+export { Hash, HASH_SIZE, ZERO_HASH };
