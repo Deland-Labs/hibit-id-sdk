@@ -1,45 +1,33 @@
 {
   "name": "@delandlabs/crypto-lib",
   "version": "1.0.0",
-  "type": "module",
-  "main": "./dist/index.umd.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "scripts": {
+    "build:esm": "run-s clean tsc:esm",
+    "build:common": "run-s clean tsc:common",
+    "tsc:esm": "tsc -p tsconfig-esm.json",
+    "tsc:common": "tsc -p tsconfig.json",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "test": "jest"
+  },
   "files": [
     "dist"
   ],
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/lib/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/lib/index.d.ts",
-        "default": "./dist/index.umd.cjs"
-      }
-    }
-  },
-  "scripts": {
-    "dev": "vite",
-    "test": "vitest",
-    "build": "vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
-  },
   "devDependencies": {
     "@types/bn.js": "^4.11.6",
     "@types/create-hash": "1.2.2",
     "@types/create-hmac": "1.1.0",
+    "@types/jest": "^27.5.1",
     "@types/node": "^12.20.52",
     "@types/randombytes": "2.0.0",
+    "jest": "^27.5.1",
     "npm-run-all": "^4.1.5",
+    "prettier": "2.6.2",
     "rimraf": "^3.0.2",
+    "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0",
-    "@rollup/plugin-typescript": "^12.1.1",
-    "typescript": "~5.6.2",
-    "vite": "^6.0.1",
-    "vitest": "^2.1.6"
+    "typescript": "^4.6.2"
   },
   "dependencies": {
     "@noble/ed25519": "^1.7.3",
