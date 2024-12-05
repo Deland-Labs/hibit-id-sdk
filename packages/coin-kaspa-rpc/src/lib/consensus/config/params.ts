@@ -261,7 +261,7 @@ const MAINNET_PARAMS = new Params(
     'dnsseeder-kaspa-mainnet.x-con.at',
     'ns-mainnet.kaspa-dnsseeder.net'
   ],
-  NetworkId.new(NetworkType.Mainnet),
+  NetworkId.from(NetworkType.Mainnet),
   Consensus.LEGACY_DEFAULT_GHOSTDAG_K,
   BigInt(Consensus.LEGACY_TIMESTAMP_DEVIATION_TOLERANCE),
   BigInt(Consensus.NEW_TIMESTAMP_DEVIATION_TOLERANCE),
@@ -395,7 +395,7 @@ const TESTNET11_PARAMS = new Params(
 
 const SIMNET_PARAMS = new Params(
   [],
-  NetworkId.new(NetworkType.Simnet),
+  NetworkId.from(NetworkType.Simnet),
   Testnet11Bps.ghostDagK(),
   BigInt(Consensus.LEGACY_TIMESTAMP_DEVIATION_TOLERANCE),
   BigInt(Consensus.NEW_TIMESTAMP_DEVIATION_TOLERANCE),
@@ -438,7 +438,7 @@ const SIMNET_PARAMS = new Params(
 
 const DEVNET_PARAMS = new Params(
   [],
-  NetworkId.new(NetworkType.Devnet),
+  NetworkId.from(NetworkType.Devnet),
   Consensus.LEGACY_DEFAULT_GHOSTDAG_K,
   BigInt(Consensus.LEGACY_TIMESTAMP_DEVIATION_TOLERANCE),
   BigInt(Consensus.NEW_TIMESTAMP_DEVIATION_TOLERANCE),

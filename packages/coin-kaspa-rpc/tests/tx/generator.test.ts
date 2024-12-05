@@ -22,24 +22,26 @@ import { base } from '@delandlabs/crypto-lib';
 const SENDER_ADDR = 'kaspatest:qzzzvv57j68mcv3rsd2reshhtv4rcw4xc8snhenp2k4wu4l30jfjxlgfr8qcz';
 const RECEIVER_ADDR = 'kaspatest:qrjcg7hsgjapumpn8egyu6544qzdqs2lssas4nfwewl55lnenr5pyzd7cmyx6';
 const TESTNET_10 = new NetworkId(NetworkType.Testnet, 10);
-const PRIORITY_FEES = new Fees(kaspaToSompi(0.2));
+const PRIORITY_FEES = new Fees(kaspaToSompi(0.02));
 
 describe('Generator', () => {
-  const utxos = parseUtxosFromFile('tests/tx/data/utxos.json');
   const sentKas10 = new SendKasPramas(SENDER_ADDR, kaspaToSompi(10), RECEIVER_ADDR);
-  // const send1Kas10K = new SendKasPramas(SENDER_ADDR, kaspaToSompi(10000), RECEIVER_ADDR);
+  const send1Kas10K = new SendKasPramas(SENDER_ADDR, kaspaToSompi(10000), RECEIVER_ADDR);
   // const sendKas1M = new SendKasPramas(SENDER_ADDR, kaspaToSompi(1000000), RECEIVER_ADDR);
   const testCases = [
-    { name: '10 KAS', params: sentKas10 }
-    // { name: '10K KAS', params: send1Kas10K },
+    // { name: '10 KAS', params: sentKas10 },
+    { name: '10K KAS', params: send1Kas10K }
     // { name: '1M KAS', params: sendKas1M }
   ];
 
   const resultSendKas10 = parseTxsFromFile('tests/tx/data/send10kas.json');
-  // const resultSend1Kas10K = parseTxsFromFile('tests/tx/data/send1kas10k.json');
-  // const resultSendKas1M = parseTxsFromFile('tests/tx/data/send1m.json');
+  const resultSendKas10K = parseTxsFromFile('tests/tx/data/sendkas10k.json');
+  //const resultSendKas1M = parseTxsFromFile('tests/tx/data/sendkas1m.json');
 
-  const testReuslts = [resultSendKas10];
+  const testReuslts = [
+    //resultSendKas10,
+    resultSendKas10K
+  ];
 
   for (let i = 0; i < testCases.length; i++) {
     it(`should generate a transaction for ${testCases[i].name}`, () => {
@@ -47,6 +49,7 @@ describe('Generator', () => {
         // ignore all test when data files are not exist
         return;
       }
+      const utxos = parseUtxosFromFile('tests/tx/data/utxos.json');
       const generator = new Generator(testCases[i].params.toGeneratorSettings(utxos));
       const txs = new Array<SignableTransaction>();
 
@@ -129,6 +132,9 @@ function parseTxsFromFile(file: string): SignableTransaction[] {
       BigInt(tx.transaction.gas),
       base.fromHex(tx.transaction.payload)
     );
+
+    const mass = BigInt(tx.mass | 0n);
+    transaction.setMass(mass);
 
     const entries = tx.transaction.inputs.map((input: any) => {
       const utxo = input.utxo;

@@ -1,5 +1,7 @@
 import { AddressPrefix, AddressPrefixHelper } from './prefix';
 import { AddressVersion, AddressVersionHelper } from './version';
+// import { ScriptPublicKey } from '../consensus';
+// import { extractScriptPubKeyAddress } from '../tx-script/standard';
 
 /**
  * Class representing a Kaspa Address.
