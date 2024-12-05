@@ -7,11 +7,11 @@ import { TransactionSigningHashing } from './tx-sig';
 
 /**
  * Sign a transaction using Schnorr.
- * @param {SignableTransaction} mutableTx - The transaction to be signed.
+ * @param {SignableTransaction} signableTx - The transaction to be signed.
  * @param {string[]} privHexKeys - The private keys to sign the transaction with.
  * @returns {SignedTransaction} The signed transaction.
  */
-export function signWithMultipleV2(mutableTx: SignableTransaction, privHexKeys: string[]): SignedTransaction {
+export function signWithMultipleV2(signableTx: SignableTransaction, privHexKeys: string[]): SignedTransaction {
   const map = new Map<Uint8Array, Keypair>();
   for (const privkey of privHexKeys) {
     const keypair = Keypair.fromPrivateKeyHex(privkey);
@@ -20,18 +20,18 @@ export function signWithMultipleV2(mutableTx: SignableTransaction, privHexKeys: 
   }
 
   let additionalSignaturesRequired = false;
-  for (let i = 0; i < mutableTx.tx.inputs.length; i++) {
-    const script = mutableTx.entries[i].scriptPublicKey.script;
+  for (let i = 0; i < signableTx.tx.inputs.length; i++) {
+    const script = signableTx.entries[i].scriptPublicKey.script;
     const schnorrKey = map.get(script);
     if (schnorrKey) {
-      const sigHash = TransactionSigningHashing.calcSchnorrSignatureHash(mutableTx, i, SIG_HASH_ALL);
+      const sigHash = TransactionSigningHashing.calcSchnorrSignatureHash(signableTx, i, SIG_HASH_ALL);
       const sig = schnorrKey.sign(sigHash.toBytes());
-      mutableTx.tx.inputs[i].signatureScript = new Uint8Array([65, ...sig, SIG_HASH_ALL.value]);
+      signableTx.tx.inputs[i].signatureScript = new Uint8Array([65, ...sig, SIG_HASH_ALL.value]);
     } else {
       additionalSignaturesRequired = true;
     }
   }
 
   const signedTxType = additionalSignaturesRequired ? SignedType.Partially : SignedType.Fully;
-  return new SignedTransaction(signedTxType, mutableTx);
+  return new SignedTransaction(signedTxType, signableTx);
 }

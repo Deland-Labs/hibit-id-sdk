@@ -1,4 +1,4 @@
-export class SigHashType {
+class SigHashType {
   readonly value: number;
 
   constructor(value: number) {
@@ -48,4 +48,4 @@ const ALLOWED_SIG_HASH_TYPES_VALUES = [
   SIG_HASH_NONE.value | SIG_HASH_ANY_ONE_CAN_PAY.value,
   SIG_HASH_SINGLE.value | SIG_HASH_ANY_ONE_CAN_PAY.value
 ];
-export { SIG_HASH_ALL, SIG_HASH_NONE, SIG_HASH_SINGLE, SIG_HASH_ANY_ONE_CAN_PAY, SIG_HASH_MASK };
+export { SigHashType, SIG_HASH_ALL, SIG_HASH_NONE, SIG_HASH_SINGLE, SIG_HASH_ANY_ONE_CAN_PAY, SIG_HASH_MASK };

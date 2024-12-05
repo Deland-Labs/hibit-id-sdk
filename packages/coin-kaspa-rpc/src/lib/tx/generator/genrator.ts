@@ -235,7 +235,7 @@ class Generator {
         context.finalTransactionId = tx.id;
         context.numberOfTransactions += 1;
 
-        return new SignableTransaction(tx, utxoEntryReferences);
+        return new SignableTransaction(tx, utxoEntryReferences, transactionMass, transactionFees);
       default:
         const {
           inputs: batchInputs,
@@ -278,7 +278,7 @@ class Generator {
           context.stage = new Stage(context.stage);
         }
 
-        return new SignableTransaction(batchTx, batchUtxoEntryReferences);
+        return new SignableTransaction(batchTx, batchUtxoEntryReferences, batchTransactionMass, batchTransactionFees);
     }
   }
 

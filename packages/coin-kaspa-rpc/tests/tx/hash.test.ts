@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Hash } from '../../../src/lib';
+import { Hash } from '../../src/lib';
 
 describe('Hash Basics', () => {
   it('should create a hash from a string and convert it back to a string', () => {

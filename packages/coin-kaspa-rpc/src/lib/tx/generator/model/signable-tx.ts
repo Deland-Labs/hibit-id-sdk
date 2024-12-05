@@ -7,19 +7,25 @@ import { TransactionInput, UtxoEntry } from 'src/lib/tx/model';
 class SignableTransaction {
   tx: Transaction;
   entries: UtxoEntry[];
+  mass: bigint;
+  fees: bigint;
 
   /**
    * Creates an instance of SignableTransaction.
    * @param {Transaction} tx - The transaction to be signed.
    * @param {UtxoEntry[]} entries - The UTXO entries associated with the transaction.
+   * @param {bigint} mass - The mass of the transaction.
+   * @param {bigint} fees - The fees of the transaction.
    */
-  constructor(tx: Transaction, entries: UtxoEntry[]) {
-    if (tx.inputs.length !== 0 && entries.length) {
+  constructor(tx: Transaction, entries: UtxoEntry[], mass: bigint = 0n, fees: bigint = 0n) {
+    if (tx.inputs.length !== entries.length) {
       throw new Error('The transaction inputs length not match entries length');
     }
 
     this.tx = tx;
     this.entries = entries;
+    this.mass = mass;
+    this.fees = fees;
   }
 
   /**

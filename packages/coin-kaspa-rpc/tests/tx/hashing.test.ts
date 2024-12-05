@@ -10,7 +10,7 @@ import {
   SUBNETWORK_ID_COINBASE,
   SUBNETWORK_ID_REGISTRY,
   TransactionHashing
-} from '../../../src/lib';
+} from '../../src/lib';
 
 describe('Transaction Hashing', () => {
   interface Test {
