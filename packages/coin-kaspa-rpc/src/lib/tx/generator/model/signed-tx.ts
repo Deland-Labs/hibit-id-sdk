@@ -1,4 +1,5 @@
 import { SignableTransaction } from './signable-tx';
+import { Transaction } from 'src/lib/tx/tx.ts';
 
 /**
  * Enum representing the signed state of a transaction.
@@ -10,11 +11,11 @@ enum SignedType {
 
 class SignedTransaction {
   type: SignedType;
-  transaction: SignableTransaction;
+  transaction: Transaction;
 
   constructor(type: SignedType, transaction: SignableTransaction) {
     this.type = type;
-    this.transaction = transaction;
+    this.transaction = transaction.tx;
   }
 }
 

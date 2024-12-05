@@ -1,7 +1,7 @@
-import { Address } from 'src/lib/address';
+import { Address } from '../../../address';
 import { TransactionId, TransactionOutpoint } from '../';
 import { ClientUtxoEntry } from './utxo-entry';
-import { ScriptPublicKey } from 'src/lib/consensus';
+import { ScriptPublicKey } from '../../../consensus';
 
 /**
  * Represents a reference to a UTXO entry.

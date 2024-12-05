@@ -1,5 +1,5 @@
-import { TransactionId, UtxoEntryReference } from 'src/lib/tx/model';
-import { Stage } from 'src/lib/tx/generator/model/stage.ts';
+import { TransactionId, UtxoEntryReference } from '../../../tx/model';
+import { Stage } from './stage';
 
 /**
  * Mutable `Generator` state used to track the current transaction generation process.

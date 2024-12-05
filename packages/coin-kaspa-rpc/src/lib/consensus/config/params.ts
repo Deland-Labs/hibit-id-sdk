@@ -1,4 +1,4 @@
-import { validateU8, validateU64, validateU256 } from 'src/lib/validator';
+import { validateU8, validateU64, validateU256 } from '../../validator';
 import { ForkActivation } from './fork-activation';
 import { NetworkId, NetworkType } from '../network';
 import { Consensus, DEFAULT_REINDEX_DEPTH, KType } from './constants';

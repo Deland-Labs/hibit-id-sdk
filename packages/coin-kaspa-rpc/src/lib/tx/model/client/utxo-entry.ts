@@ -1,6 +1,6 @@
-import { Address } from 'src/lib/address';
+import { Address } from '../../../address';
 import { TransactionOutpoint, UtxoEntry } from '../';
-import { ScriptPublicKey } from 'src/lib/consensus';
+import { ScriptPublicKey } from '../../../consensus';
 
 /**
  * Represents a client-side UTXO (Unspent Transaction Output) entry.
@@ -29,6 +29,10 @@ class ClientUtxoEntry extends UtxoEntry {
     super(amount, scriptPublicKey, blockDaaScore, isCoinbase);
     this.address = address;
     this.outpoint = outpoint;
+  }
+
+  toUtxoEntry(): UtxoEntry {
+    return new UtxoEntry(this.amount, this.scriptPublicKey, this.blockDaaScore, this.isCoinbase);
   }
 }
 

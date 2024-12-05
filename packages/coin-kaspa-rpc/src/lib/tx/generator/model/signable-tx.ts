@@ -1,31 +1,59 @@
-import { Transaction } from 'src/lib/tx/tx.ts';
-import { TransactionInput, UtxoEntry } from 'src/lib/tx/model';
+import { DataKind } from './data-kind';
+import { TransactionId, TransactionInput, UtxoEntry } from '../../../tx/model';
+import { Transaction } from '../../../tx/tx';
 
 /**
  * Represents a transaction that can be signed.
  */
 class SignableTransaction {
+  id: TransactionId;
   tx: Transaction;
   entries: UtxoEntry[];
+  paymentAmount: bigint;
+  changeAmount: bigint;
+  aggregateInputAmount: bigint;
+  aggregateOutputAmount: bigint;
+  minimumSignatures: number;
   mass: bigint;
-  fees: bigint;
+  feeAmount: bigint;
+  kind: DataKind;
 
   /**
    * Creates an instance of SignableTransaction.
    * @param {Transaction} tx - The transaction to be signed.
    * @param {UtxoEntry[]} entries - The UTXO entries associated with the transaction.
+   * @param {bigint} paymentAmount - The payment amount of the transaction.
+   * @param {bigint} changeAmount - The change amount of the transaction.
+   * @param {bigint} aggregateInputAmount - The aggregate input amount of the transaction.
+   * @param {bigint} aggregateOutputAmount - The aggregate output amount of the transaction.
+   * @param {number} minimumSignatures - The minimum number of signatures required.
    * @param {bigint} mass - The mass of the transaction.
-   * @param {bigint} fees - The fees of the transaction.
+   * @param {bigint} feeAmount - The fee amount of the transaction.
+   * @param {DataKind} kind - The kind of the transaction.
    */
-  constructor(tx: Transaction, entries: UtxoEntry[], mass: bigint = 0n, fees: bigint = 0n) {
-    if (tx.inputs.length !== entries.length) {
-      throw new Error('The transaction inputs length not match entries length');
-    }
-
+  constructor(
+    tx: Transaction,
+    entries: UtxoEntry[],
+    paymentAmount: bigint = 0n,
+    changeAmount: bigint = 0n,
+    aggregateInputAmount: bigint = 0n,
+    aggregateOutputAmount: bigint = 0n,
+    minimumSignatures: number = 0,
+    mass: bigint = 0n,
+    feeAmount: bigint = 0n,
+    kind: DataKind = DataKind.NoOp
+  ) {
+    this.id = tx.id;
     this.tx = tx;
     this.entries = entries;
+    this.paymentAmount = paymentAmount;
+    this.changeAmount = changeAmount;
+    this.aggregateInputAmount = aggregateInputAmount;
+    this.aggregateOutputAmount = aggregateOutputAmount;
+    this.minimumSignatures = minimumSignatures;
     this.mass = mass;
-    this.fees = fees;
+    this.feeAmount = feeAmount;
+    this.kind = kind;
   }
 
   /**

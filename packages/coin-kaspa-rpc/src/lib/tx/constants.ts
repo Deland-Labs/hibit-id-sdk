@@ -75,21 +75,21 @@ export const UNACCEPTED_DAA_SCORE: bigint = (1n << 64n) - 1n;
  * Size of the signature in bytes.
  * 1 byte for OP_DATA_65 + 64 bytes for the length of the signature + 1 byte for the signature hash type.
  */
-export const SIGNATURE_SIZE = 1n + 64n + 1n;
+export const SIGNATURE_SIZE: bigint = 1n + 64n + 1n;
 
 /**
  * Minimum relay transaction fee in sompi.
  * This is the minimum fee required for a transaction to be accepted into the mempool and relayed.
  */
-export const MINIMUM_RELAY_TRANSACTION_FEE = 1000n;
+export const MINIMUM_RELAY_TRANSACTION_FEE: bigint = 1000n;
 
 /**
  * Maximum standard transaction mass.
  * This is the maximum mass allowed for transactions that are considered standard and will be relayed and considered for mining.
  */
-export const MAXIMUM_STANDARD_TRANSACTION_MASS = 100_000n;
+export const MAXIMUM_STANDARD_TRANSACTION_MASS: bigint = 100_000n;
 
 /**
  * Size of the script vector in bytes.
  */
-export const SCRIPT_VECTOR_SIZE = 520;
+export const SCRIPT_VECTOR_SIZE: number = 520;

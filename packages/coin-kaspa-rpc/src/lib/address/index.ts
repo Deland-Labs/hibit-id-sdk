@@ -1,7 +1,5 @@
 import { AddressPrefix, AddressPrefixHelper } from './prefix';
 import { AddressVersion, AddressVersionHelper } from './version';
-import { ScriptPublicKey } from 'src/lib/consensus';
-import { extractScriptPubKeyAddress } from 'src/lib/tx-script';
 
 /**
  * Class representing a Kaspa Address.
@@ -43,9 +41,9 @@ class Address {
     return this.decodePayload(AddressPrefixHelper.parse(parts[0]), parts[1]);
   }
 
-  public static extractScriptPubKeyAddress(scriptPubKey: ScriptPublicKey, prefix: AddressPrefix): Address {
-    return extractScriptPubKeyAddress(scriptPubKey, prefix);
-  }
+  // public static extractScriptPubKeyAddress(scriptPubKey: ScriptPublicKey, prefix: AddressPrefix): Address {
+  //   return extractScriptPubKeyAddress(scriptPubKey, prefix);
+  // }
 
   /**
    * Validate an address string.
