@@ -1,7 +1,7 @@
 import { AddressVersion } from '../address';
 import { OpCodes } from './op-codes';
 import { MAX_SCRIPT_PUBLIC_KEY_VERSION } from './constants';
-import { ScriptPublicKey } from 'src/lib/tx';
+import { ScriptPublicKey } from '../consensus';
 
 /**
  * Enum representing different script classes.

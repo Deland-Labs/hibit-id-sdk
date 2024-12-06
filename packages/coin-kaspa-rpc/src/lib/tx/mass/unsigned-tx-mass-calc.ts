@@ -8,7 +8,7 @@ import {
 } from '../';
 import { StorageMassCalculator } from './storage-mass-calc';
 import { STANDARD_OUTPUT_SIZE_PLUS_INPUT_SIZE_3X, TransactionCalculator } from './tx-calc';
-import { Kip9Version, NetworkParams, Params } from 'src/lib/consensus';
+import { Kip9Version, NetworkParams, Params } from '../../consensus';
 
 /**
  * Class to calculate the mass of unsigned transactions.
