@@ -1,6 +1,7 @@
 import { KaspadWrpcClient } from "./kaspad-wrpc";
 import { Krc20RpcClient } from "./krc20-rpc";
 import { KaspaNetwork, Krc20TokenBalanceInfo, Krc20TokenDetailsWithHolders } from "./types";
+import { RpcFeeEstimate, RpcUtxosByAddressesEntry, SubmitTransactionRequestMessage } from "./compiled_proto/rpc";
 
 export class KaspaRpc {
   private krc20RpcClient: Krc20RpcClient
@@ -16,9 +17,17 @@ export class KaspaRpc {
     return String(balance)
   }
 
-  transfer = async (from: string, to: string, amount: string): Promise<string> => {
-    // TODO:
-    return ''
+  submitTransaction = async (input: SubmitTransactionRequestMessage): Promise<string> => {
+    const res = await this.kaspadWrpcClient.submitTransaction(input)
+    return res.transactionId
+  }
+
+  getFeeEstimate = async (): Promise<RpcFeeEstimate | null> => {
+    return await this.kaspadWrpcClient.getFeeEstimate()
+  }
+
+  getUtxosByAddress = async (address: string): Promise<RpcUtxosByAddressesEntry[]> => {
+    return await this.kaspadWrpcClient.getUtxosByAddress(address)
   }
 
   getKrc20TokenInfo = async (tick: string): Promise<Krc20TokenDetailsWithHolders | null> => {

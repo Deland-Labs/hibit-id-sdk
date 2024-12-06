@@ -1,2 +1,2 @@
-export { GeneratorSummary, GeneratorSettings } from './model';
+export { GeneratorSummary, GeneratorSettings, SignableTransaction } from './model';
 export { Generator } from './genrator';

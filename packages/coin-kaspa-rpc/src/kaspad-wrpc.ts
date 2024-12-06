@@ -1,4 +1,4 @@
-import { GetBalanceByAddressRequestMessage, GetBalanceByAddressResponseMessage } from './compiled_proto/rpc';
+import { GetBalanceByAddressRequestMessage, GetBalanceByAddressResponseMessage, GetFeeEstimateRequestMessage, GetFeeEstimateResponseMessage, GetUtxosByAddressesRequestMessage, GetUtxosByAddressesResponseMessage, RpcFeeEstimate, RpcUtxosByAddressesEntry, SubmitTransactionRequestMessage, SubmitTransactionResponseMessage } from './compiled_proto/rpc';
 import { KaspaNetwork, WrpcJsonRequest, WrpcJsonResponse } from './types';
 import WebsocketHeartbeatJs from 'websocket-heartbeat-js'
 
@@ -85,6 +85,30 @@ export class KaspadWrpcClient {
       { address }
     )
     return res.balance
+  }
+
+  getUtxosByAddress = async (address: string): Promise<RpcUtxosByAddressesEntry[]> => {
+    const res = await this.sendRequest<GetUtxosByAddressesRequestMessage, GetUtxosByAddressesResponseMessage>(
+      'getUtxosByAddresses',
+      { addresses: [address] }
+    )
+    return res.entries
+  }
+
+  getFeeEstimate = async (): Promise<RpcFeeEstimate | null> => {
+    const res = await this.sendRequest<GetFeeEstimateRequestMessage, GetFeeEstimateResponseMessage>(
+      'getFeeEstimate',
+      {}
+    )
+    return res.estimate ?? null
+  }
+
+  submitTransaction = async (input: SubmitTransactionRequestMessage): Promise<SubmitTransactionResponseMessage> => {
+    const res = await this.sendRequest<SubmitTransactionRequestMessage, SubmitTransactionResponseMessage>(
+      'submitTransaction',
+      input
+    )
+    return res
   }
 
   private buildRequest = <T>(method: string, params: T): WrpcJsonRequest<T> => {
