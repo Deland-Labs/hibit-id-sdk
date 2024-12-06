@@ -73,6 +73,9 @@ export class KaspaChainWallet extends BaseChainWallet {
       throw new Error('Kaspa: invalid asset chain');
     }
     const fee = await this.getEstimatedFee(toAddress, amount, assetInfo)
+    const utxos = await this.rpcClient.getUtxosByAddress(this.keyPair.toAddress(this.networkId.networkType).toString())
+    const utxoEntries = rpcUtxosToUtxoEntries(utxos)
+
     try {
       // native
       if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
@@ -86,7 +89,7 @@ export class KaspaChainWallet extends BaseChainWallet {
         )
         for (const tx of transactions) {
           const signedTx = signWithMultipleV2(tx, [this.keyPair.privateKey!])
-          const reqMessage = signedTransactionToSubmitTransactionMessage(signedTx)
+          const reqMessage = signedTransactionToSubmitTransactionMessage(signedTx, utxoEntries)
           await this.rpcClient.submitTransaction(reqMessage)
         }
         return summary.finalTransactionId.toString()
@@ -108,7 +111,7 @@ export class KaspaChainWallet extends BaseChainWallet {
         )
         for (const tx of transactions) {
           const signedTx = signWithMultipleV2(tx, [this.keyPair.privateKey!])
-          const reqMessage = signedTransactionToSubmitTransactionMessage(signedTx)
+          const reqMessage = signedTransactionToSubmitTransactionMessage(signedTx, utxoEntries)
           await this.rpcClient.submitTransaction(reqMessage)
         }
         return summary.finalTransactionId.toString()

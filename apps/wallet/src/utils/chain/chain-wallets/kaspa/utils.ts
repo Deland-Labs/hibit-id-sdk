@@ -37,37 +37,45 @@ export const kaspaNetworkToNetworkId = (network: KaspaNetwork): NetworkId => {
   return new NetworkId(isMainnet ? NetworkType.Mainnet : NetworkType.Testnet, isMainnet ? undefined : 10)
 }
 
-export const signedTransactionToSubmitTransactionMessage = (signedTransaction: SignedTransaction): SubmitTransactionRequestMessage => {
+export const signedTransactionToSubmitTransactionMessage = (signedTransaction: SignedTransaction, utxos: UtxoEntryReference[]): SubmitTransactionRequestMessage => {
   const tx = signedTransaction.transaction as Transaction
   return {
     transaction: {
+      // id: tx.id.toString(),
       version: tx.version,
-      inputs: tx.inputs.map((input) => ({
-        previousOutpoint: {
+      inputs: tx.inputs.map((input, index) => ({
+        // previousOutpoint: {
           transactionId: input.previousOutpoint.transactionId.toString(),
           index: input.previousOutpoint.index,
-        },
+        // },
         signatureScript: Buffer.from(input.signatureScript).toString('hex'),
-        sequence: Number(input.sequence),
+        sequence: String(input.sequence),
         sigOpCount: input.sigOpCount,
         verboseData: undefined,
+        utxo: {
+          address: utxos[index].address?.toString(),
+          amount: utxos[index].amount.toString(),
+          scriptPublicKey: utxos[index].scriptPublicKey.toHex(),
+          blockDaaScore: utxos[index].blockDaaScore.toString(),
+          isCoinbase: utxos[index].isCoinbase,
+        }
       })),
       outputs: tx.outputs.map((output) => ({
-        amount: Number(output.value),
+        value: String(output.value),
         scriptPublicKey: {
           version: output.scriptPublicKey.version,
-          scriptPublicKey: output.scriptPublicKey.toHex(),
+          script: output.scriptPublicKey.toHex(),
         },
         verboseData: undefined,
       })),
-      lockTime: Number(tx.lockTime),
+      lockTime: String(tx.lockTime),
       subnetworkId: tx.subnetworkId.toString(),
-      gas: Number(tx.gas),
+      gas: String(tx.gas),
       payload: Buffer.from(tx.payload).toString('hex'),
       // verboseData: undefined,
-      mass: Number(tx.mass),
+      mass: String(tx.mass),
       verboseData: undefined
     },
     allowOrphan: false,
-  } as SubmitTransactionRequestMessage
+  } as any
 }
