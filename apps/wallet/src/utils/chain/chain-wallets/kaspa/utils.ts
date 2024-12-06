@@ -26,7 +26,7 @@ export const rpcUtxosToUtxoEntries = (utxos: RpcUtxosByAddressesEntry[]): UtxoEn
     Address.fromString(utxo.address),
     new TransactionOutpoint(Hash.fromString(utxo.outpoint!.transactionId), utxo.outpoint!.index),
     BigInt(utxo.utxoEntry?.amount ?? 0),
-    ScriptPublicKey.fromHex(utxo.utxoEntry!.scriptPublicKey!.scriptPublicKey),
+    ScriptPublicKey.fromHex(utxo.utxoEntry!.scriptPublicKey!),
     BigInt(utxo.utxoEntry?.blockDaaScore ?? 0),
     utxo.utxoEntry?.isCoinbase ?? false,
   )))
@@ -64,8 +64,9 @@ export const signedTransactionToSubmitTransactionMessage = (signedTransaction: S
       subnetworkId: tx.subnetworkId.toString(),
       gas: Number(tx.gas),
       payload: Buffer.from(tx.payload).toString('hex'),
-      verboseData: undefined,
+      // verboseData: undefined,
       mass: Number(tx.mass),
+      verboseData: undefined
     },
     allowOrphan: false,
   } as SubmitTransactionRequestMessage

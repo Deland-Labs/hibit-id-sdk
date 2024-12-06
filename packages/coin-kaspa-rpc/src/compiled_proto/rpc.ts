@@ -109,7 +109,7 @@ export interface RpcOutpoint {
 
 export interface RpcUtxoEntry {
   amount: number;
-  scriptPublicKey: RpcScriptPublicKey | undefined;
+  scriptPublicKey: string;
   blockDaaScore: number;
   isCoinbase: boolean;
 }
@@ -2004,7 +2004,7 @@ export const RpcOutpoint: MessageFns<RpcOutpoint> = {
 };
 
 function createBaseRpcUtxoEntry(): RpcUtxoEntry {
-  return { amount: 0, scriptPublicKey: undefined, blockDaaScore: 0, isCoinbase: false };
+  return { amount: 0, scriptPublicKey: "", blockDaaScore: 0, isCoinbase: false };
 }
 
 export const RpcUtxoEntry: MessageFns<RpcUtxoEntry> = {
@@ -2012,8 +2012,8 @@ export const RpcUtxoEntry: MessageFns<RpcUtxoEntry> = {
     if (message.amount !== 0) {
       writer.uint32(8).uint64(message.amount);
     }
-    if (message.scriptPublicKey !== undefined) {
-      RpcScriptPublicKey.encode(message.scriptPublicKey, writer.uint32(18).fork()).join();
+    if (message.scriptPublicKey !== "") {
+      writer.uint32(18).string(message.scriptPublicKey);
     }
     if (message.blockDaaScore !== 0) {
       writer.uint32(24).uint64(message.blockDaaScore);
@@ -2044,7 +2044,7 @@ export const RpcUtxoEntry: MessageFns<RpcUtxoEntry> = {
             break;
           }
 
-          message.scriptPublicKey = RpcScriptPublicKey.decode(reader, reader.uint32());
+          message.scriptPublicKey = reader.string();
           continue;
         }
         case 3: {
@@ -2078,9 +2078,7 @@ export const RpcUtxoEntry: MessageFns<RpcUtxoEntry> = {
   fromPartial(object: DeepPartial<RpcUtxoEntry>): RpcUtxoEntry {
     const message = createBaseRpcUtxoEntry();
     message.amount = object.amount ?? 0;
-    message.scriptPublicKey = (object.scriptPublicKey !== undefined && object.scriptPublicKey !== null)
-      ? RpcScriptPublicKey.fromPartial(object.scriptPublicKey)
-      : undefined;
+    message.scriptPublicKey = object.scriptPublicKey ?? "";
     message.blockDaaScore = object.blockDaaScore ?? 0;
     message.isCoinbase = object.isCoinbase ?? false;
     return message;

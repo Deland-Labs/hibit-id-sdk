@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { AssetInfo, BaseChainWallet } from "../types";
 import { Chain, ChainAssetType, ChainId, ChainInfo } from "../../../basicTypes";
 import { WalletAccount } from "@delandlabs/hibit-id-sdk";
-import { GeneratorSettings, KaspaNetwork, KaspaRpc, Keypair, PaymentOutput, ScriptBuilder, OpCodes, Address, NetworkId, extractScriptPubKeyAddress, AddressPrefix, kaspaToSompi, signWithMultipleV2, SubmitTransactionRequestMessage } from '@delandlabs/coin-kaspa-rpc'
+import { GeneratorSettings, KaspaNetwork, KaspaRpc, Keypair, PaymentOutput, ScriptBuilder, OpCodes, Address, NetworkId, extractScriptPubKeyAddress, AddressPrefix, kaspaToSompi, signWithMultipleV2, Fees } from '@delandlabs/coin-kaspa-rpc'
 import { getChainByChainId } from "../..";
 import { HDNodeWallet } from "ethers";
 import { createTransactions, kaspaNetworkToNetworkId, rpcUtxosToUtxoEntries, signedTransactionToSubmitTransactionMessage } from "./utils";
@@ -26,7 +26,7 @@ export class KaspaChainWallet extends BaseChainWallet {
     this.rpcClient = new KaspaRpc(this.network)
     const hdWallet = HDNodeWallet.fromPhrase(phrase, undefined, DERIVING_PATH)
     const privKey = hdWallet.privateKey
-    this.keyPair = Keypair.fromPrivateKeyHex(privKey)
+    this.keyPair = Keypair.fromPrivateKeyHex(privKey.slice(2))
     console.debug(privKey, this.keyPair)
   }
 
@@ -72,6 +72,7 @@ export class KaspaChainWallet extends BaseChainWallet {
     if (!assetInfo.chain.equals(Chain.Kaspa)) {
       throw new Error('Kaspa: invalid asset chain');
     }
+    const fee = await this.getEstimatedFee(toAddress, amount, assetInfo)
     try {
       // native
       if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
@@ -81,6 +82,7 @@ export class KaspaChainWallet extends BaseChainWallet {
             amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
           }],
           this.keyPair.toAddress(this.networkId.networkType).toString(),
+          new Fees(kaspaToSompi(fee.toString()))
         )
         for (const tx of transactions) {
           const signedTx = signWithMultipleV2(tx, [this.keyPair.privateKey!])
@@ -102,6 +104,7 @@ export class KaspaChainWallet extends BaseChainWallet {
             amount: AMOUNT_FOR_INSCRIBE,
           }],
           this.keyPair.toAddress(this.networkId.networkType).toString(),
+          new Fees(kaspaToSompi(fee.toString()))
         )
         for (const tx of transactions) {
           const signedTx = signWithMultipleV2(tx, [this.keyPair.privateKey!])
@@ -129,15 +132,17 @@ export class KaspaChainWallet extends BaseChainWallet {
     }
     // native
     if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
-      const { transactions } = await this.createTransactionsByOutputs(
+      const { transactions, summary } = await this.createTransactionsByOutputs(
         [{
           address: Address.fromString(toAddress),
-          amount: BigInt(amount.toString()),
+          amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
         }],
         this.keyPair.toAddress(this.networkId.networkType).toString(),
+        new Fees(0n)
       )
       const mass = transactions[transactions.length - 1].tx.mass
       const sompiFee = mass * BigInt(feeSetting.priorityBucket.feerate)
+      console.log('fee compare', sompiFee, summary.aggregatedFees.toString())
       return new BigNumber(sompiFee.toString()).shiftedBy(-assetInfo.decimalPlaces.value)
     }
     // krc20
@@ -149,6 +154,7 @@ export class KaspaChainWallet extends BaseChainWallet {
           amount: AMOUNT_FOR_INSCRIBE,
         }],
         this.keyPair.toAddress(this.networkId.networkType).toString(),
+        new Fees(0n)
       )
       const mass = transactions[transactions.length - 1].tx.mass
       const sompiFee = mass * BigInt(feeSetting.priorityBucket.feerate)
@@ -158,7 +164,7 @@ export class KaspaChainWallet extends BaseChainWallet {
     throw new Error(`Kaspa: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   }
 
-  private createTransactionsByOutputs = async (outputs: PaymentOutput[], changeAddress: string): Promise<ReturnType<typeof createTransactions>> => {
+  private createTransactionsByOutputs = async (outputs: PaymentOutput[], changeAddress: string, priorityFee: Fees): Promise<ReturnType<typeof createTransactions>> => {
     const utxos = await this.rpcClient.getUtxosByAddress(changeAddress)
     const utxoEntries = rpcUtxosToUtxoEntries(utxos)
     return createTransactions(new GeneratorSettings(
@@ -166,6 +172,7 @@ export class KaspaChainWallet extends BaseChainWallet {
       changeAddress,
       utxoEntries,
       kaspaNetworkToNetworkId(this.network),
+      priorityFee,
     ))
   }
 

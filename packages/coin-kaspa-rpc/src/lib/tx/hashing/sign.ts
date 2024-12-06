@@ -12,17 +12,17 @@ import { TransactionSigningHashing } from './tx-sig';
  * @returns {SignedTransaction} The signed transaction.
  */
 export function signWithMultipleV2(signableTx: SignableTransaction, privHexKeys: string[]): SignedTransaction {
-  const map = new Map<Uint8Array, Keypair>();
+  const map = new Map<string, Keypair>();
   for (const privkey of privHexKeys) {
     const keypair = Keypair.fromPrivateKeyHex(privkey);
     const scriptPubKeyScript = new Uint8Array([0x20, ...base.fromHex(keypair.xOnlyPublicKey!), 0xac]);
-    map.set(scriptPubKeyScript, keypair);
+    map.set(scriptPubKeyScript.toString(), keypair);
   }
 
   let additionalSignaturesRequired = false;
   for (let i = 0; i < signableTx.tx.inputs.length; i++) {
     const script = signableTx.entries[i].scriptPublicKey.script;
-    const schnorrKey = map.get(script);
+    const schnorrKey = map.get(script.toString());
     if (schnorrKey) {
       const sigHash = TransactionSigningHashing.calcSchnorrSignatureHash(signableTx, i, SIG_HASH_ALL);
       const sig = schnorrKey.sign(sigHash.toBytes());
