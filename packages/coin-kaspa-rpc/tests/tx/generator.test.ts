@@ -77,9 +77,9 @@ describe('Generator', () => {
       }
       expect(tx.outputs).deep.equals(result.outputs);
       expect(tx).deep.equals(result);
-      // for (let j = 0; j < txs.length; j++) {
-      //   expect(txs[j]).deep.equals(testReuslts[i][j]);
-      // }
+      for (let j = 0; j < txs.length; j++) {
+        expect(txs[j]).deep.equals(testReuslts[i][j]);
+      }
     });
   }
 });
@@ -105,7 +105,10 @@ function parseTxsFromFile(file: string): SignableTransaction[] {
   const fileContent = fs.readFileSync(file, 'utf8');
   const txs = parseWithBigInt(fileContent);
 
-  return txs.map((tx: any) => {
+  const result = [];
+  const lastSecondIndex = txs.length - 2;
+  for (let i = 0; i < txs.length; i++) {
+    const tx = txs[i];
     const transaction = new Transaction(
       tx.transaction.version,
       tx.transaction.inputs.map(
@@ -143,22 +146,22 @@ function parseTxsFromFile(file: string): SignableTransaction[] {
       );
     });
 
-    const txId = transaction.id.toHex();
-    console.log(txId);
-
-    return new SignableTransaction(
-      transaction,
-      entries,
-      BigInt(tx.paymentAmount),
-      BigInt(tx.changeAmount),
-      BigInt(tx.aggregateInputAmount),
-      BigInt(tx.aggregateOutputAmount),
-      Number(tx.minimumSignatures),
-      BigInt(tx.mass),
-      BigInt(tx.feeAmount),
-      tx.type === 'final' ? DataKind.Final : DataKind.Node
+    result.push(
+      new SignableTransaction(
+        transaction,
+        entries,
+        BigInt(tx.paymentAmount),
+        BigInt(tx.changeAmount),
+        BigInt(tx.aggregateInputAmount),
+        BigInt(tx.aggregateOutputAmount),
+        Number(tx.minimumSignatures),
+        BigInt(tx.mass),
+        BigInt(tx.feeAmount),
+        tx.type === 'final' ? DataKind.Final : i === lastSecondIndex ? DataKind.Edge : DataKind.Node
+      )
     );
-  });
+  }
+  return result;
 }
 
 function parseUtxosFromFile(file: string): UtxoEntryReference[] {
