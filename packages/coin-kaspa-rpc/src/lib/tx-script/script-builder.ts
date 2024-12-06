@@ -2,9 +2,9 @@ import { ScriptBuilderError } from './error';
 import { SizedEncodeInt } from './dataStack/sized-encode-int';
 import { checkOpcodeRange, OpCodes } from './op-codes';
 import * as C from './constants';
-import { ScriptPublicKey } from 'src/lib/tx';
 import { payToScriptHashScript, payToScriptHashSignatureScript } from './standard';
 import { base } from '@delandlabs/crypto-lib';
+import { ScriptPublicKey } from 'src/lib/consensus';
 
 /**
  * ScriptBuilder provides a facility for building custom scripts. It allows
@@ -187,6 +187,7 @@ class ScriptBuilder {
   toString(): string {
     return base.toHex(this.script);
   }
+
   /**
    * Creates an equivalent pay-to-script-hash script.
    * Can be used to create a P2SH address.

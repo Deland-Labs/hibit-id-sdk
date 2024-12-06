@@ -1,25 +1,7 @@
-import {
-  Kip9Version,
-  NetworkId,
-  NetworkParams,
-  Params,
-  ScriptPublicKey,
-  SUBNETWORK_ID_NATIVE
-} from 'src/lib/consensus';
-import {
-  ClientUtxoEntry,
-  Fees,
-  FeeSource,
-  TransactionId,
-  TransactionInput,
-  TransactionOutpoint,
-  TransactionOutput,
-  UtxoEntryReference,
-  UnsignedTxMassCalculator,
-  Transaction,
-  MAXIMUM_STANDARD_TRANSACTION_MASS,
-  UNACCEPTED_DAA_SCORE
-} from 'src/lib/tx';
+import { MAXIMUM_STANDARD_TRANSACTION_MASS, UNACCEPTED_DAA_SCORE } from '../../tx/constants.ts';
+import { UnsignedTxMassCalculator } from '../../tx/mass/unsigned-tx-mass-calc';
+import { Address, AddressPrefixHelper } from '../../address';
+import { Kip9Version, NetworkId, NetworkParams, Params, ScriptPublicKey, SUBNETWORK_ID_NATIVE } from '../../consensus';
 import {
   Data,
   DataKind,
@@ -30,9 +12,19 @@ import {
   MassDisposition,
   SignableTransaction,
   Stage
-} from 'src/lib/tx/generator/model';
-import { Address, AddressPrefixHelper } from 'src/lib/address';
-import { payToAddressScript } from 'src/lib/tx-script';
+} from './model';
+import { payToAddressScript } from '../../tx-script';
+import {
+  ClientUtxoEntry,
+  Fees,
+  FeeSource,
+  TransactionId,
+  TransactionInput,
+  TransactionOutpoint,
+  TransactionOutput,
+  UtxoEntryReference
+} from '../../tx/model';
+import { Transaction } from '../../tx/tx';
 
 /**
  * Fee reduction - when a transaction has some storage mass
@@ -235,7 +227,18 @@ class Generator {
         context.finalTransactionId = tx.id;
         context.numberOfTransactions += 1;
 
-        return new SignableTransaction(tx, utxoEntryReferences);
+        return new SignableTransaction(
+          tx,
+          utxoEntryReferences.map((ref) => ref.utxo.toUtxoEntry()),
+          this.finalTransaction?.valueNoFees ?? 0n,
+          changeOutputValue,
+          aggregateInputValue,
+          aggregateOutputValue,
+          this.minimumSignatures,
+          transactionMass,
+          transactionFees,
+          kind
+        );
       default:
         const {
           inputs: batchInputs,
@@ -278,7 +281,18 @@ class Generator {
           context.stage = new Stage(context.stage);
         }
 
-        return new SignableTransaction(batchTx, batchUtxoEntryReferences);
+        return new SignableTransaction(
+          batchTx,
+          batchUtxoEntryReferences.map((ref) => ref.utxo.toUtxoEntry()),
+          this.finalTransaction?.valueNoFees,
+          outputValue,
+          batchAggregateInputValue,
+          outputValue,
+          this.minimumSignatures,
+          batchTransactionMass,
+          batchTransactionFees,
+          kind
+        );
     }
   }
 
@@ -290,7 +304,7 @@ class Generator {
    * @param address - The address
    * @returns The UTXO entry reference
    */
-  createBatchUtxoEntryReference(
+  private createBatchUtxoEntryReference(
     txId: TransactionId,
     amount: bigint,
     scriptPublicKey: ScriptPublicKey,

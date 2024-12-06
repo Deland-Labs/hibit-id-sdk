@@ -1,1 +1,1 @@
-export * from 'src/lib/consensus/kip/kip9.ts';
+export * from './kip9';

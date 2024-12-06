@@ -1,4 +1,4 @@
-import { AddressPrefix } from 'src/lib/address';
+import { AddressPrefix } from '../address';
 
 /**
  * Enum representing different network types.
@@ -37,7 +37,7 @@ class NetworkId {
    * @param {NetworkType} networkType - The type of the network.
    * @returns {NetworkId} The new NetworkId instance.
    */
-  public static new(networkType: NetworkType): NetworkId {
+  public static from(networkType: NetworkType): NetworkId {
     return new NetworkId(networkType);
   }
 
@@ -115,11 +115,11 @@ class NetworkId {
    */
   public static iter(): NetworkId[] {
     return [
-      NetworkId.new(NetworkType.Mainnet),
+      NetworkId.from(NetworkType.Mainnet),
       NetworkId.withSuffix(NetworkType.Testnet, 10),
       NetworkId.withSuffix(NetworkType.Testnet, 11),
-      NetworkId.new(NetworkType.Devnet),
-      NetworkId.new(NetworkType.Simnet)
+      NetworkId.from(NetworkType.Devnet),
+      NetworkId.from(NetworkType.Simnet)
     ];
   }
 

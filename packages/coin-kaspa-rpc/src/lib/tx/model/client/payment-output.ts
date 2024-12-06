@@ -1,4 +1,4 @@
-import { Address } from 'src/lib/address';
+import { Address } from '../../../address';
 
 class PaymentOutput {
   /**
@@ -13,7 +13,7 @@ class PaymentOutput {
   amount: bigint;
 
   constructor(address: Address | string, amount: bigint) {
-    this.address = Address.fromString(address.toString());
+    this.address = address instanceof Address ? address : Address.fromString(address);
     this.amount = amount;
   }
 }

@@ -1,4 +1,4 @@
-import { validateU64 } from 'src/lib/validator';
+import { validateU64 } from '../../validator';
 
 /**
  * Class representing a fork activation.

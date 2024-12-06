@@ -1,5 +1,6 @@
-import { TransactionInput, UtxoEntryReference, UnsignedTxMassCalculator } from 'src/lib/tx/index.ts';
-import { Address } from 'src/lib/address';
+import { TransactionInput, UtxoEntryReference } from '../../../tx/model';
+import { UnsignedTxMassCalculator } from '../../mass/unsigned-tx-mass-calc';
+import { Address } from '../../../address';
 
 /**
  * Single transaction data accumulator.

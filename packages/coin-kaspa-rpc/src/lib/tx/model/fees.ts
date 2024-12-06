@@ -1,4 +1,4 @@
-import { validateU64 } from 'src/lib/validator.ts';
+import { validateU64 } from '../../validator';
 
 /**
  * Represents the fees associated with a transaction.
