@@ -27,21 +27,18 @@ const PRIORITY_FEES = new Fees(kaspaToSompi(0.02));
 describe('Generator', () => {
   const sentKas10 = new SendKasPramas(SENDER_ADDR, kaspaToSompi(10), RECEIVER_ADDR);
   const send1Kas10K = new SendKasPramas(SENDER_ADDR, kaspaToSompi(10000), RECEIVER_ADDR);
-  // const sendKas1M = new SendKasPramas(SENDER_ADDR, kaspaToSompi(1000000), RECEIVER_ADDR);
+  const sendKas1M = new SendKasPramas(SENDER_ADDR, kaspaToSompi(1000000), RECEIVER_ADDR);
   const testCases = [
-    // { name: '10 KAS', params: sentKas10 },
-    { name: '10K KAS', params: send1Kas10K }
-    // { name: '1M KAS', params: sendKas1M }
+    { name: '10 KAS', params: sentKas10 },
+    { name: '10K KAS', params: send1Kas10K },
+    { name: '1M KAS', params: sendKas1M }
   ];
 
   const resultSendKas10 = parseTxsFromFile('tests/tx/data/send10kas.json');
   const resultSendKas10K = parseTxsFromFile('tests/tx/data/sendkas10k.json');
-  //const resultSendKas1M = parseTxsFromFile('tests/tx/data/sendkas1m.json');
+  const resultSendKas1M = parseTxsFromFile('tests/tx/data/sendkas1m.json');
 
-  const testReuslts = [
-    //resultSendKas10,
-    resultSendKas10K
-  ];
+  const testReuslts = [resultSendKas10, resultSendKas10K, resultSendKas1M];
 
   for (let i = 0; i < testCases.length; i++) {
     it(`should generate a transaction for ${testCases[i].name}`, () => {
