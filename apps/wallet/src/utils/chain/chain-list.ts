@@ -524,7 +524,7 @@ export const KaspaTestnet: ChainInfo = {
   name: 'Kaspa Testnet',
   fullName: 'Kaspa Testnet 10',
   icon: '/chain-icons/Kaspa.svg',
-  nativeAssetSymbol: 'TKAS',
+  nativeAssetSymbol: 'KAS',
   nativeAssetDecimals: 8,
   isMainnet: false,
   isNativeGas: true,
