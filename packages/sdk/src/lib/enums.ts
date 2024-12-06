@@ -22,6 +22,7 @@ export enum HibitIdExposeRPCMethod {
   SWITCH_CHAIN = 'switchChain',
 }
 
+// TODO: grow this list
 export enum AuthenticatorType {
   Telegram = 'Telegram',
   Google = 'Google',
@@ -31,6 +32,7 @@ export enum AuthenticatorType {
   // Add more authenticators here
 }
 
+// TODO: grow this list
 export enum HibitIdAssetType {
   Native = 0,
   NativeGas = 1,
@@ -42,8 +44,10 @@ export enum HibitIdAssetType {
   SPL = 8,
   TRC20 = 9,
   Jetton = 10,
+  KRC20 = 11,
 }
 
+// TODO: grow this list
 export enum HibitIdChainId {
   BitcoinMainnet = '0_1',
   BitcoinTestnet = '0_2',
@@ -72,6 +76,9 @@ export enum HibitIdChainId {
   TronMainnet = '195_728126428',
   TronShastaTestnet = '195_2494104990',
   TronNileTestnet = '195_3448148188',
+
+  KaspaMainnet = '111111_0',
+  KaspaTestnet = '111111_1',
 }
 
 export enum HibitIdErrorCode {
