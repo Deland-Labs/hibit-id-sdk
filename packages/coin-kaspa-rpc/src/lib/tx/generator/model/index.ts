@@ -7,3 +7,4 @@ export * from './settings';
 export * from './stage';
 export * from './summary';
 export * from './signable-tx';
+export * from './signed-tx';

@@ -6,9 +6,10 @@ import { TonChainWallet } from "./ton"
 import { AssetInfo } from "./types"
 import BigNumber from "bignumber.js"
 import { DfinityChainWallet } from "./dfinity"
+import { KaspaChainWallet } from "./kaspa"
 
 // TODO: expand as supported chains grow
-export type ChainWallet = EthereumChainWallet | TonChainWallet | DfinityChainWallet
+export type ChainWallet = EthereumChainWallet | TonChainWallet | DfinityChainWallet | KaspaChainWallet
 
 export class ChainWalletPool {
   private walletMap: Record<string, ChainWallet>
@@ -33,6 +34,8 @@ export class ChainWalletPool {
         this.walletMap[chainKey] = new TonChainWallet(chainInfo, this.phrase)
       } else if (chainInfo.chainId.type.equals(Chain.Dfinity)) {
         this.walletMap[chainKey] = new DfinityChainWallet(chainInfo, this.phrase)
+      } else if (chainInfo.chainId.type.equals(Chain.Kaspa)) {
+        this.walletMap[chainKey] = new KaspaChainWallet(chainInfo, this.phrase)
       } else {
         throw new Error(`ChainWallet of chain ${chainKey} not supported`)
       }

@@ -1,4 +1,4 @@
-import { Address, ClientUtxoEntry, Generator, GeneratorSettings, GeneratorSummary, Hash, KaspaNetwork, NetworkId, NetworkType, RpcUtxosByAddressesEntry, ScriptPublicKey, SignableTransaction, TransactionOutpoint, UtxoEntryReference } from "@delandlabs/coin-kaspa-rpc"
+import { Address, ClientUtxoEntry, Generator, GeneratorSettings, GeneratorSummary, Hash, KaspaNetwork, NetworkId, NetworkType, RpcUtxosByAddressesEntry, ScriptPublicKey, SignableTransaction, SubmitTransactionRequestMessage, TransactionOutpoint, UtxoEntryReference, SignedTransaction, Transaction } from "@delandlabs/coin-kaspa-rpc"
 
 export const createTransactions = (settings: GeneratorSettings): {
   transactions: SignableTransaction[]
@@ -35,4 +35,38 @@ export const rpcUtxosToUtxoEntries = (utxos: RpcUtxosByAddressesEntry[]): UtxoEn
 export const kaspaNetworkToNetworkId = (network: KaspaNetwork): NetworkId => {
   const isMainnet = network === 'mainnet'
   return new NetworkId(isMainnet ? NetworkType.Mainnet : NetworkType.Testnet, isMainnet ? undefined : 10)
+}
+
+export const signedTransactionToSubmitTransactionMessage = (signedTransaction: SignedTransaction): SubmitTransactionRequestMessage => {
+  const tx = signedTransaction.transaction as Transaction
+  return {
+    transaction: {
+      version: tx.version,
+      inputs: tx.inputs.map((input) => ({
+        previousOutpoint: {
+          transactionId: input.previousOutpoint.transactionId.toString(),
+          index: input.previousOutpoint.index,
+        },
+        signatureScript: Buffer.from(input.signatureScript).toString('hex'),
+        sequence: Number(input.sequence),
+        sigOpCount: input.sigOpCount,
+        verboseData: undefined,
+      })),
+      outputs: tx.outputs.map((output) => ({
+        amount: Number(output.value),
+        scriptPublicKey: {
+          version: output.scriptPublicKey.version,
+          scriptPublicKey: output.scriptPublicKey.toHex(),
+        },
+        verboseData: undefined,
+      })),
+      lockTime: Number(tx.lockTime),
+      subnetworkId: tx.subnetworkId.toString(),
+      gas: Number(tx.gas),
+      payload: Buffer.from(tx.payload).toString('hex'),
+      verboseData: undefined,
+      mass: Number(tx.mass),
+    },
+    allowOrphan: false,
+  } as SubmitTransactionRequestMessage
 }
