@@ -8,7 +8,7 @@
 'use strict';
 
 var BN = require('bn.js/lib/bn');
-var utils = require('../utils');
+import utils from '../utils';
 var assert = utils.assert;
 var cachedProperty = utils.cachedProperty;
 var parseBytes = utils.parseBytes;
@@ -69,4 +69,4 @@ Signature.prototype.toHex = function toHex() {
   return utils.encode(this.toBytes(), 'hex').toUpperCase();
 };
 
-module.exports = Signature;
+export default Signature;

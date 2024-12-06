@@ -5,7 +5,7 @@
  * Copyright Fedor Indutny, 2014.
  * */
 
-module.exports = {
+export default {
   doubles: {
     step: 4,
     points: [

@@ -9,7 +9,7 @@
 
 var BN = require('bn.js/lib/bn');
 
-var utils = require('../utils');
+import utils from '../utils';
 var assert = utils.assert;
 
 function Signature(curve, options, enc) {
@@ -29,7 +29,7 @@ function Signature(curve, options, enc) {
   this.curve = curve
   this.byteLength = this.curve.n.byteLength()
 }
-module.exports = Signature;
+export default Signature;
 
 function Position() {
   this.place = 0;

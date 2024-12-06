@@ -1,9 +1,9 @@
 /* eslint-disable no-useless-escape */
-const utils = require("./util")
-const base = require("../base")
+import * as utils from "./util"
+import * as base from "../base"
 var BN = require('bn.js/lib/bn');
-const { isHexString, stripHexPrefix, padToEven } = require('./internal');
-const { intToBuffer,addHexPrefix, bufferToHex } = require('./bytes');
+import { isHexString, stripHexPrefix, padToEven } from './internal';
+import { intToBuffer,addHexPrefix, bufferToHex } from './bytes';
 
 var ABI = function () {
 }
@@ -687,4 +687,4 @@ ABI.toSerpent = function (types) {
     return ret.join('')
 }
 
-module.exports = ABI
+export default ABI

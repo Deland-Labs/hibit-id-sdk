@@ -8,7 +8,7 @@
 'use strict';
 
 var BN = require('bn.js/lib/bn');
-var utils = require('../utils');
+import utils from '../utils';
 var assert = utils.assert;
 
 function KeyPair(ec, options) {
@@ -22,7 +22,7 @@ function KeyPair(ec, options) {
   if (options.pub)
     this._importPublic(options.pub, options.pubEnc);
 }
-module.exports = KeyPair;
+export default KeyPair;
 
 KeyPair.fromPublic = function fromPublic(ec, pub, enc) {
   if (pub instanceof KeyPair)

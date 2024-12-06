@@ -7,7 +7,7 @@
 // @ts-ignore
 'use strict';
 
-var utils = require("../utils")
+import utils from '../utils';
 var BN = require('bn.js/lib/bn');
 var getNAF = utils.getNAF;
 var getJSF = utils.getJSF;
@@ -46,7 +46,7 @@ function BaseCurve(type, conf) {
     this.redN = this.n.toRed(this.red);
   }
 }
-module.exports = BaseCurve;
+export default BaseCurve;
 
 BaseCurve.prototype.point = function point() {
   throw new Error('Not implemented');

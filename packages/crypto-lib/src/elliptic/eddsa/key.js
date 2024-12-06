@@ -7,7 +7,7 @@
 
 'use strict';
 
-var utils = require('../utils');
+import utils from '../utils';
 var assert = utils.assert;
 var parseBytes = utils.parseBytes;
 var cachedProperty = utils.cachedProperty;
@@ -99,4 +99,4 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
   return utils.encode(this.pubBytes(), enc);
 };
 
-module.exports = KeyPair;
+export default KeyPair;

@@ -7,10 +7,10 @@
 
 'use strict';
 
-var utils = require('../utils');
+import utils from '../utils';
 var BN = require('bn.js/lib/bn');
 var inherits = require('inherits');
-var Base = require('./base');
+import Base from './base';
 
 var assert = utils.assert;
 
@@ -30,7 +30,7 @@ function ShortCurve(conf) {
   this._endoWnafT2 = new Array(4);
 }
 inherits(ShortCurve, Base);
-module.exports = ShortCurve;
+export default ShortCurve;
 
 ShortCurve.prototype._getEndomorphism = function _getEndomorphism(conf) {
   // No efficient endomorphism

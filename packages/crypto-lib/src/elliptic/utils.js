@@ -7,7 +7,7 @@
 
 'use strict';
 
-var utils = exports;
+var utils = {};
 var BN = require('bn.js/lib/bn');
 var minAssert = require('minimalistic-assert');
 var minUtils = require('minimalistic-crypto-utils');
@@ -124,3 +124,4 @@ function intFromLE(bytes) {
 }
 utils.intFromLE = intFromLE;
 
+export default utils

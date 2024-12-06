@@ -12,8 +12,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@delandlabs/hibit-id-sdk": "*",
     "@delandlabs/coin-kaspa-rpc": "*",
+    "@delandlabs/hibit-id-sdk": "*",
     "@dfinity/agent": "^2.1.1",
     "@dfinity/candid": "^2.1.1",
     "@dfinity/identity-secp256k1": "^2.1.1",

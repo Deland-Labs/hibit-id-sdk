@@ -8,7 +8,7 @@ import { base58check } from "@scure/base"
 import {sha256} from "../base/hash";
 const bytesCoder = base58check(sha256);
 
-const api = require('./api');
+import * as api from './api';
 const typeforce = require('typeforce');
 const wif = require('wif');
 

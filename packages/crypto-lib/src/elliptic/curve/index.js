@@ -6,9 +6,15 @@
  * */
 'use strict';
 
-var curve = exports;
+import Base from './base';
+import Short from './short';
+import Mont from './mont';
+import Edwards from './edwards';
+var curve = {};
 
-curve.base = require('./base');
-curve.short = require('./short');
-curve.mont = require('./mont');
-curve.edwards = require('./edwards');
+curve.base = Base;
+curve.short = Short;
+curve.mont = Mont;
+curve.edwards = Edwards;
+
+export default curve

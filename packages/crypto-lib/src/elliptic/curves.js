@@ -7,11 +7,12 @@
 
 'use strict';
 
-var curves = exports;
+var curves = {};
 
-var hash = require('hash.js');
-var curve = require('./curve');
-var utils = require('./utils');
+import * as hash from 'hash.js';
+import curve from './curve';
+import utils from './utils';
+import * as pre from './precomputed/secp256k1'
 
 var assert = utils.assert;
 
@@ -173,12 +174,12 @@ defineCurve('ed25519', {
   ],
 });
 
-var pre;
-try {
-  pre = require('./precomputed/secp256k1');
-} catch (e) {
-  pre = undefined;
-}
+// var pre;
+// try {
+//   pre = require('./precomputed/secp256k1');
+// } catch (e) {
+//   pre = undefined;
+// }
 
 defineCurve('secp256k1', {
   type: 'short',
@@ -211,3 +212,5 @@ defineCurve('secp256k1', {
     pre,
   ],
 });
+
+export default curves

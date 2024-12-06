@@ -9,13 +9,13 @@
 
 var BN = require('bn.js/lib/bn');
 var HmacDRBG = require('hmac-drbg');
-var utils = require('../utils');
-var curves = require('../curves');
+import utils from '../utils';
+import curves from '../curves';
 var rand = require('brorand');
 var assert = utils.assert;
 
-var KeyPair = require('./key');
-var Signature = require('./signature');
+import KeyPair from './key';
+import Signature from './signature';
 
 function EC(options) {
   if (!(this instanceof EC))
@@ -45,7 +45,7 @@ function EC(options) {
   // Hash for function for DRBG
   this.hash = options.hash || options.curve.hash;
 }
-module.exports = EC;
+export default EC;
 
 EC.prototype.keyPair = function keyPair(options) {
   return new KeyPair(this, options);

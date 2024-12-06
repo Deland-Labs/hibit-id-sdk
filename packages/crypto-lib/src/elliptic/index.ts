@@ -7,13 +7,13 @@
 
 'use strict';
 
-const curve = require('./curve');
-const curves = require('./curves');
+import curve from './curve';
+import curves from './curves';
 
 // Protocols
-const ec = require('./ec');
-const eddsa = require('./eddsa');
+import ec from './ec';
+import eddsa from './eddsa';
 
-const utils = require('./utils')
+import utils from './utils';
 
 export {ec, eddsa, curve, curves, utils}

@@ -8,9 +8,9 @@
 
 var BN = require('bn.js/lib/bn');
 var inherits = require('inherits');
-var Base = require('./base');
+import Base from './base';
 
-var utils = require('../utils');
+import utils from '../utils';
 
 function MontCurve(conf) {
   Base.call(this, 'mont', conf);
@@ -22,7 +22,7 @@ function MontCurve(conf) {
   this.a24 = this.i4.redMul(this.a.redAdd(this.two));
 }
 inherits(MontCurve, Base);
-module.exports = MontCurve;
+export default MontCurve;
 
 MontCurve.prototype.validate = function validate(point) {
   var x = point.normalize().x;

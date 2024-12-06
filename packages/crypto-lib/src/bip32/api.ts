@@ -66,7 +66,7 @@ function loadPublicKey (pubkey: Uint8Array) {
     }
 }
 
-module.exports = {
+export default {
     contextRandomize () {
         return 0
     },
@@ -120,7 +120,7 @@ module.exports = {
 
     publicKeyConvert (pubKey: Uint8Array, compress: boolean) {
         const pair = loadPublicKey(pubKey)
-        const point = pair.getPublic()
+        const point = pair!.getPublic()
         return Buffer.from(point.encode(null, compress))
     },
 

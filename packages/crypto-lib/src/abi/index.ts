@@ -6,7 +6,7 @@
  *
  * */
 
-const ABI = require("./abi.js")
+import ABI from "./abi.js"
 function RawEncode(types: string[], values: any[]): Buffer {
     return ABI.rawEncode(types, values)
 }

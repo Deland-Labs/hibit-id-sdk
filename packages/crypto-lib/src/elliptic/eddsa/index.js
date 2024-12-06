@@ -8,12 +8,12 @@
 'use strict';
 
 var hash = require('hash.js');
-var curves = require('../curves');
-var utils = require('../utils');
+import curves from '../curves';
+import utils from '../utils';
 var assert = utils.assert;
 var parseBytes = utils.parseBytes;
-var KeyPair = require('./key');
-var Signature = require('./signature');
+import KeyPair from './key';
+import Signature from './signature';
 
 function EDDSA(curve) {
   assert(curve === 'ed25519', 'only tested with ed25519 so far');
@@ -31,7 +31,7 @@ function EDDSA(curve) {
   this.hash = hash.sha512;
 }
 
-module.exports = EDDSA;
+export default EDDSA;
 
 /**
 * @param {Array|String} message - message bytes

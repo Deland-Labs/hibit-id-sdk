@@ -6,10 +6,10 @@
  * */
 'use strict';
 
-var utils = require('../utils');
+import utils from '../utils';
 var BN = require('bn.js/lib/bn');
 var inherits = require('inherits');
-var Base = require('./base');
+import Base from './base';
 
 var assert = utils.assert;
 
@@ -32,7 +32,7 @@ function EdwardsCurve(conf) {
   this.oneC = (conf.c | 0) === 1;
 }
 inherits(EdwardsCurve, Base);
-module.exports = EdwardsCurve;
+export default EdwardsCurve;
 
 EdwardsCurve.prototype._mulA = function _mulA(num) {
   if (this.mOneA)
