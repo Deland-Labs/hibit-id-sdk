@@ -1,6 +1,6 @@
 import { SignableTransaction } from '../generator/model';
 import { SignedTransaction, SignedType } from '../generator/model/signed-tx';
-import { Keypair } from 'src/lib/keypair';
+import { Keypair } from '../../keypair';
 import { base } from '@delandlabs/crypto-lib';
 import { SIG_HASH_ALL } from './sig-hash-type';
 import { TransactionSigningHashing } from './tx-sig';

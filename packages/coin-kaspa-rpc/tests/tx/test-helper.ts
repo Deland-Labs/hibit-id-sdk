@@ -1,5 +1,4 @@
 import {
-  ClientUtxoEntry,
   DataKind,
   Hash,
   SignableTransaction,
@@ -7,7 +6,6 @@ import {
   TransactionInput,
   TransactionOutpoint,
   TransactionOutput,
-  UtxoEntry,
   UtxoEntryReference
 } from '../../src/lib/tx';
 import { Address, ScriptPublicKey, SubnetworkId } from '../../src/lib';
@@ -51,7 +49,9 @@ function parseTxsFromFile(file: string): SignableTransaction[] {
 
     const entries = tx.transaction.inputs.map((input: any) => {
       const utxo = input.utxo;
-      return new UtxoEntry(
+      return new UtxoEntryReference(
+        Address.fromString(utxo.address.prefix + ':' + utxo.address.payload),
+        new TransactionOutpoint(Hash.fromHex(utxo.outpoint.transactionId), utxo.outpoint.index),
         BigInt(utxo.amount),
         new ScriptPublicKey(utxo.scriptPublicKey.version, base.fromHex(utxo.scriptPublicKey.script)),
         BigInt(utxo.blockDaaScore),
@@ -82,7 +82,7 @@ function parseUtxosFromFile(file: string): UtxoEntryReference[] {
   const utxos = parseWithBigInt(fileContent);
 
   return utxos.map((utxo: any) => {
-    const val = new ClientUtxoEntry(
+    return new UtxoEntryReference(
       Address.fromString(utxo.address.prefix + ':' + utxo.address.payload),
       new TransactionOutpoint(Hash.fromHex(utxo.outpoint.transactionId), utxo.outpoint.index),
       BigInt(utxo.amount),
@@ -90,7 +90,6 @@ function parseUtxosFromFile(file: string): UtxoEntryReference[] {
       BigInt(utxo.blockDaaScore),
       utxo.isCoinbase
     );
-    return new UtxoEntryReference(val);
   });
 }
 

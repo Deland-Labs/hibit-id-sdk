@@ -1,4 +1,4 @@
-import { MAXIMUM_STANDARD_TRANSACTION_MASS, UNACCEPTED_DAA_SCORE } from '../../tx/constants.ts';
+import { MAXIMUM_STANDARD_TRANSACTION_MASS, UNACCEPTED_DAA_SCORE } from '../../tx/constants';
 import { UnsignedTxMassCalculator } from '../../tx/mass/unsigned-tx-mass-calc';
 import { Address, AddressPrefixHelper } from '../../address';
 import { Kip9Version, NetworkId, NetworkParams, Params, ScriptPublicKey, SUBNETWORK_ID_NATIVE } from '../../consensus';
@@ -15,7 +15,6 @@ import {
 } from './model';
 import { payToAddressScript } from '../../tx-script';
 import {
-  ClientUtxoEntry,
   Fees,
   FeeSource,
   TransactionId,
@@ -229,7 +228,7 @@ class Generator {
 
         return new SignableTransaction(
           tx,
-          utxoEntryReferences.map((ref) => ref.utxo.toUtxoEntry()),
+          utxoEntryReferences,
           this.finalTransaction?.valueNoFees ?? 0n,
           changeOutputValue,
           aggregateInputValue,
@@ -283,7 +282,7 @@ class Generator {
 
         return new SignableTransaction(
           batchTx,
-          batchUtxoEntryReferences.map((ref) => ref.utxo.toUtxoEntry()),
+          batchUtxoEntryReferences,
           this.finalTransaction?.valueNoFees,
           outputValue,
           batchAggregateInputValue,
@@ -311,8 +310,7 @@ class Generator {
     address: Address
   ): UtxoEntryReference {
     const outpoint = new TransactionOutpoint(txId, 0);
-    const utxo = new ClientUtxoEntry(address, outpoint, amount, scriptPublicKey, UNACCEPTED_DAA_SCORE, false);
-    return new UtxoEntryReference(utxo);
+    return new UtxoEntryReference(address, outpoint, amount, scriptPublicKey, UNACCEPTED_DAA_SCORE, false);
   }
 
   /// Main UTXO entry processing loop. This function sources UTXOs from [`Generator::get_utxo_entry()`] and
@@ -548,10 +546,8 @@ class Generator {
    * @returns The data kind if the mass threshold is reached, otherwise undefined
    */
   private aggregateUtxo(stage: Stage, data: Data, utxoEntryReference: UtxoEntryReference): DataKind | undefined {
-    const { utxo } = utxoEntryReference;
-
-    const input = new TransactionInput(utxo.outpoint, new Uint8Array(), 0n, this.sigOpCount);
-    const inputAmount = utxo.amount;
+    const input = new TransactionInput(utxoEntryReference.outpoint, new Uint8Array(), 0n, this.sigOpCount);
+    const inputAmount = utxoEntryReference.amount;
     const inputComputeMass =
       this.massCalculator.calcComputeMassForClientTransactionInput(input) + this.signatureMassPerInput;
 
@@ -580,8 +576,8 @@ class Generator {
       data.aggregateMass += inputComputeMass;
       data.utxoEntryReferences.push(utxoEntryReference);
       data.inputs.push(input);
-      if (utxo.address) {
-        data.addresses.add(utxo.address);
+      if (utxoEntryReference.address) {
+        data.addresses.add(utxoEntryReference.address);
       }
       return undefined;
     }

@@ -1,7 +1,7 @@
 import { Transaction, IVerifiableTransaction } from '../';
 import { TransactionCalculator, StorageMassCalculator } from './';
-import { validateU64 } from 'src/lib/validator.ts';
-import { Kip9Version } from 'src/lib/consensus';
+import { validateU64 } from '../../validator';
+import { Kip9Version } from '../../consensus';
 
 /**
  * SignedTxMassCalculator class for calculating signed transaction mass.

@@ -1,6 +1,6 @@
-import { TransactionId } from 'src/lib/tx/index.ts';
-import { validateU64 } from 'src/lib/validator.ts';
-import { NetworkId } from 'src/lib/consensus';
+import { TransactionId } from '../../../tx/index';
+import { validateU64 } from '../../../validator';
+import { NetworkId } from '../../../consensus';
 
 class GeneratorSummary {
   networkId: NetworkId;

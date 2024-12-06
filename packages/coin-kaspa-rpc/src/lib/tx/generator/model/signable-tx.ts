@@ -1,6 +1,8 @@
 import { DataKind } from './data-kind';
-import { TransactionId, TransactionInput, UtxoEntry } from '../../../tx/model';
+import { TransactionId, TransactionInput, UtxoEntry, UtxoEntryReference } from '../../../tx/model';
 import { Transaction } from '../../../tx/tx';
+import { ISerializableTransaction } from './serializable-tx';
+import { base } from '@delandlabs/crypto-lib';
 
 /**
  * Represents a transaction that can be signed.
@@ -8,7 +10,7 @@ import { Transaction } from '../../../tx/tx';
 class SignableTransaction {
   id: TransactionId;
   tx: Transaction;
-  entries: UtxoEntry[];
+  entries: UtxoEntryReference[];
   paymentAmount: bigint;
   changeAmount: bigint;
   aggregateInputAmount: bigint;
@@ -33,7 +35,7 @@ class SignableTransaction {
    */
   constructor(
     tx: Transaction,
-    entries: UtxoEntry[],
+    entries: UtxoEntryReference[],
     paymentAmount: bigint = 0n,
     changeAmount: bigint = 0n,
     aggregateInputAmount: bigint = 0n,
@@ -67,6 +69,42 @@ class SignableTransaction {
       throw new Error('expected to be called only following full UTXO population');
     }
     return [this.tx.inputs[index], this.entries[index]!];
+  }
+
+  toSerializable(): ISerializableTransaction {
+    return {
+      id: this.id.toString(),
+      version: this.tx.version,
+      inputs: this.tx.inputs.map((input, index) => ({
+        transactionId: input.previousOutpoint.transactionId.toString(),
+        index: input.previousOutpoint.index,
+        sequence: input.sequence,
+        sigOpCount: input.sigOpCount,
+        signatureScript: base.toHex(input.signatureScript),
+        utxo: {
+          address: this.entries[index].address ? this.entries[index].address.toString() : null,
+          amount: this.entries[index].amount,
+          scriptPublicKey: {
+            version: this.entries[index].scriptPublicKey.version,
+            scriptPublicKey: base.toHex(this.entries[index].scriptPublicKey.script)
+          },
+          blockDaaScore: this.entries[index].blockDaaScore,
+          isCoinbase: this.entries[index].isCoinbase
+        }
+      })),
+      outputs: this.tx.outputs.map((output) => ({
+        value: output.value,
+        scriptPublicKey: {
+          version: output.scriptPublicKey.version,
+          scriptPublicKey: base.toHex(output.scriptPublicKey.script)
+        }
+      })),
+      lockTime: this.tx.lockTime,
+      gas: this.tx.gas,
+      mass: this.mass,
+      subnetworkId: this.tx.subnetworkId.toString(),
+      payload: base.toHex(this.tx.payload)
+    };
   }
 }
 
