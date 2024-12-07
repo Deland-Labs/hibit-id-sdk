@@ -7,16 +7,10 @@ import {
   SignableTransaction,
   UtxoEntryReference
 } from '../../src/lib/tx';
-import {
-  Address,
-  extractScriptPubKeyAddress,
-  kaspaToSompi,
-  NetworkId,
-  NetworkType,
-  NetworkTypeHelper
-} from '../../src/lib';
+import { Address, kaspaToSompi, NetworkId, NetworkType } from '../../src/lib';
 import { ScriptBuilder, OpCodes } from '../../src/lib/tx-script';
 import { parseTxsFromFile, parseUtxosFromFile } from './test-helper';
+import { addressFromScriptPublicKey } from '../../src/lib/utils';
 
 const SENDER_ADDR = 'kaspatest:qzzzvv57j68mcv3rsd2reshhtv4rcw4xc8snhenp2k4wu4l30jfjxlgfr8qcz';
 const RECEIVER_ADDR = 'kaspatest:qrjcg7hsgjapumpn8egyu6544qzdqs2lssas4nfwewl55lnenr5pyzd7cmyx6';
@@ -75,10 +69,7 @@ class SendKrc20Pramas {
       .addData(Buffer.from(JSON.stringify(data, null, 0)))
       .addOp(OpCodes.OpEndIf);
 
-    const P2SHAddress = extractScriptPubKeyAddress(
-      script.createPayToScriptHashScript(),
-      NetworkTypeHelper.toAddressPrefix(TESTNET_10.networkType)
-    )!;
+    const P2SHAddress = addressFromScriptPublicKey(script.createPayToScriptHashScript(), TESTNET_10.networkType)!;
 
     const output = new PaymentOutput(P2SHAddress, kaspaToSompi(0.3));
     return new GeneratorSettings(output, this.sender, uxtos, TESTNET_10, PRIORITY_FEES);

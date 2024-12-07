@@ -8,3 +8,4 @@ export * from './stage';
 export * from './summary';
 export * from './signable-tx';
 export * from './signed-tx';
+export type * from './serializable-tx';

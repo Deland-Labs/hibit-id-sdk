@@ -1,9 +1,9 @@
 import { Hash, ZERO_HASH } from './hash';
 import { Blake2bHashKey, Sha256HashKey } from './hash-key';
 import { SigHashType } from './sig-hash-type';
-import { Transaction } from 'src/lib/tx/tx.ts';
+import { Transaction } from '../../tx/tx';
 import { blake2, sha256 } from '@delandlabs/crypto-lib/dist/base';
-import { SignableTransaction } from 'src/lib/tx/generator/model';
+import { SignableTransaction } from '../../tx/generator/model';
 import { DataWriter } from './data-writer';
 import { Buffer } from 'buffer';
 

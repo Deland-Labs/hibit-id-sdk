@@ -1,3 +1,7 @@
+import { NetworkType, NetworkTypeHelper, ScriptPublicKey } from './consensus';
+import { Address } from './address';
+import { extractScriptPubKeyAddress } from './tx-script/standard';
+
 /**
  * Constant representing the number of Sompi per Kaspa.
  */
@@ -34,4 +38,8 @@ function kaspaToSompi(amount: string | number): bigint {
   return integer + decimalValue;
 }
 
-export { SOMPI_PER_KASPA, kaspaToSompi };
+function addressFromScriptPublicKey(scriptPublicKey: ScriptPublicKey, network: NetworkType): Address {
+  return extractScriptPubKeyAddress(scriptPublicKey, NetworkTypeHelper.toAddressPrefix(network));
+}
+
+export { SOMPI_PER_KASPA, kaspaToSompi, addressFromScriptPublicKey };

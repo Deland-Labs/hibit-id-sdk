@@ -1,5 +1,5 @@
 import { SignableTransaction } from './signable-tx';
-import { Transaction } from 'src/lib/tx/tx.ts';
+import { ISerializableTransaction } from './serializable-tx';
 
 /**
  * Enum representing the signed state of a transaction.
@@ -11,11 +11,19 @@ enum SignedType {
 
 class SignedTransaction {
   type: SignedType;
-  transaction: Transaction;
+  transaction: SignableTransaction;
 
   constructor(type: SignedType, transaction: SignableTransaction) {
     this.type = type;
-    this.transaction = transaction.tx;
+    this.transaction = transaction;
+  }
+
+  /**
+   * Converts the signed transaction to a serializable transaction.
+   * @returns {ISerializableTransaction} The serializable transaction.
+   */
+  toSerializable(): ISerializableTransaction {
+    return this.transaction.toSerializable();
   }
 }
 

@@ -4,7 +4,7 @@ import { checkOpcodeRange, OpCodes } from './op-codes';
 import * as C from './constants';
 import { payToScriptHashScript, payToScriptHashSignatureScript } from './standard';
 import { base } from '@delandlabs/crypto-lib';
-import { ScriptPublicKey } from 'src/lib/consensus';
+import { ScriptPublicKey } from '../consensus';
 
 /**
  * ScriptBuilder provides a facility for building custom scripts. It allows

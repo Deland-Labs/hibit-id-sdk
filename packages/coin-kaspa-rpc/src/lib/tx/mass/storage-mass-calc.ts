@@ -1,4 +1,4 @@
-import { Kip9Version } from 'src/lib/consensus';
+import { Kip9Version } from '../../consensus';
 
 class StorageMassCalculator {
   /**

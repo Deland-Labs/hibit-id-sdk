@@ -1,11 +1,9 @@
-import { Address } from '../../../address';
-import { TransactionOutpoint, UtxoEntry } from '../';
-import { ScriptPublicKey } from '../../../consensus';
+import { Address } from '../../address';
+import { TransactionOutpoint } from './tx-outpoint';
+import { UtxoEntry } from './utxo-entry';
+import { ScriptPublicKey } from '../../consensus';
 
-/**
- * Represents a client-side UTXO (Unspent Transaction Output) entry.
- */
-class ClientUtxoEntry extends UtxoEntry {
+class UtxoEntryReference extends UtxoEntry {
   address?: Address;
   outpoint: TransactionOutpoint;
 
@@ -36,4 +34,4 @@ class ClientUtxoEntry extends UtxoEntry {
   }
 }
 
-export { ClientUtxoEntry };
+export { UtxoEntryReference };

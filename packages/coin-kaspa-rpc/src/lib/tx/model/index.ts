@@ -4,8 +4,9 @@ export { TransactionOutpoint } from './tx-outpoint';
 export { UtxoEntry } from './utxo-entry';
 export { TransactionInput } from './tx-input';
 export { TransactionOutput } from './tx-output';
+export { PaymentOutput } from './payment-output';
+export { UtxoEntryReference } from './utxo-entry-ref';
 export * from './fees';
-export * from './client';
 
 /**
  * Represents a transaction ID as a Uint8Array.
