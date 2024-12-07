@@ -69,7 +69,8 @@ describe('Generator kas tx', () => {
     const unsignedInputIndex = signedTx.transaction.tx.inputs.findIndex((i) => i.signatureScript.length === 0);
     expect(unsignedInputIndex).equals(0);
 
-    const signedTx2 = signedTx.transaction.toSerializable();
+    const signedTx2 = signedTx.transaction.toSubmitable();
+    expect(signedTx2.id).toEqual(signedTx.transaction.id.toString());
   });
 });
 
