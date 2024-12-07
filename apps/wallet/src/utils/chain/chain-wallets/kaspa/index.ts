@@ -120,6 +120,7 @@ export class KaspaChainWallet extends BaseChainWallet {
         }
         // TODO: wait for event
         await sleep(20000)
+        console.log('commitTxId', commitTxId)
         // reveal transactions
         const { script: revealScript, P2SHAddress: revealP2SHAddress } = this.buildKrc20TransferScript(
           toAddress,
@@ -137,16 +138,15 @@ export class KaspaChainWallet extends BaseChainWallet {
           0n,
           false,
         )
-        const revealUTXOs = await this.rpcClient.getUtxosByAddress(P2SHAddress.toString());
-        const revealUTXOEntries = rpcUtxosToUtxoEntries(revealUTXOs)
+        // const revealUTXOs = await this.rpcClient.getUtxosByAddress(P2SHAddress.toString());
+        // const revealUTXOEntries = rpcUtxosToUtxoEntries(revealUTXOs)
         const { result: { transactions: revealTxs } } = await this.createTransactionsByOutputs(
           [],
           this.keyPair.toAddress(this.networkId.networkType),
           undefined,
-          [revealUTXOEntries[0]]
-          // [inputsFromCommitTx]
+          // [revealUTXOEntries[0]]
+          [inputsFromCommitTx]
         );
-        console.log('revealUtxo', revealUTXOs[0].outpoint?.transactionId, revealUTXOs[0])
         let revealTxId = ''
         for (const revealTx of revealTxs) {
           // sign
@@ -169,6 +169,7 @@ export class KaspaChainWallet extends BaseChainWallet {
           })
           revealTxId = txId
         }
+        console.log('revealTxId', revealTxId)
 
         return revealTxId
       }
@@ -226,6 +227,7 @@ export class KaspaChainWallet extends BaseChainWallet {
       kaspaNetworkToNetworkId(this.network),
       !priorityFee?.amount ? new Fees(0n) : priorityFee,
       priorityEntries ? [...priorityEntries] : undefined,
+      priorityEntries ? 0 : undefined
     ))
     if (priorityFee?.amount) {
       return {
@@ -245,6 +247,7 @@ export class KaspaChainWallet extends BaseChainWallet {
       kaspaNetworkToNetworkId(this.network),
       new Fees(sompiFee),
       priorityEntries ? [...priorityEntries] : undefined,
+      priorityEntries ? 0 : undefined
     ))
     return {
       priorityFee: new Fees(sompiFee),
