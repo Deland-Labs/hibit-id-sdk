@@ -17,12 +17,26 @@ export interface ISerializableTransaction {
  * Represents a serializable transaction input.
  */
 export interface ISerializableTransactionInput {
-  transactionId: string; // TransactionId
-  index: number; // SignedTransactionIndexType
+  previousOutpoint: ISerializableTransactionOutpoint;
   sequence: string; // u64
   sigOpCount: number; // u8
   signatureScript: string; // Hex-encoded string
   utxo: ISerializableUtxoEntry;
+}
+
+/**
+ * Represents a serializable transaction outpoint.
+ */
+export interface ISerializableTransactionOutpoint {
+  /**
+   * The ID of the transaction.
+   */
+  transactionId: string; // TransactionId
+
+  /**
+   * The index of the transaction output.
+   */
+  index: number; // SignedTransactionIndexType
 }
 
 /**

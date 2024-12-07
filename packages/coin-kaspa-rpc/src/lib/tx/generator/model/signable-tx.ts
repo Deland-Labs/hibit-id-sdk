@@ -129,8 +129,10 @@ class SignableTransaction {
       id: this.id.toString(),
       version: this.tx.version,
       inputs: this.tx.inputs.map((input, index) => ({
-        transactionId: input.previousOutpoint.transactionId.toString(),
-        index: input.previousOutpoint.index,
+        previousOutpoint: {
+          transactionId: input.previousOutpoint.transactionId.toString(),
+          index: input.previousOutpoint.index
+        },
         sequence: input.sequence.toString(),
         sigOpCount: input.sigOpCount,
         signatureScript: base.toHex(input.signatureScript),
