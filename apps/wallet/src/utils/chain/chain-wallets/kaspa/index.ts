@@ -85,7 +85,7 @@ export class KaspaChainWallet extends BaseChainWallet {
         )
         for (const tx of transactions) {
           const signedTx = tx.sign([this.keyPair.privateKey!])
-          const reqMessage = signedTx.toSerializable()
+          const reqMessage = signedTx.toSubmitable()
           await this.rpcClient.submitTransaction({
             transaction: reqMessage as any,
             allowOrphan: false,
@@ -111,7 +111,7 @@ export class KaspaChainWallet extends BaseChainWallet {
         let commitTxId = ''
         for (const commitTx of commitTxs) {
           const signedTx = commitTx.sign([this.keyPair.privateKey!])
-          const reqMessage = signedTx.toSerializable()
+          const reqMessage = signedTx.toSubmitable()
           const txId = await this.rpcClient.submitTransaction({
             transaction: reqMessage as any,
             allowOrphan: false,
@@ -162,7 +162,7 @@ export class KaspaChainWallet extends BaseChainWallet {
               Buffer.from(encodedSignature, 'hex')
             );
           }
-          const reqMessage = signedTx.toSerializable()
+          const reqMessage = signedTx.toSubmitable()
           const txId = await this.rpcClient.submitTransaction({
             transaction: reqMessage as any,
             allowOrphan: false,

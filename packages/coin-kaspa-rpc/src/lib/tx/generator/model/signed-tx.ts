@@ -23,7 +23,7 @@ class SignedTransaction {
    * @returns {ISubmitableTransaction} The submitable transaction.
    */
   toSubmitable(): ISubmitableTransaction {
-    return this.transaction.toSerializable();
+    return this.transaction.toSubmitable();
   }
 }
 
