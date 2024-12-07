@@ -53,7 +53,7 @@ describe('TransactionSigningHashing', () => {
       case 'NoAction':
         break;
       case 'Output':
-        tx.outputs[index].value = 100n;
+        tx.outputs[index!].value = 100n;
         break;
       case 'Input':
         tx.inputs[index!].previousOutpoint.index = 2;

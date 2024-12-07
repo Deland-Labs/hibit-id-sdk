@@ -128,35 +128,24 @@ class SignableTransaction {
     return {
       id: this.id.toString(),
       version: this.tx.version,
-      inputs: this.tx.inputs.map((input, index) => ({
+      inputs: this.tx.inputs.map((input) => ({
         previousOutpoint: {
           transactionId: input.previousOutpoint.transactionId.toString(),
           index: input.previousOutpoint.index
         },
-        sequence: input.sequence.toString(),
+        sequence: Number(input.sequence),
         sigOpCount: input.sigOpCount,
-        signatureScript: base.toHex(input.signatureScript),
-        utxo: {
-          address: this.entries[index].address ? this.entries[index].address.toString() : null,
-          amount: this.entries[index].amount.toString(),
-          scriptPublicKey: {
-            version: this.entries[index].scriptPublicKey.version,
-            script: base.toHex(this.entries[index].scriptPublicKey.script)
-          },
-          blockDaaScore: this.entries[index].blockDaaScore.toString(),
-          isCoinbase: this.entries[index].isCoinbase
-        }
+        signatureScript: base.toHex(input.signatureScript)
       })),
       outputs: this.tx.outputs.map((output) => ({
-        value: output.value.toString(),
+        value: Number(output.value),
         scriptPublicKey: {
           version: output.scriptPublicKey.version,
           script: base.toHex(output.scriptPublicKey.script)
         }
       })),
-      lockTime: this.tx.lockTime.toString(),
-      gas: this.tx.gas.toString(),
-      mass: this.mass.toString(),
+      lockTime: Number(this.tx.lockTime),
+      gas: Number(this.tx.gas),
       subnetworkId: this.tx.subnetworkId.toString(),
       payload: base.toHex(this.tx.payload)
     };
