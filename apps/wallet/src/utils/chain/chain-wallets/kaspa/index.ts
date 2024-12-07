@@ -77,11 +77,11 @@ export class KaspaChainWallet extends BaseChainWallet {
       // native
       if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
         const { result: { transactions, summary } } = await this.createTransactionsByOutputs(
-          [{
-            address: Address.fromString(toAddress),
-            amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
-          }],
-          this.keyPair.toAddress(this.networkId.networkType).toString(),
+          [new PaymentOutput(
+            Address.fromString(toAddress),
+            BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
+        )],
+          this.keyPair.toAddress(this.networkId.networkType),
         )
         for (const tx of transactions) {
           const signedTx = tx.sign([this.keyPair.privateKey!])
@@ -96,21 +96,21 @@ export class KaspaChainWallet extends BaseChainWallet {
       // krc20
       if (assetInfo.chainAssetType.equals(ChainAssetType.KRC20)) {
         // inscribe transactions
-        const { script, P2SHAddress } = this.buildKrc20TransferScript(
+        const { P2SHAddress } = this.buildKrc20TransferScript(
           toAddress,
           amount.shiftedBy(assetInfo.decimalPlaces.value).toString(),
           assetInfo.contractAddress
         )
-        const { result: { transactions: inscribeTxs } } = await this.createTransactionsByOutputs(
-          [{
-            address: P2SHAddress,
-            amount: AMOUNT_FOR_INSCRIBE,
-          }],
-          this.keyPair.toAddress(this.networkId.networkType).toString(),
+        const { result: { transactions: commitTxs } } = await this.createTransactionsByOutputs(
+          [new PaymentOutput(
+            P2SHAddress,
+            AMOUNT_FOR_INSCRIBE,
+          )],
+          this.keyPair.toAddress(this.networkId.networkType),
         )
         let commitTxId = ''
-        for (const tx of inscribeTxs) {
-          const signedTx = tx.sign([this.keyPair.privateKey!])
+        for (const commitTx of commitTxs) {
+          const signedTx = commitTx.sign([this.keyPair.privateKey!])
           const reqMessage = signedTx.toSerializable()
           const txId = await this.rpcClient.submitTransaction({
             transaction: reqMessage as any,
@@ -119,41 +119,50 @@ export class KaspaChainWallet extends BaseChainWallet {
           commitTxId = txId
         }
         // TODO: wait for event
-        await sleep(5000)
+        await sleep(20000)
         // reveal transactions
+        const { script: revealScript, P2SHAddress: revealP2SHAddress } = this.buildKrc20TransferScript(
+          toAddress,
+          amount.shiftedBy(assetInfo.decimalPlaces.value).toString(),
+          assetInfo.contractAddress
+        )
         const inputsFromCommitTx = new UtxoEntryReference(
-          P2SHAddress,
+          revealP2SHAddress,
           new TransactionOutpoint(
             Hash.fromHex(commitTxId),
             0,
           ),
           AMOUNT_FOR_INSCRIBE,
-          script.createPayToScriptHashScript(),
+          revealScript.createPayToScriptHashScript(),
           0n,
           false,
         )
-        // const revealUTXOs = await this.rpcClient.getUtxosByAddress(P2SHAddress.toString());
-        // const revealUTXOEntries = rpcUtxosToUtxoEntries(revealUTXOs)
+        const revealUTXOs = await this.rpcClient.getUtxosByAddress(P2SHAddress.toString());
+        const revealUTXOEntries = rpcUtxosToUtxoEntries(revealUTXOs)
         const { result: { transactions: revealTxs } } = await this.createTransactionsByOutputs(
           [],
-          this.keyPair.toAddress(this.networkId.networkType).toString(),
+          this.keyPair.toAddress(this.networkId.networkType),
           undefined,
-          // [revealUTXOEntries[0]]
-          [inputsFromCommitTx]
+          [revealUTXOEntries[0]]
+          // [inputsFromCommitTx]
         );
+        console.log('revealUtxo', revealUTXOs[0].outpoint?.transactionId, revealUTXOs[0])
         let revealTxId = ''
-        for (const tx of revealTxs) {
-          // const signedTx = tx.sign([this.keyPair.privateKey!])
-          const ourOutput = tx.tx.inputs.findIndex((input) => Buffer.from(input.signatureScript).toString('hex') === '');
+        for (const revealTx of revealTxs) {
+          // sign
+          const signedTx = revealTx.sign([this.keyPair.privateKey!], false)
+          const ourOutput = signedTx.transaction.tx.inputs.findIndex(
+            (input) => Buffer.from(input.signatureScript).toString('hex') === ''
+          );
           if (ourOutput !== -1) {
-            const signature = tx.createInputSignature(ourOutput, this.keyPair.privateKey!);
-            const encodedSignature = script.encodePayToScriptHashSignatureScript(signature);
-            tx.fillInputSignature(
+            const signature = signedTx.transaction.createInputSignature(ourOutput, this.keyPair.privateKey!);
+            const encodedSignature = revealScript.encodePayToScriptHashSignatureScript(signature);
+            signedTx.transaction.fillInputSignature(
               ourOutput,
               Buffer.from(encodedSignature, 'hex')
             );
           }
-          const reqMessage = tx.toSerializable()
+          const reqMessage = signedTx.toSerializable()
           const txId = await this.rpcClient.submitTransaction({
             transaction: reqMessage as any,
             allowOrphan: false,
@@ -179,11 +188,11 @@ export class KaspaChainWallet extends BaseChainWallet {
     // native
     if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
       const { priorityFee } = await this.createTransactionsByOutputs(
-        [{
-          address: Address.fromString(toAddress),
-          amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
-        }],
-        this.keyPair.toAddress(this.networkId.networkType).toString(),
+        [new PaymentOutput(
+          Address.fromString(toAddress),
+          BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
+        )],
+        this.keyPair.toAddress(this.networkId.networkType),
       )
       return new BigNumber(priorityFee.amount.toString()).shiftedBy(-assetInfo.decimalPlaces.value)
     }
@@ -191,11 +200,11 @@ export class KaspaChainWallet extends BaseChainWallet {
     if (assetInfo.chainAssetType.equals(ChainAssetType.KRC20)) {
       const { P2SHAddress } = this.buildKrc20TransferScript(toAddress, amount.shiftedBy(assetInfo.decimalPlaces.value).toString(), assetInfo.contractAddress)
       const { priorityFee } = await this.createTransactionsByOutputs(
-        [{
-          address: P2SHAddress,
-          amount: AMOUNT_FOR_INSCRIBE,
-        }],
-        this.keyPair.toAddress(this.networkId.networkType).toString(),
+        [new PaymentOutput(
+          P2SHAddress,
+          AMOUNT_FOR_INSCRIBE,
+        )],
+        this.keyPair.toAddress(this.networkId.networkType),
       )
       return new BigNumber(priorityFee.amount.toString()).shiftedBy(-this.chainInfo.nativeAssetDecimals)
     }
@@ -203,11 +212,12 @@ export class KaspaChainWallet extends BaseChainWallet {
     throw new Error(`Kaspa: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   }
 
-  private createTransactionsByOutputs = async (outputs: PaymentOutput[], changeAddress: string, priorityFee?: Fees, priorityEntries?: UtxoEntryReference[]): Promise<{
+  private createTransactionsByOutputs = async (outputs: PaymentOutput[], changeAddress: Address, priorityFee?: Fees, priorityEntries?: UtxoEntryReference[]): Promise<{
     priorityFee: Fees
     result: ReturnType<typeof createTransactions>
   }> => {
-    const utxos = await this.rpcClient.getUtxosByAddress(changeAddress)
+    const utxos = await this.rpcClient.getUtxosByAddress(changeAddress.toString())
+    console.log('utxos', utxos.map((utxo) => utxo.outpoint?.transactionId), utxos)
     const utxoEntries = rpcUtxosToUtxoEntries(utxos)
     const txResult = createTransactions(new GeneratorSettings(
       outputs,
@@ -215,7 +225,7 @@ export class KaspaChainWallet extends BaseChainWallet {
       utxoEntries,
       kaspaNetworkToNetworkId(this.network),
       !priorityFee?.amount ? new Fees(0n) : priorityFee,
-      priorityEntries ?? [],
+      priorityEntries ? [...priorityEntries] : undefined,
     ))
     if (priorityFee?.amount) {
       return {
@@ -234,7 +244,7 @@ export class KaspaChainWallet extends BaseChainWallet {
       utxoEntries,
       kaspaNetworkToNetworkId(this.network),
       new Fees(sompiFee),
-      priorityEntries ?? [],
+      priorityEntries ? [...priorityEntries] : undefined,
     ))
     return {
       priorityFee: new Fees(sompiFee),

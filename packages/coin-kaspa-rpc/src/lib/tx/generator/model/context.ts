@@ -17,8 +17,9 @@ class GeneratorContext {
 
   /**
    * HashSet containing priority UTXO entries, used for filtering for potential duplicates from the iterator.
+   * content is utxo's `${utxo.outPoint.transactionId}_${utxo.outPoint.version}`
    */
-  priorityUtxoEntryFilter?: Set<UtxoEntryReference>;
+  priorityUtxoEntryFilter?: Set<string>;
 
   /**
    * Total number of UTXOs consumed by the single generator instance.
@@ -59,7 +60,7 @@ class GeneratorContext {
   constructor(
     utxoSourceIterator: Iterator<UtxoEntryReference>,
     priorityUtxoEntries?: UtxoEntryReference[],
-    priorityUtxoEntryFilter?: Set<UtxoEntryReference>,
+    priorityUtxoEntryFilter?: Set<string>,
     aggregatedUtxos: number = 0,
     aggregateFees: bigint = 0n,
     numberOfTransactions: number = 0,

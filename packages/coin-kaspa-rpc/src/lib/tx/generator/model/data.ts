@@ -21,7 +21,7 @@ class Data {
   /**
    * Addresses referenced by transaction inputs
    */
-  addresses: Set<Address>;
+  addresses: Set<string>;
 
   /**
    * Aggregate transaction mass
@@ -51,7 +51,7 @@ class Data {
   constructor(calc: UnsignedTxMassCalculator) {
     this.inputs = [];
     this.utxoEntryReferences = [];
-    this.addresses = new Set<Address>();
+    this.addresses = new Set<string>();
     this.aggregateMass = BigInt(calc.blankTransactionComputeMass());
     this.transactionFees = 0n;
     this.aggregateInputValue = 0n;
