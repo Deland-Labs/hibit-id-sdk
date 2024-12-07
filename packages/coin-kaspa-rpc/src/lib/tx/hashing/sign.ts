@@ -2,8 +2,31 @@ import { SignableTransaction } from '../generator/model';
 import { SignedTransaction, SignedType } from '../generator/model/signed-tx';
 import { Keypair } from '../../keypair';
 import { base } from '@delandlabs/crypto-lib';
-import { SIG_HASH_ALL } from './sig-hash-type';
+import { SIG_HASH_ALL, SigHashType } from './sig-hash-type';
 import { TransactionSigningHashing } from './tx-sig';
+
+/**
+ * Sign a transaction input with a sighash_type using Schnorr.
+ * @param {SignableTransaction} tx - The transaction to be signed.
+ * @param {number} inputIndex - The index of the input to sign.
+ * @param {string} privateKeyHex - The private key to sign the transaction with.
+ * @param {number} hashType - The sighash typeL.
+ * @returns {Uint8Array} The signed input.
+ */
+function signInput(
+  tx: SignableTransaction,
+  inputIndex: number,
+  privateKeyHex: string,
+  hashType: SigHashType
+): Uint8Array {
+  const sigHash = TransactionSigningHashing.calcSchnorrSignatureHash(tx, inputIndex, hashType);
+  const msg = new Uint8Array(sigHash.toBytes());
+  const schnorrKey = Keypair.fromPrivateKeyHex(privateKeyHex);
+  const sig = schnorrKey.sign(msg);
+
+  // This represents OP_DATA_65 <SIGNATURE+SIGHASH_TYPE> (since signature length is 64 bytes and SIGHASH_TYPE is one byte)
+  return new Uint8Array([64, ...sig, hashType.value]);
+}
 
 /**
  * Sign a transaction using Schnorr.
@@ -11,7 +34,7 @@ import { TransactionSigningHashing } from './tx-sig';
  * @param {string[]} privHexKeys - The private keys to sign the transaction with.
  * @returns {SignedTransaction} The signed transaction.
  */
-export function signWithMultipleV2(signableTx: SignableTransaction, privHexKeys: string[]): SignedTransaction {
+function signWithMultipleV2(signableTx: SignableTransaction, privHexKeys: string[]): SignedTransaction {
   const map = new Map<Uint8Array, Keypair>();
   for (const privkey of privHexKeys) {
     const keypair = Keypair.fromPrivateKeyHex(privkey);
@@ -35,3 +58,5 @@ export function signWithMultipleV2(signableTx: SignableTransaction, privHexKeys:
   const signedTxType = additionalSignaturesRequired ? SignedType.Partially : SignedType.Fully;
   return new SignedTransaction(signedTxType, signableTx);
 }
+
+export { signInput, signWithMultipleV2 };

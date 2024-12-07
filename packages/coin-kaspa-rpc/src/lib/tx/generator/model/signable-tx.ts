@@ -3,8 +3,9 @@ import { TransactionId, TransactionInput, UtxoEntry, UtxoEntryReference } from '
 import { Transaction } from '../../../tx/tx';
 import { ISerializableTransaction } from './serializable-tx';
 import { base } from '@delandlabs/crypto-lib';
-import { SignedTransaction } from './signed-tx';
-import { signWithMultipleV2 } from '../../hashing';
+import { SignedTransaction, SignedType } from './signed-tx';
+import { SIG_HASH_ALL, SigHashType } from '../../hashing';
+import { signInput, signWithMultipleV2 } from '../../hashing/sign';
 
 /**
  * Represents a transaction that can be signed.
@@ -76,10 +77,47 @@ class SignableTransaction {
   /**
    * Signs the transaction with the provided private keys.
    * @param {string[]} privHexKeys - The private keys in hexadecimal format.
+   * @param {boolean} checkFullySigned - Whether to check if the transaction is fully signed.
    * @returns {SignedTransaction} The signed transaction.
    */
-  sign(privHexKeys: string[]): SignedTransaction {
-    return signWithMultipleV2(this, privHexKeys);
+  sign(privHexKeys: string[], checkFullySigned = false): SignedTransaction {
+    const signedTx = signWithMultipleV2(this, privHexKeys);
+
+    if (checkFullySigned && signedTx.type === SignedType.Partially) {
+      throw new Error('transaction is not fully signed');
+    }
+
+    return signedTx;
+  }
+
+  /**
+   * Creates a signature for the specified input.
+   * @param {number} inputIndex - The index of the input to sign.
+   * @param {string} privateKeyHex - The private key in hexadecimal format.
+   * @param {SigHashType} [hashType=SIG_HASH_ALL] - The type of hash to use for signing.
+   * @returns {Uint8Array} The generated signature.
+   */
+  createInputSignature(inputIndex: number, privateKeyHex: string, hashType = SIG_HASH_ALL): Uint8Array {
+    return signInput(this, inputIndex, privateKeyHex, hashType);
+  }
+
+  /**
+   * Fills the signature for the specified input.
+   * @param {number} inputIndex - The index of the input to fill the signature for.
+   * @param {Uint8Array} signature - The signature to fill.
+   */
+  fillInputSignature(inputIndex: number, signature: Uint8Array): void {
+    this.tx.inputs[inputIndex].signatureScript = signature;
+  }
+
+  /**
+   * Signs the specified input with the provided private key.
+   * @param {number} inputIndex - The index of the input to sign.
+   * @param {string} privateKeyHex - The private key in hexadecimal format.
+   * @param {SigHashType} [hashType=SIG_HASH_ALL] - The type of hash to use for signing.
+   */
+  signInput(inputIndex: number, privateKeyHex: string, hashType: SigHashType = SIG_HASH_ALL) {
+    this.tx.inputs[inputIndex].signatureScript = signInput(this, inputIndex, privateKeyHex, hashType);
   }
 
   /**
