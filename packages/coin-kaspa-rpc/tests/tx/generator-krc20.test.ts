@@ -70,6 +70,7 @@ describe('Generator kas tx', () => {
     expect(unsignedInputIndex).equals(0);
 
     const signedTx2 = signedTx.transaction.toSubmitable();
+    expect(signedTx2.id).toEqual(signedTx.transaction.id.toString());
   });
 });
 
