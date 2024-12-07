@@ -139,7 +139,7 @@ class SignableTransaction {
           amount: this.entries[index].amount.toString(),
           scriptPublicKey: {
             version: this.entries[index].scriptPublicKey.version,
-            scriptPublicKey: base.toHex(this.entries[index].scriptPublicKey.script)
+            script: base.toHex(this.entries[index].scriptPublicKey.script)
           },
           blockDaaScore: this.entries[index].blockDaaScore.toString(),
           isCoinbase: this.entries[index].isCoinbase
@@ -149,7 +149,7 @@ class SignableTransaction {
         value: output.value.toString(),
         scriptPublicKey: {
           version: output.scriptPublicKey.version,
-          scriptPublicKey: base.toHex(output.scriptPublicKey.script)
+          script: base.toHex(output.scriptPublicKey.script)
         }
       })),
       lockTime: this.tx.lockTime.toString(),

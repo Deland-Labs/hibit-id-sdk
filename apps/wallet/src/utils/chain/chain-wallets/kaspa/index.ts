@@ -2,10 +2,10 @@ import BigNumber from "bignumber.js";
 import { AssetInfo, BaseChainWallet } from "../types";
 import { Chain, ChainAssetType, ChainId, ChainInfo } from "../../../basicTypes";
 import { WalletAccount } from "@delandlabs/hibit-id-sdk";
-import { GeneratorSettings, KaspaNetwork, KaspaRpc, Keypair, PaymentOutput, ScriptBuilder, OpCodes, Address, NetworkId, extractScriptPubKeyAddress, AddressPrefix, kaspaToSompi, signWithMultipleV2, Fees } from '@delandlabs/coin-kaspa-rpc'
+import { GeneratorSettings, KaspaNetwork, KaspaRpc, Keypair, PaymentOutput, ScriptBuilder, OpCodes, Address, NetworkId, extractScriptPubKeyAddress, AddressPrefix, kaspaToSompi, Fees } from '@delandlabs/coin-kaspa-rpc'
 import { getChainByChainId } from "../..";
 import { HDNodeWallet } from "ethers";
-import { createTransactions, kaspaNetworkToNetworkId, rpcUtxosToUtxoEntries, signedTransactionToSubmitTransactionMessage } from "./utils";
+import { createTransactions, kaspaNetworkToNetworkId, rpcUtxosToUtxoEntries } from "./utils";
 
 const DERIVING_PATH = "m/44'/111111'/0'/0/0"
 const AMOUNT_FOR_INSCRIBE = kaspaToSompi("0.3");
@@ -73,8 +73,8 @@ export class KaspaChainWallet extends BaseChainWallet {
       throw new Error('Kaspa: invalid asset chain');
     }
     const fee = await this.getEstimatedFee(toAddress, amount, assetInfo)
-    const utxos = await this.rpcClient.getUtxosByAddress(this.keyPair.toAddress(this.networkId.networkType).toString())
-    const utxoEntries = rpcUtxosToUtxoEntries(utxos)
+    // const utxos = await this.rpcClient.getUtxosByAddress(this.keyPair.toAddress(this.networkId.networkType).toString())
+    // const utxoEntries = rpcUtxosToUtxoEntries(utxos)
 
     try {
       // native
@@ -88,11 +88,14 @@ export class KaspaChainWallet extends BaseChainWallet {
           new Fees(kaspaToSompi(fee.toString()))
         )
         for (const tx of transactions) {
-          const signedTx = signWithMultipleV2(tx, [this.keyPair.privateKey!])
-          const reqMessage = signedTransactionToSubmitTransactionMessage(signedTx, utxoEntries)
-          await this.rpcClient.submitTransaction(reqMessage)
+          const signedTx = tx.sign([this.keyPair.privateKey!])
+          const reqMessage = signedTx.toSerializable()
+          await this.rpcClient.submitTransaction({
+            transaction: reqMessage as any,
+            allowOrphan: false,
+          })
         }
-        return summary.finalTransactionId.toString()
+        return summary.finalTransactionId?.toString() ?? ''
       }
       // krc20
       if (assetInfo.chainAssetType.equals(ChainAssetType.KRC20)) {
@@ -110,11 +113,14 @@ export class KaspaChainWallet extends BaseChainWallet {
           new Fees(kaspaToSompi(fee.toString()))
         )
         for (const tx of transactions) {
-          const signedTx = signWithMultipleV2(tx, [this.keyPair.privateKey!])
-          const reqMessage = signedTransactionToSubmitTransactionMessage(signedTx, utxoEntries)
-          await this.rpcClient.submitTransaction(reqMessage)
+          const signedTx = tx.sign([this.keyPair.privateKey!])
+          const reqMessage = signedTx.toSerializable()
+          await this.rpcClient.submitTransaction({
+            transaction: reqMessage as any,
+            allowOrphan: false,
+          })
         }
-        return summary.finalTransactionId.toString()
+        return summary.finalTransactionId?.toString() ?? ''
       }
     } catch (e) {
       console.error(e)

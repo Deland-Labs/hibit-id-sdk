@@ -49,5 +49,5 @@ export interface ISerializableUtxoEntry {
  */
 export interface ISerializableScriptPublicKey {
   version: number; // u32
-  scriptPublicKey: string; // Hex-encoded string
+  script: string; // Hex-encoded string
 }
