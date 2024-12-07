@@ -18,6 +18,10 @@ class SignedTransaction {
     this.transaction = transaction;
   }
 
+  /**
+   * Converts the signed transaction to a serializable transaction.
+   * @returns {ISerializableTransaction} The serializable transaction.
+   */
   toSerializable(): ISerializableTransaction {
     return this.transaction.toSerializable();
   }

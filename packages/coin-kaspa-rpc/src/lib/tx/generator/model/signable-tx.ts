@@ -3,6 +3,8 @@ import { TransactionId, TransactionInput, UtxoEntry, UtxoEntryReference } from '
 import { Transaction } from '../../../tx/tx';
 import { ISerializableTransaction } from './serializable-tx';
 import { base } from '@delandlabs/crypto-lib';
+import { SignedTransaction } from './signed-tx';
+import { signWithMultipleV2 } from '../../hashing';
 
 /**
  * Represents a transaction that can be signed.
@@ -71,6 +73,19 @@ class SignableTransaction {
     return [this.tx.inputs[index], this.entries[index]!];
   }
 
+  /**
+   * Signs the transaction with the provided private keys.
+   * @param {string[]} privHexKeys - The private keys in hexadecimal format.
+   * @returns {SignedTransaction} The signed transaction.
+   */
+  sign(privHexKeys: string[]): SignedTransaction {
+    return signWithMultipleV2(this, privHexKeys);
+  }
+
+  /**
+   * Converts the transaction to a serializable format.
+   * @returns {ISerializableTransaction} The serializable transaction.
+   */
   toSerializable(): ISerializableTransaction {
     return {
       id: this.id.toString(),
@@ -78,30 +93,30 @@ class SignableTransaction {
       inputs: this.tx.inputs.map((input, index) => ({
         transactionId: input.previousOutpoint.transactionId.toString(),
         index: input.previousOutpoint.index,
-        sequence: input.sequence,
+        sequence: input.sequence.toString(),
         sigOpCount: input.sigOpCount,
         signatureScript: base.toHex(input.signatureScript),
         utxo: {
           address: this.entries[index].address ? this.entries[index].address.toString() : null,
-          amount: this.entries[index].amount,
+          amount: this.entries[index].amount.toString(),
           scriptPublicKey: {
             version: this.entries[index].scriptPublicKey.version,
             scriptPublicKey: base.toHex(this.entries[index].scriptPublicKey.script)
           },
-          blockDaaScore: this.entries[index].blockDaaScore,
+          blockDaaScore: this.entries[index].blockDaaScore.toString(),
           isCoinbase: this.entries[index].isCoinbase
         }
       })),
       outputs: this.tx.outputs.map((output) => ({
-        value: output.value,
+        value: output.value.toString(),
         scriptPublicKey: {
           version: output.scriptPublicKey.version,
           scriptPublicKey: base.toHex(output.scriptPublicKey.script)
         }
       })),
-      lockTime: this.tx.lockTime,
-      gas: this.tx.gas,
-      mass: this.mass,
+      lockTime: this.tx.lockTime.toString(),
+      gas: this.tx.gas.toString(),
+      mass: this.mass.toString(),
       subnetworkId: this.tx.subnetworkId.toString(),
       payload: base.toHex(this.tx.payload)
     };
