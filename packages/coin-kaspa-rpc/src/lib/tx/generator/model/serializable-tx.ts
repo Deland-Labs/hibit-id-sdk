@@ -10,6 +10,7 @@ export interface ISerializableTransaction {
   gas: number; // u64
   subnetworkId: string; // SubnetworkId
   payload: string; // Hex-encoded string
+  mass: number; // u64
 }
 
 /**

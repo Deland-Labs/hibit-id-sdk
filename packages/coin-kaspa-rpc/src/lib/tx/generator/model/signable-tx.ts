@@ -147,7 +147,8 @@ class SignableTransaction {
       lockTime: Number(this.tx.lockTime),
       gas: Number(this.tx.gas),
       subnetworkId: this.tx.subnetworkId.toString(),
-      payload: base.toHex(this.tx.payload)
+      payload: base.toHex(this.tx.payload),
+      mass: Number(this.tx.mass)
     };
   }
 }
