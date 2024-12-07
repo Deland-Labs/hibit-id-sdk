@@ -16,7 +16,8 @@
     "@delandlabs/coin-kaspa-rpc#test": {
       "env": ["VITE_*"],
       "dependsOn": ["@delandlabs/crypto-lib#build:common"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "persistent": true
     },
 
     "@delandlabs/hibit-id-sdk#build": {
@@ -33,10 +34,15 @@
       "outputs": ["dist/**"]
     },
     "@delandlabs/hibit-id-wallet#preview": {
-      "dependsOn": ["@delandlabs/hibit-id-wallet#build"]
+      "dependsOn": ["@delandlabs/hibit-id-wallet#build"],
+      "persistent": true
     },
     "lint": {},
     "dev": {
+      "dependsOn": [
+        "@delandlabs/hibit-id-sdk#build",
+        "@delandlabs/coin-kaspa-rpc#build"
+      ],
       "cache": false,
       "persistent": true
     },

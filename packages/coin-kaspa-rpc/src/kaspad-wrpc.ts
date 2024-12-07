@@ -49,7 +49,7 @@ export class KaspadWrpcClient {
     };
     // Listen for messages
     this.client.onmessage = (event) => {
-      console.log("Received message: ", event);
+      console.debug("Received message: ", event);
       const res = JSON.parse(event.data) as WrpcJsonResponse<any>
       if (res.id) {
         const bridgePromise = this.requestPromiseMap.get(res.id)

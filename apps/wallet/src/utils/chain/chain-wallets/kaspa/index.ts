@@ -2,10 +2,11 @@ import BigNumber from "bignumber.js";
 import { AssetInfo, BaseChainWallet } from "../types";
 import { Chain, ChainAssetType, ChainId, ChainInfo } from "../../../basicTypes";
 import { WalletAccount } from "@delandlabs/hibit-id-sdk";
-import { GeneratorSettings, KaspaNetwork, KaspaRpc, Keypair, PaymentOutput, ScriptBuilder, OpCodes, Address, NetworkId, kaspaToSompi, Fees, UtxoEntryReference, addressFromScriptPublicKey } from '@delandlabs/coin-kaspa-rpc'
+import { GeneratorSettings, KaspaNetwork, KaspaRpc, Keypair, PaymentOutput, ScriptBuilder, OpCodes, Address, NetworkId, kaspaToSompi, Fees, UtxoEntryReference, addressFromScriptPublicKey, TransactionOutpoint, Hash } from '@delandlabs/coin-kaspa-rpc'
 import { getChainByChainId } from "../..";
 import { HDNodeWallet } from "ethers";
 import { createTransactions, kaspaNetworkToNetworkId, rpcUtxosToUtxoEntries } from "./utils";
+import { sleep } from "../../common";
 
 const DERIVING_PATH = "m/44'/111111'/0'/0/0"
 const AMOUNT_FOR_INSCRIBE = kaspaToSompi("0.3");
@@ -107,43 +108,60 @@ export class KaspaChainWallet extends BaseChainWallet {
           }],
           this.keyPair.toAddress(this.networkId.networkType).toString(),
         )
+        let commitTxId = ''
         for (const tx of inscribeTxs) {
           const signedTx = tx.sign([this.keyPair.privateKey!])
           const reqMessage = signedTx.toSerializable()
-          await this.rpcClient.submitTransaction({
+          const txId = await this.rpcClient.submitTransaction({
             transaction: reqMessage as any,
             allowOrphan: false,
           })
+          commitTxId = txId
         }
         // TODO: wait for event
+        await sleep(5000)
         // reveal transactions
-        const revealUTXOs = await this.rpcClient.getUtxosByAddress(P2SHAddress.toString());
-        const revealUTXOEntries = rpcUtxosToUtxoEntries(revealUTXOs)
-        const { result: { transactions: revealTxs, summary } } = await this.createTransactionsByOutputs(
+        const inputsFromCommitTx = new UtxoEntryReference(
+          P2SHAddress,
+          new TransactionOutpoint(
+            Hash.fromHex(commitTxId),
+            0,
+          ),
+          AMOUNT_FOR_INSCRIBE,
+          script.createPayToScriptHashScript(),
+          0n,
+          false,
+        )
+        // const revealUTXOs = await this.rpcClient.getUtxosByAddress(P2SHAddress.toString());
+        // const revealUTXOEntries = rpcUtxosToUtxoEntries(revealUTXOs)
+        const { result: { transactions: revealTxs } } = await this.createTransactionsByOutputs(
           [],
           this.keyPair.toAddress(this.networkId.networkType).toString(),
           undefined,
-          [revealUTXOEntries[0]]
+          // [revealUTXOEntries[0]]
+          [inputsFromCommitTx]
         );
+        let revealTxId = ''
         for (const tx of revealTxs) {
-          const signedTx = tx.sign([this.keyPair.privateKey!])
-          const ourOutput = signedTx.transaction.tx.inputs.findIndex((input) => Buffer.from(input.signatureScript).toString('hex') === '');
+          // const signedTx = tx.sign([this.keyPair.privateKey!])
+          const ourOutput = tx.tx.inputs.findIndex((input) => Buffer.from(input.signatureScript).toString('hex') === '');
           if (ourOutput !== -1) {
-            const signature = signedTx.transaction.createInputSignature(ourOutput, this.keyPair.privateKey!);
+            const signature = tx.createInputSignature(ourOutput, this.keyPair.privateKey!);
             const encodedSignature = script.encodePayToScriptHashSignatureScript(signature);
-            signedTx.transaction.fillInputSignature(
+            tx.fillInputSignature(
               ourOutput,
               Buffer.from(encodedSignature, 'hex')
             );
           }
-          const reqMessage = signedTx.toSerializable()
-          await this.rpcClient.submitTransaction({
+          const reqMessage = tx.toSerializable()
+          const txId = await this.rpcClient.submitTransaction({
             transaction: reqMessage as any,
             allowOrphan: false,
           })
+          revealTxId = txId
         }
 
-        return summary.finalTransactionId?.toString() ?? ''
+        return revealTxId
       }
     } catch (e) {
       console.error(e)

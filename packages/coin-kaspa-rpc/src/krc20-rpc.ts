@@ -1,5 +1,5 @@
 import { HttpRequest } from "./http-request";
-import { GetKrc20AddressTokenListResponse, GetKrc20BalanceResponse, GetKrc20TokenInfoResponse, KaspaNetwork } from "./types";
+import { GetKrc20AddressTokenListResponse, GetKrc20BalanceResponse, GetKrc20TokenInfoResponse, KaspaKrc20Response, KaspaNetwork } from "./types";
 
 export class Krc20RpcClient {
   public readonly network: KaspaNetwork
@@ -22,18 +22,18 @@ export class Krc20RpcClient {
     this.httpRequest = new HttpRequest(this.endpoint)
   }
 
-  getKrc20TokenInfo = async (tick: string): Promise<GetKrc20TokenInfoResponse> => {
+  getKrc20TokenInfo = async (tick: string): Promise<KaspaKrc20Response<GetKrc20TokenInfoResponse>> => {
     return await this.httpRequest
-      .get<GetKrc20TokenInfoResponse>(`/krc20/token/${tick}`)
+      .get<KaspaKrc20Response<GetKrc20TokenInfoResponse>>(`/krc20/token/${tick}`)
   }
 
-  getKrc20AddressTokenList = async (address: string): Promise<GetKrc20AddressTokenListResponse> => {
+  getKrc20AddressTokenList = async (address: string): Promise<KaspaKrc20Response<GetKrc20AddressTokenListResponse>> => {
     return await this.httpRequest
-      .get<GetKrc20AddressTokenListResponse>(`/krc20/address/${address}/tokenlist`)
+      .get<KaspaKrc20Response<GetKrc20AddressTokenListResponse>>(`/krc20/address/${address}/tokenlist`)
   }
 
-  getKrc20Balance = async (address: string, tick: string): Promise<GetKrc20BalanceResponse> => {
+  getKrc20Balance = async (address: string, tick: string): Promise<KaspaKrc20Response<GetKrc20BalanceResponse>> => {
     return await this.httpRequest
-      .get<GetKrc20BalanceResponse>(`/krc20/address/${address}/token/${tick}`)
+      .get<KaspaKrc20Response<GetKrc20BalanceResponse>>(`/krc20/address/${address}/token/${tick}`)
   }
 }

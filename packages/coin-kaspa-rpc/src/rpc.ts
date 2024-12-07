@@ -32,16 +32,17 @@ export class KaspaRpc {
 
   getKrc20TokenInfo = async (tick: string): Promise<Krc20TokenDetailsWithHolders | null> => {
     const res = await this.krc20RpcClient.getKrc20TokenInfo(tick)
-    return res[0] ?? null
+    return res.result[0] ?? null
   }
 
   getKrc20AddressTokenList = async (address: string): Promise<Krc20TokenBalanceInfo[]> => {
-    return await this.krc20RpcClient.getKrc20AddressTokenList(address)
+    const res = await this.krc20RpcClient.getKrc20AddressTokenList(address)
+    return res.result
   }
 
   getKrc20Balance = async (address: string, tick: string): Promise<Krc20TokenBalanceInfo | null> => {
     const res = await this.krc20RpcClient.getKrc20Balance(address, tick)
-    for (const item of res) {
+    for (const item of res.result) {
       if (item.tick.toUpperCase() === tick.toUpperCase()) {
         return item
       }
