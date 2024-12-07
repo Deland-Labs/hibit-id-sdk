@@ -353,5 +353,8 @@ class ModifyAction {
   static Gas = new ModifyAction('Gas');
   static SubnetworkId = new ModifyAction('SubnetworkId');
 
-  private constructor(public type: string, public data?: number) {}
+  private constructor(
+    public type: string,
+    public data?: number
+  ) {}
 }
