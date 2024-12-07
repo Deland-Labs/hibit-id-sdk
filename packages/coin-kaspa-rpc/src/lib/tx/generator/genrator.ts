@@ -107,7 +107,7 @@ class Generator {
     });
 
     // sanity checks
-    if (finalTransactionOutputs.length === 0 && priorityFee?.source === FeeSource.SenderPays) {
+    if (finalTransactionOutputs.length === 0 && priorityFee?.source === FeeSource.ReceiverPays) {
       throw new Error('Priority fees can not be included into transactions with multiple outputs');
     }
 
@@ -127,9 +127,10 @@ class Generator {
     );
     this.signatureMassPerInput = this.massCalculator.calcComputeMassForSignature(minimumSignatures);
 
-    this.finalTransaction = finalTransactionAmount
-      ? new FinalTransaction(finalTransactionAmount, finalTransactionAmount + (priorityFee?.additional() ?? 0n))
-      : undefined;
+    this.finalTransaction = new FinalTransaction(
+      finalTransactionAmount,
+      finalTransactionAmount + (priorityFee?.additional() ?? 0n)
+    );
 
     this.finalTransactionPriorityFee = priorityFee;
     this.finalTransactionPayload = payload || new Uint8Array();
