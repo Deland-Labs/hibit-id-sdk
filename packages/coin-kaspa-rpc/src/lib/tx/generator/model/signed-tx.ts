@@ -1,5 +1,5 @@
 import { SignableTransaction } from './signable-tx';
-import { ISerializableTransaction } from './serializable-tx';
+import { ISubmitableTransaction } from './submitable-tx';
 
 /**
  * Enum representing the signed state of a transaction.
@@ -19,10 +19,10 @@ class SignedTransaction {
   }
 
   /**
-   * Converts the signed transaction to a serializable transaction.
-   * @returns {ISerializableTransaction} The serializable transaction.
+   * Convert to a submitable transaction.
+   * @returns {ISubmitableTransaction} The submitable transaction.
    */
-  toSerializable(): ISerializableTransaction {
+  toSubmitable(): ISubmitableTransaction {
     return this.transaction.toSerializable();
   }
 }

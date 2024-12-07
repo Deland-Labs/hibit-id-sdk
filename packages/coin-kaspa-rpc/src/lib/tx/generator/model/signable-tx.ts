@@ -1,7 +1,7 @@
 import { DataKind } from './data-kind';
 import { TransactionId, TransactionInput, UtxoEntry, UtxoEntryReference } from '../../../tx/model';
 import { Transaction } from '../../../tx/tx';
-import { ISerializableTransaction } from './serializable-tx';
+import { ISubmitableTransaction } from './submitable-tx';
 import { base } from '@delandlabs/crypto-lib';
 import { SignedTransaction, SignedType } from './signed-tx';
 import { SIG_HASH_ALL, SigHashType } from '../../hashing';
@@ -121,10 +121,10 @@ class SignableTransaction {
   }
 
   /**
-   * Converts the transaction to a serializable format.
-   * @returns {ISerializableTransaction} The serializable transaction.
+   * Convert to a submitable tx.
+   * @returns {ISubmitableTransaction} The submitable transaction.
    */
-  toSerializable(): ISerializableTransaction {
+  toSubmitable(): ISubmitableTransaction {
     return {
       id: this.id.toString(),
       version: this.tx.version,
