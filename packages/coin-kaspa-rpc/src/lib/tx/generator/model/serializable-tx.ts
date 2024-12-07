@@ -6,9 +6,8 @@ export interface ISerializableTransaction {
   version: number; // u16
   inputs: ISerializableTransactionInput[];
   outputs: ISerializableTransactionOutput[];
-  lockTime: string; // u64
-  gas: string; // u64
-  mass: string; // u64
+  lockTime: number; // u64
+  gas: number; // u64
   subnetworkId: string; // SubnetworkId
   payload: string; // Hex-encoded string
 }
@@ -18,10 +17,9 @@ export interface ISerializableTransaction {
  */
 export interface ISerializableTransactionInput {
   previousOutpoint: ISerializableTransactionOutpoint;
-  sequence: string; // u64
+  sequence: number; // u64
   sigOpCount: number; // u8
   signatureScript: string; // Hex-encoded string
-  utxo: ISerializableUtxoEntry;
 }
 
 /**
@@ -43,19 +41,8 @@ export interface ISerializableTransactionOutpoint {
  * Represents a serializable transaction output.
  */
 export interface ISerializableTransactionOutput {
-  value: string; // u64
+  value: number; // u64
   scriptPublicKey: ISerializableScriptPublicKey;
-}
-
-/**
- * Represents a serializable UTXO (Unspent Transaction Output) entry.
- */
-export interface ISerializableUtxoEntry {
-  address: string | null; // Option<Address>
-  amount: string; // u64
-  scriptPublicKey: ISerializableScriptPublicKey;
-  blockDaaScore: string; // u64
-  isCoinbase: boolean;
 }
 
 /**
