@@ -31,7 +31,8 @@
   },
   "dependencies": {
     "@delandlabs/crypto-lib": "*",
-    "buffer": "^6.0.3"
+    "buffer": "^6.0.3",
+    "toml": "^3.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
