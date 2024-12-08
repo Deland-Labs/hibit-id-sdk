@@ -1,20 +1,48 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "@delandlabs/crypto-lib#build:esm": {
+      "outputs": ["dist/**"]
+    },
+    "@delandlabs/crypto-lib#build:common": {
+      "outputs": ["dist/**"]
+    },
+
+    "@delandlabs/coin-kaspa#build": {
+      "env": ["VITE_*"],
+      "dependsOn": ["@delandlabs/crypto-lib#build:esm"],
+      "outputs": ["dist/**"]
+    },
+    "@delandlabs/coin-kaspa#test": {
+      "env": ["VITE_*"],
+      "dependsOn": ["@delandlabs/crypto-lib#build:common"],
+      "outputs": ["dist/**"],
+      "persistent": true
+    },
+
     "@delandlabs/hibit-id-sdk#build": {
       "env": ["VITE_*"],
       "outputs": ["dist/**"]
     },
+
     "@delandlabs/hibit-id-wallet#build": {
       "env": ["VITE_*"],
-      "dependsOn": ["@delandlabs/hibit-id-sdk#build"],
+      "dependsOn": [
+        "@delandlabs/hibit-id-sdk#build",
+        "@delandlabs/coin-kaspa#build"
+      ],
       "outputs": ["dist/**"]
     },
     "@delandlabs/hibit-id-wallet#preview": {
-      "dependsOn": ["@delandlabs/hibit-id-wallet#build"]
+      "dependsOn": ["@delandlabs/hibit-id-wallet#build"],
+      "persistent": true
     },
     "lint": {},
     "dev": {
+      "dependsOn": [
+        "@delandlabs/hibit-id-sdk#build",
+        "@delandlabs/coin-kaspa#build"
+      ],
       "cache": false,
       "persistent": true
     },

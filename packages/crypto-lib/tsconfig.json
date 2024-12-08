@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "allowJs": true,                       // allow build javascript files
+    "resolveJsonModule" : true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.json"
+  ],
+  "exclude": [
+    "**/node_modules"
+  ]
+}

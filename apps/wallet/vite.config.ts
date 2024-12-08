@@ -27,9 +27,13 @@ export default defineConfig({
   preview: {
     port: 4175,
   },
+  optimizeDeps: {
+    include: ['@delandlabs/coin-kaspa']
+  },
   build: {
     commonjsOptions: {
       transformMixedEsModules: true,
+      include: [/@delandlabs\/coin-kaspa/, /node_modules/]
     },
     // rollupOptions: {
     //   output: {
