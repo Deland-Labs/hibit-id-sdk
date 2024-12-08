@@ -40,19 +40,19 @@ export class KaspadWrpcClient {
   private requestPromiseMap: Map<number, BridgePromise<any>> = new Map();
 
   constructor(network: NetworkId, encoding: Encoding, endpointOrResolver: string | Resolver) {
-    if (endpointOrResolver === undefined) {
-      switch (network.toString()) {
-        case 'mainnet':
-          endpointOrResolver = import.meta.env.VITE_KASPA_MAINNET_WRPC_ENDPOINT;
-          break;
-        case 'testnet-10':
-          endpointOrResolver = import.meta.env.VITE_KASPA_TESTNET_10_WRPC_ENDPOINT;
-          break;
-        case 'testnet-11':
-          endpointOrResolver = import.meta.env.VITE_KASPA_TESTNET_11_WRPC_ENDPOINT;
-          break;
-      }
+    console.debug('network', network.toString());
+    switch (network.toString()) {
+      case 'mainnet':
+        this.fallbackEndpoint = import.meta.env.VITE_KASPA_MAINNET_WRPC_ENDPOINT;
+        break;
+      case 'testnet-10':
+        this.fallbackEndpoint = import.meta.env.VITE_KASPA_TESTNET_10_WRPC_ENDPOINT;
+        break;
+      case 'testnet-11':
+        this.fallbackEndpoint = import.meta.env.VITE_KASPA_TESTNET_11_WRPC_ENDPOINT;
+        break;
     }
+
     this.endpoint = typeof endpointOrResolver === 'string' ? endpointOrResolver : undefined;
     this.resolver = endpointOrResolver instanceof Resolver ? endpointOrResolver : undefined;
     this.encoding = encoding;
@@ -67,6 +67,9 @@ export class KaspadWrpcClient {
       try {
         endpoint = await this.resolver!.getUrl(this.encoding, this.network);
       } catch {
+        if (this.fallbackEndpoint === undefined) {
+          throw new Error('No endpoint provided');
+        }
         endpoint = this.fallbackEndpoint;
       }
     }
