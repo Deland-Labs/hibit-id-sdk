@@ -202,10 +202,9 @@ class ScriptBuilder {
    * @param {Uint8Array} signature - The signature.
    * @returns {string} The hex string representation of the generated script.
    */
-  encodePayToScriptHashSignatureScript(signature: Uint8Array): string {
+  encodePayToScriptHashSignatureScript(signature: Uint8Array): Uint8Array {
     const script = this.script;
-    const generatedScript = payToScriptHashSignatureScript(script, signature);
-    return base.toHex(generatedScript);
+    return payToScriptHashSignatureScript(script, signature);
   }
 
   /**

@@ -26,7 +26,7 @@ function parseTxsFromFile(file: string): SignableTransaction[] {
         (input: any) =>
           new TransactionInput(
             new TransactionOutpoint(Hash.fromHex(input.previousOutpoint.transactionId), input.previousOutpoint.index),
-            base.fromHex(input.signatureScript),
+            new Uint8Array(base.fromHex(input.signatureScript)),
             BigInt(input.sequence),
             input.sigOpCount
           )
@@ -39,7 +39,7 @@ function parseTxsFromFile(file: string): SignableTransaction[] {
           )
       ),
       BigInt(tx.transaction.lockTime),
-      new SubnetworkId(base.fromHex(tx.transaction.subnetworkId)),
+      new SubnetworkId(new Uint8Array(base.fromHex(tx.transaction.subnetworkId))),
       BigInt(tx.transaction.gas),
       base.fromHex(tx.transaction.payload)
     );
@@ -53,7 +53,7 @@ function parseTxsFromFile(file: string): SignableTransaction[] {
         Address.fromString(utxo.address.prefix + ':' + utxo.address.payload),
         new TransactionOutpoint(Hash.fromHex(utxo.outpoint.transactionId), utxo.outpoint.index),
         BigInt(utxo.amount),
-        new ScriptPublicKey(utxo.scriptPublicKey.version, base.fromHex(utxo.scriptPublicKey.script)),
+        new ScriptPublicKey(utxo.scriptPublicKey.version, new Uint8Array(base.fromHex(utxo.scriptPublicKey.script))),
         BigInt(utxo.blockDaaScore),
         utxo.isCoinbase
       );

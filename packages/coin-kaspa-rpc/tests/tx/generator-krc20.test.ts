@@ -1,29 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import {
-  Fees,
-  Generator,
-  GeneratorSettings,
-  PaymentOutput,
-  SignableTransaction,
-  TransactionId,
-  TransactionOutpoint,
-  UtxoEntryReference
-} from '../../src/lib/tx';
-import { Address, kaspaToSompi, NetworkId, NetworkType } from '../../src/lib';
-import { ScriptBuilder, OpCodes } from '../../src/lib/tx-script';
+import { Fees, Generator, SignableTransaction } from '../../src/lib/tx';
+import { kaspaToSompi, NetworkId, NetworkType, SendKrc20Pramas } from '../../src/lib';
 import { parseTxsFromFile, parseUtxosFromFile } from './test-helper';
-import { addressFromScriptPublicKey } from '../../src/lib/utils';
 import { SignedType } from '../../src/lib/tx/generator/model/signed-tx';
 
+const SENDDER_PK = '5cd51b74226a845b8c757494136659997db1aaedf34c528e297f849f0fe87faf';
 const SENDER_ADDR = 'kaspatest:qzzzvv57j68mcv3rsd2reshhtv4rcw4xc8snhenp2k4wu4l30jfjxlgfr8qcz';
 const RECEIVER_ADDR = 'kaspatest:qrjcg7hsgjapumpn8egyu6544qzdqs2lssas4nfwewl55lnenr5pyzd7cmyx6';
 const TESTNET_10 = new NetworkId(NetworkType.Testnet, 10);
 const PRIORITY_FEES = new Fees(kaspaToSompi(0.02));
 
 describe('Generator kas tx', () => {
-  const sentKrc20CommitTx = new SendKrc20Pramas(SENDER_ADDR, kaspaToSompi(101), RECEIVER_ADDR, 'KAST');
+  const sentKrc20CommitTx = new SendKrc20Pramas(
+    SENDER_ADDR,
+    kaspaToSompi(101),
+    RECEIVER_ADDR,
+    'KAST',
+    TESTNET_10,
+    PRIORITY_FEES
+  );
   const resultSendKrc20CommitTx = parseTxsFromFile('tests/tx/data/sendkrc20-commit-tx.json');
   const resultSendKrc20RevealTx = parseTxsFromFile('tests/tx/data/sendkrc20-reveal-tx.json');
+  const resultSendKrc20RevealTxSigned = parseTxsFromFile('tests/tx/data/sendkrc20-reveal-signed-tx.json');
   const utxos = parseUtxosFromFile('tests/tx/data/utxos.json');
 
   it(`should generate send krc20 transactions should success`, () => {
@@ -64,68 +62,24 @@ describe('Generator kas tx', () => {
     }
     expect(revealTxs).deep.equals(resultSendKrc20RevealTx);
 
-    const signedTx = revealTxs[0].sign(['5cd51b74226a845b8c757494136659997db1aaedf34c528e297f849f0fe87faf']);
+    const signedTx = revealTxs[0].sign([SENDDER_PK]);
     expect(signedTx.type).equals(SignedType.Partially);
     const unsignedInputIndex = signedTx.transaction.tx.inputs.findIndex((i) => i.signatureScript.length === 0);
     expect(unsignedInputIndex).equals(0);
 
-    const signedTx2 = signedTx.transaction.toSubmitable();
-    expect(signedTx2.id).toEqual(signedTx.transaction.id.toString());
+    if (unsignedInputIndex !== -1) {
+      const inputSig = signedTx.transaction.createInputSignature(unsignedInputIndex, SENDDER_PK);
+      const encodedSig = sentKrc20CommitTx.script.encodePayToScriptHashSignatureScript(inputSig);
+      signedTx.transaction.fillInputSignature(unsignedInputIndex, encodedSig);
+    }
+
+    expect(signedTx.transaction.tx.payload).deep.equals(resultSendKrc20RevealTxSigned[0].tx.payload);
+    expect(signedTx.transaction.tx.inputs[unsignedInputIndex].signatureScript).deep.be.not.equals(
+      resultSendKrc20RevealTxSigned[0].tx.inputs[0].signatureScript
+    );
+
+    const submitableTx = signedTx.toSubmitable();
+
+    expect(submitableTx.id).equals(resultSendKrc20RevealTxSigned[0].id.toHex());
   });
 });
-
-class SendKrc20Pramas {
-  sender: Address;
-  amount: bigint;
-  receiver: Address;
-  tick: string;
-  dec: number = 8;
-
-  constructor(sender: string, amount: bigint, receiver: string, tick: string) {
-    this.sender = Address.fromString(sender);
-    this.amount = amount;
-    this.receiver = Address.fromString(receiver);
-    this.tick = tick;
-  }
-
-  toCommitTxGeneratorSettings(uxtos: UtxoEntryReference[] = []): GeneratorSettings {
-    const P2SHAddress = addressFromScriptPublicKey(this.script.createPayToScriptHashScript(), TESTNET_10.networkType)!;
-
-    const output = new PaymentOutput(P2SHAddress, kaspaToSompi(0.3));
-    return new GeneratorSettings(output, this.sender, uxtos, TESTNET_10, PRIORITY_FEES);
-  }
-
-  toRevealTxGeneratorSettings(uxtos: UtxoEntryReference[] = [], commitTxId: TransactionId): GeneratorSettings {
-    const P2SHAddress = addressFromScriptPublicKey(this.script.createPayToScriptHashScript(), TESTNET_10.networkType)!;
-    const priorityEntries = [
-      new UtxoEntryReference(
-        P2SHAddress,
-        new TransactionOutpoint(commitTxId, 0),
-        kaspaToSompi(0.3),
-        this.script.createPayToScriptHashScript(),
-        0n,
-        false
-      )
-    ];
-    return new GeneratorSettings([], this.sender, uxtos, TESTNET_10, PRIORITY_FEES, priorityEntries);
-  }
-
-  private get script(): ScriptBuilder {
-    const data = {
-      p: 'krc-20',
-      op: 'transfer',
-      tick: this.tick,
-      amt: this.amount.toString(),
-      to: this.receiver.toString()
-    };
-    return new ScriptBuilder()
-      .addData(this.sender.payload)
-      .addOp(OpCodes.OpCheckSig)
-      .addOp(OpCodes.OpFalse)
-      .addOp(OpCodes.OpIf)
-      .addData(Buffer.from('kasplex'))
-      .addI64(0n)
-      .addData(Buffer.from(JSON.stringify(data, null, 0)))
-      .addOp(OpCodes.OpEndIf);
-  }
-}

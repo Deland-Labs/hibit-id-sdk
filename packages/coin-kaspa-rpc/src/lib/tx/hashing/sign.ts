@@ -25,7 +25,7 @@ function signInput(
   const sig = schnorrKey.sign(msg);
 
   // This represents OP_DATA_65 <SIGNATURE+SIGHASH_TYPE> (since signature length is 64 bytes and SIGHASH_TYPE is one byte)
-  return new Uint8Array([64, ...sig, hashType.value]);
+  return new Uint8Array([65, ...sig, hashType.value]);
 }
 
 /**
