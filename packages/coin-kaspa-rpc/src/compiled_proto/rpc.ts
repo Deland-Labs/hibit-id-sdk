@@ -5,9 +5,9 @@
 // source: rpc.proto
 
 /* eslint-disable */
-import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { BinaryReader, BinaryWriter } from '@bufbuild/protobuf/wire';
 
-export const protobufPackage = "protowire";
+export const protobufPackage = 'protowire';
 
 /**
  * RPC-related types. Request messages, response messages, and dependant types.
@@ -21,7 +21,7 @@ export const protobufPackage = "protowire";
 export enum RpcNotifyCommand {
   NOTIFY_START = 0,
   NOTIFY_STOP = 1,
-  UNRECOGNIZED = -1,
+  UNRECOGNIZED = -1
 }
 
 /**
@@ -122,8 +122,7 @@ export interface RpcTransactionVerboseData {
   blockTime: number;
 }
 
-export interface RpcTransactionInputVerboseData {
-}
+export interface RpcTransactionInputVerboseData {}
 
 export interface RpcTransactionOutputVerboseData {
   scriptPublicKeyType: string;
@@ -135,8 +134,7 @@ export interface RpcTransactionOutputVerboseData {
  *
  * Possible networks are: Mainnet, Testnet, Simnet, Devnet
  */
-export interface GetCurrentNetworkRequestMessage {
-}
+export interface GetCurrentNetworkRequestMessage {}
 
 export interface GetCurrentNetworkResponseMessage {
   currentNetwork: string;
@@ -163,7 +161,7 @@ export enum SubmitBlockResponseMessage_RejectReason {
   NONE = 0,
   BLOCK_INVALID = 1,
   IS_IN_IBD = 2,
-  UNRECOGNIZED = -1,
+  UNRECOGNIZED = -1
 }
 
 /**
@@ -179,9 +177,7 @@ export interface GetBlockTemplateRequestMessage {
 }
 
 export interface GetBlockTemplateResponseMessage {
-  block:
-    | RpcBlock
-    | undefined;
+  block: RpcBlock | undefined;
   /**
    * Whether kaspad thinks that it's synced.
    * Callers are discouraged (but not forbidden) from solving blocks when kaspad is not synced.
@@ -219,8 +215,7 @@ export interface BlockAddedNotificationMessage {
  * GetPeerAddressesRequestMessage requests the list of known kaspad addresses in the
  * current network. (mainnet, testnet, etc.)
  */
-export interface GetPeerAddressesRequestMessage {
-}
+export interface GetPeerAddressesRequestMessage {}
 
 export interface GetPeerAddressesResponseMessage {
   addresses: GetPeerAddressesKnownAddressMessage[];
@@ -236,8 +231,7 @@ export interface GetPeerAddressesKnownAddressMessage {
  * GetSinkRequestMessage requests the hash of the current virtual's
  * selected parent.
  */
-export interface GetSinkRequestMessage {
-}
+export interface GetSinkRequestMessage {}
 
 export interface GetSinkResponseMessage {
   sink: string;
@@ -284,8 +278,7 @@ export interface RpcMempoolEntry {
  * GetConnectedPeerInfoRequestMessage requests information about all the p2p peers
  * currently connected to this kaspad.
  */
-export interface GetConnectedPeerInfoRequestMessage {
-}
+export interface GetConnectedPeerInfoRequestMessage {}
 
 export interface GetConnectedPeerInfoResponseMessage {
   infos: GetConnectedPeerInfoMessage[];
@@ -456,8 +449,7 @@ export interface GetBlocksResponseMessage {
  * GetBlockCountRequestMessage requests the current number of blocks in this kaspad.
  * Note that this number may decrease as pruning occurs.
  */
-export interface GetBlockCountRequestMessage {
-}
+export interface GetBlockCountRequestMessage {}
 
 export interface GetBlockCountResponseMessage {
   blockCount: number;
@@ -469,8 +461,7 @@ export interface GetBlockCountResponseMessage {
  * GetBlockDagInfoRequestMessage requests general information about the current state
  * of this kaspad's DAG.
  */
-export interface GetBlockDagInfoRequestMessage {
-}
+export interface GetBlockDagInfoRequestMessage {}
 
 export interface GetBlockDagInfoResponseMessage {
   networkName: string;
@@ -511,8 +502,7 @@ export interface FinalityConflictResolvedNotificationMessage {
 }
 
 /** ShutdownRequestMessage shuts down this kaspad. */
-export interface ShutdownRequestMessage {
-}
+export interface ShutdownRequestMessage {}
 
 export interface ShutdownResponseMessage {
   error: RPCError | undefined;
@@ -636,8 +626,7 @@ export interface GetBalancesByAddressesResponseMessage {
  * GetSinkBlueScoreRequestMessage requests the blue score of the current selected parent
  * of the virtual block.
  */
-export interface GetSinkBlueScoreRequestMessage {
-}
+export interface GetSinkBlueScoreRequestMessage {}
 
 export interface GetSinkBlueScoreResponseMessage {
   blueScore: number;
@@ -714,8 +703,7 @@ export interface NotifyPruningPointUtxoSetOverrideResponseMessage {
  *
  * See NotifyPruningPointUtxoSetOverrideRequestMessage
  */
-export interface PruningPointUtxoSetOverrideNotificationMessage {
-}
+export interface PruningPointUtxoSetOverrideNotificationMessage {}
 
 /**
  * StopNotifyingPruningPointUtxoSetOverrideRequestMessage unregisters this connection for
@@ -728,8 +716,7 @@ export interface PruningPointUtxoSetOverrideNotificationMessage {
  * This message only exists for backward compatibility reason with kaspad and is deprecated.
  * Use instead NotifyPruningPointUtxoSetOverrideRequestMessage with command = NOTIFY_STOP.
  */
-export interface StopNotifyingPruningPointUtxoSetOverrideRequestMessage {
-}
+export interface StopNotifyingPruningPointUtxoSetOverrideRequestMessage {}
 
 export interface StopNotifyingPruningPointUtxoSetOverrideResponseMessage {
   error: RPCError | undefined;
@@ -754,8 +741,7 @@ export interface UnbanResponseMessage {
 }
 
 /** GetInfoRequestMessage returns info about the node. */
-export interface GetInfoRequestMessage {
-}
+export interface GetInfoRequestMessage {}
 
 export interface GetInfoResponseMessage {
   p2pId: string;
@@ -798,8 +784,7 @@ export interface NotifyNewBlockTemplateResponseMessage {
  *
  * See NotifyNewBlockTemplateRequestMessage
  */
-export interface NewBlockTemplateNotificationMessage {
-}
+export interface NewBlockTemplateNotificationMessage {}
 
 export interface RpcMempoolEntryByAddress {
   address: string;
@@ -818,8 +803,7 @@ export interface GetMempoolEntriesByAddressesResponseMessage {
   error: RPCError | undefined;
 }
 
-export interface GetCoinSupplyRequestMessage {
-}
+export interface GetCoinSupplyRequestMessage {}
 
 export interface GetCoinSupplyResponseMessage {
   /** note: this is a hard coded maxSupply, actual maxSupply is expected to deviate by upto -5%, but cannot be measured exactly. */
@@ -828,8 +812,7 @@ export interface GetCoinSupplyResponseMessage {
   error: RPCError | undefined;
 }
 
-export interface PingRequestMessage {
-}
+export interface PingRequestMessage {}
 
 export interface PingResponseMessage {
   error: RPCError | undefined;
@@ -906,8 +889,7 @@ export interface GetConnectionsResponseMessage {
   error: RPCError | undefined;
 }
 
-export interface GetSystemInfoRequestMessage {
-}
+export interface GetSystemInfoRequestMessage {}
 
 export interface GetSystemInfoResponseMessage {
   version: string;
@@ -939,8 +921,7 @@ export interface GetMetricsResponseMessage {
   error: RPCError | undefined;
 }
 
-export interface GetServerInfoRequestMessage {
-}
+export interface GetServerInfoRequestMessage {}
 
 export interface GetServerInfoResponseMessage {
   rpcApiVersion: number;
@@ -953,8 +934,7 @@ export interface GetServerInfoResponseMessage {
   error: RPCError | undefined;
 }
 
-export interface GetSyncStatusRequestMessage {
-}
+export interface GetSyncStatusRequestMessage {}
 
 export interface GetSyncStatusResponseMessage {
   isSynced: boolean;
@@ -985,9 +965,7 @@ export interface RpcFeerateBucket {
  */
 export interface RpcFeeEstimate {
   /** Top-priority feerate bucket. Provides an estimation of the feerate required for sub-second DAG inclusion. */
-  priorityBucket:
-    | RpcFeerateBucket
-    | undefined;
+  priorityBucket: RpcFeerateBucket | undefined;
   /**
    * A vector of *normal* priority feerate values. The first value of this vector is guaranteed to exist and
    * provide an estimation for sub-*minute* DAG inclusion. All other values will have shorter estimation
@@ -1012,8 +990,7 @@ export interface RpcFeeEstimateVerboseExperimentalData {
   nextBlockTemplateFeerateMax: number;
 }
 
-export interface GetFeeEstimateRequestMessage {
-}
+export interface GetFeeEstimateRequestMessage {}
 
 export interface GetFeeEstimateResponseMessage {
   estimate: RpcFeeEstimate | undefined;
@@ -1040,12 +1017,12 @@ export interface GetCurrentBlockColorResponseMessage {
 }
 
 function createBaseRPCError(): RPCError {
-  return { message: "" };
+  return { message: '' };
 }
 
 export const RPCError: MessageFns<RPCError> = {
   encode(message: RPCError, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.message !== "") {
+    if (message.message !== '') {
       writer.uint32(10).string(message.message);
     }
     return writer;
@@ -1080,9 +1057,9 @@ export const RPCError: MessageFns<RPCError> = {
   },
   fromPartial(object: DeepPartial<RPCError>): RPCError {
     const message = createBaseRPCError();
-    message.message = object.message ?? "";
+    message.message = object.message ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseRpcBlock(): RpcBlock {
@@ -1148,31 +1125,31 @@ export const RpcBlock: MessageFns<RpcBlock> = {
   },
   fromPartial(object: DeepPartial<RpcBlock>): RpcBlock {
     const message = createBaseRpcBlock();
-    message.header = (object.header !== undefined && object.header !== null)
-      ? RpcBlockHeader.fromPartial(object.header)
-      : undefined;
+    message.header =
+      object.header !== undefined && object.header !== null ? RpcBlockHeader.fromPartial(object.header) : undefined;
     message.transactions = object.transactions?.map((e) => RpcTransaction.fromPartial(e)) || [];
-    message.verboseData = (object.verboseData !== undefined && object.verboseData !== null)
-      ? RpcBlockVerboseData.fromPartial(object.verboseData)
-      : undefined;
+    message.verboseData =
+      object.verboseData !== undefined && object.verboseData !== null
+        ? RpcBlockVerboseData.fromPartial(object.verboseData)
+        : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseRpcBlockHeader(): RpcBlockHeader {
   return {
     version: 0,
     parents: [],
-    hashMerkleRoot: "",
-    acceptedIdMerkleRoot: "",
-    utxoCommitment: "",
+    hashMerkleRoot: '',
+    acceptedIdMerkleRoot: '',
+    utxoCommitment: '',
     timestamp: 0,
     bits: 0,
     nonce: 0,
     daaScore: 0,
-    blueWork: "",
-    pruningPoint: "",
-    blueScore: 0,
+    blueWork: '',
+    pruningPoint: '',
+    blueScore: 0
   };
 }
 
@@ -1184,13 +1161,13 @@ export const RpcBlockHeader: MessageFns<RpcBlockHeader> = {
     for (const v of message.parents) {
       RpcBlockLevelParents.encode(v!, writer.uint32(98).fork()).join();
     }
-    if (message.hashMerkleRoot !== "") {
+    if (message.hashMerkleRoot !== '') {
       writer.uint32(26).string(message.hashMerkleRoot);
     }
-    if (message.acceptedIdMerkleRoot !== "") {
+    if (message.acceptedIdMerkleRoot !== '') {
       writer.uint32(34).string(message.acceptedIdMerkleRoot);
     }
-    if (message.utxoCommitment !== "") {
+    if (message.utxoCommitment !== '') {
       writer.uint32(42).string(message.utxoCommitment);
     }
     if (message.timestamp !== 0) {
@@ -1205,10 +1182,10 @@ export const RpcBlockHeader: MessageFns<RpcBlockHeader> = {
     if (message.daaScore !== 0) {
       writer.uint32(72).uint64(message.daaScore);
     }
-    if (message.blueWork !== "") {
+    if (message.blueWork !== '') {
       writer.uint32(82).string(message.blueWork);
     }
-    if (message.pruningPoint !== "") {
+    if (message.pruningPoint !== '') {
       writer.uint32(114).string(message.pruningPoint);
     }
     if (message.blueScore !== 0) {
@@ -1336,18 +1313,18 @@ export const RpcBlockHeader: MessageFns<RpcBlockHeader> = {
     const message = createBaseRpcBlockHeader();
     message.version = object.version ?? 0;
     message.parents = object.parents?.map((e) => RpcBlockLevelParents.fromPartial(e)) || [];
-    message.hashMerkleRoot = object.hashMerkleRoot ?? "";
-    message.acceptedIdMerkleRoot = object.acceptedIdMerkleRoot ?? "";
-    message.utxoCommitment = object.utxoCommitment ?? "";
+    message.hashMerkleRoot = object.hashMerkleRoot ?? '';
+    message.acceptedIdMerkleRoot = object.acceptedIdMerkleRoot ?? '';
+    message.utxoCommitment = object.utxoCommitment ?? '';
     message.timestamp = object.timestamp ?? 0;
     message.bits = object.bits ?? 0;
     message.nonce = object.nonce ?? 0;
     message.daaScore = object.daaScore ?? 0;
-    message.blueWork = object.blueWork ?? "";
-    message.pruningPoint = object.pruningPoint ?? "";
+    message.blueWork = object.blueWork ?? '';
+    message.pruningPoint = object.pruningPoint ?? '';
     message.blueScore = object.blueScore ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseRpcBlockLevelParents(): RpcBlockLevelParents {
@@ -1393,33 +1370,33 @@ export const RpcBlockLevelParents: MessageFns<RpcBlockLevelParents> = {
     const message = createBaseRpcBlockLevelParents();
     message.parentHashes = object.parentHashes?.map((e) => e) || [];
     return message;
-  },
+  }
 };
 
 function createBaseRpcBlockVerboseData(): RpcBlockVerboseData {
   return {
-    hash: "",
+    hash: '',
     difficulty: 0,
-    selectedParentHash: "",
+    selectedParentHash: '',
     transactionIds: [],
     isHeaderOnly: false,
     blueScore: 0,
     childrenHashes: [],
     mergeSetBluesHashes: [],
     mergeSetRedsHashes: [],
-    isChainBlock: false,
+    isChainBlock: false
   };
 }
 
 export const RpcBlockVerboseData: MessageFns<RpcBlockVerboseData> = {
   encode(message: RpcBlockVerboseData, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.hash !== "") {
+    if (message.hash !== '') {
       writer.uint32(10).string(message.hash);
     }
     if (message.difficulty !== 0) {
       writer.uint32(89).double(message.difficulty);
     }
-    if (message.selectedParentHash !== "") {
+    if (message.selectedParentHash !== '') {
       writer.uint32(106).string(message.selectedParentHash);
     }
     for (const v of message.transactionIds) {
@@ -1547,9 +1524,9 @@ export const RpcBlockVerboseData: MessageFns<RpcBlockVerboseData> = {
   },
   fromPartial(object: DeepPartial<RpcBlockVerboseData>): RpcBlockVerboseData {
     const message = createBaseRpcBlockVerboseData();
-    message.hash = object.hash ?? "";
+    message.hash = object.hash ?? '';
     message.difficulty = object.difficulty ?? 0;
-    message.selectedParentHash = object.selectedParentHash ?? "";
+    message.selectedParentHash = object.selectedParentHash ?? '';
     message.transactionIds = object.transactionIds?.map((e) => e) || [];
     message.isHeaderOnly = object.isHeaderOnly ?? false;
     message.blueScore = object.blueScore ?? 0;
@@ -1558,7 +1535,7 @@ export const RpcBlockVerboseData: MessageFns<RpcBlockVerboseData> = {
     message.mergeSetRedsHashes = object.mergeSetRedsHashes?.map((e) => e) || [];
     message.isChainBlock = object.isChainBlock ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseRpcTransaction(): RpcTransaction {
@@ -1567,11 +1544,11 @@ function createBaseRpcTransaction(): RpcTransaction {
     inputs: [],
     outputs: [],
     lockTime: 0,
-    subnetworkId: "",
+    subnetworkId: '',
     gas: 0,
-    payload: "",
+    payload: '',
     verboseData: undefined,
-    mass: 0,
+    mass: 0
   };
 }
 
@@ -1589,13 +1566,13 @@ export const RpcTransaction: MessageFns<RpcTransaction> = {
     if (message.lockTime !== 0) {
       writer.uint32(32).uint64(message.lockTime);
     }
-    if (message.subnetworkId !== "") {
+    if (message.subnetworkId !== '') {
       writer.uint32(42).string(message.subnetworkId);
     }
     if (message.gas !== 0) {
       writer.uint32(48).uint64(message.gas);
     }
-    if (message.payload !== "") {
+    if (message.payload !== '') {
       writer.uint32(66).string(message.payload);
     }
     if (message.verboseData !== undefined) {
@@ -1704,19 +1681,20 @@ export const RpcTransaction: MessageFns<RpcTransaction> = {
     message.inputs = object.inputs?.map((e) => RpcTransactionInput.fromPartial(e)) || [];
     message.outputs = object.outputs?.map((e) => RpcTransactionOutput.fromPartial(e)) || [];
     message.lockTime = object.lockTime ?? 0;
-    message.subnetworkId = object.subnetworkId ?? "";
+    message.subnetworkId = object.subnetworkId ?? '';
     message.gas = object.gas ?? 0;
-    message.payload = object.payload ?? "";
-    message.verboseData = (object.verboseData !== undefined && object.verboseData !== null)
-      ? RpcTransactionVerboseData.fromPartial(object.verboseData)
-      : undefined;
+    message.payload = object.payload ?? '';
+    message.verboseData =
+      object.verboseData !== undefined && object.verboseData !== null
+        ? RpcTransactionVerboseData.fromPartial(object.verboseData)
+        : undefined;
     message.mass = object.mass ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseRpcTransactionInput(): RpcTransactionInput {
-  return { previousOutpoint: undefined, signatureScript: "", sequence: 0, sigOpCount: 0, verboseData: undefined };
+  return { previousOutpoint: undefined, signatureScript: '', sequence: 0, sigOpCount: 0, verboseData: undefined };
 }
 
 export const RpcTransactionInput: MessageFns<RpcTransactionInput> = {
@@ -1724,7 +1702,7 @@ export const RpcTransactionInput: MessageFns<RpcTransactionInput> = {
     if (message.previousOutpoint !== undefined) {
       RpcOutpoint.encode(message.previousOutpoint, writer.uint32(10).fork()).join();
     }
-    if (message.signatureScript !== "") {
+    if (message.signatureScript !== '') {
       writer.uint32(18).string(message.signatureScript);
     }
     if (message.sequence !== 0) {
@@ -1800,21 +1778,23 @@ export const RpcTransactionInput: MessageFns<RpcTransactionInput> = {
   },
   fromPartial(object: DeepPartial<RpcTransactionInput>): RpcTransactionInput {
     const message = createBaseRpcTransactionInput();
-    message.previousOutpoint = (object.previousOutpoint !== undefined && object.previousOutpoint !== null)
-      ? RpcOutpoint.fromPartial(object.previousOutpoint)
-      : undefined;
-    message.signatureScript = object.signatureScript ?? "";
+    message.previousOutpoint =
+      object.previousOutpoint !== undefined && object.previousOutpoint !== null
+        ? RpcOutpoint.fromPartial(object.previousOutpoint)
+        : undefined;
+    message.signatureScript = object.signatureScript ?? '';
     message.sequence = object.sequence ?? 0;
     message.sigOpCount = object.sigOpCount ?? 0;
-    message.verboseData = (object.verboseData !== undefined && object.verboseData !== null)
-      ? RpcTransactionInputVerboseData.fromPartial(object.verboseData)
-      : undefined;
+    message.verboseData =
+      object.verboseData !== undefined && object.verboseData !== null
+        ? RpcTransactionInputVerboseData.fromPartial(object.verboseData)
+        : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseRpcScriptPublicKey(): RpcScriptPublicKey {
-  return { version: 0, scriptPublicKey: "" };
+  return { version: 0, scriptPublicKey: '' };
 }
 
 export const RpcScriptPublicKey: MessageFns<RpcScriptPublicKey> = {
@@ -1822,7 +1802,7 @@ export const RpcScriptPublicKey: MessageFns<RpcScriptPublicKey> = {
     if (message.version !== 0) {
       writer.uint32(8).uint32(message.version);
     }
-    if (message.scriptPublicKey !== "") {
+    if (message.scriptPublicKey !== '') {
       writer.uint32(18).string(message.scriptPublicKey);
     }
     return writer;
@@ -1866,9 +1846,9 @@ export const RpcScriptPublicKey: MessageFns<RpcScriptPublicKey> = {
   fromPartial(object: DeepPartial<RpcScriptPublicKey>): RpcScriptPublicKey {
     const message = createBaseRpcScriptPublicKey();
     message.version = object.version ?? 0;
-    message.scriptPublicKey = object.scriptPublicKey ?? "";
+    message.scriptPublicKey = object.scriptPublicKey ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseRpcTransactionOutput(): RpcTransactionOutput {
@@ -1935,23 +1915,25 @@ export const RpcTransactionOutput: MessageFns<RpcTransactionOutput> = {
   fromPartial(object: DeepPartial<RpcTransactionOutput>): RpcTransactionOutput {
     const message = createBaseRpcTransactionOutput();
     message.amount = object.amount ?? 0;
-    message.scriptPublicKey = (object.scriptPublicKey !== undefined && object.scriptPublicKey !== null)
-      ? RpcScriptPublicKey.fromPartial(object.scriptPublicKey)
-      : undefined;
-    message.verboseData = (object.verboseData !== undefined && object.verboseData !== null)
-      ? RpcTransactionOutputVerboseData.fromPartial(object.verboseData)
-      : undefined;
+    message.scriptPublicKey =
+      object.scriptPublicKey !== undefined && object.scriptPublicKey !== null
+        ? RpcScriptPublicKey.fromPartial(object.scriptPublicKey)
+        : undefined;
+    message.verboseData =
+      object.verboseData !== undefined && object.verboseData !== null
+        ? RpcTransactionOutputVerboseData.fromPartial(object.verboseData)
+        : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseRpcOutpoint(): RpcOutpoint {
-  return { transactionId: "", index: 0 };
+  return { transactionId: '', index: 0 };
 }
 
 export const RpcOutpoint: MessageFns<RpcOutpoint> = {
   encode(message: RpcOutpoint, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.transactionId !== "") {
+    if (message.transactionId !== '') {
       writer.uint32(10).string(message.transactionId);
     }
     if (message.index !== 0) {
@@ -1997,14 +1979,14 @@ export const RpcOutpoint: MessageFns<RpcOutpoint> = {
   },
   fromPartial(object: DeepPartial<RpcOutpoint>): RpcOutpoint {
     const message = createBaseRpcOutpoint();
-    message.transactionId = object.transactionId ?? "";
+    message.transactionId = object.transactionId ?? '';
     message.index = object.index ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseRpcUtxoEntry(): RpcUtxoEntry {
-  return { amount: 0, scriptPublicKey: "", blockDaaScore: 0, isCoinbase: false };
+  return { amount: 0, scriptPublicKey: '', blockDaaScore: 0, isCoinbase: false };
 }
 
 export const RpcUtxoEntry: MessageFns<RpcUtxoEntry> = {
@@ -2012,7 +1994,7 @@ export const RpcUtxoEntry: MessageFns<RpcUtxoEntry> = {
     if (message.amount !== 0) {
       writer.uint32(8).uint64(message.amount);
     }
-    if (message.scriptPublicKey !== "") {
+    if (message.scriptPublicKey !== '') {
       writer.uint32(18).string(message.scriptPublicKey);
     }
     if (message.blockDaaScore !== 0) {
@@ -2078,29 +2060,29 @@ export const RpcUtxoEntry: MessageFns<RpcUtxoEntry> = {
   fromPartial(object: DeepPartial<RpcUtxoEntry>): RpcUtxoEntry {
     const message = createBaseRpcUtxoEntry();
     message.amount = object.amount ?? 0;
-    message.scriptPublicKey = object.scriptPublicKey ?? "";
+    message.scriptPublicKey = object.scriptPublicKey ?? '';
     message.blockDaaScore = object.blockDaaScore ?? 0;
     message.isCoinbase = object.isCoinbase ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseRpcTransactionVerboseData(): RpcTransactionVerboseData {
-  return { transactionId: "", hash: "", computeMass: 0, blockHash: "", blockTime: 0 };
+  return { transactionId: '', hash: '', computeMass: 0, blockHash: '', blockTime: 0 };
 }
 
 export const RpcTransactionVerboseData: MessageFns<RpcTransactionVerboseData> = {
   encode(message: RpcTransactionVerboseData, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.transactionId !== "") {
+    if (message.transactionId !== '') {
       writer.uint32(10).string(message.transactionId);
     }
-    if (message.hash !== "") {
+    if (message.hash !== '') {
       writer.uint32(18).string(message.hash);
     }
     if (message.computeMass !== 0) {
       writer.uint32(32).uint64(message.computeMass);
     }
-    if (message.blockHash !== "") {
+    if (message.blockHash !== '') {
       writer.uint32(98).string(message.blockHash);
     }
     if (message.blockTime !== 0) {
@@ -2170,13 +2152,13 @@ export const RpcTransactionVerboseData: MessageFns<RpcTransactionVerboseData> = 
   },
   fromPartial(object: DeepPartial<RpcTransactionVerboseData>): RpcTransactionVerboseData {
     const message = createBaseRpcTransactionVerboseData();
-    message.transactionId = object.transactionId ?? "";
-    message.hash = object.hash ?? "";
+    message.transactionId = object.transactionId ?? '';
+    message.hash = object.hash ?? '';
     message.computeMass = object.computeMass ?? 0;
-    message.blockHash = object.blockHash ?? "";
+    message.blockHash = object.blockHash ?? '';
     message.blockTime = object.blockTime ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseRpcTransactionInputVerboseData(): RpcTransactionInputVerboseData {
@@ -2210,19 +2192,19 @@ export const RpcTransactionInputVerboseData: MessageFns<RpcTransactionInputVerbo
   fromPartial(_: DeepPartial<RpcTransactionInputVerboseData>): RpcTransactionInputVerboseData {
     const message = createBaseRpcTransactionInputVerboseData();
     return message;
-  },
+  }
 };
 
 function createBaseRpcTransactionOutputVerboseData(): RpcTransactionOutputVerboseData {
-  return { scriptPublicKeyType: "", scriptPublicKeyAddress: "" };
+  return { scriptPublicKeyType: '', scriptPublicKeyAddress: '' };
 }
 
 export const RpcTransactionOutputVerboseData: MessageFns<RpcTransactionOutputVerboseData> = {
   encode(message: RpcTransactionOutputVerboseData, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.scriptPublicKeyType !== "") {
+    if (message.scriptPublicKeyType !== '') {
       writer.uint32(42).string(message.scriptPublicKeyType);
     }
-    if (message.scriptPublicKeyAddress !== "") {
+    if (message.scriptPublicKeyAddress !== '') {
       writer.uint32(50).string(message.scriptPublicKeyAddress);
     }
     return writer;
@@ -2265,10 +2247,10 @@ export const RpcTransactionOutputVerboseData: MessageFns<RpcTransactionOutputVer
   },
   fromPartial(object: DeepPartial<RpcTransactionOutputVerboseData>): RpcTransactionOutputVerboseData {
     const message = createBaseRpcTransactionOutputVerboseData();
-    message.scriptPublicKeyType = object.scriptPublicKeyType ?? "";
-    message.scriptPublicKeyAddress = object.scriptPublicKeyAddress ?? "";
+    message.scriptPublicKeyType = object.scriptPublicKeyType ?? '';
+    message.scriptPublicKeyAddress = object.scriptPublicKeyAddress ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseGetCurrentNetworkRequestMessage(): GetCurrentNetworkRequestMessage {
@@ -2302,16 +2284,16 @@ export const GetCurrentNetworkRequestMessage: MessageFns<GetCurrentNetworkReques
   fromPartial(_: DeepPartial<GetCurrentNetworkRequestMessage>): GetCurrentNetworkRequestMessage {
     const message = createBaseGetCurrentNetworkRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetCurrentNetworkResponseMessage(): GetCurrentNetworkResponseMessage {
-  return { currentNetwork: "", error: undefined };
+  return { currentNetwork: '', error: undefined };
 }
 
 export const GetCurrentNetworkResponseMessage: MessageFns<GetCurrentNetworkResponseMessage> = {
   encode(message: GetCurrentNetworkResponseMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.currentNetwork !== "") {
+    if (message.currentNetwork !== '') {
       writer.uint32(10).string(message.currentNetwork);
     }
     if (message.error !== undefined) {
@@ -2357,12 +2339,11 @@ export const GetCurrentNetworkResponseMessage: MessageFns<GetCurrentNetworkRespo
   },
   fromPartial(object: DeepPartial<GetCurrentNetworkResponseMessage>): GetCurrentNetworkResponseMessage {
     const message = createBaseGetCurrentNetworkResponseMessage();
-    message.currentNetwork = object.currentNetwork ?? "";
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.currentNetwork = object.currentNetwork ?? '';
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseSubmitBlockRequestMessage(): SubmitBlockRequestMessage {
@@ -2417,12 +2398,11 @@ export const SubmitBlockRequestMessage: MessageFns<SubmitBlockRequestMessage> = 
   },
   fromPartial(object: DeepPartial<SubmitBlockRequestMessage>): SubmitBlockRequestMessage {
     const message = createBaseSubmitBlockRequestMessage();
-    message.block = (object.block !== undefined && object.block !== null)
-      ? RpcBlock.fromPartial(object.block)
-      : undefined;
+    message.block =
+      object.block !== undefined && object.block !== null ? RpcBlock.fromPartial(object.block) : undefined;
     message.allowNonDAABlocks = object.allowNonDAABlocks ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseSubmitBlockResponseMessage(): SubmitBlockResponseMessage {
@@ -2478,23 +2458,22 @@ export const SubmitBlockResponseMessage: MessageFns<SubmitBlockResponseMessage> 
   fromPartial(object: DeepPartial<SubmitBlockResponseMessage>): SubmitBlockResponseMessage {
     const message = createBaseSubmitBlockResponseMessage();
     message.rejectReason = object.rejectReason ?? 0;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetBlockTemplateRequestMessage(): GetBlockTemplateRequestMessage {
-  return { payAddress: "", extraData: "" };
+  return { payAddress: '', extraData: '' };
 }
 
 export const GetBlockTemplateRequestMessage: MessageFns<GetBlockTemplateRequestMessage> = {
   encode(message: GetBlockTemplateRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.payAddress !== "") {
+    if (message.payAddress !== '') {
       writer.uint32(10).string(message.payAddress);
     }
-    if (message.extraData !== "") {
+    if (message.extraData !== '') {
       writer.uint32(18).string(message.extraData);
     }
     return writer;
@@ -2537,10 +2516,10 @@ export const GetBlockTemplateRequestMessage: MessageFns<GetBlockTemplateRequestM
   },
   fromPartial(object: DeepPartial<GetBlockTemplateRequestMessage>): GetBlockTemplateRequestMessage {
     const message = createBaseGetBlockTemplateRequestMessage();
-    message.payAddress = object.payAddress ?? "";
-    message.extraData = object.extraData ?? "";
+    message.payAddress = object.payAddress ?? '';
+    message.extraData = object.extraData ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseGetBlockTemplateResponseMessage(): GetBlockTemplateResponseMessage {
@@ -2606,15 +2585,13 @@ export const GetBlockTemplateResponseMessage: MessageFns<GetBlockTemplateRespons
   },
   fromPartial(object: DeepPartial<GetBlockTemplateResponseMessage>): GetBlockTemplateResponseMessage {
     const message = createBaseGetBlockTemplateResponseMessage();
-    message.block = (object.block !== undefined && object.block !== null)
-      ? RpcBlock.fromPartial(object.block)
-      : undefined;
+    message.block =
+      object.block !== undefined && object.block !== null ? RpcBlock.fromPartial(object.block) : undefined;
     message.isSynced = object.isSynced ?? false;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyBlockAddedRequestMessage(): NotifyBlockAddedRequestMessage {
@@ -2660,7 +2637,7 @@ export const NotifyBlockAddedRequestMessage: MessageFns<NotifyBlockAddedRequestM
     const message = createBaseNotifyBlockAddedRequestMessage();
     message.command = object.command ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyBlockAddedResponseMessage(): NotifyBlockAddedResponseMessage {
@@ -2704,11 +2681,10 @@ export const NotifyBlockAddedResponseMessage: MessageFns<NotifyBlockAddedRespons
   },
   fromPartial(object: DeepPartial<NotifyBlockAddedResponseMessage>): NotifyBlockAddedResponseMessage {
     const message = createBaseNotifyBlockAddedResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseBlockAddedNotificationMessage(): BlockAddedNotificationMessage {
@@ -2752,11 +2728,10 @@ export const BlockAddedNotificationMessage: MessageFns<BlockAddedNotificationMes
   },
   fromPartial(object: DeepPartial<BlockAddedNotificationMessage>): BlockAddedNotificationMessage {
     const message = createBaseBlockAddedNotificationMessage();
-    message.block = (object.block !== undefined && object.block !== null)
-      ? RpcBlock.fromPartial(object.block)
-      : undefined;
+    message.block =
+      object.block !== undefined && object.block !== null ? RpcBlock.fromPartial(object.block) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetPeerAddressesRequestMessage(): GetPeerAddressesRequestMessage {
@@ -2790,7 +2765,7 @@ export const GetPeerAddressesRequestMessage: MessageFns<GetPeerAddressesRequestM
   fromPartial(_: DeepPartial<GetPeerAddressesRequestMessage>): GetPeerAddressesRequestMessage {
     const message = createBaseGetPeerAddressesRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetPeerAddressesResponseMessage(): GetPeerAddressesResponseMessage {
@@ -2857,22 +2832,21 @@ export const GetPeerAddressesResponseMessage: MessageFns<GetPeerAddressesRespons
   fromPartial(object: DeepPartial<GetPeerAddressesResponseMessage>): GetPeerAddressesResponseMessage {
     const message = createBaseGetPeerAddressesResponseMessage();
     message.addresses = object.addresses?.map((e) => GetPeerAddressesKnownAddressMessage.fromPartial(e)) || [];
-    message.bannedAddresses = object.bannedAddresses?.map((e) => GetPeerAddressesKnownAddressMessage.fromPartial(e)) ||
-      [];
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.bannedAddresses =
+      object.bannedAddresses?.map((e) => GetPeerAddressesKnownAddressMessage.fromPartial(e)) || [];
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetPeerAddressesKnownAddressMessage(): GetPeerAddressesKnownAddressMessage {
-  return { Addr: "" };
+  return { Addr: '' };
 }
 
 export const GetPeerAddressesKnownAddressMessage: MessageFns<GetPeerAddressesKnownAddressMessage> = {
   encode(message: GetPeerAddressesKnownAddressMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.Addr !== "") {
+    if (message.Addr !== '') {
       writer.uint32(10).string(message.Addr);
     }
     return writer;
@@ -2907,9 +2881,9 @@ export const GetPeerAddressesKnownAddressMessage: MessageFns<GetPeerAddressesKno
   },
   fromPartial(object: DeepPartial<GetPeerAddressesKnownAddressMessage>): GetPeerAddressesKnownAddressMessage {
     const message = createBaseGetPeerAddressesKnownAddressMessage();
-    message.Addr = object.Addr ?? "";
+    message.Addr = object.Addr ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseGetSinkRequestMessage(): GetSinkRequestMessage {
@@ -2943,16 +2917,16 @@ export const GetSinkRequestMessage: MessageFns<GetSinkRequestMessage> = {
   fromPartial(_: DeepPartial<GetSinkRequestMessage>): GetSinkRequestMessage {
     const message = createBaseGetSinkRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetSinkResponseMessage(): GetSinkResponseMessage {
-  return { sink: "", error: undefined };
+  return { sink: '', error: undefined };
 }
 
 export const GetSinkResponseMessage: MessageFns<GetSinkResponseMessage> = {
   encode(message: GetSinkResponseMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.sink !== "") {
+    if (message.sink !== '') {
       writer.uint32(10).string(message.sink);
     }
     if (message.error !== undefined) {
@@ -2998,21 +2972,20 @@ export const GetSinkResponseMessage: MessageFns<GetSinkResponseMessage> = {
   },
   fromPartial(object: DeepPartial<GetSinkResponseMessage>): GetSinkResponseMessage {
     const message = createBaseGetSinkResponseMessage();
-    message.sink = object.sink ?? "";
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.sink = object.sink ?? '';
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetMempoolEntryRequestMessage(): GetMempoolEntryRequestMessage {
-  return { txId: "", includeOrphanPool: false, filterTransactionPool: false };
+  return { txId: '', includeOrphanPool: false, filterTransactionPool: false };
 }
 
 export const GetMempoolEntryRequestMessage: MessageFns<GetMempoolEntryRequestMessage> = {
   encode(message: GetMempoolEntryRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.txId !== "") {
+    if (message.txId !== '') {
       writer.uint32(10).string(message.txId);
     }
     if (message.includeOrphanPool !== false) {
@@ -3069,11 +3042,11 @@ export const GetMempoolEntryRequestMessage: MessageFns<GetMempoolEntryRequestMes
   },
   fromPartial(object: DeepPartial<GetMempoolEntryRequestMessage>): GetMempoolEntryRequestMessage {
     const message = createBaseGetMempoolEntryRequestMessage();
-    message.txId = object.txId ?? "";
+    message.txId = object.txId ?? '';
     message.includeOrphanPool = object.includeOrphanPool ?? false;
     message.filterTransactionPool = object.filterTransactionPool ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseGetMempoolEntryResponseMessage(): GetMempoolEntryResponseMessage {
@@ -3128,14 +3101,12 @@ export const GetMempoolEntryResponseMessage: MessageFns<GetMempoolEntryResponseM
   },
   fromPartial(object: DeepPartial<GetMempoolEntryResponseMessage>): GetMempoolEntryResponseMessage {
     const message = createBaseGetMempoolEntryResponseMessage();
-    message.entry = (object.entry !== undefined && object.entry !== null)
-      ? RpcMempoolEntry.fromPartial(object.entry)
-      : undefined;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.entry =
+      object.entry !== undefined && object.entry !== null ? RpcMempoolEntry.fromPartial(object.entry) : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetMempoolEntriesRequestMessage(): GetMempoolEntriesRequestMessage {
@@ -3193,7 +3164,7 @@ export const GetMempoolEntriesRequestMessage: MessageFns<GetMempoolEntriesReques
     message.includeOrphanPool = object.includeOrphanPool ?? false;
     message.filterTransactionPool = object.filterTransactionPool ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseGetMempoolEntriesResponseMessage(): GetMempoolEntriesResponseMessage {
@@ -3249,11 +3220,10 @@ export const GetMempoolEntriesResponseMessage: MessageFns<GetMempoolEntriesRespo
   fromPartial(object: DeepPartial<GetMempoolEntriesResponseMessage>): GetMempoolEntriesResponseMessage {
     const message = createBaseGetMempoolEntriesResponseMessage();
     message.entries = object.entries?.map((e) => RpcMempoolEntry.fromPartial(e)) || [];
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseRpcMempoolEntry(): RpcMempoolEntry {
@@ -3320,12 +3290,13 @@ export const RpcMempoolEntry: MessageFns<RpcMempoolEntry> = {
   fromPartial(object: DeepPartial<RpcMempoolEntry>): RpcMempoolEntry {
     const message = createBaseRpcMempoolEntry();
     message.fee = object.fee ?? 0;
-    message.transaction = (object.transaction !== undefined && object.transaction !== null)
-      ? RpcTransaction.fromPartial(object.transaction)
-      : undefined;
+    message.transaction =
+      object.transaction !== undefined && object.transaction !== null
+        ? RpcTransaction.fromPartial(object.transaction)
+        : undefined;
     message.isOrphan = object.isOrphan ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseGetConnectedPeerInfoRequestMessage(): GetConnectedPeerInfoRequestMessage {
@@ -3359,7 +3330,7 @@ export const GetConnectedPeerInfoRequestMessage: MessageFns<GetConnectedPeerInfo
   fromPartial(_: DeepPartial<GetConnectedPeerInfoRequestMessage>): GetConnectedPeerInfoRequestMessage {
     const message = createBaseGetConnectedPeerInfoRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetConnectedPeerInfoResponseMessage(): GetConnectedPeerInfoResponseMessage {
@@ -3415,33 +3386,32 @@ export const GetConnectedPeerInfoResponseMessage: MessageFns<GetConnectedPeerInf
   fromPartial(object: DeepPartial<GetConnectedPeerInfoResponseMessage>): GetConnectedPeerInfoResponseMessage {
     const message = createBaseGetConnectedPeerInfoResponseMessage();
     message.infos = object.infos?.map((e) => GetConnectedPeerInfoMessage.fromPartial(e)) || [];
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetConnectedPeerInfoMessage(): GetConnectedPeerInfoMessage {
   return {
-    id: "",
-    address: "",
+    id: '',
+    address: '',
     lastPingDuration: 0,
     isOutbound: false,
     timeOffset: 0,
-    userAgent: "",
+    userAgent: '',
     advertisedProtocolVersion: 0,
     timeConnected: 0,
-    isIbdPeer: false,
+    isIbdPeer: false
   };
 }
 
 export const GetConnectedPeerInfoMessage: MessageFns<GetConnectedPeerInfoMessage> = {
   encode(message: GetConnectedPeerInfoMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== "") {
+    if (message.id !== '') {
       writer.uint32(10).string(message.id);
     }
-    if (message.address !== "") {
+    if (message.address !== '') {
       writer.uint32(18).string(message.address);
     }
     if (message.lastPingDuration !== 0) {
@@ -3453,7 +3423,7 @@ export const GetConnectedPeerInfoMessage: MessageFns<GetConnectedPeerInfoMessage
     if (message.timeOffset !== 0) {
       writer.uint32(56).int64(message.timeOffset);
     }
-    if (message.userAgent !== "") {
+    if (message.userAgent !== '') {
       writer.uint32(66).string(message.userAgent);
     }
     if (message.advertisedProtocolVersion !== 0) {
@@ -3561,26 +3531,26 @@ export const GetConnectedPeerInfoMessage: MessageFns<GetConnectedPeerInfoMessage
   },
   fromPartial(object: DeepPartial<GetConnectedPeerInfoMessage>): GetConnectedPeerInfoMessage {
     const message = createBaseGetConnectedPeerInfoMessage();
-    message.id = object.id ?? "";
-    message.address = object.address ?? "";
+    message.id = object.id ?? '';
+    message.address = object.address ?? '';
     message.lastPingDuration = object.lastPingDuration ?? 0;
     message.isOutbound = object.isOutbound ?? false;
     message.timeOffset = object.timeOffset ?? 0;
-    message.userAgent = object.userAgent ?? "";
+    message.userAgent = object.userAgent ?? '';
     message.advertisedProtocolVersion = object.advertisedProtocolVersion ?? 0;
     message.timeConnected = object.timeConnected ?? 0;
     message.isIbdPeer = object.isIbdPeer ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseAddPeerRequestMessage(): AddPeerRequestMessage {
-  return { address: "", isPermanent: false };
+  return { address: '', isPermanent: false };
 }
 
 export const AddPeerRequestMessage: MessageFns<AddPeerRequestMessage> = {
   encode(message: AddPeerRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.address !== "") {
+    if (message.address !== '') {
       writer.uint32(10).string(message.address);
     }
     if (message.isPermanent !== false) {
@@ -3626,10 +3596,10 @@ export const AddPeerRequestMessage: MessageFns<AddPeerRequestMessage> = {
   },
   fromPartial(object: DeepPartial<AddPeerRequestMessage>): AddPeerRequestMessage {
     const message = createBaseAddPeerRequestMessage();
-    message.address = object.address ?? "";
+    message.address = object.address ?? '';
     message.isPermanent = object.isPermanent ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseAddPeerResponseMessage(): AddPeerResponseMessage {
@@ -3673,11 +3643,10 @@ export const AddPeerResponseMessage: MessageFns<AddPeerResponseMessage> = {
   },
   fromPartial(object: DeepPartial<AddPeerResponseMessage>): AddPeerResponseMessage {
     const message = createBaseAddPeerResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseSubmitTransactionRequestMessage(): SubmitTransactionRequestMessage {
@@ -3732,21 +3701,22 @@ export const SubmitTransactionRequestMessage: MessageFns<SubmitTransactionReques
   },
   fromPartial(object: DeepPartial<SubmitTransactionRequestMessage>): SubmitTransactionRequestMessage {
     const message = createBaseSubmitTransactionRequestMessage();
-    message.transaction = (object.transaction !== undefined && object.transaction !== null)
-      ? RpcTransaction.fromPartial(object.transaction)
-      : undefined;
+    message.transaction =
+      object.transaction !== undefined && object.transaction !== null
+        ? RpcTransaction.fromPartial(object.transaction)
+        : undefined;
     message.allowOrphan = object.allowOrphan ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseSubmitTransactionResponseMessage(): SubmitTransactionResponseMessage {
-  return { transactionId: "", error: undefined };
+  return { transactionId: '', error: undefined };
 }
 
 export const SubmitTransactionResponseMessage: MessageFns<SubmitTransactionResponseMessage> = {
   encode(message: SubmitTransactionResponseMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.transactionId !== "") {
+    if (message.transactionId !== '') {
       writer.uint32(10).string(message.transactionId);
     }
     if (message.error !== undefined) {
@@ -3792,12 +3762,11 @@ export const SubmitTransactionResponseMessage: MessageFns<SubmitTransactionRespo
   },
   fromPartial(object: DeepPartial<SubmitTransactionResponseMessage>): SubmitTransactionResponseMessage {
     const message = createBaseSubmitTransactionResponseMessage();
-    message.transactionId = object.transactionId ?? "";
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.transactionId = object.transactionId ?? '';
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseSubmitTransactionReplacementRequestMessage(): SubmitTransactionReplacementRequestMessage {
@@ -3840,26 +3809,27 @@ export const SubmitTransactionReplacementRequestMessage: MessageFns<SubmitTransa
     return SubmitTransactionReplacementRequestMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<SubmitTransactionReplacementRequestMessage>,
+    object: DeepPartial<SubmitTransactionReplacementRequestMessage>
   ): SubmitTransactionReplacementRequestMessage {
     const message = createBaseSubmitTransactionReplacementRequestMessage();
-    message.transaction = (object.transaction !== undefined && object.transaction !== null)
-      ? RpcTransaction.fromPartial(object.transaction)
-      : undefined;
+    message.transaction =
+      object.transaction !== undefined && object.transaction !== null
+        ? RpcTransaction.fromPartial(object.transaction)
+        : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseSubmitTransactionReplacementResponseMessage(): SubmitTransactionReplacementResponseMessage {
-  return { transactionId: "", replacedTransaction: undefined, error: undefined };
+  return { transactionId: '', replacedTransaction: undefined, error: undefined };
 }
 
 export const SubmitTransactionReplacementResponseMessage: MessageFns<SubmitTransactionReplacementResponseMessage> = {
   encode(
     message: SubmitTransactionReplacementResponseMessage,
-    writer: BinaryWriter = new BinaryWriter(),
+    writer: BinaryWriter = new BinaryWriter()
   ): BinaryWriter {
-    if (message.transactionId !== "") {
+    if (message.transactionId !== '') {
       writer.uint32(10).string(message.transactionId);
     }
     if (message.replacedTransaction !== undefined) {
@@ -3915,18 +3885,18 @@ export const SubmitTransactionReplacementResponseMessage: MessageFns<SubmitTrans
     return SubmitTransactionReplacementResponseMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<SubmitTransactionReplacementResponseMessage>,
+    object: DeepPartial<SubmitTransactionReplacementResponseMessage>
   ): SubmitTransactionReplacementResponseMessage {
     const message = createBaseSubmitTransactionReplacementResponseMessage();
-    message.transactionId = object.transactionId ?? "";
-    message.replacedTransaction = (object.replacedTransaction !== undefined && object.replacedTransaction !== null)
-      ? RpcTransaction.fromPartial(object.replacedTransaction)
-      : undefined;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.transactionId = object.transactionId ?? '';
+    message.replacedTransaction =
+      object.replacedTransaction !== undefined && object.replacedTransaction !== null
+        ? RpcTransaction.fromPartial(object.replacedTransaction)
+        : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyVirtualChainChangedRequestMessage(): NotifyVirtualChainChangedRequestMessage {
@@ -3984,7 +3954,7 @@ export const NotifyVirtualChainChangedRequestMessage: MessageFns<NotifyVirtualCh
     message.includeAcceptedTransactionIds = object.includeAcceptedTransactionIds ?? false;
     message.command = object.command ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyVirtualChainChangedResponseMessage(): NotifyVirtualChainChangedResponseMessage {
@@ -4028,11 +3998,10 @@ export const NotifyVirtualChainChangedResponseMessage: MessageFns<NotifyVirtualC
   },
   fromPartial(object: DeepPartial<NotifyVirtualChainChangedResponseMessage>): NotifyVirtualChainChangedResponseMessage {
     const message = createBaseNotifyVirtualChainChangedResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseVirtualChainChangedNotificationMessage(): VirtualChainChangedNotificationMessage {
@@ -4103,16 +4072,16 @@ export const VirtualChainChangedNotificationMessage: MessageFns<VirtualChainChan
     message.acceptedTransactionIds =
       object.acceptedTransactionIds?.map((e) => RpcAcceptedTransactionIds.fromPartial(e)) || [];
     return message;
-  },
+  }
 };
 
 function createBaseGetBlockRequestMessage(): GetBlockRequestMessage {
-  return { hash: "", includeTransactions: false };
+  return { hash: '', includeTransactions: false };
 }
 
 export const GetBlockRequestMessage: MessageFns<GetBlockRequestMessage> = {
   encode(message: GetBlockRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.hash !== "") {
+    if (message.hash !== '') {
       writer.uint32(10).string(message.hash);
     }
     if (message.includeTransactions !== false) {
@@ -4158,10 +4127,10 @@ export const GetBlockRequestMessage: MessageFns<GetBlockRequestMessage> = {
   },
   fromPartial(object: DeepPartial<GetBlockRequestMessage>): GetBlockRequestMessage {
     const message = createBaseGetBlockRequestMessage();
-    message.hash = object.hash ?? "";
+    message.hash = object.hash ?? '';
     message.includeTransactions = object.includeTransactions ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseGetBlockResponseMessage(): GetBlockResponseMessage {
@@ -4216,23 +4185,21 @@ export const GetBlockResponseMessage: MessageFns<GetBlockResponseMessage> = {
   },
   fromPartial(object: DeepPartial<GetBlockResponseMessage>): GetBlockResponseMessage {
     const message = createBaseGetBlockResponseMessage();
-    message.block = (object.block !== undefined && object.block !== null)
-      ? RpcBlock.fromPartial(object.block)
-      : undefined;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.block =
+      object.block !== undefined && object.block !== null ? RpcBlock.fromPartial(object.block) : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetSubnetworkRequestMessage(): GetSubnetworkRequestMessage {
-  return { subnetworkId: "" };
+  return { subnetworkId: '' };
 }
 
 export const GetSubnetworkRequestMessage: MessageFns<GetSubnetworkRequestMessage> = {
   encode(message: GetSubnetworkRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.subnetworkId !== "") {
+    if (message.subnetworkId !== '') {
       writer.uint32(10).string(message.subnetworkId);
     }
     return writer;
@@ -4267,9 +4234,9 @@ export const GetSubnetworkRequestMessage: MessageFns<GetSubnetworkRequestMessage
   },
   fromPartial(object: DeepPartial<GetSubnetworkRequestMessage>): GetSubnetworkRequestMessage {
     const message = createBaseGetSubnetworkRequestMessage();
-    message.subnetworkId = object.subnetworkId ?? "";
+    message.subnetworkId = object.subnetworkId ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseGetSubnetworkResponseMessage(): GetSubnetworkResponseMessage {
@@ -4325,20 +4292,19 @@ export const GetSubnetworkResponseMessage: MessageFns<GetSubnetworkResponseMessa
   fromPartial(object: DeepPartial<GetSubnetworkResponseMessage>): GetSubnetworkResponseMessage {
     const message = createBaseGetSubnetworkResponseMessage();
     message.gasLimit = object.gasLimit ?? 0;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetVirtualChainFromBlockRequestMessage(): GetVirtualChainFromBlockRequestMessage {
-  return { startHash: "", includeAcceptedTransactionIds: false };
+  return { startHash: '', includeAcceptedTransactionIds: false };
 }
 
 export const GetVirtualChainFromBlockRequestMessage: MessageFns<GetVirtualChainFromBlockRequestMessage> = {
   encode(message: GetVirtualChainFromBlockRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.startHash !== "") {
+    if (message.startHash !== '') {
       writer.uint32(10).string(message.startHash);
     }
     if (message.includeAcceptedTransactionIds !== false) {
@@ -4384,19 +4350,19 @@ export const GetVirtualChainFromBlockRequestMessage: MessageFns<GetVirtualChainF
   },
   fromPartial(object: DeepPartial<GetVirtualChainFromBlockRequestMessage>): GetVirtualChainFromBlockRequestMessage {
     const message = createBaseGetVirtualChainFromBlockRequestMessage();
-    message.startHash = object.startHash ?? "";
+    message.startHash = object.startHash ?? '';
     message.includeAcceptedTransactionIds = object.includeAcceptedTransactionIds ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseRpcAcceptedTransactionIds(): RpcAcceptedTransactionIds {
-  return { acceptingBlockHash: "", acceptedTransactionIds: [] };
+  return { acceptingBlockHash: '', acceptedTransactionIds: [] };
 }
 
 export const RpcAcceptedTransactionIds: MessageFns<RpcAcceptedTransactionIds> = {
   encode(message: RpcAcceptedTransactionIds, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.acceptingBlockHash !== "") {
+    if (message.acceptingBlockHash !== '') {
       writer.uint32(10).string(message.acceptingBlockHash);
     }
     for (const v of message.acceptedTransactionIds) {
@@ -4442,10 +4408,10 @@ export const RpcAcceptedTransactionIds: MessageFns<RpcAcceptedTransactionIds> = 
   },
   fromPartial(object: DeepPartial<RpcAcceptedTransactionIds>): RpcAcceptedTransactionIds {
     const message = createBaseRpcAcceptedTransactionIds();
-    message.acceptingBlockHash = object.acceptingBlockHash ?? "";
+    message.acceptingBlockHash = object.acceptingBlockHash ?? '';
     message.acceptedTransactionIds = object.acceptedTransactionIds?.map((e) => e) || [];
     return message;
-  },
+  }
 };
 
 function createBaseGetVirtualChainFromBlockResponseMessage(): GetVirtualChainFromBlockResponseMessage {
@@ -4526,20 +4492,19 @@ export const GetVirtualChainFromBlockResponseMessage: MessageFns<GetVirtualChain
     message.addedChainBlockHashes = object.addedChainBlockHashes?.map((e) => e) || [];
     message.acceptedTransactionIds =
       object.acceptedTransactionIds?.map((e) => RpcAcceptedTransactionIds.fromPartial(e)) || [];
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetBlocksRequestMessage(): GetBlocksRequestMessage {
-  return { lowHash: "", includeBlocks: false, includeTransactions: false };
+  return { lowHash: '', includeBlocks: false, includeTransactions: false };
 }
 
 export const GetBlocksRequestMessage: MessageFns<GetBlocksRequestMessage> = {
   encode(message: GetBlocksRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.lowHash !== "") {
+    if (message.lowHash !== '') {
       writer.uint32(10).string(message.lowHash);
     }
     if (message.includeBlocks !== false) {
@@ -4596,11 +4561,11 @@ export const GetBlocksRequestMessage: MessageFns<GetBlocksRequestMessage> = {
   },
   fromPartial(object: DeepPartial<GetBlocksRequestMessage>): GetBlocksRequestMessage {
     const message = createBaseGetBlocksRequestMessage();
-    message.lowHash = object.lowHash ?? "";
+    message.lowHash = object.lowHash ?? '';
     message.includeBlocks = object.includeBlocks ?? false;
     message.includeTransactions = object.includeTransactions ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseGetBlocksResponseMessage(): GetBlocksResponseMessage {
@@ -4668,11 +4633,10 @@ export const GetBlocksResponseMessage: MessageFns<GetBlocksResponseMessage> = {
     const message = createBaseGetBlocksResponseMessage();
     message.blockHashes = object.blockHashes?.map((e) => e) || [];
     message.blocks = object.blocks?.map((e) => RpcBlock.fromPartial(e)) || [];
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetBlockCountRequestMessage(): GetBlockCountRequestMessage {
@@ -4706,7 +4670,7 @@ export const GetBlockCountRequestMessage: MessageFns<GetBlockCountRequestMessage
   fromPartial(_: DeepPartial<GetBlockCountRequestMessage>): GetBlockCountRequestMessage {
     const message = createBaseGetBlockCountRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetBlockCountResponseMessage(): GetBlockCountResponseMessage {
@@ -4774,11 +4738,10 @@ export const GetBlockCountResponseMessage: MessageFns<GetBlockCountResponseMessa
     const message = createBaseGetBlockCountResponseMessage();
     message.blockCount = object.blockCount ?? 0;
     message.headerCount = object.headerCount ?? 0;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetBlockDagInfoRequestMessage(): GetBlockDagInfoRequestMessage {
@@ -4812,28 +4775,28 @@ export const GetBlockDagInfoRequestMessage: MessageFns<GetBlockDagInfoRequestMes
   fromPartial(_: DeepPartial<GetBlockDagInfoRequestMessage>): GetBlockDagInfoRequestMessage {
     const message = createBaseGetBlockDagInfoRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetBlockDagInfoResponseMessage(): GetBlockDagInfoResponseMessage {
   return {
-    networkName: "",
+    networkName: '',
     blockCount: 0,
     headerCount: 0,
     tipHashes: [],
     difficulty: 0,
     pastMedianTime: 0,
     virtualParentHashes: [],
-    pruningPointHash: "",
+    pruningPointHash: '',
     virtualDaaScore: 0,
-    sink: "",
-    error: undefined,
+    sink: '',
+    error: undefined
   };
 }
 
 export const GetBlockDagInfoResponseMessage: MessageFns<GetBlockDagInfoResponseMessage> = {
   encode(message: GetBlockDagInfoResponseMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.networkName !== "") {
+    if (message.networkName !== '') {
       writer.uint32(10).string(message.networkName);
     }
     if (message.blockCount !== 0) {
@@ -4854,13 +4817,13 @@ export const GetBlockDagInfoResponseMessage: MessageFns<GetBlockDagInfoResponseM
     for (const v of message.virtualParentHashes) {
       writer.uint32(58).string(v!);
     }
-    if (message.pruningPointHash !== "") {
+    if (message.pruningPointHash !== '') {
       writer.uint32(66).string(message.pruningPointHash);
     }
     if (message.virtualDaaScore !== 0) {
       writer.uint32(72).uint64(message.virtualDaaScore);
     }
-    if (message.sink !== "") {
+    if (message.sink !== '') {
       writer.uint32(82).string(message.sink);
     }
     if (message.error !== undefined) {
@@ -4978,30 +4941,29 @@ export const GetBlockDagInfoResponseMessage: MessageFns<GetBlockDagInfoResponseM
   },
   fromPartial(object: DeepPartial<GetBlockDagInfoResponseMessage>): GetBlockDagInfoResponseMessage {
     const message = createBaseGetBlockDagInfoResponseMessage();
-    message.networkName = object.networkName ?? "";
+    message.networkName = object.networkName ?? '';
     message.blockCount = object.blockCount ?? 0;
     message.headerCount = object.headerCount ?? 0;
     message.tipHashes = object.tipHashes?.map((e) => e) || [];
     message.difficulty = object.difficulty ?? 0;
     message.pastMedianTime = object.pastMedianTime ?? 0;
     message.virtualParentHashes = object.virtualParentHashes?.map((e) => e) || [];
-    message.pruningPointHash = object.pruningPointHash ?? "";
+    message.pruningPointHash = object.pruningPointHash ?? '';
     message.virtualDaaScore = object.virtualDaaScore ?? 0;
-    message.sink = object.sink ?? "";
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.sink = object.sink ?? '';
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseResolveFinalityConflictRequestMessage(): ResolveFinalityConflictRequestMessage {
-  return { finalityBlockHash: "" };
+  return { finalityBlockHash: '' };
 }
 
 export const ResolveFinalityConflictRequestMessage: MessageFns<ResolveFinalityConflictRequestMessage> = {
   encode(message: ResolveFinalityConflictRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.finalityBlockHash !== "") {
+    if (message.finalityBlockHash !== '') {
       writer.uint32(10).string(message.finalityBlockHash);
     }
     return writer;
@@ -5036,9 +4998,9 @@ export const ResolveFinalityConflictRequestMessage: MessageFns<ResolveFinalityCo
   },
   fromPartial(object: DeepPartial<ResolveFinalityConflictRequestMessage>): ResolveFinalityConflictRequestMessage {
     const message = createBaseResolveFinalityConflictRequestMessage();
-    message.finalityBlockHash = object.finalityBlockHash ?? "";
+    message.finalityBlockHash = object.finalityBlockHash ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseResolveFinalityConflictResponseMessage(): ResolveFinalityConflictResponseMessage {
@@ -5082,11 +5044,10 @@ export const ResolveFinalityConflictResponseMessage: MessageFns<ResolveFinalityC
   },
   fromPartial(object: DeepPartial<ResolveFinalityConflictResponseMessage>): ResolveFinalityConflictResponseMessage {
     const message = createBaseResolveFinalityConflictResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyFinalityConflictRequestMessage(): NotifyFinalityConflictRequestMessage {
@@ -5132,7 +5093,7 @@ export const NotifyFinalityConflictRequestMessage: MessageFns<NotifyFinalityConf
     const message = createBaseNotifyFinalityConflictRequestMessage();
     message.command = object.command ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyFinalityConflictResponseMessage(): NotifyFinalityConflictResponseMessage {
@@ -5176,20 +5137,19 @@ export const NotifyFinalityConflictResponseMessage: MessageFns<NotifyFinalityCon
   },
   fromPartial(object: DeepPartial<NotifyFinalityConflictResponseMessage>): NotifyFinalityConflictResponseMessage {
     const message = createBaseNotifyFinalityConflictResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseFinalityConflictNotificationMessage(): FinalityConflictNotificationMessage {
-  return { violatingBlockHash: "" };
+  return { violatingBlockHash: '' };
 }
 
 export const FinalityConflictNotificationMessage: MessageFns<FinalityConflictNotificationMessage> = {
   encode(message: FinalityConflictNotificationMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.violatingBlockHash !== "") {
+    if (message.violatingBlockHash !== '') {
       writer.uint32(10).string(message.violatingBlockHash);
     }
     return writer;
@@ -5224,21 +5184,21 @@ export const FinalityConflictNotificationMessage: MessageFns<FinalityConflictNot
   },
   fromPartial(object: DeepPartial<FinalityConflictNotificationMessage>): FinalityConflictNotificationMessage {
     const message = createBaseFinalityConflictNotificationMessage();
-    message.violatingBlockHash = object.violatingBlockHash ?? "";
+    message.violatingBlockHash = object.violatingBlockHash ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseFinalityConflictResolvedNotificationMessage(): FinalityConflictResolvedNotificationMessage {
-  return { finalityBlockHash: "" };
+  return { finalityBlockHash: '' };
 }
 
 export const FinalityConflictResolvedNotificationMessage: MessageFns<FinalityConflictResolvedNotificationMessage> = {
   encode(
     message: FinalityConflictResolvedNotificationMessage,
-    writer: BinaryWriter = new BinaryWriter(),
+    writer: BinaryWriter = new BinaryWriter()
   ): BinaryWriter {
-    if (message.finalityBlockHash !== "") {
+    if (message.finalityBlockHash !== '') {
       writer.uint32(10).string(message.finalityBlockHash);
     }
     return writer;
@@ -5272,12 +5232,12 @@ export const FinalityConflictResolvedNotificationMessage: MessageFns<FinalityCon
     return FinalityConflictResolvedNotificationMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<FinalityConflictResolvedNotificationMessage>,
+    object: DeepPartial<FinalityConflictResolvedNotificationMessage>
   ): FinalityConflictResolvedNotificationMessage {
     const message = createBaseFinalityConflictResolvedNotificationMessage();
-    message.finalityBlockHash = object.finalityBlockHash ?? "";
+    message.finalityBlockHash = object.finalityBlockHash ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseShutdownRequestMessage(): ShutdownRequestMessage {
@@ -5311,7 +5271,7 @@ export const ShutdownRequestMessage: MessageFns<ShutdownRequestMessage> = {
   fromPartial(_: DeepPartial<ShutdownRequestMessage>): ShutdownRequestMessage {
     const message = createBaseShutdownRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseShutdownResponseMessage(): ShutdownResponseMessage {
@@ -5355,20 +5315,19 @@ export const ShutdownResponseMessage: MessageFns<ShutdownResponseMessage> = {
   },
   fromPartial(object: DeepPartial<ShutdownResponseMessage>): ShutdownResponseMessage {
     const message = createBaseShutdownResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetHeadersRequestMessage(): GetHeadersRequestMessage {
-  return { startHash: "", limit: 0, isAscending: false };
+  return { startHash: '', limit: 0, isAscending: false };
 }
 
 export const GetHeadersRequestMessage: MessageFns<GetHeadersRequestMessage> = {
   encode(message: GetHeadersRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.startHash !== "") {
+    if (message.startHash !== '') {
       writer.uint32(10).string(message.startHash);
     }
     if (message.limit !== 0) {
@@ -5425,11 +5384,11 @@ export const GetHeadersRequestMessage: MessageFns<GetHeadersRequestMessage> = {
   },
   fromPartial(object: DeepPartial<GetHeadersRequestMessage>): GetHeadersRequestMessage {
     const message = createBaseGetHeadersRequestMessage();
-    message.startHash = object.startHash ?? "";
+    message.startHash = object.startHash ?? '';
     message.limit = object.limit ?? 0;
     message.isAscending = object.isAscending ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseGetHeadersResponseMessage(): GetHeadersResponseMessage {
@@ -5485,11 +5444,10 @@ export const GetHeadersResponseMessage: MessageFns<GetHeadersResponseMessage> = 
   fromPartial(object: DeepPartial<GetHeadersResponseMessage>): GetHeadersResponseMessage {
     const message = createBaseGetHeadersResponseMessage();
     message.headers = object.headers?.map((e) => e) || [];
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyUtxosChangedRequestMessage(): NotifyUtxosChangedRequestMessage {
@@ -5547,7 +5505,7 @@ export const NotifyUtxosChangedRequestMessage: MessageFns<NotifyUtxosChangedRequ
     message.addresses = object.addresses?.map((e) => e) || [];
     message.command = object.command ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyUtxosChangedResponseMessage(): NotifyUtxosChangedResponseMessage {
@@ -5591,11 +5549,10 @@ export const NotifyUtxosChangedResponseMessage: MessageFns<NotifyUtxosChangedRes
   },
   fromPartial(object: DeepPartial<NotifyUtxosChangedResponseMessage>): NotifyUtxosChangedResponseMessage {
     const message = createBaseNotifyUtxosChangedResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseUtxosChangedNotificationMessage(): UtxosChangedNotificationMessage {
@@ -5653,16 +5610,16 @@ export const UtxosChangedNotificationMessage: MessageFns<UtxosChangedNotificatio
     message.added = object.added?.map((e) => RpcUtxosByAddressesEntry.fromPartial(e)) || [];
     message.removed = object.removed?.map((e) => RpcUtxosByAddressesEntry.fromPartial(e)) || [];
     return message;
-  },
+  }
 };
 
 function createBaseRpcUtxosByAddressesEntry(): RpcUtxosByAddressesEntry {
-  return { address: "", outpoint: undefined, utxoEntry: undefined };
+  return { address: '', outpoint: undefined, utxoEntry: undefined };
 }
 
 export const RpcUtxosByAddressesEntry: MessageFns<RpcUtxosByAddressesEntry> = {
   encode(message: RpcUtxosByAddressesEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.address !== "") {
+    if (message.address !== '') {
       writer.uint32(10).string(message.address);
     }
     if (message.outpoint !== undefined) {
@@ -5719,15 +5676,15 @@ export const RpcUtxosByAddressesEntry: MessageFns<RpcUtxosByAddressesEntry> = {
   },
   fromPartial(object: DeepPartial<RpcUtxosByAddressesEntry>): RpcUtxosByAddressesEntry {
     const message = createBaseRpcUtxosByAddressesEntry();
-    message.address = object.address ?? "";
-    message.outpoint = (object.outpoint !== undefined && object.outpoint !== null)
-      ? RpcOutpoint.fromPartial(object.outpoint)
-      : undefined;
-    message.utxoEntry = (object.utxoEntry !== undefined && object.utxoEntry !== null)
-      ? RpcUtxoEntry.fromPartial(object.utxoEntry)
-      : undefined;
+    message.address = object.address ?? '';
+    message.outpoint =
+      object.outpoint !== undefined && object.outpoint !== null ? RpcOutpoint.fromPartial(object.outpoint) : undefined;
+    message.utxoEntry =
+      object.utxoEntry !== undefined && object.utxoEntry !== null
+        ? RpcUtxoEntry.fromPartial(object.utxoEntry)
+        : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseStopNotifyingUtxosChangedRequestMessage(): StopNotifyingUtxosChangedRequestMessage {
@@ -5773,7 +5730,7 @@ export const StopNotifyingUtxosChangedRequestMessage: MessageFns<StopNotifyingUt
     const message = createBaseStopNotifyingUtxosChangedRequestMessage();
     message.addresses = object.addresses?.map((e) => e) || [];
     return message;
-  },
+  }
 };
 
 function createBaseStopNotifyingUtxosChangedResponseMessage(): StopNotifyingUtxosChangedResponseMessage {
@@ -5817,11 +5774,10 @@ export const StopNotifyingUtxosChangedResponseMessage: MessageFns<StopNotifyingU
   },
   fromPartial(object: DeepPartial<StopNotifyingUtxosChangedResponseMessage>): StopNotifyingUtxosChangedResponseMessage {
     const message = createBaseStopNotifyingUtxosChangedResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetUtxosByAddressesRequestMessage(): GetUtxosByAddressesRequestMessage {
@@ -5867,7 +5823,7 @@ export const GetUtxosByAddressesRequestMessage: MessageFns<GetUtxosByAddressesRe
     const message = createBaseGetUtxosByAddressesRequestMessage();
     message.addresses = object.addresses?.map((e) => e) || [];
     return message;
-  },
+  }
 };
 
 function createBaseGetUtxosByAddressesResponseMessage(): GetUtxosByAddressesResponseMessage {
@@ -5923,20 +5879,19 @@ export const GetUtxosByAddressesResponseMessage: MessageFns<GetUtxosByAddressesR
   fromPartial(object: DeepPartial<GetUtxosByAddressesResponseMessage>): GetUtxosByAddressesResponseMessage {
     const message = createBaseGetUtxosByAddressesResponseMessage();
     message.entries = object.entries?.map((e) => RpcUtxosByAddressesEntry.fromPartial(e)) || [];
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetBalanceByAddressRequestMessage(): GetBalanceByAddressRequestMessage {
-  return { address: "" };
+  return { address: '' };
 }
 
 export const GetBalanceByAddressRequestMessage: MessageFns<GetBalanceByAddressRequestMessage> = {
   encode(message: GetBalanceByAddressRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.address !== "") {
+    if (message.address !== '') {
       writer.uint32(10).string(message.address);
     }
     return writer;
@@ -5971,9 +5926,9 @@ export const GetBalanceByAddressRequestMessage: MessageFns<GetBalanceByAddressRe
   },
   fromPartial(object: DeepPartial<GetBalanceByAddressRequestMessage>): GetBalanceByAddressRequestMessage {
     const message = createBaseGetBalanceByAddressRequestMessage();
-    message.address = object.address ?? "";
+    message.address = object.address ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseGetBalanceByAddressResponseMessage(): GetBalanceByAddressResponseMessage {
@@ -6029,11 +5984,10 @@ export const GetBalanceByAddressResponseMessage: MessageFns<GetBalanceByAddressR
   fromPartial(object: DeepPartial<GetBalanceByAddressResponseMessage>): GetBalanceByAddressResponseMessage {
     const message = createBaseGetBalanceByAddressResponseMessage();
     message.balance = object.balance ?? 0;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetBalancesByAddressesRequestMessage(): GetBalancesByAddressesRequestMessage {
@@ -6079,16 +6033,16 @@ export const GetBalancesByAddressesRequestMessage: MessageFns<GetBalancesByAddre
     const message = createBaseGetBalancesByAddressesRequestMessage();
     message.addresses = object.addresses?.map((e) => e) || [];
     return message;
-  },
+  }
 };
 
 function createBaseRpcBalancesByAddressesEntry(): RpcBalancesByAddressesEntry {
-  return { address: "", balance: 0, error: undefined };
+  return { address: '', balance: 0, error: undefined };
 }
 
 export const RpcBalancesByAddressesEntry: MessageFns<RpcBalancesByAddressesEntry> = {
   encode(message: RpcBalancesByAddressesEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.address !== "") {
+    if (message.address !== '') {
       writer.uint32(10).string(message.address);
     }
     if (message.balance !== 0) {
@@ -6145,13 +6099,12 @@ export const RpcBalancesByAddressesEntry: MessageFns<RpcBalancesByAddressesEntry
   },
   fromPartial(object: DeepPartial<RpcBalancesByAddressesEntry>): RpcBalancesByAddressesEntry {
     const message = createBaseRpcBalancesByAddressesEntry();
-    message.address = object.address ?? "";
+    message.address = object.address ?? '';
     message.balance = object.balance ?? 0;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetBalancesByAddressesResponseMessage(): GetBalancesByAddressesResponseMessage {
@@ -6207,11 +6160,10 @@ export const GetBalancesByAddressesResponseMessage: MessageFns<GetBalancesByAddr
   fromPartial(object: DeepPartial<GetBalancesByAddressesResponseMessage>): GetBalancesByAddressesResponseMessage {
     const message = createBaseGetBalancesByAddressesResponseMessage();
     message.entries = object.entries?.map((e) => RpcBalancesByAddressesEntry.fromPartial(e)) || [];
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetSinkBlueScoreRequestMessage(): GetSinkBlueScoreRequestMessage {
@@ -6245,7 +6197,7 @@ export const GetSinkBlueScoreRequestMessage: MessageFns<GetSinkBlueScoreRequestM
   fromPartial(_: DeepPartial<GetSinkBlueScoreRequestMessage>): GetSinkBlueScoreRequestMessage {
     const message = createBaseGetSinkBlueScoreRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetSinkBlueScoreResponseMessage(): GetSinkBlueScoreResponseMessage {
@@ -6301,11 +6253,10 @@ export const GetSinkBlueScoreResponseMessage: MessageFns<GetSinkBlueScoreRespons
   fromPartial(object: DeepPartial<GetSinkBlueScoreResponseMessage>): GetSinkBlueScoreResponseMessage {
     const message = createBaseGetSinkBlueScoreResponseMessage();
     message.blueScore = object.blueScore ?? 0;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseNotifySinkBlueScoreChangedRequestMessage(): NotifySinkBlueScoreChangedRequestMessage {
@@ -6351,7 +6302,7 @@ export const NotifySinkBlueScoreChangedRequestMessage: MessageFns<NotifySinkBlue
     const message = createBaseNotifySinkBlueScoreChangedRequestMessage();
     message.command = object.command ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseNotifySinkBlueScoreChangedResponseMessage(): NotifySinkBlueScoreChangedResponseMessage {
@@ -6394,14 +6345,13 @@ export const NotifySinkBlueScoreChangedResponseMessage: MessageFns<NotifySinkBlu
     return NotifySinkBlueScoreChangedResponseMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<NotifySinkBlueScoreChangedResponseMessage>,
+    object: DeepPartial<NotifySinkBlueScoreChangedResponseMessage>
   ): NotifySinkBlueScoreChangedResponseMessage {
     const message = createBaseNotifySinkBlueScoreChangedResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseSinkBlueScoreChangedNotificationMessage(): SinkBlueScoreChangedNotificationMessage {
@@ -6447,7 +6397,7 @@ export const SinkBlueScoreChangedNotificationMessage: MessageFns<SinkBlueScoreCh
     const message = createBaseSinkBlueScoreChangedNotificationMessage();
     message.sinkBlueScore = object.sinkBlueScore ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyVirtualDaaScoreChangedRequestMessage(): NotifyVirtualDaaScoreChangedRequestMessage {
@@ -6490,12 +6440,12 @@ export const NotifyVirtualDaaScoreChangedRequestMessage: MessageFns<NotifyVirtua
     return NotifyVirtualDaaScoreChangedRequestMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<NotifyVirtualDaaScoreChangedRequestMessage>,
+    object: DeepPartial<NotifyVirtualDaaScoreChangedRequestMessage>
   ): NotifyVirtualDaaScoreChangedRequestMessage {
     const message = createBaseNotifyVirtualDaaScoreChangedRequestMessage();
     message.command = object.command ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyVirtualDaaScoreChangedResponseMessage(): NotifyVirtualDaaScoreChangedResponseMessage {
@@ -6505,7 +6455,7 @@ function createBaseNotifyVirtualDaaScoreChangedResponseMessage(): NotifyVirtualD
 export const NotifyVirtualDaaScoreChangedResponseMessage: MessageFns<NotifyVirtualDaaScoreChangedResponseMessage> = {
   encode(
     message: NotifyVirtualDaaScoreChangedResponseMessage,
-    writer: BinaryWriter = new BinaryWriter(),
+    writer: BinaryWriter = new BinaryWriter()
   ): BinaryWriter {
     if (message.error !== undefined) {
       RPCError.encode(message.error, writer.uint32(8002).fork()).join();
@@ -6541,14 +6491,13 @@ export const NotifyVirtualDaaScoreChangedResponseMessage: MessageFns<NotifyVirtu
     return NotifyVirtualDaaScoreChangedResponseMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<NotifyVirtualDaaScoreChangedResponseMessage>,
+    object: DeepPartial<NotifyVirtualDaaScoreChangedResponseMessage>
   ): NotifyVirtualDaaScoreChangedResponseMessage {
     const message = createBaseNotifyVirtualDaaScoreChangedResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseVirtualDaaScoreChangedNotificationMessage(): VirtualDaaScoreChangedNotificationMessage {
@@ -6591,273 +6540,266 @@ export const VirtualDaaScoreChangedNotificationMessage: MessageFns<VirtualDaaSco
     return VirtualDaaScoreChangedNotificationMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<VirtualDaaScoreChangedNotificationMessage>,
+    object: DeepPartial<VirtualDaaScoreChangedNotificationMessage>
   ): VirtualDaaScoreChangedNotificationMessage {
     const message = createBaseVirtualDaaScoreChangedNotificationMessage();
     message.virtualDaaScore = object.virtualDaaScore ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyPruningPointUtxoSetOverrideRequestMessage(): NotifyPruningPointUtxoSetOverrideRequestMessage {
   return { command: 0 };
 }
 
-export const NotifyPruningPointUtxoSetOverrideRequestMessage: MessageFns<
-  NotifyPruningPointUtxoSetOverrideRequestMessage
-> = {
-  encode(
-    message: NotifyPruningPointUtxoSetOverrideRequestMessage,
-    writer: BinaryWriter = new BinaryWriter(),
-  ): BinaryWriter {
-    if (message.command !== 0) {
-      writer.uint32(808).int32(message.command);
-    }
-    return writer;
-  },
+export const NotifyPruningPointUtxoSetOverrideRequestMessage: MessageFns<NotifyPruningPointUtxoSetOverrideRequestMessage> =
+  {
+    encode(
+      message: NotifyPruningPointUtxoSetOverrideRequestMessage,
+      writer: BinaryWriter = new BinaryWriter()
+    ): BinaryWriter {
+      if (message.command !== 0) {
+        writer.uint32(808).int32(message.command);
+      }
+      return writer;
+    },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): NotifyPruningPointUtxoSetOverrideRequestMessage {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseNotifyPruningPointUtxoSetOverrideRequestMessage();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 101: {
-          if (tag !== 808) {
-            break;
+    decode(input: BinaryReader | Uint8Array, length?: number): NotifyPruningPointUtxoSetOverrideRequestMessage {
+      const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+      let end = length === undefined ? reader.len : reader.pos + length;
+      const message = createBaseNotifyPruningPointUtxoSetOverrideRequestMessage();
+      while (reader.pos < end) {
+        const tag = reader.uint32();
+        switch (tag >>> 3) {
+          case 101: {
+            if (tag !== 808) {
+              break;
+            }
+
+            message.command = reader.int32() as any;
+            continue;
           }
-
-          message.command = reader.int32() as any;
-          continue;
         }
+        if ((tag & 7) === 4 || tag === 0) {
+          break;
+        }
+        reader.skip(tag & 7);
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
+      return message;
+    },
 
-  create(
-    base?: DeepPartial<NotifyPruningPointUtxoSetOverrideRequestMessage>,
-  ): NotifyPruningPointUtxoSetOverrideRequestMessage {
-    return NotifyPruningPointUtxoSetOverrideRequestMessage.fromPartial(base ?? {});
-  },
-  fromPartial(
-    object: DeepPartial<NotifyPruningPointUtxoSetOverrideRequestMessage>,
-  ): NotifyPruningPointUtxoSetOverrideRequestMessage {
-    const message = createBaseNotifyPruningPointUtxoSetOverrideRequestMessage();
-    message.command = object.command ?? 0;
-    return message;
-  },
-};
+    create(
+      base?: DeepPartial<NotifyPruningPointUtxoSetOverrideRequestMessage>
+    ): NotifyPruningPointUtxoSetOverrideRequestMessage {
+      return NotifyPruningPointUtxoSetOverrideRequestMessage.fromPartial(base ?? {});
+    },
+    fromPartial(
+      object: DeepPartial<NotifyPruningPointUtxoSetOverrideRequestMessage>
+    ): NotifyPruningPointUtxoSetOverrideRequestMessage {
+      const message = createBaseNotifyPruningPointUtxoSetOverrideRequestMessage();
+      message.command = object.command ?? 0;
+      return message;
+    }
+  };
 
 function createBaseNotifyPruningPointUtxoSetOverrideResponseMessage(): NotifyPruningPointUtxoSetOverrideResponseMessage {
   return { error: undefined };
 }
 
-export const NotifyPruningPointUtxoSetOverrideResponseMessage: MessageFns<
-  NotifyPruningPointUtxoSetOverrideResponseMessage
-> = {
-  encode(
-    message: NotifyPruningPointUtxoSetOverrideResponseMessage,
-    writer: BinaryWriter = new BinaryWriter(),
-  ): BinaryWriter {
-    if (message.error !== undefined) {
-      RPCError.encode(message.error, writer.uint32(8002).fork()).join();
-    }
-    return writer;
-  },
+export const NotifyPruningPointUtxoSetOverrideResponseMessage: MessageFns<NotifyPruningPointUtxoSetOverrideResponseMessage> =
+  {
+    encode(
+      message: NotifyPruningPointUtxoSetOverrideResponseMessage,
+      writer: BinaryWriter = new BinaryWriter()
+    ): BinaryWriter {
+      if (message.error !== undefined) {
+        RPCError.encode(message.error, writer.uint32(8002).fork()).join();
+      }
+      return writer;
+    },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): NotifyPruningPointUtxoSetOverrideResponseMessage {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseNotifyPruningPointUtxoSetOverrideResponseMessage();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1000: {
-          if (tag !== 8002) {
-            break;
+    decode(input: BinaryReader | Uint8Array, length?: number): NotifyPruningPointUtxoSetOverrideResponseMessage {
+      const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+      let end = length === undefined ? reader.len : reader.pos + length;
+      const message = createBaseNotifyPruningPointUtxoSetOverrideResponseMessage();
+      while (reader.pos < end) {
+        const tag = reader.uint32();
+        switch (tag >>> 3) {
+          case 1000: {
+            if (tag !== 8002) {
+              break;
+            }
+
+            message.error = RPCError.decode(reader, reader.uint32());
+            continue;
           }
-
-          message.error = RPCError.decode(reader, reader.uint32());
-          continue;
         }
+        if ((tag & 7) === 4 || tag === 0) {
+          break;
+        }
+        reader.skip(tag & 7);
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
+      return message;
+    },
 
-  create(
-    base?: DeepPartial<NotifyPruningPointUtxoSetOverrideResponseMessage>,
-  ): NotifyPruningPointUtxoSetOverrideResponseMessage {
-    return NotifyPruningPointUtxoSetOverrideResponseMessage.fromPartial(base ?? {});
-  },
-  fromPartial(
-    object: DeepPartial<NotifyPruningPointUtxoSetOverrideResponseMessage>,
-  ): NotifyPruningPointUtxoSetOverrideResponseMessage {
-    const message = createBaseNotifyPruningPointUtxoSetOverrideResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
-    return message;
-  },
-};
+    create(
+      base?: DeepPartial<NotifyPruningPointUtxoSetOverrideResponseMessage>
+    ): NotifyPruningPointUtxoSetOverrideResponseMessage {
+      return NotifyPruningPointUtxoSetOverrideResponseMessage.fromPartial(base ?? {});
+    },
+    fromPartial(
+      object: DeepPartial<NotifyPruningPointUtxoSetOverrideResponseMessage>
+    ): NotifyPruningPointUtxoSetOverrideResponseMessage {
+      const message = createBaseNotifyPruningPointUtxoSetOverrideResponseMessage();
+      message.error =
+        object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
+      return message;
+    }
+  };
 
 function createBasePruningPointUtxoSetOverrideNotificationMessage(): PruningPointUtxoSetOverrideNotificationMessage {
   return {};
 }
 
-export const PruningPointUtxoSetOverrideNotificationMessage: MessageFns<
-  PruningPointUtxoSetOverrideNotificationMessage
-> = {
-  encode(_: PruningPointUtxoSetOverrideNotificationMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    return writer;
-  },
+export const PruningPointUtxoSetOverrideNotificationMessage: MessageFns<PruningPointUtxoSetOverrideNotificationMessage> =
+  {
+    encode(_: PruningPointUtxoSetOverrideNotificationMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+      return writer;
+    },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): PruningPointUtxoSetOverrideNotificationMessage {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBasePruningPointUtxoSetOverrideNotificationMessage();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
+    decode(input: BinaryReader | Uint8Array, length?: number): PruningPointUtxoSetOverrideNotificationMessage {
+      const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+      let end = length === undefined ? reader.len : reader.pos + length;
+      const message = createBasePruningPointUtxoSetOverrideNotificationMessage();
+      while (reader.pos < end) {
+        const tag = reader.uint32();
+        switch (tag >>> 3) {
+        }
+        if ((tag & 7) === 4 || tag === 0) {
+          break;
+        }
+        reader.skip(tag & 7);
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
+      return message;
+    },
+
+    create(
+      base?: DeepPartial<PruningPointUtxoSetOverrideNotificationMessage>
+    ): PruningPointUtxoSetOverrideNotificationMessage {
+      return PruningPointUtxoSetOverrideNotificationMessage.fromPartial(base ?? {});
+    },
+    fromPartial(
+      _: DeepPartial<PruningPointUtxoSetOverrideNotificationMessage>
+    ): PruningPointUtxoSetOverrideNotificationMessage {
+      const message = createBasePruningPointUtxoSetOverrideNotificationMessage();
+      return message;
     }
-    return message;
-  },
-
-  create(
-    base?: DeepPartial<PruningPointUtxoSetOverrideNotificationMessage>,
-  ): PruningPointUtxoSetOverrideNotificationMessage {
-    return PruningPointUtxoSetOverrideNotificationMessage.fromPartial(base ?? {});
-  },
-  fromPartial(
-    _: DeepPartial<PruningPointUtxoSetOverrideNotificationMessage>,
-  ): PruningPointUtxoSetOverrideNotificationMessage {
-    const message = createBasePruningPointUtxoSetOverrideNotificationMessage();
-    return message;
-  },
-};
+  };
 
 function createBaseStopNotifyingPruningPointUtxoSetOverrideRequestMessage(): StopNotifyingPruningPointUtxoSetOverrideRequestMessage {
   return {};
 }
 
-export const StopNotifyingPruningPointUtxoSetOverrideRequestMessage: MessageFns<
-  StopNotifyingPruningPointUtxoSetOverrideRequestMessage
-> = {
-  encode(
-    _: StopNotifyingPruningPointUtxoSetOverrideRequestMessage,
-    writer: BinaryWriter = new BinaryWriter(),
-  ): BinaryWriter {
-    return writer;
-  },
+export const StopNotifyingPruningPointUtxoSetOverrideRequestMessage: MessageFns<StopNotifyingPruningPointUtxoSetOverrideRequestMessage> =
+  {
+    encode(
+      _: StopNotifyingPruningPointUtxoSetOverrideRequestMessage,
+      writer: BinaryWriter = new BinaryWriter()
+    ): BinaryWriter {
+      return writer;
+    },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): StopNotifyingPruningPointUtxoSetOverrideRequestMessage {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStopNotifyingPruningPointUtxoSetOverrideRequestMessage();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
+    decode(input: BinaryReader | Uint8Array, length?: number): StopNotifyingPruningPointUtxoSetOverrideRequestMessage {
+      const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+      let end = length === undefined ? reader.len : reader.pos + length;
+      const message = createBaseStopNotifyingPruningPointUtxoSetOverrideRequestMessage();
+      while (reader.pos < end) {
+        const tag = reader.uint32();
+        switch (tag >>> 3) {
+        }
+        if ((tag & 7) === 4 || tag === 0) {
+          break;
+        }
+        reader.skip(tag & 7);
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
+      return message;
+    },
+
+    create(
+      base?: DeepPartial<StopNotifyingPruningPointUtxoSetOverrideRequestMessage>
+    ): StopNotifyingPruningPointUtxoSetOverrideRequestMessage {
+      return StopNotifyingPruningPointUtxoSetOverrideRequestMessage.fromPartial(base ?? {});
+    },
+    fromPartial(
+      _: DeepPartial<StopNotifyingPruningPointUtxoSetOverrideRequestMessage>
+    ): StopNotifyingPruningPointUtxoSetOverrideRequestMessage {
+      const message = createBaseStopNotifyingPruningPointUtxoSetOverrideRequestMessage();
+      return message;
     }
-    return message;
-  },
-
-  create(
-    base?: DeepPartial<StopNotifyingPruningPointUtxoSetOverrideRequestMessage>,
-  ): StopNotifyingPruningPointUtxoSetOverrideRequestMessage {
-    return StopNotifyingPruningPointUtxoSetOverrideRequestMessage.fromPartial(base ?? {});
-  },
-  fromPartial(
-    _: DeepPartial<StopNotifyingPruningPointUtxoSetOverrideRequestMessage>,
-  ): StopNotifyingPruningPointUtxoSetOverrideRequestMessage {
-    const message = createBaseStopNotifyingPruningPointUtxoSetOverrideRequestMessage();
-    return message;
-  },
-};
+  };
 
 function createBaseStopNotifyingPruningPointUtxoSetOverrideResponseMessage(): StopNotifyingPruningPointUtxoSetOverrideResponseMessage {
   return { error: undefined };
 }
 
-export const StopNotifyingPruningPointUtxoSetOverrideResponseMessage: MessageFns<
-  StopNotifyingPruningPointUtxoSetOverrideResponseMessage
-> = {
-  encode(
-    message: StopNotifyingPruningPointUtxoSetOverrideResponseMessage,
-    writer: BinaryWriter = new BinaryWriter(),
-  ): BinaryWriter {
-    if (message.error !== undefined) {
-      RPCError.encode(message.error, writer.uint32(8002).fork()).join();
-    }
-    return writer;
-  },
+export const StopNotifyingPruningPointUtxoSetOverrideResponseMessage: MessageFns<StopNotifyingPruningPointUtxoSetOverrideResponseMessage> =
+  {
+    encode(
+      message: StopNotifyingPruningPointUtxoSetOverrideResponseMessage,
+      writer: BinaryWriter = new BinaryWriter()
+    ): BinaryWriter {
+      if (message.error !== undefined) {
+        RPCError.encode(message.error, writer.uint32(8002).fork()).join();
+      }
+      return writer;
+    },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): StopNotifyingPruningPointUtxoSetOverrideResponseMessage {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStopNotifyingPruningPointUtxoSetOverrideResponseMessage();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1000: {
-          if (tag !== 8002) {
-            break;
+    decode(input: BinaryReader | Uint8Array, length?: number): StopNotifyingPruningPointUtxoSetOverrideResponseMessage {
+      const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+      let end = length === undefined ? reader.len : reader.pos + length;
+      const message = createBaseStopNotifyingPruningPointUtxoSetOverrideResponseMessage();
+      while (reader.pos < end) {
+        const tag = reader.uint32();
+        switch (tag >>> 3) {
+          case 1000: {
+            if (tag !== 8002) {
+              break;
+            }
+
+            message.error = RPCError.decode(reader, reader.uint32());
+            continue;
           }
-
-          message.error = RPCError.decode(reader, reader.uint32());
-          continue;
         }
+        if ((tag & 7) === 4 || tag === 0) {
+          break;
+        }
+        reader.skip(tag & 7);
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
+      return message;
+    },
 
-  create(
-    base?: DeepPartial<StopNotifyingPruningPointUtxoSetOverrideResponseMessage>,
-  ): StopNotifyingPruningPointUtxoSetOverrideResponseMessage {
-    return StopNotifyingPruningPointUtxoSetOverrideResponseMessage.fromPartial(base ?? {});
-  },
-  fromPartial(
-    object: DeepPartial<StopNotifyingPruningPointUtxoSetOverrideResponseMessage>,
-  ): StopNotifyingPruningPointUtxoSetOverrideResponseMessage {
-    const message = createBaseStopNotifyingPruningPointUtxoSetOverrideResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
-    return message;
-  },
-};
+    create(
+      base?: DeepPartial<StopNotifyingPruningPointUtxoSetOverrideResponseMessage>
+    ): StopNotifyingPruningPointUtxoSetOverrideResponseMessage {
+      return StopNotifyingPruningPointUtxoSetOverrideResponseMessage.fromPartial(base ?? {});
+    },
+    fromPartial(
+      object: DeepPartial<StopNotifyingPruningPointUtxoSetOverrideResponseMessage>
+    ): StopNotifyingPruningPointUtxoSetOverrideResponseMessage {
+      const message = createBaseStopNotifyingPruningPointUtxoSetOverrideResponseMessage();
+      message.error =
+        object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
+      return message;
+    }
+  };
 
 function createBaseBanRequestMessage(): BanRequestMessage {
-  return { ip: "" };
+  return { ip: '' };
 }
 
 export const BanRequestMessage: MessageFns<BanRequestMessage> = {
   encode(message: BanRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.ip !== "") {
+    if (message.ip !== '') {
       writer.uint32(10).string(message.ip);
     }
     return writer;
@@ -6892,9 +6834,9 @@ export const BanRequestMessage: MessageFns<BanRequestMessage> = {
   },
   fromPartial(object: DeepPartial<BanRequestMessage>): BanRequestMessage {
     const message = createBaseBanRequestMessage();
-    message.ip = object.ip ?? "";
+    message.ip = object.ip ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseBanResponseMessage(): BanResponseMessage {
@@ -6938,20 +6880,19 @@ export const BanResponseMessage: MessageFns<BanResponseMessage> = {
   },
   fromPartial(object: DeepPartial<BanResponseMessage>): BanResponseMessage {
     const message = createBaseBanResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseUnbanRequestMessage(): UnbanRequestMessage {
-  return { ip: "" };
+  return { ip: '' };
 }
 
 export const UnbanRequestMessage: MessageFns<UnbanRequestMessage> = {
   encode(message: UnbanRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.ip !== "") {
+    if (message.ip !== '') {
       writer.uint32(10).string(message.ip);
     }
     return writer;
@@ -6986,9 +6927,9 @@ export const UnbanRequestMessage: MessageFns<UnbanRequestMessage> = {
   },
   fromPartial(object: DeepPartial<UnbanRequestMessage>): UnbanRequestMessage {
     const message = createBaseUnbanRequestMessage();
-    message.ip = object.ip ?? "";
+    message.ip = object.ip ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseUnbanResponseMessage(): UnbanResponseMessage {
@@ -7032,11 +6973,10 @@ export const UnbanResponseMessage: MessageFns<UnbanResponseMessage> = {
   },
   fromPartial(object: DeepPartial<UnbanResponseMessage>): UnbanResponseMessage {
     const message = createBaseUnbanResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetInfoRequestMessage(): GetInfoRequestMessage {
@@ -7070,31 +7010,31 @@ export const GetInfoRequestMessage: MessageFns<GetInfoRequestMessage> = {
   fromPartial(_: DeepPartial<GetInfoRequestMessage>): GetInfoRequestMessage {
     const message = createBaseGetInfoRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetInfoResponseMessage(): GetInfoResponseMessage {
   return {
-    p2pId: "",
+    p2pId: '',
     mempoolSize: 0,
-    serverVersion: "",
+    serverVersion: '',
     isUtxoIndexed: false,
     isSynced: false,
     hasNotifyCommand: false,
     hasMessageId: false,
-    error: undefined,
+    error: undefined
   };
 }
 
 export const GetInfoResponseMessage: MessageFns<GetInfoResponseMessage> = {
   encode(message: GetInfoResponseMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.p2pId !== "") {
+    if (message.p2pId !== '') {
       writer.uint32(10).string(message.p2pId);
     }
     if (message.mempoolSize !== 0) {
       writer.uint32(16).uint64(message.mempoolSize);
     }
-    if (message.serverVersion !== "") {
+    if (message.serverVersion !== '') {
       writer.uint32(26).string(message.serverVersion);
     }
     if (message.isUtxoIndexed !== false) {
@@ -7200,33 +7140,32 @@ export const GetInfoResponseMessage: MessageFns<GetInfoResponseMessage> = {
   },
   fromPartial(object: DeepPartial<GetInfoResponseMessage>): GetInfoResponseMessage {
     const message = createBaseGetInfoResponseMessage();
-    message.p2pId = object.p2pId ?? "";
+    message.p2pId = object.p2pId ?? '';
     message.mempoolSize = object.mempoolSize ?? 0;
-    message.serverVersion = object.serverVersion ?? "";
+    message.serverVersion = object.serverVersion ?? '';
     message.isUtxoIndexed = object.isUtxoIndexed ?? false;
     message.isSynced = object.isSynced ?? false;
     message.hasNotifyCommand = object.hasNotifyCommand ?? false;
     message.hasMessageId = object.hasMessageId ?? false;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseEstimateNetworkHashesPerSecondRequestMessage(): EstimateNetworkHashesPerSecondRequestMessage {
-  return { windowSize: 0, startHash: "" };
+  return { windowSize: 0, startHash: '' };
 }
 
 export const EstimateNetworkHashesPerSecondRequestMessage: MessageFns<EstimateNetworkHashesPerSecondRequestMessage> = {
   encode(
     message: EstimateNetworkHashesPerSecondRequestMessage,
-    writer: BinaryWriter = new BinaryWriter(),
+    writer: BinaryWriter = new BinaryWriter()
   ): BinaryWriter {
     if (message.windowSize !== 0) {
       writer.uint32(8).uint32(message.windowSize);
     }
-    if (message.startHash !== "") {
+    if (message.startHash !== '') {
       writer.uint32(18).string(message.startHash);
     }
     return writer;
@@ -7265,18 +7204,18 @@ export const EstimateNetworkHashesPerSecondRequestMessage: MessageFns<EstimateNe
   },
 
   create(
-    base?: DeepPartial<EstimateNetworkHashesPerSecondRequestMessage>,
+    base?: DeepPartial<EstimateNetworkHashesPerSecondRequestMessage>
   ): EstimateNetworkHashesPerSecondRequestMessage {
     return EstimateNetworkHashesPerSecondRequestMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<EstimateNetworkHashesPerSecondRequestMessage>,
+    object: DeepPartial<EstimateNetworkHashesPerSecondRequestMessage>
   ): EstimateNetworkHashesPerSecondRequestMessage {
     const message = createBaseEstimateNetworkHashesPerSecondRequestMessage();
     message.windowSize = object.windowSize ?? 0;
-    message.startHash = object.startHash ?? "";
+    message.startHash = object.startHash ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseEstimateNetworkHashesPerSecondResponseMessage(): EstimateNetworkHashesPerSecondResponseMessage {
@@ -7287,7 +7226,7 @@ export const EstimateNetworkHashesPerSecondResponseMessage: MessageFns<EstimateN
   {
     encode(
       message: EstimateNetworkHashesPerSecondResponseMessage,
-      writer: BinaryWriter = new BinaryWriter(),
+      writer: BinaryWriter = new BinaryWriter()
     ): BinaryWriter {
       if (message.networkHashesPerSecond !== 0) {
         writer.uint32(8).uint64(message.networkHashesPerSecond);
@@ -7331,20 +7270,19 @@ export const EstimateNetworkHashesPerSecondResponseMessage: MessageFns<EstimateN
     },
 
     create(
-      base?: DeepPartial<EstimateNetworkHashesPerSecondResponseMessage>,
+      base?: DeepPartial<EstimateNetworkHashesPerSecondResponseMessage>
     ): EstimateNetworkHashesPerSecondResponseMessage {
       return EstimateNetworkHashesPerSecondResponseMessage.fromPartial(base ?? {});
     },
     fromPartial(
-      object: DeepPartial<EstimateNetworkHashesPerSecondResponseMessage>,
+      object: DeepPartial<EstimateNetworkHashesPerSecondResponseMessage>
     ): EstimateNetworkHashesPerSecondResponseMessage {
       const message = createBaseEstimateNetworkHashesPerSecondResponseMessage();
       message.networkHashesPerSecond = object.networkHashesPerSecond ?? 0;
-      message.error = (object.error !== undefined && object.error !== null)
-        ? RPCError.fromPartial(object.error)
-        : undefined;
+      message.error =
+        object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
       return message;
-    },
+    }
   };
 
 function createBaseNotifyNewBlockTemplateRequestMessage(): NotifyNewBlockTemplateRequestMessage {
@@ -7390,7 +7328,7 @@ export const NotifyNewBlockTemplateRequestMessage: MessageFns<NotifyNewBlockTemp
     const message = createBaseNotifyNewBlockTemplateRequestMessage();
     message.command = object.command ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseNotifyNewBlockTemplateResponseMessage(): NotifyNewBlockTemplateResponseMessage {
@@ -7434,11 +7372,10 @@ export const NotifyNewBlockTemplateResponseMessage: MessageFns<NotifyNewBlockTem
   },
   fromPartial(object: DeepPartial<NotifyNewBlockTemplateResponseMessage>): NotifyNewBlockTemplateResponseMessage {
     const message = createBaseNotifyNewBlockTemplateResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseNewBlockTemplateNotificationMessage(): NewBlockTemplateNotificationMessage {
@@ -7472,16 +7409,16 @@ export const NewBlockTemplateNotificationMessage: MessageFns<NewBlockTemplateNot
   fromPartial(_: DeepPartial<NewBlockTemplateNotificationMessage>): NewBlockTemplateNotificationMessage {
     const message = createBaseNewBlockTemplateNotificationMessage();
     return message;
-  },
+  }
 };
 
 function createBaseRpcMempoolEntryByAddress(): RpcMempoolEntryByAddress {
-  return { address: "", sending: [], receiving: [] };
+  return { address: '', sending: [], receiving: [] };
 }
 
 export const RpcMempoolEntryByAddress: MessageFns<RpcMempoolEntryByAddress> = {
   encode(message: RpcMempoolEntryByAddress, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.address !== "") {
+    if (message.address !== '') {
       writer.uint32(10).string(message.address);
     }
     for (const v of message.sending) {
@@ -7538,11 +7475,11 @@ export const RpcMempoolEntryByAddress: MessageFns<RpcMempoolEntryByAddress> = {
   },
   fromPartial(object: DeepPartial<RpcMempoolEntryByAddress>): RpcMempoolEntryByAddress {
     const message = createBaseRpcMempoolEntryByAddress();
-    message.address = object.address ?? "";
+    message.address = object.address ?? '';
     message.sending = object.sending?.map((e) => RpcMempoolEntry.fromPartial(e)) || [];
     message.receiving = object.receiving?.map((e) => RpcMempoolEntry.fromPartial(e)) || [];
     return message;
-  },
+  }
 };
 
 function createBaseGetMempoolEntriesByAddressesRequestMessage(): GetMempoolEntriesByAddressesRequestMessage {
@@ -7607,14 +7544,14 @@ export const GetMempoolEntriesByAddressesRequestMessage: MessageFns<GetMempoolEn
     return GetMempoolEntriesByAddressesRequestMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<GetMempoolEntriesByAddressesRequestMessage>,
+    object: DeepPartial<GetMempoolEntriesByAddressesRequestMessage>
   ): GetMempoolEntriesByAddressesRequestMessage {
     const message = createBaseGetMempoolEntriesByAddressesRequestMessage();
     message.addresses = object.addresses?.map((e) => e) || [];
     message.includeOrphanPool = object.includeOrphanPool ?? false;
     message.filterTransactionPool = object.filterTransactionPool ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseGetMempoolEntriesByAddressesResponseMessage(): GetMempoolEntriesByAddressesResponseMessage {
@@ -7624,7 +7561,7 @@ function createBaseGetMempoolEntriesByAddressesResponseMessage(): GetMempoolEntr
 export const GetMempoolEntriesByAddressesResponseMessage: MessageFns<GetMempoolEntriesByAddressesResponseMessage> = {
   encode(
     message: GetMempoolEntriesByAddressesResponseMessage,
-    writer: BinaryWriter = new BinaryWriter(),
+    writer: BinaryWriter = new BinaryWriter()
   ): BinaryWriter {
     for (const v of message.entries) {
       RpcMempoolEntryByAddress.encode(v!, writer.uint32(10).fork()).join();
@@ -7671,15 +7608,14 @@ export const GetMempoolEntriesByAddressesResponseMessage: MessageFns<GetMempoolE
     return GetMempoolEntriesByAddressesResponseMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<GetMempoolEntriesByAddressesResponseMessage>,
+    object: DeepPartial<GetMempoolEntriesByAddressesResponseMessage>
   ): GetMempoolEntriesByAddressesResponseMessage {
     const message = createBaseGetMempoolEntriesByAddressesResponseMessage();
     message.entries = object.entries?.map((e) => RpcMempoolEntryByAddress.fromPartial(e)) || [];
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetCoinSupplyRequestMessage(): GetCoinSupplyRequestMessage {
@@ -7713,7 +7649,7 @@ export const GetCoinSupplyRequestMessage: MessageFns<GetCoinSupplyRequestMessage
   fromPartial(_: DeepPartial<GetCoinSupplyRequestMessage>): GetCoinSupplyRequestMessage {
     const message = createBaseGetCoinSupplyRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetCoinSupplyResponseMessage(): GetCoinSupplyResponseMessage {
@@ -7781,11 +7717,10 @@ export const GetCoinSupplyResponseMessage: MessageFns<GetCoinSupplyResponseMessa
     const message = createBaseGetCoinSupplyResponseMessage();
     message.maxSompi = object.maxSompi ?? 0;
     message.circulatingSompi = object.circulatingSompi ?? 0;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBasePingRequestMessage(): PingRequestMessage {
@@ -7819,7 +7754,7 @@ export const PingRequestMessage: MessageFns<PingRequestMessage> = {
   fromPartial(_: DeepPartial<PingRequestMessage>): PingRequestMessage {
     const message = createBasePingRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBasePingResponseMessage(): PingResponseMessage {
@@ -7863,11 +7798,10 @@ export const PingResponseMessage: MessageFns<PingResponseMessage> = {
   },
   fromPartial(object: DeepPartial<PingResponseMessage>): PingResponseMessage {
     const message = createBasePingResponseMessage();
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseProcessMetrics(): ProcessMetrics {
@@ -7880,7 +7814,7 @@ function createBaseProcessMetrics(): ProcessMetrics {
     diskIoReadBytes: 0,
     diskIoWriteBytes: 0,
     diskIoReadPerSec: 0,
-    diskIoWritePerSec: 0,
+    diskIoWritePerSec: 0
   };
 }
 
@@ -8019,7 +7953,7 @@ export const ProcessMetrics: MessageFns<ProcessMetrics> = {
     message.diskIoReadPerSec = object.diskIoReadPerSec ?? 0;
     message.diskIoWritePerSec = object.diskIoWritePerSec ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseConnectionMetrics(): ConnectionMetrics {
@@ -8030,7 +7964,7 @@ function createBaseConnectionMetrics(): ConnectionMetrics {
     jsonLiveConnections: 0,
     jsonConnectionAttempts: 0,
     jsonHandshakeFailures: 0,
-    activePeers: 0,
+    activePeers: 0
   };
 }
 
@@ -8145,7 +8079,7 @@ export const ConnectionMetrics: MessageFns<ConnectionMetrics> = {
     message.jsonHandshakeFailures = object.jsonHandshakeFailures ?? 0;
     message.activePeers = object.activePeers ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseBandwidthMetrics(): BandwidthMetrics {
@@ -8157,7 +8091,7 @@ function createBaseBandwidthMetrics(): BandwidthMetrics {
     grpcP2pBytesTx: 0,
     grpcP2pBytesRx: 0,
     grpcUserBytesTx: 0,
-    grpcUserBytesRx: 0,
+    grpcUserBytesRx: 0
   };
 }
 
@@ -8284,7 +8218,7 @@ export const BandwidthMetrics: MessageFns<BandwidthMetrics> = {
     message.grpcUserBytesTx = object.grpcUserBytesTx ?? 0;
     message.grpcUserBytesRx = object.grpcUserBytesRx ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseConsensusMetrics(): ConsensusMetrics {
@@ -8303,7 +8237,7 @@ function createBaseConsensusMetrics(): ConsensusMetrics {
     difficulty: 0,
     pastMedianTime: 0,
     virtualParentHashesCount: 0,
-    virtualDaaScore: 0,
+    virtualDaaScore: 0
   };
 }
 
@@ -8514,7 +8448,7 @@ export const ConsensusMetrics: MessageFns<ConsensusMetrics> = {
     message.virtualParentHashesCount = object.virtualParentHashesCount ?? 0;
     message.virtualDaaScore = object.virtualDaaScore ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseStorageMetrics(): StorageMetrics {
@@ -8560,7 +8494,7 @@ export const StorageMetrics: MessageFns<StorageMetrics> = {
     const message = createBaseStorageMetrics();
     message.storageSizeBytes = object.storageSizeBytes ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseGetConnectionsRequestMessage(): GetConnectionsRequestMessage {
@@ -8606,7 +8540,7 @@ export const GetConnectionsRequestMessage: MessageFns<GetConnectionsRequestMessa
     const message = createBaseGetConnectionsRequestMessage();
     message.includeProfileData = object.includeProfileData ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseConnectionsProfileData(): ConnectionsProfileData {
@@ -8664,7 +8598,7 @@ export const ConnectionsProfileData: MessageFns<ConnectionsProfileData> = {
     message.cpuUsage = object.cpuUsage ?? 0;
     message.memoryUsage = object.memoryUsage ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseGetConnectionsResponseMessage(): GetConnectionsResponseMessage {
@@ -8743,14 +8677,14 @@ export const GetConnectionsResponseMessage: MessageFns<GetConnectionsResponseMes
     const message = createBaseGetConnectionsResponseMessage();
     message.clients = object.clients ?? 0;
     message.peers = object.peers ?? 0;
-    message.profileData = (object.profileData !== undefined && object.profileData !== null)
-      ? ConnectionsProfileData.fromPartial(object.profileData)
-      : undefined;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.profileData =
+      object.profileData !== undefined && object.profileData !== null
+        ? ConnectionsProfileData.fromPartial(object.profileData)
+        : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetSystemInfoRequestMessage(): GetSystemInfoRequestMessage {
@@ -8784,31 +8718,31 @@ export const GetSystemInfoRequestMessage: MessageFns<GetSystemInfoRequestMessage
   fromPartial(_: DeepPartial<GetSystemInfoRequestMessage>): GetSystemInfoRequestMessage {
     const message = createBaseGetSystemInfoRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetSystemInfoResponseMessage(): GetSystemInfoResponseMessage {
   return {
-    version: "",
-    systemId: "",
-    gitHash: "",
+    version: '',
+    systemId: '',
+    gitHash: '',
     coreNum: 0,
     totalMemory: 0,
     fdLimit: 0,
     proxySocketLimitPerCpuCore: 0,
-    error: undefined,
+    error: undefined
   };
 }
 
 export const GetSystemInfoResponseMessage: MessageFns<GetSystemInfoResponseMessage> = {
   encode(message: GetSystemInfoResponseMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.version !== "") {
+    if (message.version !== '') {
       writer.uint32(10).string(message.version);
     }
-    if (message.systemId !== "") {
+    if (message.systemId !== '') {
       writer.uint32(18).string(message.systemId);
     }
-    if (message.gitHash !== "") {
+    if (message.gitHash !== '') {
       writer.uint32(26).string(message.gitHash);
     }
     if (message.coreNum !== 0) {
@@ -8914,18 +8848,17 @@ export const GetSystemInfoResponseMessage: MessageFns<GetSystemInfoResponseMessa
   },
   fromPartial(object: DeepPartial<GetSystemInfoResponseMessage>): GetSystemInfoResponseMessage {
     const message = createBaseGetSystemInfoResponseMessage();
-    message.version = object.version ?? "";
-    message.systemId = object.systemId ?? "";
-    message.gitHash = object.gitHash ?? "";
+    message.version = object.version ?? '';
+    message.systemId = object.systemId ?? '';
+    message.gitHash = object.gitHash ?? '';
     message.coreNum = object.coreNum ?? 0;
     message.totalMemory = object.totalMemory ?? 0;
     message.fdLimit = object.fdLimit ?? 0;
     message.proxySocketLimitPerCpuCore = object.proxySocketLimitPerCpuCore ?? 0;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetMetricsRequestMessage(): GetMetricsRequestMessage {
@@ -8935,7 +8868,7 @@ function createBaseGetMetricsRequestMessage(): GetMetricsRequestMessage {
     bandwidthMetrics: false,
     consensusMetrics: false,
     storageMetrics: false,
-    customMetrics: false,
+    customMetrics: false
   };
 }
 
@@ -9038,7 +8971,7 @@ export const GetMetricsRequestMessage: MessageFns<GetMetricsRequestMessage> = {
     message.storageMetrics = object.storageMetrics ?? false;
     message.customMetrics = object.customMetrics ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseGetMetricsResponseMessage(): GetMetricsResponseMessage {
@@ -9049,7 +8982,7 @@ function createBaseGetMetricsResponseMessage(): GetMetricsResponseMessage {
     bandwidthMetrics: undefined,
     consensusMetrics: undefined,
     storageMetrics: undefined,
-    error: undefined,
+    error: undefined
   };
 }
 
@@ -9157,26 +9090,30 @@ export const GetMetricsResponseMessage: MessageFns<GetMetricsResponseMessage> = 
   fromPartial(object: DeepPartial<GetMetricsResponseMessage>): GetMetricsResponseMessage {
     const message = createBaseGetMetricsResponseMessage();
     message.serverTime = object.serverTime ?? 0;
-    message.processMetrics = (object.processMetrics !== undefined && object.processMetrics !== null)
-      ? ProcessMetrics.fromPartial(object.processMetrics)
-      : undefined;
-    message.connectionMetrics = (object.connectionMetrics !== undefined && object.connectionMetrics !== null)
-      ? ConnectionMetrics.fromPartial(object.connectionMetrics)
-      : undefined;
-    message.bandwidthMetrics = (object.bandwidthMetrics !== undefined && object.bandwidthMetrics !== null)
-      ? BandwidthMetrics.fromPartial(object.bandwidthMetrics)
-      : undefined;
-    message.consensusMetrics = (object.consensusMetrics !== undefined && object.consensusMetrics !== null)
-      ? ConsensusMetrics.fromPartial(object.consensusMetrics)
-      : undefined;
-    message.storageMetrics = (object.storageMetrics !== undefined && object.storageMetrics !== null)
-      ? StorageMetrics.fromPartial(object.storageMetrics)
-      : undefined;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.processMetrics =
+      object.processMetrics !== undefined && object.processMetrics !== null
+        ? ProcessMetrics.fromPartial(object.processMetrics)
+        : undefined;
+    message.connectionMetrics =
+      object.connectionMetrics !== undefined && object.connectionMetrics !== null
+        ? ConnectionMetrics.fromPartial(object.connectionMetrics)
+        : undefined;
+    message.bandwidthMetrics =
+      object.bandwidthMetrics !== undefined && object.bandwidthMetrics !== null
+        ? BandwidthMetrics.fromPartial(object.bandwidthMetrics)
+        : undefined;
+    message.consensusMetrics =
+      object.consensusMetrics !== undefined && object.consensusMetrics !== null
+        ? ConsensusMetrics.fromPartial(object.consensusMetrics)
+        : undefined;
+    message.storageMetrics =
+      object.storageMetrics !== undefined && object.storageMetrics !== null
+        ? StorageMetrics.fromPartial(object.storageMetrics)
+        : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetServerInfoRequestMessage(): GetServerInfoRequestMessage {
@@ -9210,19 +9147,19 @@ export const GetServerInfoRequestMessage: MessageFns<GetServerInfoRequestMessage
   fromPartial(_: DeepPartial<GetServerInfoRequestMessage>): GetServerInfoRequestMessage {
     const message = createBaseGetServerInfoRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetServerInfoResponseMessage(): GetServerInfoResponseMessage {
   return {
     rpcApiVersion: 0,
     rpcApiRevision: 0,
-    serverVersion: "",
-    networkId: "",
+    serverVersion: '',
+    networkId: '',
     hasUtxoIndex: false,
     isSynced: false,
     virtualDaaScore: 0,
-    error: undefined,
+    error: undefined
   };
 }
 
@@ -9234,10 +9171,10 @@ export const GetServerInfoResponseMessage: MessageFns<GetServerInfoResponseMessa
     if (message.rpcApiRevision !== 0) {
       writer.uint32(16).uint32(message.rpcApiRevision);
     }
-    if (message.serverVersion !== "") {
+    if (message.serverVersion !== '') {
       writer.uint32(26).string(message.serverVersion);
     }
-    if (message.networkId !== "") {
+    if (message.networkId !== '') {
       writer.uint32(34).string(message.networkId);
     }
     if (message.hasUtxoIndex !== false) {
@@ -9342,16 +9279,15 @@ export const GetServerInfoResponseMessage: MessageFns<GetServerInfoResponseMessa
     const message = createBaseGetServerInfoResponseMessage();
     message.rpcApiVersion = object.rpcApiVersion ?? 0;
     message.rpcApiRevision = object.rpcApiRevision ?? 0;
-    message.serverVersion = object.serverVersion ?? "";
-    message.networkId = object.networkId ?? "";
+    message.serverVersion = object.serverVersion ?? '';
+    message.networkId = object.networkId ?? '';
     message.hasUtxoIndex = object.hasUtxoIndex ?? false;
     message.isSynced = object.isSynced ?? false;
     message.virtualDaaScore = object.virtualDaaScore ?? 0;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetSyncStatusRequestMessage(): GetSyncStatusRequestMessage {
@@ -9385,7 +9321,7 @@ export const GetSyncStatusRequestMessage: MessageFns<GetSyncStatusRequestMessage
   fromPartial(_: DeepPartial<GetSyncStatusRequestMessage>): GetSyncStatusRequestMessage {
     const message = createBaseGetSyncStatusRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetSyncStatusResponseMessage(): GetSyncStatusResponseMessage {
@@ -9441,11 +9377,10 @@ export const GetSyncStatusResponseMessage: MessageFns<GetSyncStatusResponseMessa
   fromPartial(object: DeepPartial<GetSyncStatusResponseMessage>): GetSyncStatusResponseMessage {
     const message = createBaseGetSyncStatusResponseMessage();
     message.isSynced = object.isSynced ?? false;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetDaaScoreTimestampEstimateRequestMessage(): GetDaaScoreTimestampEstimateRequestMessage {
@@ -9500,12 +9435,12 @@ export const GetDaaScoreTimestampEstimateRequestMessage: MessageFns<GetDaaScoreT
     return GetDaaScoreTimestampEstimateRequestMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<GetDaaScoreTimestampEstimateRequestMessage>,
+    object: DeepPartial<GetDaaScoreTimestampEstimateRequestMessage>
   ): GetDaaScoreTimestampEstimateRequestMessage {
     const message = createBaseGetDaaScoreTimestampEstimateRequestMessage();
     message.daaScores = object.daaScores?.map((e) => e) || [];
     return message;
-  },
+  }
 };
 
 function createBaseGetDaaScoreTimestampEstimateResponseMessage(): GetDaaScoreTimestampEstimateResponseMessage {
@@ -9515,7 +9450,7 @@ function createBaseGetDaaScoreTimestampEstimateResponseMessage(): GetDaaScoreTim
 export const GetDaaScoreTimestampEstimateResponseMessage: MessageFns<GetDaaScoreTimestampEstimateResponseMessage> = {
   encode(
     message: GetDaaScoreTimestampEstimateResponseMessage,
-    writer: BinaryWriter = new BinaryWriter(),
+    writer: BinaryWriter = new BinaryWriter()
   ): BinaryWriter {
     writer.uint32(10).fork();
     for (const v of message.timestamps) {
@@ -9574,15 +9509,14 @@ export const GetDaaScoreTimestampEstimateResponseMessage: MessageFns<GetDaaScore
     return GetDaaScoreTimestampEstimateResponseMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<GetDaaScoreTimestampEstimateResponseMessage>,
+    object: DeepPartial<GetDaaScoreTimestampEstimateResponseMessage>
   ): GetDaaScoreTimestampEstimateResponseMessage {
     const message = createBaseGetDaaScoreTimestampEstimateResponseMessage();
     message.timestamps = object.timestamps?.map((e) => e) || [];
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseRpcFeerateBucket(): RpcFeerateBucket {
@@ -9640,7 +9574,7 @@ export const RpcFeerateBucket: MessageFns<RpcFeerateBucket> = {
     message.feerate = object.feerate ?? 0;
     message.estimatedSeconds = object.estimatedSeconds ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseRpcFeeEstimate(): RpcFeeEstimate {
@@ -9706,13 +9640,14 @@ export const RpcFeeEstimate: MessageFns<RpcFeeEstimate> = {
   },
   fromPartial(object: DeepPartial<RpcFeeEstimate>): RpcFeeEstimate {
     const message = createBaseRpcFeeEstimate();
-    message.priorityBucket = (object.priorityBucket !== undefined && object.priorityBucket !== null)
-      ? RpcFeerateBucket.fromPartial(object.priorityBucket)
-      : undefined;
+    message.priorityBucket =
+      object.priorityBucket !== undefined && object.priorityBucket !== null
+        ? RpcFeerateBucket.fromPartial(object.priorityBucket)
+        : undefined;
     message.normalBuckets = object.normalBuckets?.map((e) => RpcFeerateBucket.fromPartial(e)) || [];
     message.lowBuckets = object.lowBuckets?.map((e) => RpcFeerateBucket.fromPartial(e)) || [];
     return message;
-  },
+  }
 };
 
 function createBaseRpcFeeEstimateVerboseExperimentalData(): RpcFeeEstimateVerboseExperimentalData {
@@ -9722,7 +9657,7 @@ function createBaseRpcFeeEstimateVerboseExperimentalData(): RpcFeeEstimateVerbos
     networkMassPerSecond: 0,
     nextBlockTemplateFeerateMin: 0,
     nextBlockTemplateFeerateMedian: 0,
-    nextBlockTemplateFeerateMax: 0,
+    nextBlockTemplateFeerateMax: 0
   };
 }
 
@@ -9825,7 +9760,7 @@ export const RpcFeeEstimateVerboseExperimentalData: MessageFns<RpcFeeEstimateVer
     message.nextBlockTemplateFeerateMedian = object.nextBlockTemplateFeerateMedian ?? 0;
     message.nextBlockTemplateFeerateMax = object.nextBlockTemplateFeerateMax ?? 0;
     return message;
-  },
+  }
 };
 
 function createBaseGetFeeEstimateRequestMessage(): GetFeeEstimateRequestMessage {
@@ -9859,7 +9794,7 @@ export const GetFeeEstimateRequestMessage: MessageFns<GetFeeEstimateRequestMessa
   fromPartial(_: DeepPartial<GetFeeEstimateRequestMessage>): GetFeeEstimateRequestMessage {
     const message = createBaseGetFeeEstimateRequestMessage();
     return message;
-  },
+  }
 };
 
 function createBaseGetFeeEstimateResponseMessage(): GetFeeEstimateResponseMessage {
@@ -9914,14 +9849,14 @@ export const GetFeeEstimateResponseMessage: MessageFns<GetFeeEstimateResponseMes
   },
   fromPartial(object: DeepPartial<GetFeeEstimateResponseMessage>): GetFeeEstimateResponseMessage {
     const message = createBaseGetFeeEstimateResponseMessage();
-    message.estimate = (object.estimate !== undefined && object.estimate !== null)
-      ? RpcFeeEstimate.fromPartial(object.estimate)
-      : undefined;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.estimate =
+      object.estimate !== undefined && object.estimate !== null
+        ? RpcFeeEstimate.fromPartial(object.estimate)
+        : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetFeeEstimateExperimentalRequestMessage(): GetFeeEstimateExperimentalRequestMessage {
@@ -9967,7 +9902,7 @@ export const GetFeeEstimateExperimentalRequestMessage: MessageFns<GetFeeEstimate
     const message = createBaseGetFeeEstimateExperimentalRequestMessage();
     message.verbose = object.verbose ?? false;
     return message;
-  },
+  }
 };
 
 function createBaseGetFeeEstimateExperimentalResponseMessage(): GetFeeEstimateExperimentalResponseMessage {
@@ -10032,29 +9967,30 @@ export const GetFeeEstimateExperimentalResponseMessage: MessageFns<GetFeeEstimat
     return GetFeeEstimateExperimentalResponseMessage.fromPartial(base ?? {});
   },
   fromPartial(
-    object: DeepPartial<GetFeeEstimateExperimentalResponseMessage>,
+    object: DeepPartial<GetFeeEstimateExperimentalResponseMessage>
   ): GetFeeEstimateExperimentalResponseMessage {
     const message = createBaseGetFeeEstimateExperimentalResponseMessage();
-    message.estimate = (object.estimate !== undefined && object.estimate !== null)
-      ? RpcFeeEstimate.fromPartial(object.estimate)
-      : undefined;
-    message.verbose = (object.verbose !== undefined && object.verbose !== null)
-      ? RpcFeeEstimateVerboseExperimentalData.fromPartial(object.verbose)
-      : undefined;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.estimate =
+      object.estimate !== undefined && object.estimate !== null
+        ? RpcFeeEstimate.fromPartial(object.estimate)
+        : undefined;
+    message.verbose =
+      object.verbose !== undefined && object.verbose !== null
+        ? RpcFeeEstimateVerboseExperimentalData.fromPartial(object.verbose)
+        : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseGetCurrentBlockColorRequestMessage(): GetCurrentBlockColorRequestMessage {
-  return { hash: "" };
+  return { hash: '' };
 }
 
 export const GetCurrentBlockColorRequestMessage: MessageFns<GetCurrentBlockColorRequestMessage> = {
   encode(message: GetCurrentBlockColorRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.hash !== "") {
+    if (message.hash !== '') {
       writer.uint32(10).string(message.hash);
     }
     return writer;
@@ -10089,9 +10025,9 @@ export const GetCurrentBlockColorRequestMessage: MessageFns<GetCurrentBlockColor
   },
   fromPartial(object: DeepPartial<GetCurrentBlockColorRequestMessage>): GetCurrentBlockColorRequestMessage {
     const message = createBaseGetCurrentBlockColorRequestMessage();
-    message.hash = object.hash ?? "";
+    message.hash = object.hash ?? '';
     return message;
-  },
+  }
 };
 
 function createBaseGetCurrentBlockColorResponseMessage(): GetCurrentBlockColorResponseMessage {
@@ -10147,28 +10083,31 @@ export const GetCurrentBlockColorResponseMessage: MessageFns<GetCurrentBlockColo
   fromPartial(object: DeepPartial<GetCurrentBlockColorResponseMessage>): GetCurrentBlockColorResponseMessage {
     const message = createBaseGetCurrentBlockColorResponseMessage();
     message.blue = object.blue ?? false;
-    message.error = (object.error !== undefined && object.error !== null)
-      ? RPCError.fromPartial(object.error)
-      : undefined;
+    message.error =
+      object.error !== undefined && object.error !== null ? RPCError.fromPartial(object.error) : undefined;
     return message;
-  },
+  }
 };
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
+export type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends globalThis.Array<infer U>
+    ? globalThis.Array<DeepPartial<U>>
+    : T extends ReadonlyArray<infer U>
+      ? ReadonlyArray<DeepPartial<U>>
+      : T extends {}
+        ? { [K in keyof T]?: DeepPartial<T[K]> }
+        : Partial<T>;
 
 function longToNumber(int64: { toString(): string }): number {
   const num = globalThis.Number(int64.toString());
   if (num > globalThis.Number.MAX_SAFE_INTEGER) {
-    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
   }
   if (num < globalThis.Number.MIN_SAFE_INTEGER) {
-    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
+    throw new globalThis.Error('Value is smaller than Number.MIN_SAFE_INTEGER');
   }
   return num;
 }

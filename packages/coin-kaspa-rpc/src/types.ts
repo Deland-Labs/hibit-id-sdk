@@ -1,11 +1,11 @@
 export type KaspaNetwork = 'mainnet' | 'testnet-10' | 'testnet-11';
 
 export type KaspaKrc20Response<T> = {
-  message: string
-  prev?: string
-  next?: string
-  result: T
-}
+  message: string;
+  prev?: string;
+  next?: string;
+  result: T;
+};
 
 export type Krc20TokenHolder = {
   address: string;
@@ -31,33 +31,33 @@ export type Krc20TokenDetailsWithHolders = {
   holder: Krc20TokenHolder[];
 };
 
-export type GetKrc20TokenInfoResponse = Krc20TokenDetailsWithHolders[]
+export type GetKrc20TokenInfoResponse = Krc20TokenDetailsWithHolders[];
 
 export type Krc20TokenBalanceInfo = {
-  tick: string
-  balance: string
-  locked: string  // 0 or 1
-  dec: string
-  opScoreMod: string
-}
+  tick: string;
+  balance: string;
+  locked: string; // 0 or 1
+  dec: string;
+  opScoreMod: string;
+};
 
-export type GetKrc20AddressTokenListResponse = Krc20TokenBalanceInfo[]
+export type GetKrc20AddressTokenListResponse = Krc20TokenBalanceInfo[];
 
-export type GetKrc20BalanceResponse = GetKrc20AddressTokenListResponse
+export type GetKrc20BalanceResponse = GetKrc20AddressTokenListResponse;
 
 export type WrpcJsonRequest<T> = {
-  id?: number
-  method: string
-  params: T
-}
+  id?: number;
+  method: string;
+  params: T;
+};
 
 export type WrpcJsonResponse<T> = {
-  id?: number
-  method: string
-  params: T
+  id?: number;
+  method: string;
+  params: T;
   error?: {
-    code: number
-    message: string
-    data: any
-  }
-}
+    code: number;
+    message: string;
+    data: any;
+  };
+};

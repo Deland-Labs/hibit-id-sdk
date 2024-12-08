@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [],
   resolve: {
     alias: {
-      'src': resolve(__dirname, 'src'),
-    },
+      src: resolve(__dirname, 'src')
+    }
   },
   build: {
     lib: {

@@ -5,8 +5,8 @@
 // source: messages.proto
 
 /* eslint-disable */
-import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { type CallContext, type CallOptions } from "nice-grpc-common";
+import { BinaryReader, BinaryWriter } from '@bufbuild/protobuf/wire';
+import { type CallContext, type CallOptions } from 'nice-grpc-common';
 import {
   AddPeerRequestMessage,
   AddPeerResponseMessage,
@@ -116,19 +116,17 @@ import {
   UnbanResponseMessage,
   UtxosChangedNotificationMessage,
   VirtualChainChangedNotificationMessage,
-  VirtualDaaScoreChangedNotificationMessage,
-} from "./rpc";
+  VirtualDaaScoreChangedNotificationMessage
+} from './rpc';
 
-export const protobufPackage = "protowire";
+export const protobufPackage = 'protowire';
 
 export interface KaspadRequest {
   id: number;
   getCurrentNetworkRequest?: GetCurrentNetworkRequestMessage | undefined;
   submitBlockRequest?: SubmitBlockRequestMessage | undefined;
   getBlockTemplateRequest?: GetBlockTemplateRequestMessage | undefined;
-  notifyBlockAddedRequest?:
-    | NotifyBlockAddedRequestMessage
-    | undefined;
+  notifyBlockAddedRequest?: NotifyBlockAddedRequestMessage | undefined;
   /** BlockAddedNotificationMessage blockAddedNotification = 1009; */
   getPeerAddressesRequest?: GetPeerAddressesRequestMessage | undefined;
   GetSinkRequest?: GetSinkRequestMessage | undefined;
@@ -136,9 +134,7 @@ export interface KaspadRequest {
   getConnectedPeerInfoRequest?: GetConnectedPeerInfoRequestMessage | undefined;
   addPeerRequest?: AddPeerRequestMessage | undefined;
   submitTransactionRequest?: SubmitTransactionRequestMessage | undefined;
-  notifyVirtualChainChangedRequest?:
-    | NotifyVirtualChainChangedRequestMessage
-    | undefined;
+  notifyVirtualChainChangedRequest?: NotifyVirtualChainChangedRequestMessage | undefined;
   /** VirtualChainChangedNotificationMessage virtualChainChangedNotification = 1024; */
   getBlockRequest?: GetBlockRequestMessage | undefined;
   getSubnetworkRequest?: GetSubnetworkRequestMessage | undefined;
@@ -147,9 +143,7 @@ export interface KaspadRequest {
   getBlockCountRequest?: GetBlockCountRequestMessage | undefined;
   getBlockDagInfoRequest?: GetBlockDagInfoRequestMessage | undefined;
   resolveFinalityConflictRequest?: ResolveFinalityConflictRequestMessage | undefined;
-  notifyFinalityConflictRequest?:
-    | NotifyFinalityConflictRequestMessage
-    | undefined;
+  notifyFinalityConflictRequest?: NotifyFinalityConflictRequestMessage | undefined;
   /**
    * FinalityConflictNotificationMessage finalityConflictNotification = 1041;
    * FinalityConflictResolvedNotificationMessage finalityConflictResolvedNotification = 1042;
@@ -157,35 +151,25 @@ export interface KaspadRequest {
   getMempoolEntriesRequest?: GetMempoolEntriesRequestMessage | undefined;
   shutdownRequest?: ShutdownRequestMessage | undefined;
   getHeadersRequest?: GetHeadersRequestMessage | undefined;
-  notifyUtxosChangedRequest?:
-    | NotifyUtxosChangedRequestMessage
-    | undefined;
+  notifyUtxosChangedRequest?: NotifyUtxosChangedRequestMessage | undefined;
   /** UtxosChangedNotificationMessage utxosChangedNotification = 1051; */
   getUtxosByAddressesRequest?: GetUtxosByAddressesRequestMessage | undefined;
   getSinkBlueScoreRequest?: GetSinkBlueScoreRequestMessage | undefined;
-  notifySinkBlueScoreChangedRequest?:
-    | NotifySinkBlueScoreChangedRequestMessage
-    | undefined;
+  notifySinkBlueScoreChangedRequest?: NotifySinkBlueScoreChangedRequestMessage | undefined;
   /** SinkBlueScoreChangedNotificationMessage sinkBlueScoreChangedNotification = 1058; */
   banRequest?: BanRequestMessage | undefined;
   unbanRequest?: UnbanRequestMessage | undefined;
   getInfoRequest?: GetInfoRequestMessage | undefined;
   stopNotifyingUtxosChangedRequest?: StopNotifyingUtxosChangedRequestMessage | undefined;
-  notifyPruningPointUtxoSetOverrideRequest?:
-    | NotifyPruningPointUtxoSetOverrideRequestMessage
-    | undefined;
+  notifyPruningPointUtxoSetOverrideRequest?: NotifyPruningPointUtxoSetOverrideRequestMessage | undefined;
   /** PruningPointUtxoSetOverrideNotificationMessage pruningPointUtxoSetOverrideNotification = 1069; */
   stopNotifyingPruningPointUtxoSetOverrideRequest?: StopNotifyingPruningPointUtxoSetOverrideRequestMessage | undefined;
   estimateNetworkHashesPerSecondRequest?: EstimateNetworkHashesPerSecondRequestMessage | undefined;
-  notifyVirtualDaaScoreChangedRequest?:
-    | NotifyVirtualDaaScoreChangedRequestMessage
-    | undefined;
+  notifyVirtualDaaScoreChangedRequest?: NotifyVirtualDaaScoreChangedRequestMessage | undefined;
   /** VirtualDaaScoreChangedNotificationMessage virtualDaaScoreChangedNotification = 1076; */
   getBalanceByAddressRequest?: GetBalanceByAddressRequestMessage | undefined;
   getBalancesByAddressesRequest?: GetBalancesByAddressesRequestMessage | undefined;
-  notifyNewBlockTemplateRequest?:
-    | NotifyNewBlockTemplateRequestMessage
-    | undefined;
+  notifyNewBlockTemplateRequest?: NotifyNewBlockTemplateRequestMessage | undefined;
   /** NewBlockTemplateNotificationMessage newBlockTemplateNotification = 1083; */
   getMempoolEntriesByAddressesRequest?: GetMempoolEntriesByAddressesRequestMessage | undefined;
   getCoinSupplyRequest?: GetCoinSupplyRequestMessage | undefined;
@@ -319,7 +303,7 @@ function createBaseKaspadRequest(): KaspadRequest {
     getSystemInfoRequest: undefined,
     getFeeEstimateRequest: undefined,
     getFeeEstimateExperimentalRequest: undefined,
-    getCurrentBlockColorRequest: undefined,
+    getCurrentBlockColorRequest: undefined
   };
 }
 
@@ -361,7 +345,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
     if (message.notifyVirtualChainChangedRequest !== undefined) {
       NotifyVirtualChainChangedRequestMessage.encode(
         message.notifyVirtualChainChangedRequest,
-        writer.uint32(8178).fork(),
+        writer.uint32(8178).fork()
       ).join();
     }
     if (message.getBlockRequest !== undefined) {
@@ -371,8 +355,10 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
       GetSubnetworkRequestMessage.encode(message.getSubnetworkRequest, writer.uint32(8218).fork()).join();
     }
     if (message.getVirtualChainFromBlockRequest !== undefined) {
-      GetVirtualChainFromBlockRequestMessage.encode(message.getVirtualChainFromBlockRequest, writer.uint32(8234).fork())
-        .join();
+      GetVirtualChainFromBlockRequestMessage.encode(
+        message.getVirtualChainFromBlockRequest,
+        writer.uint32(8234).fork()
+      ).join();
     }
     if (message.getBlocksRequest !== undefined) {
       GetBlocksRequestMessage.encode(message.getBlocksRequest, writer.uint32(8250).fork()).join();
@@ -384,12 +370,16 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
       GetBlockDagInfoRequestMessage.encode(message.getBlockDagInfoRequest, writer.uint32(8282).fork()).join();
     }
     if (message.resolveFinalityConflictRequest !== undefined) {
-      ResolveFinalityConflictRequestMessage.encode(message.resolveFinalityConflictRequest, writer.uint32(8298).fork())
-        .join();
+      ResolveFinalityConflictRequestMessage.encode(
+        message.resolveFinalityConflictRequest,
+        writer.uint32(8298).fork()
+      ).join();
     }
     if (message.notifyFinalityConflictRequest !== undefined) {
-      NotifyFinalityConflictRequestMessage.encode(message.notifyFinalityConflictRequest, writer.uint32(8314).fork())
-        .join();
+      NotifyFinalityConflictRequestMessage.encode(
+        message.notifyFinalityConflictRequest,
+        writer.uint32(8314).fork()
+      ).join();
     }
     if (message.getMempoolEntriesRequest !== undefined) {
       GetMempoolEntriesRequestMessage.encode(message.getMempoolEntriesRequest, writer.uint32(8346).fork()).join();
@@ -412,7 +402,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
     if (message.notifySinkBlueScoreChangedRequest !== undefined) {
       NotifySinkBlueScoreChangedRequestMessage.encode(
         message.notifySinkBlueScoreChangedRequest,
-        writer.uint32(8450).fork(),
+        writer.uint32(8450).fork()
       ).join();
     }
     if (message.banRequest !== undefined) {
@@ -427,48 +417,52 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
     if (message.stopNotifyingUtxosChangedRequest !== undefined) {
       StopNotifyingUtxosChangedRequestMessage.encode(
         message.stopNotifyingUtxosChangedRequest,
-        writer.uint32(8522).fork(),
+        writer.uint32(8522).fork()
       ).join();
     }
     if (message.notifyPruningPointUtxoSetOverrideRequest !== undefined) {
       NotifyPruningPointUtxoSetOverrideRequestMessage.encode(
         message.notifyPruningPointUtxoSetOverrideRequest,
-        writer.uint32(8538).fork(),
+        writer.uint32(8538).fork()
       ).join();
     }
     if (message.stopNotifyingPruningPointUtxoSetOverrideRequest !== undefined) {
       StopNotifyingPruningPointUtxoSetOverrideRequestMessage.encode(
         message.stopNotifyingPruningPointUtxoSetOverrideRequest,
-        writer.uint32(8562).fork(),
+        writer.uint32(8562).fork()
       ).join();
     }
     if (message.estimateNetworkHashesPerSecondRequest !== undefined) {
       EstimateNetworkHashesPerSecondRequestMessage.encode(
         message.estimateNetworkHashesPerSecondRequest,
-        writer.uint32(8578).fork(),
+        writer.uint32(8578).fork()
       ).join();
     }
     if (message.notifyVirtualDaaScoreChangedRequest !== undefined) {
       NotifyVirtualDaaScoreChangedRequestMessage.encode(
         message.notifyVirtualDaaScoreChangedRequest,
-        writer.uint32(8594).fork(),
+        writer.uint32(8594).fork()
       ).join();
     }
     if (message.getBalanceByAddressRequest !== undefined) {
       GetBalanceByAddressRequestMessage.encode(message.getBalanceByAddressRequest, writer.uint32(8618).fork()).join();
     }
     if (message.getBalancesByAddressesRequest !== undefined) {
-      GetBalancesByAddressesRequestMessage.encode(message.getBalancesByAddressesRequest, writer.uint32(8634).fork())
-        .join();
+      GetBalancesByAddressesRequestMessage.encode(
+        message.getBalancesByAddressesRequest,
+        writer.uint32(8634).fork()
+      ).join();
     }
     if (message.notifyNewBlockTemplateRequest !== undefined) {
-      NotifyNewBlockTemplateRequestMessage.encode(message.notifyNewBlockTemplateRequest, writer.uint32(8650).fork())
-        .join();
+      NotifyNewBlockTemplateRequestMessage.encode(
+        message.notifyNewBlockTemplateRequest,
+        writer.uint32(8650).fork()
+      ).join();
     }
     if (message.getMempoolEntriesByAddressesRequest !== undefined) {
       GetMempoolEntriesByAddressesRequestMessage.encode(
         message.getMempoolEntriesByAddressesRequest,
-        writer.uint32(8674).fork(),
+        writer.uint32(8674).fork()
       ).join();
     }
     if (message.getCoinSupplyRequest !== undefined) {
@@ -489,13 +483,13 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
     if (message.getDaaScoreTimestampEstimateRequest !== undefined) {
       GetDaaScoreTimestampEstimateRequestMessage.encode(
         message.getDaaScoreTimestampEstimateRequest,
-        writer.uint32(8770).fork(),
+        writer.uint32(8770).fork()
       ).join();
     }
     if (message.submitTransactionReplacementRequest !== undefined) {
       SubmitTransactionReplacementRequestMessage.encode(
         message.submitTransactionReplacementRequest,
-        writer.uint32(8802).fork(),
+        writer.uint32(8802).fork()
       ).join();
     }
     if (message.getConnectionsRequest !== undefined) {
@@ -510,7 +504,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
     if (message.getFeeEstimateExperimentalRequest !== undefined) {
       GetFeeEstimateExperimentalRequestMessage.encode(
         message.getFeeEstimateExperimentalRequest,
-        writer.uint32(8866).fork(),
+        writer.uint32(8866).fork()
       ).join();
     }
     if (message.getCurrentBlockColorRequest !== undefined) {
@@ -621,7 +615,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.notifyVirtualChainChangedRequest = NotifyVirtualChainChangedRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -648,7 +642,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.getVirtualChainFromBlockRequest = GetVirtualChainFromBlockRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -683,7 +677,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.resolveFinalityConflictRequest = ResolveFinalityConflictRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -750,7 +744,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.notifySinkBlueScoreChangedRequest = NotifySinkBlueScoreChangedRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -785,7 +779,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.stopNotifyingUtxosChangedRequest = StopNotifyingUtxosChangedRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -796,7 +790,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.notifyPruningPointUtxoSetOverrideRequest = NotifyPruningPointUtxoSetOverrideRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -816,7 +810,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.estimateNetworkHashesPerSecondRequest = EstimateNetworkHashesPerSecondRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -827,7 +821,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.notifyVirtualDaaScoreChangedRequest = NotifyVirtualDaaScoreChangedRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -862,7 +856,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.getMempoolEntriesByAddressesRequest = GetMempoolEntriesByAddressesRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -913,7 +907,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.getDaaScoreTimestampEstimateRequest = GetDaaScoreTimestampEstimateRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -924,7 +918,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.submitTransactionReplacementRequest = SubmitTransactionReplacementRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -959,7 +953,7 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
 
           message.getFeeEstimateExperimentalRequest = GetFeeEstimateExperimentalRequestMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -987,194 +981,212 @@ export const KaspadRequest: MessageFns<KaspadRequest> = {
     const message = createBaseKaspadRequest();
     message.id = object.id ?? 0;
     message.getCurrentNetworkRequest =
-      (object.getCurrentNetworkRequest !== undefined && object.getCurrentNetworkRequest !== null)
+      object.getCurrentNetworkRequest !== undefined && object.getCurrentNetworkRequest !== null
         ? GetCurrentNetworkRequestMessage.fromPartial(object.getCurrentNetworkRequest)
         : undefined;
-    message.submitBlockRequest = (object.submitBlockRequest !== undefined && object.submitBlockRequest !== null)
-      ? SubmitBlockRequestMessage.fromPartial(object.submitBlockRequest)
-      : undefined;
+    message.submitBlockRequest =
+      object.submitBlockRequest !== undefined && object.submitBlockRequest !== null
+        ? SubmitBlockRequestMessage.fromPartial(object.submitBlockRequest)
+        : undefined;
     message.getBlockTemplateRequest =
-      (object.getBlockTemplateRequest !== undefined && object.getBlockTemplateRequest !== null)
+      object.getBlockTemplateRequest !== undefined && object.getBlockTemplateRequest !== null
         ? GetBlockTemplateRequestMessage.fromPartial(object.getBlockTemplateRequest)
         : undefined;
     message.notifyBlockAddedRequest =
-      (object.notifyBlockAddedRequest !== undefined && object.notifyBlockAddedRequest !== null)
+      object.notifyBlockAddedRequest !== undefined && object.notifyBlockAddedRequest !== null
         ? NotifyBlockAddedRequestMessage.fromPartial(object.notifyBlockAddedRequest)
         : undefined;
     message.getPeerAddressesRequest =
-      (object.getPeerAddressesRequest !== undefined && object.getPeerAddressesRequest !== null)
+      object.getPeerAddressesRequest !== undefined && object.getPeerAddressesRequest !== null
         ? GetPeerAddressesRequestMessage.fromPartial(object.getPeerAddressesRequest)
         : undefined;
-    message.GetSinkRequest = (object.GetSinkRequest !== undefined && object.GetSinkRequest !== null)
-      ? GetSinkRequestMessage.fromPartial(object.GetSinkRequest)
-      : undefined;
+    message.GetSinkRequest =
+      object.GetSinkRequest !== undefined && object.GetSinkRequest !== null
+        ? GetSinkRequestMessage.fromPartial(object.GetSinkRequest)
+        : undefined;
     message.getMempoolEntryRequest =
-      (object.getMempoolEntryRequest !== undefined && object.getMempoolEntryRequest !== null)
+      object.getMempoolEntryRequest !== undefined && object.getMempoolEntryRequest !== null
         ? GetMempoolEntryRequestMessage.fromPartial(object.getMempoolEntryRequest)
         : undefined;
     message.getConnectedPeerInfoRequest =
-      (object.getConnectedPeerInfoRequest !== undefined && object.getConnectedPeerInfoRequest !== null)
+      object.getConnectedPeerInfoRequest !== undefined && object.getConnectedPeerInfoRequest !== null
         ? GetConnectedPeerInfoRequestMessage.fromPartial(object.getConnectedPeerInfoRequest)
         : undefined;
-    message.addPeerRequest = (object.addPeerRequest !== undefined && object.addPeerRequest !== null)
-      ? AddPeerRequestMessage.fromPartial(object.addPeerRequest)
-      : undefined;
+    message.addPeerRequest =
+      object.addPeerRequest !== undefined && object.addPeerRequest !== null
+        ? AddPeerRequestMessage.fromPartial(object.addPeerRequest)
+        : undefined;
     message.submitTransactionRequest =
-      (object.submitTransactionRequest !== undefined && object.submitTransactionRequest !== null)
+      object.submitTransactionRequest !== undefined && object.submitTransactionRequest !== null
         ? SubmitTransactionRequestMessage.fromPartial(object.submitTransactionRequest)
         : undefined;
     message.notifyVirtualChainChangedRequest =
-      (object.notifyVirtualChainChangedRequest !== undefined && object.notifyVirtualChainChangedRequest !== null)
+      object.notifyVirtualChainChangedRequest !== undefined && object.notifyVirtualChainChangedRequest !== null
         ? NotifyVirtualChainChangedRequestMessage.fromPartial(object.notifyVirtualChainChangedRequest)
         : undefined;
-    message.getBlockRequest = (object.getBlockRequest !== undefined && object.getBlockRequest !== null)
-      ? GetBlockRequestMessage.fromPartial(object.getBlockRequest)
-      : undefined;
-    message.getSubnetworkRequest = (object.getSubnetworkRequest !== undefined && object.getSubnetworkRequest !== null)
-      ? GetSubnetworkRequestMessage.fromPartial(object.getSubnetworkRequest)
-      : undefined;
+    message.getBlockRequest =
+      object.getBlockRequest !== undefined && object.getBlockRequest !== null
+        ? GetBlockRequestMessage.fromPartial(object.getBlockRequest)
+        : undefined;
+    message.getSubnetworkRequest =
+      object.getSubnetworkRequest !== undefined && object.getSubnetworkRequest !== null
+        ? GetSubnetworkRequestMessage.fromPartial(object.getSubnetworkRequest)
+        : undefined;
     message.getVirtualChainFromBlockRequest =
-      (object.getVirtualChainFromBlockRequest !== undefined && object.getVirtualChainFromBlockRequest !== null)
+      object.getVirtualChainFromBlockRequest !== undefined && object.getVirtualChainFromBlockRequest !== null
         ? GetVirtualChainFromBlockRequestMessage.fromPartial(object.getVirtualChainFromBlockRequest)
         : undefined;
-    message.getBlocksRequest = (object.getBlocksRequest !== undefined && object.getBlocksRequest !== null)
-      ? GetBlocksRequestMessage.fromPartial(object.getBlocksRequest)
-      : undefined;
-    message.getBlockCountRequest = (object.getBlockCountRequest !== undefined && object.getBlockCountRequest !== null)
-      ? GetBlockCountRequestMessage.fromPartial(object.getBlockCountRequest)
-      : undefined;
+    message.getBlocksRequest =
+      object.getBlocksRequest !== undefined && object.getBlocksRequest !== null
+        ? GetBlocksRequestMessage.fromPartial(object.getBlocksRequest)
+        : undefined;
+    message.getBlockCountRequest =
+      object.getBlockCountRequest !== undefined && object.getBlockCountRequest !== null
+        ? GetBlockCountRequestMessage.fromPartial(object.getBlockCountRequest)
+        : undefined;
     message.getBlockDagInfoRequest =
-      (object.getBlockDagInfoRequest !== undefined && object.getBlockDagInfoRequest !== null)
+      object.getBlockDagInfoRequest !== undefined && object.getBlockDagInfoRequest !== null
         ? GetBlockDagInfoRequestMessage.fromPartial(object.getBlockDagInfoRequest)
         : undefined;
     message.resolveFinalityConflictRequest =
-      (object.resolveFinalityConflictRequest !== undefined && object.resolveFinalityConflictRequest !== null)
+      object.resolveFinalityConflictRequest !== undefined && object.resolveFinalityConflictRequest !== null
         ? ResolveFinalityConflictRequestMessage.fromPartial(object.resolveFinalityConflictRequest)
         : undefined;
     message.notifyFinalityConflictRequest =
-      (object.notifyFinalityConflictRequest !== undefined && object.notifyFinalityConflictRequest !== null)
+      object.notifyFinalityConflictRequest !== undefined && object.notifyFinalityConflictRequest !== null
         ? NotifyFinalityConflictRequestMessage.fromPartial(object.notifyFinalityConflictRequest)
         : undefined;
     message.getMempoolEntriesRequest =
-      (object.getMempoolEntriesRequest !== undefined && object.getMempoolEntriesRequest !== null)
+      object.getMempoolEntriesRequest !== undefined && object.getMempoolEntriesRequest !== null
         ? GetMempoolEntriesRequestMessage.fromPartial(object.getMempoolEntriesRequest)
         : undefined;
-    message.shutdownRequest = (object.shutdownRequest !== undefined && object.shutdownRequest !== null)
-      ? ShutdownRequestMessage.fromPartial(object.shutdownRequest)
-      : undefined;
-    message.getHeadersRequest = (object.getHeadersRequest !== undefined && object.getHeadersRequest !== null)
-      ? GetHeadersRequestMessage.fromPartial(object.getHeadersRequest)
-      : undefined;
+    message.shutdownRequest =
+      object.shutdownRequest !== undefined && object.shutdownRequest !== null
+        ? ShutdownRequestMessage.fromPartial(object.shutdownRequest)
+        : undefined;
+    message.getHeadersRequest =
+      object.getHeadersRequest !== undefined && object.getHeadersRequest !== null
+        ? GetHeadersRequestMessage.fromPartial(object.getHeadersRequest)
+        : undefined;
     message.notifyUtxosChangedRequest =
-      (object.notifyUtxosChangedRequest !== undefined && object.notifyUtxosChangedRequest !== null)
+      object.notifyUtxosChangedRequest !== undefined && object.notifyUtxosChangedRequest !== null
         ? NotifyUtxosChangedRequestMessage.fromPartial(object.notifyUtxosChangedRequest)
         : undefined;
     message.getUtxosByAddressesRequest =
-      (object.getUtxosByAddressesRequest !== undefined && object.getUtxosByAddressesRequest !== null)
+      object.getUtxosByAddressesRequest !== undefined && object.getUtxosByAddressesRequest !== null
         ? GetUtxosByAddressesRequestMessage.fromPartial(object.getUtxosByAddressesRequest)
         : undefined;
     message.getSinkBlueScoreRequest =
-      (object.getSinkBlueScoreRequest !== undefined && object.getSinkBlueScoreRequest !== null)
+      object.getSinkBlueScoreRequest !== undefined && object.getSinkBlueScoreRequest !== null
         ? GetSinkBlueScoreRequestMessage.fromPartial(object.getSinkBlueScoreRequest)
         : undefined;
     message.notifySinkBlueScoreChangedRequest =
-      (object.notifySinkBlueScoreChangedRequest !== undefined && object.notifySinkBlueScoreChangedRequest !== null)
+      object.notifySinkBlueScoreChangedRequest !== undefined && object.notifySinkBlueScoreChangedRequest !== null
         ? NotifySinkBlueScoreChangedRequestMessage.fromPartial(object.notifySinkBlueScoreChangedRequest)
         : undefined;
-    message.banRequest = (object.banRequest !== undefined && object.banRequest !== null)
-      ? BanRequestMessage.fromPartial(object.banRequest)
-      : undefined;
-    message.unbanRequest = (object.unbanRequest !== undefined && object.unbanRequest !== null)
-      ? UnbanRequestMessage.fromPartial(object.unbanRequest)
-      : undefined;
-    message.getInfoRequest = (object.getInfoRequest !== undefined && object.getInfoRequest !== null)
-      ? GetInfoRequestMessage.fromPartial(object.getInfoRequest)
-      : undefined;
+    message.banRequest =
+      object.banRequest !== undefined && object.banRequest !== null
+        ? BanRequestMessage.fromPartial(object.banRequest)
+        : undefined;
+    message.unbanRequest =
+      object.unbanRequest !== undefined && object.unbanRequest !== null
+        ? UnbanRequestMessage.fromPartial(object.unbanRequest)
+        : undefined;
+    message.getInfoRequest =
+      object.getInfoRequest !== undefined && object.getInfoRequest !== null
+        ? GetInfoRequestMessage.fromPartial(object.getInfoRequest)
+        : undefined;
     message.stopNotifyingUtxosChangedRequest =
-      (object.stopNotifyingUtxosChangedRequest !== undefined && object.stopNotifyingUtxosChangedRequest !== null)
+      object.stopNotifyingUtxosChangedRequest !== undefined && object.stopNotifyingUtxosChangedRequest !== null
         ? StopNotifyingUtxosChangedRequestMessage.fromPartial(object.stopNotifyingUtxosChangedRequest)
         : undefined;
     message.notifyPruningPointUtxoSetOverrideRequest =
-      (object.notifyPruningPointUtxoSetOverrideRequest !== undefined &&
-          object.notifyPruningPointUtxoSetOverrideRequest !== null)
+      object.notifyPruningPointUtxoSetOverrideRequest !== undefined &&
+      object.notifyPruningPointUtxoSetOverrideRequest !== null
         ? NotifyPruningPointUtxoSetOverrideRequestMessage.fromPartial(object.notifyPruningPointUtxoSetOverrideRequest)
         : undefined;
     message.stopNotifyingPruningPointUtxoSetOverrideRequest =
-      (object.stopNotifyingPruningPointUtxoSetOverrideRequest !== undefined &&
-          object.stopNotifyingPruningPointUtxoSetOverrideRequest !== null)
+      object.stopNotifyingPruningPointUtxoSetOverrideRequest !== undefined &&
+      object.stopNotifyingPruningPointUtxoSetOverrideRequest !== null
         ? StopNotifyingPruningPointUtxoSetOverrideRequestMessage.fromPartial(
-          object.stopNotifyingPruningPointUtxoSetOverrideRequest,
-        )
+            object.stopNotifyingPruningPointUtxoSetOverrideRequest
+          )
         : undefined;
     message.estimateNetworkHashesPerSecondRequest =
-      (object.estimateNetworkHashesPerSecondRequest !== undefined &&
-          object.estimateNetworkHashesPerSecondRequest !== null)
+      object.estimateNetworkHashesPerSecondRequest !== undefined &&
+      object.estimateNetworkHashesPerSecondRequest !== null
         ? EstimateNetworkHashesPerSecondRequestMessage.fromPartial(object.estimateNetworkHashesPerSecondRequest)
         : undefined;
     message.notifyVirtualDaaScoreChangedRequest =
-      (object.notifyVirtualDaaScoreChangedRequest !== undefined && object.notifyVirtualDaaScoreChangedRequest !== null)
+      object.notifyVirtualDaaScoreChangedRequest !== undefined && object.notifyVirtualDaaScoreChangedRequest !== null
         ? NotifyVirtualDaaScoreChangedRequestMessage.fromPartial(object.notifyVirtualDaaScoreChangedRequest)
         : undefined;
     message.getBalanceByAddressRequest =
-      (object.getBalanceByAddressRequest !== undefined && object.getBalanceByAddressRequest !== null)
+      object.getBalanceByAddressRequest !== undefined && object.getBalanceByAddressRequest !== null
         ? GetBalanceByAddressRequestMessage.fromPartial(object.getBalanceByAddressRequest)
         : undefined;
     message.getBalancesByAddressesRequest =
-      (object.getBalancesByAddressesRequest !== undefined && object.getBalancesByAddressesRequest !== null)
+      object.getBalancesByAddressesRequest !== undefined && object.getBalancesByAddressesRequest !== null
         ? GetBalancesByAddressesRequestMessage.fromPartial(object.getBalancesByAddressesRequest)
         : undefined;
     message.notifyNewBlockTemplateRequest =
-      (object.notifyNewBlockTemplateRequest !== undefined && object.notifyNewBlockTemplateRequest !== null)
+      object.notifyNewBlockTemplateRequest !== undefined && object.notifyNewBlockTemplateRequest !== null
         ? NotifyNewBlockTemplateRequestMessage.fromPartial(object.notifyNewBlockTemplateRequest)
         : undefined;
     message.getMempoolEntriesByAddressesRequest =
-      (object.getMempoolEntriesByAddressesRequest !== undefined && object.getMempoolEntriesByAddressesRequest !== null)
+      object.getMempoolEntriesByAddressesRequest !== undefined && object.getMempoolEntriesByAddressesRequest !== null
         ? GetMempoolEntriesByAddressesRequestMessage.fromPartial(object.getMempoolEntriesByAddressesRequest)
         : undefined;
-    message.getCoinSupplyRequest = (object.getCoinSupplyRequest !== undefined && object.getCoinSupplyRequest !== null)
-      ? GetCoinSupplyRequestMessage.fromPartial(object.getCoinSupplyRequest)
-      : undefined;
-    message.pingRequest = (object.pingRequest !== undefined && object.pingRequest !== null)
-      ? PingRequestMessage.fromPartial(object.pingRequest)
-      : undefined;
-    message.getMetricsRequest = (object.getMetricsRequest !== undefined && object.getMetricsRequest !== null)
-      ? GetMetricsRequestMessage.fromPartial(object.getMetricsRequest)
-      : undefined;
-    message.getServerInfoRequest = (object.getServerInfoRequest !== undefined && object.getServerInfoRequest !== null)
-      ? GetServerInfoRequestMessage.fromPartial(object.getServerInfoRequest)
-      : undefined;
-    message.getSyncStatusRequest = (object.getSyncStatusRequest !== undefined && object.getSyncStatusRequest !== null)
-      ? GetSyncStatusRequestMessage.fromPartial(object.getSyncStatusRequest)
-      : undefined;
+    message.getCoinSupplyRequest =
+      object.getCoinSupplyRequest !== undefined && object.getCoinSupplyRequest !== null
+        ? GetCoinSupplyRequestMessage.fromPartial(object.getCoinSupplyRequest)
+        : undefined;
+    message.pingRequest =
+      object.pingRequest !== undefined && object.pingRequest !== null
+        ? PingRequestMessage.fromPartial(object.pingRequest)
+        : undefined;
+    message.getMetricsRequest =
+      object.getMetricsRequest !== undefined && object.getMetricsRequest !== null
+        ? GetMetricsRequestMessage.fromPartial(object.getMetricsRequest)
+        : undefined;
+    message.getServerInfoRequest =
+      object.getServerInfoRequest !== undefined && object.getServerInfoRequest !== null
+        ? GetServerInfoRequestMessage.fromPartial(object.getServerInfoRequest)
+        : undefined;
+    message.getSyncStatusRequest =
+      object.getSyncStatusRequest !== undefined && object.getSyncStatusRequest !== null
+        ? GetSyncStatusRequestMessage.fromPartial(object.getSyncStatusRequest)
+        : undefined;
     message.getDaaScoreTimestampEstimateRequest =
-      (object.getDaaScoreTimestampEstimateRequest !== undefined && object.getDaaScoreTimestampEstimateRequest !== null)
+      object.getDaaScoreTimestampEstimateRequest !== undefined && object.getDaaScoreTimestampEstimateRequest !== null
         ? GetDaaScoreTimestampEstimateRequestMessage.fromPartial(object.getDaaScoreTimestampEstimateRequest)
         : undefined;
     message.submitTransactionReplacementRequest =
-      (object.submitTransactionReplacementRequest !== undefined && object.submitTransactionReplacementRequest !== null)
+      object.submitTransactionReplacementRequest !== undefined && object.submitTransactionReplacementRequest !== null
         ? SubmitTransactionReplacementRequestMessage.fromPartial(object.submitTransactionReplacementRequest)
         : undefined;
     message.getConnectionsRequest =
-      (object.getConnectionsRequest !== undefined && object.getConnectionsRequest !== null)
+      object.getConnectionsRequest !== undefined && object.getConnectionsRequest !== null
         ? GetConnectionsRequestMessage.fromPartial(object.getConnectionsRequest)
         : undefined;
-    message.getSystemInfoRequest = (object.getSystemInfoRequest !== undefined && object.getSystemInfoRequest !== null)
-      ? GetSystemInfoRequestMessage.fromPartial(object.getSystemInfoRequest)
-      : undefined;
+    message.getSystemInfoRequest =
+      object.getSystemInfoRequest !== undefined && object.getSystemInfoRequest !== null
+        ? GetSystemInfoRequestMessage.fromPartial(object.getSystemInfoRequest)
+        : undefined;
     message.getFeeEstimateRequest =
-      (object.getFeeEstimateRequest !== undefined && object.getFeeEstimateRequest !== null)
+      object.getFeeEstimateRequest !== undefined && object.getFeeEstimateRequest !== null
         ? GetFeeEstimateRequestMessage.fromPartial(object.getFeeEstimateRequest)
         : undefined;
     message.getFeeEstimateExperimentalRequest =
-      (object.getFeeEstimateExperimentalRequest !== undefined && object.getFeeEstimateExperimentalRequest !== null)
+      object.getFeeEstimateExperimentalRequest !== undefined && object.getFeeEstimateExperimentalRequest !== null
         ? GetFeeEstimateExperimentalRequestMessage.fromPartial(object.getFeeEstimateExperimentalRequest)
         : undefined;
     message.getCurrentBlockColorRequest =
-      (object.getCurrentBlockColorRequest !== undefined && object.getCurrentBlockColorRequest !== null)
+      object.getCurrentBlockColorRequest !== undefined && object.getCurrentBlockColorRequest !== null
         ? GetCurrentBlockColorRequestMessage.fromPartial(object.getCurrentBlockColorRequest)
         : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseKaspadResponse(): KaspadResponse {
@@ -1238,7 +1250,7 @@ function createBaseKaspadResponse(): KaspadResponse {
     getSystemInfoResponse: undefined,
     getFeeEstimateResponse: undefined,
     getFeeEstimateExperimentalResponse: undefined,
-    getCurrentBlockColorResponse: undefined,
+    getCurrentBlockColorResponse: undefined
   };
 }
 
@@ -1272,8 +1284,10 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
       GetMempoolEntryResponseMessage.encode(message.getMempoolEntryResponse, writer.uint32(8122).fork()).join();
     }
     if (message.getConnectedPeerInfoResponse !== undefined) {
-      GetConnectedPeerInfoResponseMessage.encode(message.getConnectedPeerInfoResponse, writer.uint32(8138).fork())
-        .join();
+      GetConnectedPeerInfoResponseMessage.encode(
+        message.getConnectedPeerInfoResponse,
+        writer.uint32(8138).fork()
+      ).join();
     }
     if (message.addPeerResponse !== undefined) {
       AddPeerResponseMessage.encode(message.addPeerResponse, writer.uint32(8154).fork()).join();
@@ -1284,12 +1298,14 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
     if (message.notifyVirtualChainChangedResponse !== undefined) {
       NotifyVirtualChainChangedResponseMessage.encode(
         message.notifyVirtualChainChangedResponse,
-        writer.uint32(8186).fork(),
+        writer.uint32(8186).fork()
       ).join();
     }
     if (message.virtualChainChangedNotification !== undefined) {
-      VirtualChainChangedNotificationMessage.encode(message.virtualChainChangedNotification, writer.uint32(8194).fork())
-        .join();
+      VirtualChainChangedNotificationMessage.encode(
+        message.virtualChainChangedNotification,
+        writer.uint32(8194).fork()
+      ).join();
     }
     if (message.getBlockResponse !== undefined) {
       GetBlockResponseMessage.encode(message.getBlockResponse, writer.uint32(8210).fork()).join();
@@ -1300,7 +1316,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
     if (message.getVirtualChainFromBlockResponse !== undefined) {
       GetVirtualChainFromBlockResponseMessage.encode(
         message.getVirtualChainFromBlockResponse,
-        writer.uint32(8242).fork(),
+        writer.uint32(8242).fork()
       ).join();
     }
     if (message.getBlocksResponse !== undefined) {
@@ -1313,21 +1329,27 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
       GetBlockDagInfoResponseMessage.encode(message.getBlockDagInfoResponse, writer.uint32(8290).fork()).join();
     }
     if (message.resolveFinalityConflictResponse !== undefined) {
-      ResolveFinalityConflictResponseMessage.encode(message.resolveFinalityConflictResponse, writer.uint32(8306).fork())
-        .join();
+      ResolveFinalityConflictResponseMessage.encode(
+        message.resolveFinalityConflictResponse,
+        writer.uint32(8306).fork()
+      ).join();
     }
     if (message.notifyFinalityConflictResponse !== undefined) {
-      NotifyFinalityConflictResponseMessage.encode(message.notifyFinalityConflictResponse, writer.uint32(8322).fork())
-        .join();
+      NotifyFinalityConflictResponseMessage.encode(
+        message.notifyFinalityConflictResponse,
+        writer.uint32(8322).fork()
+      ).join();
     }
     if (message.finalityConflictNotification !== undefined) {
-      FinalityConflictNotificationMessage.encode(message.finalityConflictNotification, writer.uint32(8330).fork())
-        .join();
+      FinalityConflictNotificationMessage.encode(
+        message.finalityConflictNotification,
+        writer.uint32(8330).fork()
+      ).join();
     }
     if (message.finalityConflictResolvedNotification !== undefined) {
       FinalityConflictResolvedNotificationMessage.encode(
         message.finalityConflictResolvedNotification,
-        writer.uint32(8338).fork(),
+        writer.uint32(8338).fork()
       ).join();
     }
     if (message.getMempoolEntriesResponse !== undefined) {
@@ -1354,13 +1376,13 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
     if (message.notifySinkBlueScoreChangedResponse !== undefined) {
       NotifySinkBlueScoreChangedResponseMessage.encode(
         message.notifySinkBlueScoreChangedResponse,
-        writer.uint32(8458).fork(),
+        writer.uint32(8458).fork()
       ).join();
     }
     if (message.sinkBlueScoreChangedNotification !== undefined) {
       SinkBlueScoreChangedNotificationMessage.encode(
         message.sinkBlueScoreChangedNotification,
-        writer.uint32(8466).fork(),
+        writer.uint32(8466).fork()
       ).join();
     }
     if (message.banResponse !== undefined) {
@@ -1375,64 +1397,70 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
     if (message.stopNotifyingUtxosChangedResponse !== undefined) {
       StopNotifyingUtxosChangedResponseMessage.encode(
         message.stopNotifyingUtxosChangedResponse,
-        writer.uint32(8530).fork(),
+        writer.uint32(8530).fork()
       ).join();
     }
     if (message.notifyPruningPointUtxoSetOverrideResponse !== undefined) {
       NotifyPruningPointUtxoSetOverrideResponseMessage.encode(
         message.notifyPruningPointUtxoSetOverrideResponse,
-        writer.uint32(8546).fork(),
+        writer.uint32(8546).fork()
       ).join();
     }
     if (message.pruningPointUtxoSetOverrideNotification !== undefined) {
       PruningPointUtxoSetOverrideNotificationMessage.encode(
         message.pruningPointUtxoSetOverrideNotification,
-        writer.uint32(8554).fork(),
+        writer.uint32(8554).fork()
       ).join();
     }
     if (message.stopNotifyingPruningPointUtxoSetOverrideResponse !== undefined) {
       StopNotifyingPruningPointUtxoSetOverrideResponseMessage.encode(
         message.stopNotifyingPruningPointUtxoSetOverrideResponse,
-        writer.uint32(8570).fork(),
+        writer.uint32(8570).fork()
       ).join();
     }
     if (message.estimateNetworkHashesPerSecondResponse !== undefined) {
       EstimateNetworkHashesPerSecondResponseMessage.encode(
         message.estimateNetworkHashesPerSecondResponse,
-        writer.uint32(8586).fork(),
+        writer.uint32(8586).fork()
       ).join();
     }
     if (message.notifyVirtualDaaScoreChangedResponse !== undefined) {
       NotifyVirtualDaaScoreChangedResponseMessage.encode(
         message.notifyVirtualDaaScoreChangedResponse,
-        writer.uint32(8602).fork(),
+        writer.uint32(8602).fork()
       ).join();
     }
     if (message.virtualDaaScoreChangedNotification !== undefined) {
       VirtualDaaScoreChangedNotificationMessage.encode(
         message.virtualDaaScoreChangedNotification,
-        writer.uint32(8610).fork(),
+        writer.uint32(8610).fork()
       ).join();
     }
     if (message.getBalanceByAddressResponse !== undefined) {
       GetBalanceByAddressResponseMessage.encode(message.getBalanceByAddressResponse, writer.uint32(8626).fork()).join();
     }
     if (message.getBalancesByAddressesResponse !== undefined) {
-      GetBalancesByAddressesResponseMessage.encode(message.getBalancesByAddressesResponse, writer.uint32(8642).fork())
-        .join();
+      GetBalancesByAddressesResponseMessage.encode(
+        message.getBalancesByAddressesResponse,
+        writer.uint32(8642).fork()
+      ).join();
     }
     if (message.notifyNewBlockTemplateResponse !== undefined) {
-      NotifyNewBlockTemplateResponseMessage.encode(message.notifyNewBlockTemplateResponse, writer.uint32(8658).fork())
-        .join();
+      NotifyNewBlockTemplateResponseMessage.encode(
+        message.notifyNewBlockTemplateResponse,
+        writer.uint32(8658).fork()
+      ).join();
     }
     if (message.newBlockTemplateNotification !== undefined) {
-      NewBlockTemplateNotificationMessage.encode(message.newBlockTemplateNotification, writer.uint32(8666).fork())
-        .join();
+      NewBlockTemplateNotificationMessage.encode(
+        message.newBlockTemplateNotification,
+        writer.uint32(8666).fork()
+      ).join();
     }
     if (message.getMempoolEntriesByAddressesResponse !== undefined) {
       GetMempoolEntriesByAddressesResponseMessage.encode(
         message.getMempoolEntriesByAddressesResponse,
-        writer.uint32(8682).fork(),
+        writer.uint32(8682).fork()
       ).join();
     }
     if (message.getCoinSupplyResponse !== undefined) {
@@ -1453,13 +1481,13 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
     if (message.getDaaScoreTimestampEstimateResponse !== undefined) {
       GetDaaScoreTimestampEstimateResponseMessage.encode(
         message.getDaaScoreTimestampEstimateResponse,
-        writer.uint32(8778).fork(),
+        writer.uint32(8778).fork()
       ).join();
     }
     if (message.submitTransactionReplacementResponse !== undefined) {
       SubmitTransactionReplacementResponseMessage.encode(
         message.submitTransactionReplacementResponse,
-        writer.uint32(8810).fork(),
+        writer.uint32(8810).fork()
       ).join();
     }
     if (message.getConnectionsResponse !== undefined) {
@@ -1474,12 +1502,14 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
     if (message.getFeeEstimateExperimentalResponse !== undefined) {
       GetFeeEstimateExperimentalResponseMessage.encode(
         message.getFeeEstimateExperimentalResponse,
-        writer.uint32(8874).fork(),
+        writer.uint32(8874).fork()
       ).join();
     }
     if (message.getCurrentBlockColorResponse !== undefined) {
-      GetCurrentBlockColorResponseMessage.encode(message.getCurrentBlockColorResponse, writer.uint32(8890).fork())
-        .join();
+      GetCurrentBlockColorResponseMessage.encode(
+        message.getCurrentBlockColorResponse,
+        writer.uint32(8890).fork()
+      ).join();
     }
     return writer;
   },
@@ -1594,7 +1624,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.notifyVirtualChainChangedResponse = NotifyVirtualChainChangedResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1605,7 +1635,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.virtualChainChangedNotification = VirtualChainChangedNotificationMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1632,7 +1662,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.getVirtualChainFromBlockResponse = GetVirtualChainFromBlockResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1667,7 +1697,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.resolveFinalityConflictResponse = ResolveFinalityConflictResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1678,7 +1708,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.notifyFinalityConflictResponse = NotifyFinalityConflictResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1697,7 +1727,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.finalityConflictResolvedNotification = FinalityConflictResolvedNotificationMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1764,7 +1794,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.notifySinkBlueScoreChangedResponse = NotifySinkBlueScoreChangedResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1775,7 +1805,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.sinkBlueScoreChangedNotification = SinkBlueScoreChangedNotificationMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1810,7 +1840,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.stopNotifyingUtxosChangedResponse = StopNotifyingUtxosChangedResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1821,7 +1851,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.notifyPruningPointUtxoSetOverrideResponse = NotifyPruningPointUtxoSetOverrideResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1832,7 +1862,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.pruningPointUtxoSetOverrideNotification = PruningPointUtxoSetOverrideNotificationMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1852,7 +1882,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.estimateNetworkHashesPerSecondResponse = EstimateNetworkHashesPerSecondResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1863,7 +1893,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.notifyVirtualDaaScoreChangedResponse = NotifyVirtualDaaScoreChangedResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1874,7 +1904,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.virtualDaaScoreChangedNotification = VirtualDaaScoreChangedNotificationMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1893,7 +1923,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.getBalancesByAddressesResponse = GetBalancesByAddressesResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1904,7 +1934,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.notifyNewBlockTemplateResponse = NotifyNewBlockTemplateResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1923,7 +1953,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.getMempoolEntriesByAddressesResponse = GetMempoolEntriesByAddressesResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1974,7 +2004,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.getDaaScoreTimestampEstimateResponse = GetDaaScoreTimestampEstimateResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -1985,7 +2015,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.submitTransactionReplacementResponse = SubmitTransactionReplacementResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -2020,7 +2050,7 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
 
           message.getFeeEstimateExperimentalResponse = GetFeeEstimateExperimentalResponseMessage.decode(
             reader,
-            reader.uint32(),
+            reader.uint32()
           );
           continue;
         }
@@ -2048,289 +2078,300 @@ export const KaspadResponse: MessageFns<KaspadResponse> = {
     const message = createBaseKaspadResponse();
     message.id = object.id ?? 0;
     message.getCurrentNetworkResponse =
-      (object.getCurrentNetworkResponse !== undefined && object.getCurrentNetworkResponse !== null)
+      object.getCurrentNetworkResponse !== undefined && object.getCurrentNetworkResponse !== null
         ? GetCurrentNetworkResponseMessage.fromPartial(object.getCurrentNetworkResponse)
         : undefined;
-    message.submitBlockResponse = (object.submitBlockResponse !== undefined && object.submitBlockResponse !== null)
-      ? SubmitBlockResponseMessage.fromPartial(object.submitBlockResponse)
-      : undefined;
+    message.submitBlockResponse =
+      object.submitBlockResponse !== undefined && object.submitBlockResponse !== null
+        ? SubmitBlockResponseMessage.fromPartial(object.submitBlockResponse)
+        : undefined;
     message.getBlockTemplateResponse =
-      (object.getBlockTemplateResponse !== undefined && object.getBlockTemplateResponse !== null)
+      object.getBlockTemplateResponse !== undefined && object.getBlockTemplateResponse !== null
         ? GetBlockTemplateResponseMessage.fromPartial(object.getBlockTemplateResponse)
         : undefined;
     message.notifyBlockAddedResponse =
-      (object.notifyBlockAddedResponse !== undefined && object.notifyBlockAddedResponse !== null)
+      object.notifyBlockAddedResponse !== undefined && object.notifyBlockAddedResponse !== null
         ? NotifyBlockAddedResponseMessage.fromPartial(object.notifyBlockAddedResponse)
         : undefined;
     message.blockAddedNotification =
-      (object.blockAddedNotification !== undefined && object.blockAddedNotification !== null)
+      object.blockAddedNotification !== undefined && object.blockAddedNotification !== null
         ? BlockAddedNotificationMessage.fromPartial(object.blockAddedNotification)
         : undefined;
     message.getPeerAddressesResponse =
-      (object.getPeerAddressesResponse !== undefined && object.getPeerAddressesResponse !== null)
+      object.getPeerAddressesResponse !== undefined && object.getPeerAddressesResponse !== null
         ? GetPeerAddressesResponseMessage.fromPartial(object.getPeerAddressesResponse)
         : undefined;
-    message.GetSinkResponse = (object.GetSinkResponse !== undefined && object.GetSinkResponse !== null)
-      ? GetSinkResponseMessage.fromPartial(object.GetSinkResponse)
-      : undefined;
+    message.GetSinkResponse =
+      object.GetSinkResponse !== undefined && object.GetSinkResponse !== null
+        ? GetSinkResponseMessage.fromPartial(object.GetSinkResponse)
+        : undefined;
     message.getMempoolEntryResponse =
-      (object.getMempoolEntryResponse !== undefined && object.getMempoolEntryResponse !== null)
+      object.getMempoolEntryResponse !== undefined && object.getMempoolEntryResponse !== null
         ? GetMempoolEntryResponseMessage.fromPartial(object.getMempoolEntryResponse)
         : undefined;
     message.getConnectedPeerInfoResponse =
-      (object.getConnectedPeerInfoResponse !== undefined && object.getConnectedPeerInfoResponse !== null)
+      object.getConnectedPeerInfoResponse !== undefined && object.getConnectedPeerInfoResponse !== null
         ? GetConnectedPeerInfoResponseMessage.fromPartial(object.getConnectedPeerInfoResponse)
         : undefined;
-    message.addPeerResponse = (object.addPeerResponse !== undefined && object.addPeerResponse !== null)
-      ? AddPeerResponseMessage.fromPartial(object.addPeerResponse)
-      : undefined;
+    message.addPeerResponse =
+      object.addPeerResponse !== undefined && object.addPeerResponse !== null
+        ? AddPeerResponseMessage.fromPartial(object.addPeerResponse)
+        : undefined;
     message.submitTransactionResponse =
-      (object.submitTransactionResponse !== undefined && object.submitTransactionResponse !== null)
+      object.submitTransactionResponse !== undefined && object.submitTransactionResponse !== null
         ? SubmitTransactionResponseMessage.fromPartial(object.submitTransactionResponse)
         : undefined;
     message.notifyVirtualChainChangedResponse =
-      (object.notifyVirtualChainChangedResponse !== undefined && object.notifyVirtualChainChangedResponse !== null)
+      object.notifyVirtualChainChangedResponse !== undefined && object.notifyVirtualChainChangedResponse !== null
         ? NotifyVirtualChainChangedResponseMessage.fromPartial(object.notifyVirtualChainChangedResponse)
         : undefined;
     message.virtualChainChangedNotification =
-      (object.virtualChainChangedNotification !== undefined && object.virtualChainChangedNotification !== null)
+      object.virtualChainChangedNotification !== undefined && object.virtualChainChangedNotification !== null
         ? VirtualChainChangedNotificationMessage.fromPartial(object.virtualChainChangedNotification)
         : undefined;
-    message.getBlockResponse = (object.getBlockResponse !== undefined && object.getBlockResponse !== null)
-      ? GetBlockResponseMessage.fromPartial(object.getBlockResponse)
-      : undefined;
+    message.getBlockResponse =
+      object.getBlockResponse !== undefined && object.getBlockResponse !== null
+        ? GetBlockResponseMessage.fromPartial(object.getBlockResponse)
+        : undefined;
     message.getSubnetworkResponse =
-      (object.getSubnetworkResponse !== undefined && object.getSubnetworkResponse !== null)
+      object.getSubnetworkResponse !== undefined && object.getSubnetworkResponse !== null
         ? GetSubnetworkResponseMessage.fromPartial(object.getSubnetworkResponse)
         : undefined;
     message.getVirtualChainFromBlockResponse =
-      (object.getVirtualChainFromBlockResponse !== undefined && object.getVirtualChainFromBlockResponse !== null)
+      object.getVirtualChainFromBlockResponse !== undefined && object.getVirtualChainFromBlockResponse !== null
         ? GetVirtualChainFromBlockResponseMessage.fromPartial(object.getVirtualChainFromBlockResponse)
         : undefined;
-    message.getBlocksResponse = (object.getBlocksResponse !== undefined && object.getBlocksResponse !== null)
-      ? GetBlocksResponseMessage.fromPartial(object.getBlocksResponse)
-      : undefined;
+    message.getBlocksResponse =
+      object.getBlocksResponse !== undefined && object.getBlocksResponse !== null
+        ? GetBlocksResponseMessage.fromPartial(object.getBlocksResponse)
+        : undefined;
     message.getBlockCountResponse =
-      (object.getBlockCountResponse !== undefined && object.getBlockCountResponse !== null)
+      object.getBlockCountResponse !== undefined && object.getBlockCountResponse !== null
         ? GetBlockCountResponseMessage.fromPartial(object.getBlockCountResponse)
         : undefined;
     message.getBlockDagInfoResponse =
-      (object.getBlockDagInfoResponse !== undefined && object.getBlockDagInfoResponse !== null)
+      object.getBlockDagInfoResponse !== undefined && object.getBlockDagInfoResponse !== null
         ? GetBlockDagInfoResponseMessage.fromPartial(object.getBlockDagInfoResponse)
         : undefined;
     message.resolveFinalityConflictResponse =
-      (object.resolveFinalityConflictResponse !== undefined && object.resolveFinalityConflictResponse !== null)
+      object.resolveFinalityConflictResponse !== undefined && object.resolveFinalityConflictResponse !== null
         ? ResolveFinalityConflictResponseMessage.fromPartial(object.resolveFinalityConflictResponse)
         : undefined;
     message.notifyFinalityConflictResponse =
-      (object.notifyFinalityConflictResponse !== undefined && object.notifyFinalityConflictResponse !== null)
+      object.notifyFinalityConflictResponse !== undefined && object.notifyFinalityConflictResponse !== null
         ? NotifyFinalityConflictResponseMessage.fromPartial(object.notifyFinalityConflictResponse)
         : undefined;
     message.finalityConflictNotification =
-      (object.finalityConflictNotification !== undefined && object.finalityConflictNotification !== null)
+      object.finalityConflictNotification !== undefined && object.finalityConflictNotification !== null
         ? FinalityConflictNotificationMessage.fromPartial(object.finalityConflictNotification)
         : undefined;
     message.finalityConflictResolvedNotification =
-      (object.finalityConflictResolvedNotification !== undefined &&
-          object.finalityConflictResolvedNotification !== null)
+      object.finalityConflictResolvedNotification !== undefined && object.finalityConflictResolvedNotification !== null
         ? FinalityConflictResolvedNotificationMessage.fromPartial(object.finalityConflictResolvedNotification)
         : undefined;
     message.getMempoolEntriesResponse =
-      (object.getMempoolEntriesResponse !== undefined && object.getMempoolEntriesResponse !== null)
+      object.getMempoolEntriesResponse !== undefined && object.getMempoolEntriesResponse !== null
         ? GetMempoolEntriesResponseMessage.fromPartial(object.getMempoolEntriesResponse)
         : undefined;
-    message.shutdownResponse = (object.shutdownResponse !== undefined && object.shutdownResponse !== null)
-      ? ShutdownResponseMessage.fromPartial(object.shutdownResponse)
-      : undefined;
-    message.getHeadersResponse = (object.getHeadersResponse !== undefined && object.getHeadersResponse !== null)
-      ? GetHeadersResponseMessage.fromPartial(object.getHeadersResponse)
-      : undefined;
+    message.shutdownResponse =
+      object.shutdownResponse !== undefined && object.shutdownResponse !== null
+        ? ShutdownResponseMessage.fromPartial(object.shutdownResponse)
+        : undefined;
+    message.getHeadersResponse =
+      object.getHeadersResponse !== undefined && object.getHeadersResponse !== null
+        ? GetHeadersResponseMessage.fromPartial(object.getHeadersResponse)
+        : undefined;
     message.notifyUtxosChangedResponse =
-      (object.notifyUtxosChangedResponse !== undefined && object.notifyUtxosChangedResponse !== null)
+      object.notifyUtxosChangedResponse !== undefined && object.notifyUtxosChangedResponse !== null
         ? NotifyUtxosChangedResponseMessage.fromPartial(object.notifyUtxosChangedResponse)
         : undefined;
     message.utxosChangedNotification =
-      (object.utxosChangedNotification !== undefined && object.utxosChangedNotification !== null)
+      object.utxosChangedNotification !== undefined && object.utxosChangedNotification !== null
         ? UtxosChangedNotificationMessage.fromPartial(object.utxosChangedNotification)
         : undefined;
     message.getUtxosByAddressesResponse =
-      (object.getUtxosByAddressesResponse !== undefined && object.getUtxosByAddressesResponse !== null)
+      object.getUtxosByAddressesResponse !== undefined && object.getUtxosByAddressesResponse !== null
         ? GetUtxosByAddressesResponseMessage.fromPartial(object.getUtxosByAddressesResponse)
         : undefined;
     message.getSinkBlueScoreResponse =
-      (object.getSinkBlueScoreResponse !== undefined && object.getSinkBlueScoreResponse !== null)
+      object.getSinkBlueScoreResponse !== undefined && object.getSinkBlueScoreResponse !== null
         ? GetSinkBlueScoreResponseMessage.fromPartial(object.getSinkBlueScoreResponse)
         : undefined;
     message.notifySinkBlueScoreChangedResponse =
-      (object.notifySinkBlueScoreChangedResponse !== undefined && object.notifySinkBlueScoreChangedResponse !== null)
+      object.notifySinkBlueScoreChangedResponse !== undefined && object.notifySinkBlueScoreChangedResponse !== null
         ? NotifySinkBlueScoreChangedResponseMessage.fromPartial(object.notifySinkBlueScoreChangedResponse)
         : undefined;
     message.sinkBlueScoreChangedNotification =
-      (object.sinkBlueScoreChangedNotification !== undefined && object.sinkBlueScoreChangedNotification !== null)
+      object.sinkBlueScoreChangedNotification !== undefined && object.sinkBlueScoreChangedNotification !== null
         ? SinkBlueScoreChangedNotificationMessage.fromPartial(object.sinkBlueScoreChangedNotification)
         : undefined;
-    message.banResponse = (object.banResponse !== undefined && object.banResponse !== null)
-      ? BanResponseMessage.fromPartial(object.banResponse)
-      : undefined;
-    message.unbanResponse = (object.unbanResponse !== undefined && object.unbanResponse !== null)
-      ? UnbanResponseMessage.fromPartial(object.unbanResponse)
-      : undefined;
-    message.getInfoResponse = (object.getInfoResponse !== undefined && object.getInfoResponse !== null)
-      ? GetInfoResponseMessage.fromPartial(object.getInfoResponse)
-      : undefined;
+    message.banResponse =
+      object.banResponse !== undefined && object.banResponse !== null
+        ? BanResponseMessage.fromPartial(object.banResponse)
+        : undefined;
+    message.unbanResponse =
+      object.unbanResponse !== undefined && object.unbanResponse !== null
+        ? UnbanResponseMessage.fromPartial(object.unbanResponse)
+        : undefined;
+    message.getInfoResponse =
+      object.getInfoResponse !== undefined && object.getInfoResponse !== null
+        ? GetInfoResponseMessage.fromPartial(object.getInfoResponse)
+        : undefined;
     message.stopNotifyingUtxosChangedResponse =
-      (object.stopNotifyingUtxosChangedResponse !== undefined && object.stopNotifyingUtxosChangedResponse !== null)
+      object.stopNotifyingUtxosChangedResponse !== undefined && object.stopNotifyingUtxosChangedResponse !== null
         ? StopNotifyingUtxosChangedResponseMessage.fromPartial(object.stopNotifyingUtxosChangedResponse)
         : undefined;
     message.notifyPruningPointUtxoSetOverrideResponse =
-      (object.notifyPruningPointUtxoSetOverrideResponse !== undefined &&
-          object.notifyPruningPointUtxoSetOverrideResponse !== null)
+      object.notifyPruningPointUtxoSetOverrideResponse !== undefined &&
+      object.notifyPruningPointUtxoSetOverrideResponse !== null
         ? NotifyPruningPointUtxoSetOverrideResponseMessage.fromPartial(object.notifyPruningPointUtxoSetOverrideResponse)
         : undefined;
     message.pruningPointUtxoSetOverrideNotification =
-      (object.pruningPointUtxoSetOverrideNotification !== undefined &&
-          object.pruningPointUtxoSetOverrideNotification !== null)
+      object.pruningPointUtxoSetOverrideNotification !== undefined &&
+      object.pruningPointUtxoSetOverrideNotification !== null
         ? PruningPointUtxoSetOverrideNotificationMessage.fromPartial(object.pruningPointUtxoSetOverrideNotification)
         : undefined;
     message.stopNotifyingPruningPointUtxoSetOverrideResponse =
-      (object.stopNotifyingPruningPointUtxoSetOverrideResponse !== undefined &&
-          object.stopNotifyingPruningPointUtxoSetOverrideResponse !== null)
+      object.stopNotifyingPruningPointUtxoSetOverrideResponse !== undefined &&
+      object.stopNotifyingPruningPointUtxoSetOverrideResponse !== null
         ? StopNotifyingPruningPointUtxoSetOverrideResponseMessage.fromPartial(
-          object.stopNotifyingPruningPointUtxoSetOverrideResponse,
-        )
+            object.stopNotifyingPruningPointUtxoSetOverrideResponse
+          )
         : undefined;
     message.estimateNetworkHashesPerSecondResponse =
-      (object.estimateNetworkHashesPerSecondResponse !== undefined &&
-          object.estimateNetworkHashesPerSecondResponse !== null)
+      object.estimateNetworkHashesPerSecondResponse !== undefined &&
+      object.estimateNetworkHashesPerSecondResponse !== null
         ? EstimateNetworkHashesPerSecondResponseMessage.fromPartial(object.estimateNetworkHashesPerSecondResponse)
         : undefined;
     message.notifyVirtualDaaScoreChangedResponse =
-      (object.notifyVirtualDaaScoreChangedResponse !== undefined &&
-          object.notifyVirtualDaaScoreChangedResponse !== null)
+      object.notifyVirtualDaaScoreChangedResponse !== undefined && object.notifyVirtualDaaScoreChangedResponse !== null
         ? NotifyVirtualDaaScoreChangedResponseMessage.fromPartial(object.notifyVirtualDaaScoreChangedResponse)
         : undefined;
     message.virtualDaaScoreChangedNotification =
-      (object.virtualDaaScoreChangedNotification !== undefined && object.virtualDaaScoreChangedNotification !== null)
+      object.virtualDaaScoreChangedNotification !== undefined && object.virtualDaaScoreChangedNotification !== null
         ? VirtualDaaScoreChangedNotificationMessage.fromPartial(object.virtualDaaScoreChangedNotification)
         : undefined;
     message.getBalanceByAddressResponse =
-      (object.getBalanceByAddressResponse !== undefined && object.getBalanceByAddressResponse !== null)
+      object.getBalanceByAddressResponse !== undefined && object.getBalanceByAddressResponse !== null
         ? GetBalanceByAddressResponseMessage.fromPartial(object.getBalanceByAddressResponse)
         : undefined;
     message.getBalancesByAddressesResponse =
-      (object.getBalancesByAddressesResponse !== undefined && object.getBalancesByAddressesResponse !== null)
+      object.getBalancesByAddressesResponse !== undefined && object.getBalancesByAddressesResponse !== null
         ? GetBalancesByAddressesResponseMessage.fromPartial(object.getBalancesByAddressesResponse)
         : undefined;
     message.notifyNewBlockTemplateResponse =
-      (object.notifyNewBlockTemplateResponse !== undefined && object.notifyNewBlockTemplateResponse !== null)
+      object.notifyNewBlockTemplateResponse !== undefined && object.notifyNewBlockTemplateResponse !== null
         ? NotifyNewBlockTemplateResponseMessage.fromPartial(object.notifyNewBlockTemplateResponse)
         : undefined;
     message.newBlockTemplateNotification =
-      (object.newBlockTemplateNotification !== undefined && object.newBlockTemplateNotification !== null)
+      object.newBlockTemplateNotification !== undefined && object.newBlockTemplateNotification !== null
         ? NewBlockTemplateNotificationMessage.fromPartial(object.newBlockTemplateNotification)
         : undefined;
     message.getMempoolEntriesByAddressesResponse =
-      (object.getMempoolEntriesByAddressesResponse !== undefined &&
-          object.getMempoolEntriesByAddressesResponse !== null)
+      object.getMempoolEntriesByAddressesResponse !== undefined && object.getMempoolEntriesByAddressesResponse !== null
         ? GetMempoolEntriesByAddressesResponseMessage.fromPartial(object.getMempoolEntriesByAddressesResponse)
         : undefined;
     message.getCoinSupplyResponse =
-      (object.getCoinSupplyResponse !== undefined && object.getCoinSupplyResponse !== null)
+      object.getCoinSupplyResponse !== undefined && object.getCoinSupplyResponse !== null
         ? GetCoinSupplyResponseMessage.fromPartial(object.getCoinSupplyResponse)
         : undefined;
-    message.pingResponse = (object.pingResponse !== undefined && object.pingResponse !== null)
-      ? PingResponseMessage.fromPartial(object.pingResponse)
-      : undefined;
-    message.getMetricsResponse = (object.getMetricsResponse !== undefined && object.getMetricsResponse !== null)
-      ? GetMetricsResponseMessage.fromPartial(object.getMetricsResponse)
-      : undefined;
+    message.pingResponse =
+      object.pingResponse !== undefined && object.pingResponse !== null
+        ? PingResponseMessage.fromPartial(object.pingResponse)
+        : undefined;
+    message.getMetricsResponse =
+      object.getMetricsResponse !== undefined && object.getMetricsResponse !== null
+        ? GetMetricsResponseMessage.fromPartial(object.getMetricsResponse)
+        : undefined;
     message.getServerInfoResponse =
-      (object.getServerInfoResponse !== undefined && object.getServerInfoResponse !== null)
+      object.getServerInfoResponse !== undefined && object.getServerInfoResponse !== null
         ? GetServerInfoResponseMessage.fromPartial(object.getServerInfoResponse)
         : undefined;
     message.getSyncStatusResponse =
-      (object.getSyncStatusResponse !== undefined && object.getSyncStatusResponse !== null)
+      object.getSyncStatusResponse !== undefined && object.getSyncStatusResponse !== null
         ? GetSyncStatusResponseMessage.fromPartial(object.getSyncStatusResponse)
         : undefined;
     message.getDaaScoreTimestampEstimateResponse =
-      (object.getDaaScoreTimestampEstimateResponse !== undefined &&
-          object.getDaaScoreTimestampEstimateResponse !== null)
+      object.getDaaScoreTimestampEstimateResponse !== undefined && object.getDaaScoreTimestampEstimateResponse !== null
         ? GetDaaScoreTimestampEstimateResponseMessage.fromPartial(object.getDaaScoreTimestampEstimateResponse)
         : undefined;
     message.submitTransactionReplacementResponse =
-      (object.submitTransactionReplacementResponse !== undefined &&
-          object.submitTransactionReplacementResponse !== null)
+      object.submitTransactionReplacementResponse !== undefined && object.submitTransactionReplacementResponse !== null
         ? SubmitTransactionReplacementResponseMessage.fromPartial(object.submitTransactionReplacementResponse)
         : undefined;
     message.getConnectionsResponse =
-      (object.getConnectionsResponse !== undefined && object.getConnectionsResponse !== null)
+      object.getConnectionsResponse !== undefined && object.getConnectionsResponse !== null
         ? GetConnectionsResponseMessage.fromPartial(object.getConnectionsResponse)
         : undefined;
     message.getSystemInfoResponse =
-      (object.getSystemInfoResponse !== undefined && object.getSystemInfoResponse !== null)
+      object.getSystemInfoResponse !== undefined && object.getSystemInfoResponse !== null
         ? GetSystemInfoResponseMessage.fromPartial(object.getSystemInfoResponse)
         : undefined;
     message.getFeeEstimateResponse =
-      (object.getFeeEstimateResponse !== undefined && object.getFeeEstimateResponse !== null)
+      object.getFeeEstimateResponse !== undefined && object.getFeeEstimateResponse !== null
         ? GetFeeEstimateResponseMessage.fromPartial(object.getFeeEstimateResponse)
         : undefined;
     message.getFeeEstimateExperimentalResponse =
-      (object.getFeeEstimateExperimentalResponse !== undefined && object.getFeeEstimateExperimentalResponse !== null)
+      object.getFeeEstimateExperimentalResponse !== undefined && object.getFeeEstimateExperimentalResponse !== null
         ? GetFeeEstimateExperimentalResponseMessage.fromPartial(object.getFeeEstimateExperimentalResponse)
         : undefined;
     message.getCurrentBlockColorResponse =
-      (object.getCurrentBlockColorResponse !== undefined && object.getCurrentBlockColorResponse !== null)
+      object.getCurrentBlockColorResponse !== undefined && object.getCurrentBlockColorResponse !== null
         ? GetCurrentBlockColorResponseMessage.fromPartial(object.getCurrentBlockColorResponse)
         : undefined;
     return message;
-  },
+  }
 };
 
 export type RPCDefinition = typeof RPCDefinition;
 export const RPCDefinition = {
-  name: "RPC",
-  fullName: "protowire.RPC",
+  name: 'RPC',
+  fullName: 'protowire.RPC',
   methods: {
     messageStream: {
-      name: "MessageStream",
+      name: 'MessageStream',
       requestType: KaspadRequest,
       requestStream: true,
       responseType: KaspadResponse,
       responseStream: true,
-      options: {},
-    },
-  },
+      options: {}
+    }
+  }
 } as const;
 
 export interface RPCServiceImplementation<CallContextExt = {}> {
   messageStream(
     request: AsyncIterable<KaspadRequest>,
-    context: CallContext & CallContextExt,
+    context: CallContext & CallContextExt
   ): ServerStreamingMethodResult<DeepPartial<KaspadResponse>>;
 }
 
 export interface RPCClient<CallOptionsExt = {}> {
   messageStream(
     request: AsyncIterable<DeepPartial<KaspadRequest>>,
-    options?: CallOptions & CallOptionsExt,
+    options?: CallOptions & CallOptionsExt
   ): AsyncIterable<KaspadResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
+export type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends globalThis.Array<infer U>
+    ? globalThis.Array<DeepPartial<U>>
+    : T extends ReadonlyArray<infer U>
+      ? ReadonlyArray<DeepPartial<U>>
+      : T extends {}
+        ? { [K in keyof T]?: DeepPartial<T[K]> }
+        : Partial<T>;
 
 function longToNumber(int64: { toString(): string }): number {
   const num = globalThis.Number(int64.toString());
   if (num > globalThis.Number.MAX_SAFE_INTEGER) {
-    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
   }
   if (num < globalThis.Number.MIN_SAFE_INTEGER) {
-    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
+    throw new globalThis.Error('Value is smaller than Number.MIN_SAFE_INTEGER');
   }
   return num;
 }
