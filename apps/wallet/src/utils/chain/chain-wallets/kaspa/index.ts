@@ -42,7 +42,14 @@ export class KaspaChainWallet extends BaseChainWallet {
     super(chainInfo, phrase);
     this.network = chainInfo.isMainnet ? 'mainnet' : 'testnet-10';
     this.networkId = kaspaNetworkToNetworkId(this.network);
-    this.rpcClient = new KaspaRpc(this.network, this.encoding, new Resolver());
+    const endpoint = this.network === 'mainnet'
+      ? import.meta.env.VITE_HIBIT_KASPA_MAINNET_ENDPOINT
+      : import.meta.env.VITE_HIBIT_KASPA_TESTNET_ENDPOINT;
+    this.rpcClient = new KaspaRpc(
+      this.network,
+      this.encoding,
+      endpoint, // ! TEMP: use endpoint for now
+    );
     const hdWallet = HDNodeWallet.fromPhrase(phrase, undefined, DERIVING_PATH);
     const privKey = hdWallet.privateKey;
     this.keyPair = Keypair.fromPrivateKeyHex(privKey.slice(2));
@@ -120,7 +127,8 @@ export class KaspaChainWallet extends BaseChainWallet {
           this.keyPair.toAddress(this.networkId.networkType),
           BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
           Address.fromString(toAddress),
-          this.networkId
+          this.networkId,
+          new Fees(0n)
         );
         const {
           result: { transactions, summary }
@@ -159,11 +167,8 @@ export class KaspaChainWallet extends BaseChainWallet {
             allowOrphan: false
           });
         }
-        // TODO: wait for event
-
         console.log('commitTxId', commitTxId);
-        // const revealUTXOs = await this.rpcClient.getUtxosByAddress(P2SHAddress.toString());
-        // const revealUTXOEntries = rpcUtxosToUtxoEntries(revealUTXOs)
+
         const {
           result: { transactions: revealTxs }
         } = await this.createTransactionsByOutputs(sendKrc20Param, commitTxId);
@@ -185,7 +190,7 @@ export class KaspaChainWallet extends BaseChainWallet {
               );
             signedTx.transaction.fillInputSignature(
               ourOutput,
-              Buffer.from(encodedSignature, 'hex')
+              encodedSignature
             );
           }
           const reqMessage = signedTx.toSubmitableJson();
@@ -224,7 +229,8 @@ export class KaspaChainWallet extends BaseChainWallet {
         this.keyPair.toAddress(this.networkId.networkType),
         BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
         Address.fromString(toAddress),
-        this.networkId
+        this.networkId,
+        new Fees(0n)
       );
       const { priorityFee } =
         await this.createTransactionsByOutputs(sendKasParam);
