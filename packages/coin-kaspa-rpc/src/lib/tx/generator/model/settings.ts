@@ -30,10 +30,15 @@ class GeneratorSettings {
     this.networkId = networkId instanceof NetworkId ? networkId : NetworkId.fromString(networkId);
     this.priorityFee = this.priorityFee =
       priorityFee instanceof Fees ? priorityFee : priorityFee !== undefined ? new Fees(priorityFee) : undefined;
-    this.priorityEntries = priorityEntries;
+    this.priorityEntries = priorityEntries ? [...priorityEntries] : undefined;
     this.sigOpCount = sigOpCount ?? 1;
     this.minimumSignatures = minimumSignatures ?? 1;
     this.payload = payload;
+  }
+
+  setPriorityFee(priorityFee: Fees | bigint) {
+    this.priorityFee = priorityFee instanceof Fees ? priorityFee : new Fees(priorityFee);
+    return this;
   }
 }
 

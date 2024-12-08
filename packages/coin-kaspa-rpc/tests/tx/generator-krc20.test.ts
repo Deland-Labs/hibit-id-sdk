@@ -9,6 +9,7 @@ const SENDER_ADDR = 'kaspatest:qzzzvv57j68mcv3rsd2reshhtv4rcw4xc8snhenp2k4wu4l30
 const RECEIVER_ADDR = 'kaspatest:qrjcg7hsgjapumpn8egyu6544qzdqs2lssas4nfwewl55lnenr5pyzd7cmyx6';
 const TESTNET_10 = new NetworkId(NetworkType.Testnet, 10);
 const PRIORITY_FEES = new Fees(kaspaToSompi(0.02));
+const OUTPUT_AMOUNT = kaspaToSompi(0.3);
 
 describe('Generator kas tx', () => {
   const sentKrc20CommitTx = new SendKrc20Pramas(
@@ -17,6 +18,7 @@ describe('Generator kas tx', () => {
     RECEIVER_ADDR,
     'KAST',
     TESTNET_10,
+    OUTPUT_AMOUNT,
     PRIORITY_FEES
   );
   const resultSendKrc20CommitTx = parseTxsFromFile('tests/tx/data/sendkrc20-commit-tx.json');

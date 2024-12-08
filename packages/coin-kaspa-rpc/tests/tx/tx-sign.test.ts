@@ -26,20 +26,20 @@ const SIG_HASH_NONE_ANYONE_CAN_PAY = new SigHashType(SIG_HASH_NONE.value | SIG_H
 const SIG_HASH_SINGLE_ANYONE_CAN_PAY = new SigHashType(SIG_HASH_SINGLE.value | SIG_HASH_ANY_ONE_CAN_PAY.value);
 
 describe('TransactionSigningHashing', () => {
-  let nativePopulatedTx: SignableTransaction = new SignableTransaction(createNativeTx(), createUtoxs());
+  let nativePopulatedTx: SignableTransaction = new SignableTransaction(createNativeTx(), createUtoxs() as any);
   let subnetworkTx = createNativeTx();
-  let subnetworkPopulatedTx: SignableTransaction = new SignableTransaction(subnetworkTx, createUtoxs());
+  let subnetworkPopulatedTx: SignableTransaction = new SignableTransaction(subnetworkTx, createUtoxs() as any);
   let tests = createTestCases(nativePopulatedTx, subnetworkPopulatedTx);
 
   beforeEach(() => {
     // reset the txs
-    nativePopulatedTx = new SignableTransaction(createNativeTx(), createUtoxs());
+    nativePopulatedTx = new SignableTransaction(createNativeTx(), createUtoxs() as any);
     subnetworkTx.subnetworkId = new SubnetworkId(
       Buffer.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     );
     subnetworkTx.gas = 250n;
     subnetworkTx.payload = Buffer.from([10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
-    subnetworkPopulatedTx = new SignableTransaction(subnetworkTx, createUtoxs());
+    subnetworkPopulatedTx = new SignableTransaction(subnetworkTx, createUtoxs() as any);
     tests = createTestCases(nativePopulatedTx, subnetworkPopulatedTx);
   });
 

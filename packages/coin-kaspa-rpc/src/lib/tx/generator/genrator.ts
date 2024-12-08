@@ -84,14 +84,17 @@ class Generator {
     const {
       networkId,
       outputs,
-      entries,
-      priorityEntries,
+      entries: entriesSource,
+      priorityEntries: priorityEntriesSource,
       sigOpCount,
       minimumSignatures,
       changeAddress,
       priorityFee,
       payload
     } = settings;
+
+    let entries = [...entriesSource];
+    let priorityEntries = priorityEntriesSource ? [...priorityEntriesSource] : undefined;
 
     let finalTransactionAmount = 0n;
     const finalTransactionOutputs = outputs.map((output) => {
@@ -148,13 +151,10 @@ class Generator {
       throw new Error(`Transaction outputs exceed the maximum allowed mass:${massSanityCheck}`);
     }
 
-    const priorityUtxoEntryFilter = priorityEntries?.reduce(
-      (set, entry) => {
-        set.add(`${entry.outpoint.transactionId.toHex()}_${entry.outpoint.index}`)
-        return set
-      },
-      new Set<string>()
-    );
+    const priorityUtxoEntryFilter = priorityEntries?.reduce((set, entry) => {
+      set.add(`${entry.outpoint.transactionId.toHex()}_${entry.outpoint.index}`);
+      return set;
+    }, new Set<string>());
     this.context = new GeneratorContext(entries[Symbol.iterator](), priorityEntries, priorityUtxoEntryFilter);
   }
 
@@ -497,9 +497,11 @@ class Generator {
           const utxoEntry = this.context.utxoSourceIterator.next().value as UtxoEntryReference | undefined;
           if (!utxoEntry) return undefined;
 
-          if (this.context.priorityUtxoEntryFilter?.has(
-            `${utxoEntry.outpoint.transactionId.toHex()}_${utxoEntry.outpoint.index}`
-          )) {
+          if (
+            this.context.priorityUtxoEntryFilter?.has(
+              `${utxoEntry.outpoint.transactionId.toHex()}_${utxoEntry.outpoint.index}`
+            )
+          ) {
             // Skip the entry from the iterator intake if it has been supplied as a priority entry
             continue;
           }

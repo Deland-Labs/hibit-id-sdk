@@ -1,4 +1,4 @@
-import { Address, Generator, GeneratorSettings, GeneratorSummary, Hash, KaspaNetwork, NetworkId, NetworkType, RpcUtxosByAddressesEntry, ScriptPublicKey, SignableTransaction, SubmitTransactionRequestMessage, TransactionOutpoint, UtxoEntryReference, SignedTransaction, Transaction } from "@delandlabs/coin-kaspa-rpc"
+import { Address, Generator, GeneratorSettings, GeneratorSummary, Hash, KaspaNetwork, NetworkId, NetworkType, RpcUtxosByAddressesEntry, ScriptPublicKey, SignableTransaction, TransactionOutpoint, UtxoEntryReference } from "@delandlabs/coin-kaspa-rpc"
 
 export const createTransactions = (settings: GeneratorSettings): {
   transactions: SignableTransaction[]

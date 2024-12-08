@@ -1,13 +1,24 @@
 import { Address } from './address';
 import { Fees, GeneratorSettings, PaymentOutput, TransactionId, TransactionOutpoint, UtxoEntryReference } from './tx';
-import { addressFromScriptPublicKey, kaspaToSompi } from './utils';
+import { addressFromScriptPublicKey } from './utils';
 import { OpCodes, ScriptBuilder } from './tx-script';
 import { NetworkId } from './consensus';
 
 /**
+ * Interface representing parameters for sending KRC-20 tokens.
+ */
+export interface ISendKrc20Pramas {
+  /**
+   * Sets the priority fee for the transaction.
+   * @param priorityFee - The priority fee to set.
+   */
+  setPriorityFee(priorityFee: Fees): void;
+}
+
+/**
  * Class representing parameters for sending Kaspa.
  */
-class SendKasPramas {
+class SendKasPramas implements ISendKrc20Pramas {
   sender: Address;
   amount: bigint;
   receiver: Address;
@@ -36,6 +47,10 @@ class SendKasPramas {
     this.priorityFee = priorityFee;
   }
 
+  setPriorityFee(priorityFee: Fees): void {
+    this.priorityFee = priorityFee;
+  }
+
   /**
    * Converts the parameters to generator settings.
    * @param uxtos - The UTXO entries.
@@ -50,36 +65,48 @@ class SendKasPramas {
 /**
  * Class representing parameters for sending KRC-20 tokens.
  */
-class SendKrc20Pramas {
+class SendKrc20Pramas implements ISendKrc20Pramas {
   sender: Address;
-  amount: bigint;
+  krc20Amount: bigint;
   receiver: Address;
   tick: string;
   networkId: NetworkId;
+  /*
+   * The output amount for the transaction.
+   * Note: this amount used for the first output value for commit transaction.
+   */
+  outputAmount: bigint;
   priorityFee?: Fees;
 
   /**
    * Creates an instance of SendKrc20Pramas.
    * @param sender - The sender's address.
-   * @param amount - The amount to send.
+   * @param krc20Amount - The amount to send.
    * @param receiver - The receiver's address.
    * @param tick - The token ticker.
    * @param networkId - The network ID.
-   * @param priorityFee - The optional priority fee.
+   * @param outputAmount - The output amount for the commit transaction.
+   * @param priorityFee - The optional priority fee, default is 0.
    */
   constructor(
     sender: Address | string,
-    amount: bigint,
+    krc20Amount: bigint,
     receiver: Address | string,
     tick: string,
     networkId: NetworkId,
+    outputAmount: bigint,
     priorityFee?: Fees
   ) {
     this.sender = sender instanceof Address ? sender : Address.fromString(sender);
-    this.amount = amount;
+    this.krc20Amount = krc20Amount;
     this.receiver = receiver instanceof Address ? receiver : Address.fromString(receiver);
     this.tick = tick.toUpperCase();
     this.networkId = networkId;
+    this.outputAmount = outputAmount;
+    this.priorityFee = priorityFee;
+  }
+
+  setPriorityFee(priorityFee: Fees): void {
     this.priorityFee = priorityFee;
   }
 
@@ -94,7 +121,7 @@ class SendKrc20Pramas {
       this.networkId.networkType
     )!;
 
-    const output = new PaymentOutput(P2SHAddress, kaspaToSompi(0.3));
+    const output = new PaymentOutput(P2SHAddress, this.outputAmount);
     return new GeneratorSettings(output, this.sender, uxtos, this.networkId, this.priorityFee);
   }
 
@@ -113,7 +140,7 @@ class SendKrc20Pramas {
       new UtxoEntryReference(
         P2SHAddress,
         new TransactionOutpoint(commitTxId, 0),
-        kaspaToSompi(0.3),
+        this.outputAmount,
         this.script.createPayToScriptHashScript(),
         0n,
         false
@@ -131,7 +158,7 @@ class SendKrc20Pramas {
       p: 'krc-20',
       op: 'transfer',
       tick: this.tick,
-      amt: this.amount.toString(),
+      amt: this.krc20Amount.toString(),
       to: this.receiver.toString()
     };
     return new ScriptBuilder()
