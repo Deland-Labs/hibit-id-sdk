@@ -10,8 +10,9 @@ import {
   SubmitTransactionRequestMessage,
   SubmitTransactionResponseMessage
 } from './compiled_proto/rpc';
-import { KaspaNetwork, WrpcJsonRequest, WrpcJsonResponse } from './types';
+import { WrpcJsonRequest, WrpcJsonResponse } from './types';
 import WebsocketHeartbeatJs from 'websocket-heartbeat-js';
+import { Encoding, NetworkId, Resolver } from './lib';
 
 class BridgePromise<T> {
   public resolve: (value: T) => void = () => {};
@@ -27,37 +28,58 @@ class BridgePromise<T> {
 }
 
 export class KaspadWrpcClient {
-  public readonly client: WebsocketHeartbeatJs;
-  public readonly network: KaspaNetwork;
+  public readonly network: NetworkId;
+  public readonly encoding: Encoding;
 
-  private endpoint: string;
+  private client?: WebsocketHeartbeatJs;
+  private readonly resolver?: Resolver;
+  private readonly endpoint?: string;
+  private readonly fallbackEndpoint?: string;
   private connectedPromise: BridgePromise<boolean>;
   private idAutoIncrement = 1;
   private requestPromiseMap: Map<number, BridgePromise<any>> = new Map();
 
-  constructor(network: KaspaNetwork) {
-    this.network = network;
-    switch (network) {
-      case 'mainnet':
-        this.endpoint = import.meta.env.VITE_KASPA_MAINNET_WRPC_ENDPOINT;
-        break;
-      case 'testnet-10':
-        this.endpoint = import.meta.env.VITE_KASPA_TESTNET_10_WRPC_ENDPOINT;
-        break;
-      case 'testnet-11':
-        this.endpoint = import.meta.env.VITE_KASPA_TESTNET_11_WRPC_ENDPOINT;
-        break;
+  constructor(network: NetworkId, encoding: Encoding, endpointOrResolver: string | Resolver) {
+    if (endpointOrResolver === undefined) {
+      switch (network.toString()) {
+        case 'mainnet':
+          endpointOrResolver = import.meta.env.VITE_KASPA_MAINNET_WRPC_ENDPOINT;
+          break;
+        case 'testnet-10':
+          endpointOrResolver = import.meta.env.VITE_KASPA_TESTNET_10_WRPC_ENDPOINT;
+          break;
+        case 'testnet-11':
+          endpointOrResolver = import.meta.env.VITE_KASPA_TESTNET_11_WRPC_ENDPOINT;
+          break;
+      }
     }
+    this.endpoint = typeof endpointOrResolver === 'string' ? endpointOrResolver : undefined;
+    this.resolver = endpointOrResolver instanceof Resolver ? endpointOrResolver : undefined;
+    this.encoding = encoding;
+    this.network = network;
+    this.connectedPromise = new BridgePromise<boolean>();
+  }
+
+  connect = async () => {
+    let endpoint = this.endpoint;
+
+    if (endpoint === undefined) {
+      try {
+        endpoint = await this.resolver!.getUrl(this.encoding, this.network);
+      } catch {
+        endpoint = this.fallbackEndpoint;
+      }
+    }
+
     this.client = new WebsocketHeartbeatJs({
-      url: this.endpoint,
+      url: endpoint!,
       pingMsg: JSON.stringify(this.buildRequest('ping', {}))
     });
-    this.connectedPromise = new BridgePromise<boolean>();
-
     this.client.onopen = (event) => {
       console.log('Connection opened: ', event);
-      this.connectedPromise.resolve(true);
+      this.connectedPromise?.resolve(true);
     };
+
     // Listen for messages
     this.client.onmessage = (event) => {
       console.debug('Received message: ', event);
@@ -84,10 +106,10 @@ export class KaspadWrpcClient {
     this.client.onerror = (event) => {
       console.error('WebSocket error: ', event);
     };
-  }
+  };
 
   dispose = () => {
-    this.client.close();
+    this.client?.close();
   };
 
   getBalanceByAddress = async (address: string): Promise<number> => {
@@ -95,6 +117,7 @@ export class KaspadWrpcClient {
       'getBalanceByAddress',
       { address }
     );
+    console.log('getBalanceByAddress', res);
     return res.balance;
   };
 
@@ -131,11 +154,15 @@ export class KaspadWrpcClient {
   };
 
   private async sendRequest<TParam, TRes>(method: string, params: TParam): Promise<TRes> {
+    if (this.client === undefined) {
+      await this.connect();
+    }
+
     await this.connectedPromise.promise;
     const request = this.buildRequest(method, params);
     const bridgePromise = new BridgePromise<TRes>();
     this.requestPromiseMap.set(request.id ?? 0, bridgePromise);
-    this.client.send(JSON.stringify(request));
+    this.client!.send(JSON.stringify(request));
     return bridgePromise.promise;
   }
 }

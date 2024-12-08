@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { Resolver, Encoding, tryParseResolvers } from '../src/lib/resolver';
+import { Resolver, Encoding, tryParseResolvers } from '../src/lib/resolver/index';
 import { NetworkId, NetworkType } from '../src/lib/consensus/network';
 
 const TESTNET_10 = new NetworkId(NetworkType.Testnet, 10);

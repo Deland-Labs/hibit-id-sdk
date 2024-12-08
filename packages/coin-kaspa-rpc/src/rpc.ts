@@ -2,15 +2,20 @@ import { KaspadWrpcClient } from './kaspad-wrpc';
 import { Krc20RpcClient } from './krc20-rpc';
 import { KaspaNetwork, Krc20TokenBalanceInfo, Krc20TokenDetailsWithHolders } from './types';
 import { RpcFeeEstimate, RpcUtxosByAddressesEntry, SubmitTransactionRequestMessage } from './compiled_proto/rpc';
+import { Encoding, NetworkId, Resolver } from 'src/lib';
 
 export class KaspaRpc {
   private krc20RpcClient: Krc20RpcClient;
   private kaspadWrpcClient: KaspadWrpcClient;
 
-  constructor(network: KaspaNetwork) {
-    this.krc20RpcClient = new Krc20RpcClient(network);
-    this.kaspadWrpcClient = new KaspadWrpcClient(network);
+  constructor(networkId: NetworkId, encoding: Encoding, endpointOrResolver: string | Resolver) {
+    this.krc20RpcClient = new Krc20RpcClient(networkId.toString() as KaspaNetwork);
+    this.kaspadWrpcClient = new KaspadWrpcClient(networkId, encoding, endpointOrResolver);
   }
+
+  connect = () => {
+    return this.kaspadWrpcClient.connect();
+  };
 
   getBalance = async (address: string): Promise<string> => {
     const balance = await this.kaspadWrpcClient.getBalanceByAddress(address);

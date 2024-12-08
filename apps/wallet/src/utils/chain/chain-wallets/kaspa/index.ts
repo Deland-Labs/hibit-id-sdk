@@ -4,6 +4,7 @@ import { Chain, ChainAssetType, ChainId, ChainInfo } from '../../../basicTypes';
 import { WalletAccount } from '@delandlabs/hibit-id-sdk';
 import {
   Address,
+  Encoding,
   Fees,
   GeneratorSettings,
   Hash,
@@ -12,6 +13,7 @@ import {
   kaspaToSompi,
   Keypair,
   NetworkId,
+  Resolver,
   SendKasPramas,
   SendKrc20Pramas
 } from '@delandlabs/coin-kaspa-rpc';
@@ -31,6 +33,7 @@ export class KaspaChainWallet extends BaseChainWallet {
   private networkId: NetworkId;
   private rpcClient: KaspaRpc;
   private keyPair: Keypair;
+  private encoding: Encoding = Encoding.JSON;
 
   constructor(chainInfo: ChainInfo, phrase: string) {
     if (!chainInfo.chainId.type.equals(Chain.Kaspa)) {
@@ -39,7 +42,7 @@ export class KaspaChainWallet extends BaseChainWallet {
     super(chainInfo, phrase);
     this.network = chainInfo.isMainnet ? 'mainnet' : 'testnet-10';
     this.networkId = kaspaNetworkToNetworkId(this.network);
-    this.rpcClient = new KaspaRpc(this.network);
+    this.rpcClient = new KaspaRpc(this.network, this.encoding, new Resolver());
     const hdWallet = HDNodeWallet.fromPhrase(phrase, undefined, DERIVING_PATH);
     const privKey = hdWallet.privateKey;
     this.keyPair = Keypair.fromPrivateKeyHex(privKey.slice(2));
@@ -69,8 +72,14 @@ export class KaspaChainWallet extends BaseChainWallet {
     }
     // native
     if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
-      const balance = await this.rpcClient.getBalance(address);
-      return new BigNumber(balance).shiftedBy(-assetInfo.decimalPlaces.value);
+      try {
+        const balance = await this.rpcClient.getBalance(address);
+        return new BigNumber(balance).shiftedBy(-assetInfo.decimalPlaces.value);
+      }
+      catch (e) {
+        console.error(e);
+        return new BigNumber(0);
+      }
     }
     // krc20
     if (assetInfo.chainAssetType.equals(ChainAssetType.KRC20)) {
