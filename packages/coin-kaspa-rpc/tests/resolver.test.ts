@@ -3,7 +3,7 @@ import { Resolver, Encoding, tryParseResolvers } from '../src/lib/resolver/index
 import { NetworkId, NetworkType } from '../src/lib/consensus/network';
 
 const TESTNET_10 = new NetworkId(NetworkType.Testnet, 10);
-const ENCODING = Encoding.Borsh;
+const ENCODING = Encoding.JSON;
 
 describe('Resolver', () => {
   const mockToml = `
@@ -42,7 +42,7 @@ describe('Resolver', () => {
   it('should make the correct URL', () => {
     const resolver = new Resolver(['http://example.com'], true);
     const url = resolver['makeUrl']('http://example.com', ENCODING, new NetworkId(NetworkType.Mainnet));
-    expect(url).toBe('http://example.com/v2/kaspa/mainnet/tls/wrpc/borsh');
+    expect(url).toBe(`http://example.com/v2/kaspa/mainnet/tls/wrpc/${ENCODING}`);
   });
 
   it('should fetch node info successfully', async () => {
@@ -89,4 +89,10 @@ describe('Resolver', () => {
     const resolver = new Resolver(['http://example1.com', 'http://example2.com'], true);
     await expect(resolver['fetch'](ENCODING, TESTNET_10)).rejects.toThrowError(/Network error/);
   });
+
+  // it('real', async () => {
+  //   const resolver = new Resolver(null, true);
+  //   const url = await resolver.getUrl(ENCODING, TESTNET_10);
+  //   expect(url).length.greaterThan(0);
+  // }, 1000000);
 });

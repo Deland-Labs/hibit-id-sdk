@@ -33,7 +33,7 @@ class Resolver {
 
   private makeUrl(url: string, encoding: Encoding, networkId: NetworkId): string {
     const tls = this.tlsAsStr();
-    return `${url}/v${CURRENT_VERSION}/kaspa/${networkId}/${tls}/wrpc/${encoding}`;
+    return `${url}/v${CURRENT_VERSION}/kaspa/${networkId.toString()}/${tls}/wrpc/${encoding}`;
   }
 
   private async fetchNodeInfo(url: string, encoding: Encoding, networkId: NetworkId): Promise<INodeDescriptor> {

@@ -4,10 +4,10 @@ import { AddressPrefix } from '../address';
  * Enum representing different network types.
  */
 enum NetworkType {
-  Mainnet,
-  Testnet,
-  Devnet,
-  Simnet
+  Mainnet = 'mainnet',
+  Testnet = 'testnet',
+  Devnet = 'devnet',
+  Simnet = 'simnet'
 }
 
 /**
@@ -91,7 +91,7 @@ class NetworkId {
    * @returns {string} The string representation of the NetworkId.
    */
   public toString(): string {
-    return this.suffix !== undefined ? `${this.networkType.toString()}-${this.suffix}` : this.networkType.toString();
+    return this.suffix !== undefined ? `${this.networkType}-${this.suffix}` : this.networkType.toString();
   }
 
   /**
@@ -151,27 +151,6 @@ class NetworkTypeHelper {
         return AddressPrefix.Simnet;
       case NetworkType.Devnet:
         return AddressPrefix.Devnet;
-      default:
-        throw new Error(`Unknown network type: ${networkType}`);
-    }
-  }
-
-  /**
-   * Converts a NetworkType to its string representation.
-   * @param {NetworkType} networkType - The type of the network.
-   * @returns {string} The string representation of the network type.
-   * @throws Will throw an error if the network type is unknown.
-   */
-  public static toString(networkType: NetworkType): string {
-    switch (networkType) {
-      case NetworkType.Mainnet:
-        return 'mainnet';
-      case NetworkType.Testnet:
-        return 'testnet';
-      case NetworkType.Devnet:
-        return 'devnet';
-      case NetworkType.Simnet:
-        return 'simnet';
       default:
         throw new Error(`Unknown network type: ${networkType}`);
     }
