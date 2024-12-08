@@ -13,10 +13,9 @@ import {
   kaspaToSompi,
   Keypair,
   NetworkId,
-  Resolver,
   SendKasPramas,
   SendKrc20Pramas
-} from '@delandlabs/coin-kaspa-rpc';
+} from '@delandlabs/coin-kaspa';
 import { getChainByChainId } from '../..';
 import { HDNodeWallet } from 'ethers';
 import {

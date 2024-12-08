@@ -8,12 +8,12 @@
       "outputs": ["dist/**"]
     },
 
-    "@delandlabs/coin-kaspa-rpc#build": {
+    "@delandlabs/coin-kaspa#build": {
       "env": ["VITE_*"],
       "dependsOn": ["@delandlabs/crypto-lib#build:esm"],
       "outputs": ["dist/**"]
     },
-    "@delandlabs/coin-kaspa-rpc#test": {
+    "@delandlabs/coin-kaspa#test": {
       "env": ["VITE_*"],
       "dependsOn": ["@delandlabs/crypto-lib#build:common"],
       "outputs": ["dist/**"],
@@ -29,7 +29,7 @@
       "env": ["VITE_*"],
       "dependsOn": [
         "@delandlabs/hibit-id-sdk#build",
-        "@delandlabs/coin-kaspa-rpc#build"
+        "@delandlabs/coin-kaspa#build"
       ],
       "outputs": ["dist/**"]
     },
@@ -41,7 +41,7 @@
     "dev": {
       "dependsOn": [
         "@delandlabs/hibit-id-sdk#build",
-        "@delandlabs/coin-kaspa-rpc#build"
+        "@delandlabs/coin-kaspa#build"
       ],
       "cache": false,
       "persistent": true
