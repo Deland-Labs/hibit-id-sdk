@@ -1,5 +1,5 @@
 import { SignableTransaction } from './signable-tx';
-import { ISubmitableTransaction } from './submitable-tx';
+import { ISubmitableBorshTransaction, ISubmitableJsonTransaction } from './submitable';
 
 /**
  * Enum representing the signed state of a transaction.
@@ -20,10 +20,18 @@ class SignedTransaction {
 
   /**
    * Convert to a submitable transaction.
-   * @returns {ISubmitableTransaction} The submitable transaction.
+   * @returns {ISubmitableJsonTransaction} The submitable transaction.
    */
-  toSubmitable(): ISubmitableTransaction {
-    return this.transaction.toSubmitable();
+  toSubmitableJson(): ISubmitableJsonTransaction {
+    return this.transaction.toSubmitableJson();
+  }
+
+  /**
+   * Convert to a submitable transaction.
+   * @returns {ISubmitableBorshTransaction} The submitable transaction.
+   */
+  toSubmitableBorsh(): ISubmitableBorshTransaction {
+    return this.transaction.toSubmitableBorsh();
   }
 }
 

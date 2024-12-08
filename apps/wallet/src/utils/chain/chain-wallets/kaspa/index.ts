@@ -5,7 +5,8 @@ import { WalletAccount } from '@delandlabs/hibit-id-sdk';
 import {
   Address,
   Fees,
-  GeneratorSettings, Hash,
+  GeneratorSettings,
+  Hash,
   KaspaNetwork,
   KaspaRpc,
   kaspaToSompi,
@@ -21,7 +22,6 @@ import {
   kaspaNetworkToNetworkId,
   rpcUtxosToUtxoEntries
 } from './utils';
-import { sleep } from '../../common';
 
 const DERIVING_PATH = "m/44'/111111'/0'/0/0";
 const AMOUNT_FOR_INSCRIBE = kaspaToSompi('0.3');
@@ -118,7 +118,7 @@ export class KaspaChainWallet extends BaseChainWallet {
         } = await this.createTransactionsByOutputs(sendParam);
         for (const tx of transactions) {
           const signedTx = tx.sign([this.keyPair.privateKey!]);
-          const reqMessage = signedTx.toSubmitable();
+          const reqMessage = signedTx.toSubmitableJson();
           await this.rpcClient.submitTransaction({
             transaction: reqMessage as any,
             allowOrphan: false
@@ -144,7 +144,7 @@ export class KaspaChainWallet extends BaseChainWallet {
         let commitTxId = '';
         for (const commitTx of commitTxs) {
           const signedTx = commitTx.sign([this.keyPair.privateKey!]);
-          const reqMessage = signedTx.toSubmitable();
+          const reqMessage = signedTx.toSubmitableJson();
           commitTxId = await this.rpcClient.submitTransaction({
             transaction: reqMessage as any,
             allowOrphan: false
@@ -179,7 +179,7 @@ export class KaspaChainWallet extends BaseChainWallet {
               Buffer.from(encodedSignature, 'hex')
             );
           }
-          const reqMessage = signedTx.toSubmitable();
+          const reqMessage = signedTx.toSubmitableJson();
           console.log('reqMessage', reqMessage);
           revealTxId = await this.rpcClient.submitTransaction({
             transaction: reqMessage as any,

@@ -1,11 +1,11 @@
 /**
  * Represents a submitable transaction.
  */
-export interface ISubmitableTransaction {
+export interface ISubmitableJsonTransaction {
   id: string; // TransactionId
   version: number; // u16
-  inputs: ISubmitableTransactionInput[];
-  outputs: ISubmitableTransactionOutput[];
+  inputs: ISubmitableJsonTransactionInput[];
+  outputs: ISubmitableJsonTransactionOutput[];
   lockTime: number; // u64
   gas: number; // u64
   subnetworkId: string; // SubnetworkId
@@ -16,8 +16,8 @@ export interface ISubmitableTransaction {
 /**
  * Represents a submitable transaction input.
  */
-export interface ISubmitableTransactionInput {
-  previousOutpoint: ISubmitableTransactionOutpoint;
+export interface ISubmitableJsonTransactionInput {
+  previousOutpoint: ISubmitableJsonTransactionOutpoint;
   sequence: number; // u64
   sigOpCount: number; // u8
   signatureScript: string; // Hex-encoded string
@@ -26,7 +26,7 @@ export interface ISubmitableTransactionInput {
 /**
  * Represents a submitable transaction outpoint.
  */
-export interface ISubmitableTransactionOutpoint {
+export interface ISubmitableJsonTransactionOutpoint {
   /**
    * The ID of the transaction.
    */
@@ -41,15 +41,15 @@ export interface ISubmitableTransactionOutpoint {
 /**
  * Represents a submitable transaction output.
  */
-export interface ISubmitableTransactionOutput {
+export interface ISubmitableJsonTransactionOutput {
   value: number; // u64
-  scriptPublicKey: ISubmitableScriptPublicKey;
+  scriptPublicKey: ISubmitableJsonScriptPublicKey;
 }
 
 /**
  * Represents a submitable script public key.
  */
-export interface ISubmitableScriptPublicKey {
+export interface ISubmitableJsonScriptPublicKey {
   version: number; // u32
   script: string; // Hex-encoded string
 }

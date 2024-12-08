@@ -86,4 +86,10 @@ describe('Resolver', () => {
     const resolver = new Resolver(['http://example1.com', 'http://example2.com'], true);
     await expect(resolver['fetch'](MAIN_NET)).rejects.toThrowError(/Network error,Error: Failed to connect/);
   });
+
+  it('real', async () => {
+    const resolver = new Resolver(null, true);
+    const url = await resolver.getUrl(MAIN_NET);
+    expect(url).length.greaterThan(0);
+  },1000000);
 });
