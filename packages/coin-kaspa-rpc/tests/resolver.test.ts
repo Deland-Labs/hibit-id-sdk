@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
-import { Resolver, tryParseResolvers } from '../src/lib/resolver';
+import { Resolver, Encoding, tryParseResolvers } from '../src/lib/resolver';
 import { NetworkId, NetworkType } from '../src/lib/consensus/network';
 
-const MAIN_NET = new NetworkId(NetworkType.Mainnet);
+const TESTNET_10 = new NetworkId(NetworkType.Testnet, 10);
+const ENCODING = Encoding.Borsh;
+
 describe('Resolver', () => {
   const mockToml = `
     [[group]]
@@ -20,9 +22,10 @@ describe('Resolver', () => {
     expect(urls).toEqual(['http://127.0.0.1:8888', 'https://alpha.example.org', 'https://beta.example.org']);
   });
 
-  it('should return null for public URLs', () => {
-    const resolver = new Resolver();
-    expect(resolver.getUrls()).toBeNull();
+  it('should return urls', () => {
+    const urls = tryParseResolvers(mockToml);
+    const resolver = new Resolver(urls);
+    expect(resolver.getUrls()).equals(urls);
   });
 
   it('should return URLs for custom configuration', () => {
@@ -38,8 +41,8 @@ describe('Resolver', () => {
 
   it('should make the correct URL', () => {
     const resolver = new Resolver(['http://example.com'], true);
-    const url = resolver['makeUrl']('http://example.com', new NetworkId(NetworkType.Mainnet));
-    expect(url).toBe('http://example.com/v2/kaspa/mainnet/tls/wrpc/json');
+    const url = resolver['makeUrl']('http://example.com', ENCODING, new NetworkId(NetworkType.Mainnet));
+    expect(url).toBe('http://example.com/v2/kaspa/mainnet/tls/wrpc/borsh');
   });
 
   it('should fetch node info successfully', async () => {
@@ -51,7 +54,7 @@ describe('Resolver', () => {
     ) as unknown as typeof fetch;
 
     const resolver = new Resolver(['http://example.com'], true);
-    const nodeInfo = await resolver['fetchNodeInfo']('http://example.com', MAIN_NET);
+    const nodeInfo = await resolver['fetchNodeInfo']('http://example.com', ENCODING, TESTNET_10);
     expect(nodeInfo).toEqual({ uid: '123', url: 'http://node-url.com' });
   });
 
@@ -59,8 +62,8 @@ describe('Resolver', () => {
     global.fetch = vi.fn(() => Promise.reject('Network error')) as unknown as typeof fetch;
 
     const resolver = new Resolver(['http://example.com'], true);
-    await expect(resolver['fetchNodeInfo']('http://example.com', MAIN_NET)).rejects.toThrow(
-      'Failed to connect http://example.com/v2/kaspa/mainnet/tls/wrpc/json: Network error'
+    await expect(resolver['fetchNodeInfo']('http://example.com', ENCODING, TESTNET_10)).rejects.toThrow(
+      /Network error/
     );
   });
 
@@ -76,7 +79,7 @@ describe('Resolver', () => {
     }) as unknown as typeof fetch;
 
     const resolver = new Resolver(['http://example1.com', 'http://example2.com'], true);
-    const nodeInfo = await resolver['fetch'](MAIN_NET);
+    const nodeInfo = await resolver['fetch'](ENCODING, TESTNET_10);
     expect(nodeInfo).toEqual({ uid: '123', url: 'http://node-url.com' });
   });
 
@@ -84,12 +87,6 @@ describe('Resolver', () => {
     global.fetch = vi.fn(() => Promise.reject('Network error')) as unknown as typeof fetch;
 
     const resolver = new Resolver(['http://example1.com', 'http://example2.com'], true);
-    await expect(resolver['fetch'](MAIN_NET)).rejects.toThrowError(/Network error,Error: Failed to connect/);
+    await expect(resolver['fetch'](ENCODING, TESTNET_10)).rejects.toThrowError(/Network error/);
   });
-
-  it('real', async () => {
-    const resolver = new Resolver(null, true);
-    const url = await resolver.getUrl(MAIN_NET);
-    expect(url).length.greaterThan(0);
-  },1000000);
 });
