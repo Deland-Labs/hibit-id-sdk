@@ -18,6 +18,10 @@ export default defineConfig({
       // the proper extensions will be added
       fileName: 'coin-kaspa'
     },
+    commonjsOptions: {
+      transformMixedEsModules: true,
+      include: [/crypto-lib/, /node_modules/]
+    },
     rollupOptions: {
       plugins: [
         typescript({
