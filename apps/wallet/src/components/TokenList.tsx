@@ -37,6 +37,11 @@ const TokenList: FC = observer(() => {
 
   return (
     <ul className="flex flex-col gap-6">
+      {assetsQuery.isPending && (
+        <li className="h-9 flex items-center justify-center">
+          <span className="loading loading-spinner text-primary"></span>
+        </li>
+      )}
       {assetsQuery.data?.map((asset) => (
         <TokenListItem key={asset.assetId.toString()} token={asset} />
       ))}

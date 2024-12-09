@@ -14,6 +14,7 @@ import toaster from './components/Toaster';
 import rpcManager from './stores/rpc';
 import { useTranslation } from 'react-i18next';
 import { useDfinityIcrcPostMessageTransport } from './utils/chain/chain-wallets/dfinity/post-message-transport-hook';
+import { sendTokenStore } from './pages/send-token/store';
 
 const MainPage = lazy(() => import('./pages/main'));
 const SelectNetworkPage = lazy(() => import('./pages/select-network'));
@@ -106,8 +107,8 @@ const App: FC = observer(() => {
                   <Route path="/account-manage" element={<AccountManagePage />} />
                   <Route path="/lang-select" element={<SelectLangPage />} />
                   <Route path="/token/:addressOrSymbol" element={<TokenDetailPage />} />
-                  <Route path="/send/:addressOrSymbol?" element={<SendTokenPage />} />
-                  <Route path="/send/confirm" element={<SendTokenConfirmPage />} />
+                  <Route path="/send/:addressOrSymbol" element={<SendTokenPage />} />
+                  <Route path="/send/:addressOrSymbol/confirm" element={sendTokenStore.state.token ? <SendTokenConfirmPage /> : <Navigate to="/" replace />} />
                   <Route path="/receive" element={<ReceiveTokenPage />} />
                 </>
               )}

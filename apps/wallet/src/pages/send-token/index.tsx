@@ -90,7 +90,7 @@ const SendTokenPage: FC = observer(() => {
       token,
       amount,
     })
-    navigate('/send/confirm')
+    navigate(`/send/${addressOrSymbol}/confirm`)
   })
 
   return (
