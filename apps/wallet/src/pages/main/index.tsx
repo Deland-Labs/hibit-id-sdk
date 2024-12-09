@@ -26,6 +26,7 @@ const WalletMainPage: FC = observer(() => {
     queryFn: async () => {
       return tokenListQuery.data?.find((token) => {
         return token.chainAssetType.equals(ChainAssetType.Native)
+          || token.chainAssetType.equals(ChainAssetType.ICP)
       }) ?? tokenListQuery.data?.[0] ?? null
     },
     enabled: !!tokenListQuery.data

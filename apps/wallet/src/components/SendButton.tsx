@@ -16,10 +16,11 @@ const SendButton: FC<SendButtonProps> = observer(({ token }) => {
   return (
     <div className="flex flex-col items-center gap-1">
       <button
-        className="btn btn-primary btn-circle btn-sm size-9"
+        className="btn btn-primary btn-circle btn-sm size-9 disabled:bg-primary disabled:opacity-50"
         onClick={() => {
           navigate(`/send${token ? `/${token.contractAddress || token.assetSymbol}` : ''}`)
         }}
+        disabled={!token}
       >
         <SvgSend />
       </button>

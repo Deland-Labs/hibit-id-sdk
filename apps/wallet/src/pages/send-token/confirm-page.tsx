@@ -98,7 +98,6 @@ const SendTokenConfirmPage: FC = observer(() => {
       })
       console.debug('[txId]', txId)
       setResultTxId(txId)
-      sendTokenStore.reset()
     } catch (e) {
       console.error(e)
       setResultTxId('')
@@ -134,6 +133,7 @@ const SendTokenConfirmPage: FC = observer(() => {
         </div>
         <button className="btn btn-sm" onClick={() => {
           navigate('/')
+          sendTokenStore.reset()
         }}>
           {t('common_close')}
         </button>
