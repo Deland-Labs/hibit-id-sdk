@@ -48,6 +48,8 @@ class Params {
   skipProofOfWork: boolean;
   maxBlockLevel: number;
   pruningProofM: bigint;
+
+  /// Activation rules for when to enable using the payload field in transactions
   payloadActivation: ForkActivation;
 
   /**
@@ -424,11 +426,13 @@ const TESTNET11_PARAMS: Params = {
 
   storageMassParameter: STORAGE_MASS_PARAMETER,
   storageMassActivation: ForkActivation.always(),
-  kip10Activation: ForkActivation.never(),
+
+  // Roughly at Dec 3, 2024 1800 UTC
+  kip10Activation: new ForkActivation(287238000),
+  payloadActivation: new ForkActivation(287238000),
 
   skipProofOfWork: false,
-  maxBlockLevel: 250,
-  payloadActivation: ForkActivation.never()
+  maxBlockLevel: 250
 };
 
 const SIMNET_PARAMS: Params = {

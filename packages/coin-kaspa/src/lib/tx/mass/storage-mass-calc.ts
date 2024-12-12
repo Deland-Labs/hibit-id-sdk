@@ -1,5 +1,3 @@
-import { Kip9Version } from '../../consensus';
-
 class StorageMassCalculator {
   /**
    * Calculates the storage mass for the provided input and output values.
@@ -10,7 +8,6 @@ class StorageMassCalculator {
    * @param {boolean} isCoinbase - Whether the transaction is a coinbase transaction.
    * @param {Iterable<number>} inputValues - The input values of the transaction.
    * @param {Iterable<number>} outputValues - The output values of the transaction.
-   * @param {Kip9Version} version - The KIP9 version to use for the calculation.
    * @param {number} storageMassParameter - The storage mass parameter to use for the calculation.
    * @returns {number | undefined} The storage mass of the transaction, or undefined if it cannot be calculated.
    */
@@ -18,7 +15,6 @@ class StorageMassCalculator {
     isCoinbase: boolean,
     inputValues: Iterable<bigint>,
     outputValues: Iterable<bigint>,
-    version: Kip9Version,
     storageMassParameter: bigint
   ): bigint | undefined {
     if (isCoinbase) {
@@ -32,7 +28,7 @@ class StorageMassCalculator {
       .map((out) => storageMassParameter / out)
       .reduce((total, current) => total + current, 0n);
 
-    if (version === Kip9Version.Beta && (outsLen === 1n || insLen === 1n || (outsLen === 2n && insLen === 2n))) {
+    if (outsLen === 1n || insLen === 1n || (outsLen === 2n && insLen === 2n)) {
       const harmonicIns = Array.from(inputValues)
         .map((value) => storageMassParameter / value)
         .reduce((total, current) => total + current, 0n);

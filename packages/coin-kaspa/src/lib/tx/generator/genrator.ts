@@ -1,7 +1,7 @@
 import { MAXIMUM_STANDARD_TRANSACTION_MASS, UNACCEPTED_DAA_SCORE } from '../../tx/constants';
 import { UnsignedTxMassCalculator } from '../../tx/mass/unsigned-tx-mass-calc';
 import { Address, AddressPrefixHelper } from '../../address';
-import { Kip9Version, NetworkId, NetworkParams, Params, ScriptPublicKey, SUBNETWORK_ID_NATIVE } from '../../consensus';
+import { NetworkId, NetworkParams, Params, ScriptPublicKey, SUBNETWORK_ID_NATIVE } from '../../consensus';
 import {
   Data,
   DataKind,
@@ -120,7 +120,7 @@ class Generator {
 
     this.networkId = networkId;
     this.networkParams = NetworkParams.from(networkId);
-    this.massCalculator = new UnsignedTxMassCalculator(Params.fromNetworkId(networkId), this.networkParams);
+    this.massCalculator = new UnsignedTxMassCalculator(Params.fromNetworkId(networkId));
     this.sigOpCount = sigOpCount;
     this.minimumSignatures = minimumSignatures;
     this.changeAddress = changeAddress;
@@ -681,10 +681,7 @@ class Generator {
             calc.calcStorageMassOutputHarmonicSingle(changeValue) + this.finalTransactionOutputsHarmonic;
           const storageMassWithChange = this.calcStorageMass(data, outputHarmonicWithChange);
 
-          if (
-            storageMassWithChange === 0n ||
-            (this.networkParams.kip9Version === Kip9Version.Beta && storageMassWithChange < computeMassWithChange)
-          ) {
+          if (storageMassWithChange === 0n || storageMassWithChange < computeMassWithChange) {
             return 0n;
           } else {
             const storageMassNoChange = this.calcStorageMass(data, this.finalTransactionOutputsHarmonic);

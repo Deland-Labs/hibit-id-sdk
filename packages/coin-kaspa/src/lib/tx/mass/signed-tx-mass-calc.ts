@@ -1,7 +1,6 @@
 import { Transaction, IVerifiableTransaction } from '../';
 import { TransactionCalculator, StorageMassCalculator } from './';
 import { validateU64 } from '../../validator';
-import { Kip9Version } from '../../consensus';
 
 /**
  * SignedTxMassCalculator class for calculating signed transaction mass.
@@ -78,15 +77,13 @@ class SignedTxMassCalculator {
    * 2. At least one input (unless coinbase)
    * Otherwise this function should never fail.
    * @param {IVerifiableTransaction} tx - The transaction to calculate the storage mass for.
-   * @param {Kip9Version} version - The KIP9 version to use for the calculation.
    * @returns {bigint | undefined} The storage mass of the transaction, or undefined if it cannot be calculated.
    */
-  calcTxStorageMass(tx: IVerifiableTransaction, version: Kip9Version): bigint | undefined {
+  calcTxStorageMass(tx: IVerifiableTransaction): bigint | undefined {
     return StorageMassCalculator.calcStorageMass(
       tx.isCoinbase(),
       tx.populatedInputs().map(([, entry]) => entry.amount),
       tx.outputs().map((out) => out.value),
-      version,
       this.storageMassParameter
     );
   }
@@ -95,19 +92,13 @@ class SignedTxMassCalculator {
    * Calculates the overall mass of this transaction, combining both compute and storage masses.
    * The combination strategy depends on the version passed.
    * @param {IVerifiableTransaction} tx - The transaction to calculate the overall mass for.
-   * @param {Kip9Version} version - The KIP9 version to use for the calculation.
    * @returns {bigint | undefined} The overall mass of the transaction, or undefined if it cannot be calculated.
    */
-  calcTxOverallMass(tx: IVerifiableTransaction, version: Kip9Version): bigint | undefined {
-    const storageMass = this.calcTxStorageMass(tx, version);
+  calcTxOverallMass(tx: IVerifiableTransaction): bigint | undefined {
+    const storageMass = this.calcTxStorageMass(tx);
     const computeMass = this.calcTxComputeMass(tx.tx());
 
-    switch (version) {
-      case Kip9Version.Alpha:
-        return storageMass !== undefined ? storageMass + computeMass : undefined;
-      case Kip9Version.Beta:
-        return storageMass !== undefined ? (storageMass > computeMass ? storageMass : computeMass) : undefined;
-    }
+    return storageMass !== undefined ? (storageMass > computeMass ? storageMass : computeMass) : undefined;
   }
 }
 
