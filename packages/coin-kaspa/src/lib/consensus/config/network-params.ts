@@ -1,5 +1,4 @@
 import { NetworkId, NetworkType } from '../network';
-import { Kip9Version } from '../kip';
 
 /**
  * Class representing network parameters.
@@ -8,7 +7,6 @@ class NetworkParams {
   coinbaseTransactionMaturityPeriodDaa: bigint;
   coinbaseTransactionStasisPeriodDaa: bigint;
   userTransactionMaturityPeriodDaa: bigint;
-  kip9Version: Kip9Version;
   additionalCompoundTransactionMass: bigint;
 
   /**
@@ -16,20 +14,17 @@ class NetworkParams {
    * @param {bigint} coinbaseTransactionMaturityPeriodDaa - The maturity period for coinbase transactions.
    * @param {bigint} coinbaseTransactionStasisPeriodDaa - The stasis period for coinbase transactions.
    * @param {bigint} userTransactionMaturityPeriodDaa - The maturity period for user transactions.
-   * @param {Kip9Version} kip9Version - The KIP-9 version.
    * @param {bigint} additionalCompoundTransactionMass - The additional compound transaction mass.
    */
   constructor(
     coinbaseTransactionMaturityPeriodDaa: bigint,
     coinbaseTransactionStasisPeriodDaa: bigint,
     userTransactionMaturityPeriodDaa: bigint,
-    kip9Version: Kip9Version,
     additionalCompoundTransactionMass: bigint
   ) {
     this.coinbaseTransactionMaturityPeriodDaa = coinbaseTransactionMaturityPeriodDaa;
     this.coinbaseTransactionStasisPeriodDaa = coinbaseTransactionStasisPeriodDaa;
     this.userTransactionMaturityPeriodDaa = userTransactionMaturityPeriodDaa;
-    this.kip9Version = kip9Version;
     this.additionalCompoundTransactionMass = additionalCompoundTransactionMass;
   }
 
@@ -66,27 +61,27 @@ class NetworkParams {
  * Mainnet network parameters.
  * @type {NetworkParams}
  */
-const MAINNET_NETWORK_PARAMS = new NetworkParams(100n, 50n, 10n, Kip9Version.Beta, 100n);
+const MAINNET_NETWORK_PARAMS = new NetworkParams(100n, 50n, 10n, 100n);
 /**
  * Testnet10 network parameters.
  * @type {NetworkParams}
  */
-const TESTNET10_NETWORK_PARAMS = new NetworkParams(100n, 50n, 10n, Kip9Version.Beta, 100n);
+const TESTNET10_NETWORK_PARAMS = new NetworkParams(100n, 50n, 10n, 100n);
 /**
  * Testnet11 network parameters.
  * @type {NetworkParams}
  */
-const TESTNET11_NETWORK_PARAMS = new NetworkParams(1000n, 500n, 100n, Kip9Version.Alpha, 100n);
+const TESTNET11_NETWORK_PARAMS = new NetworkParams(1000n, 500n, 100n, 100n);
 /**
  * Simnet network parameters.
  * @type {NetworkParams}
  */
-const SIMNET_NETWORK_PARAMS = new NetworkParams(100n, 50n, 10n, Kip9Version.Alpha, 0n);
+const SIMNET_NETWORK_PARAMS = new NetworkParams(100n, 50n, 10n, 0n);
 /**
  * Devnet network parameters.
  * @type {NetworkParams}
  */
-const DEVNET_NETWORK_PARAMS = new NetworkParams(100n, 50n, 10n, Kip9Version.Beta, 0n);
+const DEVNET_NETWORK_PARAMS = new NetworkParams(100n, 50n, 10n, 0n);
 
 export {
   NetworkParams,

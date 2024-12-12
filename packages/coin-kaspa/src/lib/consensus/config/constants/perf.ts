@@ -2,7 +2,7 @@
 export const DEFAULT_REINDEX_DEPTH: bigint = 100n;
 
 /** The default slack interval used by the reachability algorithm to encounter for blocks out of the selected chain. */
-export const DEFAULT_REINDEX_SLACK: bigint = 1n << 12n;
+export const DEFAULT_REINDEX_SLACK: bigint = 1n << 14n;
 
 const BASELINE_HEADER_DATA_CACHE_SIZE: bigint = 10000n;
 const BASELINE_BLOCK_DATA_CACHE_SIZE: bigint = 200n;

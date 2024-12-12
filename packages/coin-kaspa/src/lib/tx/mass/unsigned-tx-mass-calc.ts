@@ -8,7 +8,7 @@ import {
 } from '../';
 import { StorageMassCalculator } from './storage-mass-calc';
 import { STANDARD_OUTPUT_SIZE_PLUS_INPUT_SIZE_3X, TransactionCalculator } from './tx-calc';
-import { Kip9Version, NetworkParams, Params } from '../../consensus';
+import { Params } from '../../consensus';
 
 /**
  * Class to calculate the mass of unsigned transactions.
@@ -18,19 +18,16 @@ class UnsignedTxMassCalculator {
   massPerScriptPubKeyByte: bigint;
   massPerSigOp: bigint;
   storageMassParameter: bigint;
-  kip9Version: Kip9Version;
 
   /**
    * Constructor for UnsignedTxMassCalculator.
    * @param consensusParams - Consensus parameters.
-   * @param networkParams - Network parameters.
    */
-  constructor(consensusParams: Params, networkParams: NetworkParams) {
+  constructor(consensusParams: Params) {
     this.massPerTxByte = consensusParams.massPerTxByte;
     this.massPerScriptPubKeyByte = consensusParams.massPerScriptPubKeyByte;
     this.massPerSigOp = consensusParams.massPerSigOp;
     this.storageMassParameter = consensusParams.storageMassParameter;
-    this.kip9Version = networkParams.kip9Version;
   }
 
   /**
@@ -174,12 +171,7 @@ class UnsignedTxMassCalculator {
    * @returns The combined mass.
    */
   combineMass(computeMass: bigint, storageMass: bigint): bigint {
-    switch (this.kip9Version) {
-      case Kip9Version.Alpha:
-        return computeMass + storageMass;
-      case Kip9Version.Beta:
-        return computeMass > storageMass ? computeMass : storageMass;
-    }
+    return computeMass > storageMass ? computeMass : storageMass;
   }
 
   /**
@@ -210,7 +202,6 @@ class UnsignedTxMassCalculator {
       false,
       inputs.map((entry) => entry.amount),
       outputs.map((out) => out.value),
-      this.kip9Version,
       this.storageMassParameter
     );
   }
