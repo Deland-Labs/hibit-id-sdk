@@ -6,6 +6,7 @@
     "build:sdk": "turbo run @delandlabs/hibit-id-wallet-sdk#build",
     "test:coin-kaspa": "turbo run @delandlabs/coin-kaspa#test",
     "build:coin-kaspa": "turbo run @delandlabs/coin-kaspa#build",
+    "build:coin-ethereum": "turbo run @delandlabs/coin-ethereum#build",
     "prepare": "husky install"
   },
   "workspaces": [

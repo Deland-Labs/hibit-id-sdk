@@ -244,3 +244,8 @@ export class AssetInfo {
   })
   decimalPlaces!: DecimalPlaces;
 }
+
+export interface WalletAccount {
+  address: string;
+  publicKey?: string;
+}
