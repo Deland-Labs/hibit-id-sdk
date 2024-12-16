@@ -15,7 +15,7 @@
     "bignumber.js": "^9.1.2",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.10",
-    "nanoid": "3"
+    "nanoid": "5"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
