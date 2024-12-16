@@ -8,6 +8,7 @@
     "build:coin-kaspa": "turbo run @delandlabs/coin-kaspa#build",
     "build:coin-ethereum": "turbo run @delandlabs/coin-ethereum#build",
     "build:coin-ton": "turbo run @delandlabs/coin-ton#build",
+    "build:coin-dfinity": "turbo run @delandlabs/coin-dfinity#build",
     "prepare": "husky install"
   },
   "workspaces": [

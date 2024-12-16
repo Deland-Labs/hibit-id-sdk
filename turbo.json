@@ -28,6 +28,14 @@
       "outputs": ["dist/**"]
     },
 
+    "@delandlabs/coin-dfinity#build": {
+      "env": ["VITE_*"],
+      "dependsOn": [
+        "@delandlabs/coin-base#build"
+      ],
+      "outputs": ["dist/**"]
+    },
+
     "@delandlabs/coin-kaspa#build": {
       "env": ["VITE_*"],
       "dependsOn": [
