@@ -1,4 +1,4 @@
-name: publish hibit-id-sdk package to gitlab
+name: publish hibit-id-wallet-sdk package to gitlab
 on:
   release:
     types: [ published ]

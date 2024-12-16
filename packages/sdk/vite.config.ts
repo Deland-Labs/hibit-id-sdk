@@ -18,7 +18,7 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/lib/index.ts'),
       name: 'HibitIDSdk',
       // the proper extensions will be added
-      fileName: 'hibit-id-sdk',
+      fileName: 'hibit-id-wallet-sdk',
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

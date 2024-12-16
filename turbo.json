@@ -20,29 +20,13 @@
       "persistent": true
     },
 
-    "@delandlabs/hibit-id-sdk#build": {
+    "@delandlabs/hibit-id-wallet-sdk#build": {
       "env": ["VITE_*"],
       "outputs": ["dist/**"]
     },
 
-    "@delandlabs/hibit-id-wallet#build": {
-      "env": ["VITE_*"],
-      "dependsOn": [
-        "@delandlabs/hibit-id-sdk#build",
-        "@delandlabs/coin-kaspa#build"
-      ],
-      "outputs": ["dist/**"]
-    },
-    "@delandlabs/hibit-id-wallet#preview": {
-      "dependsOn": ["@delandlabs/hibit-id-wallet#build"],
-      "persistent": true
-    },
     "lint": {},
     "dev": {
-      "dependsOn": [
-        "@delandlabs/hibit-id-sdk#build",
-        "@delandlabs/coin-kaspa#build"
-      ],
       "cache": false,
       "persistent": true
     },
