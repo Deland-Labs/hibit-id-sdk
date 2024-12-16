@@ -7,7 +7,7 @@ import { NetworkId } from './consensus';
 /**
  * Interface representing parameters for sending KRC-20 tokens.
  */
-export interface ISendKrc20Pramas {
+export interface ISendKrc20Params {
   /**
    * Sets the priority fee for the transaction.
    * @param priorityFee - The priority fee to set.
@@ -18,7 +18,7 @@ export interface ISendKrc20Pramas {
 /**
  * Class representing parameters for sending Kaspa.
  */
-class SendKasPramas implements ISendKrc20Pramas {
+class SendKasParams implements ISendKrc20Params {
   sender: Address;
   amount: bigint;
   receiver: Address;
@@ -65,7 +65,7 @@ class SendKasPramas implements ISendKrc20Pramas {
 /**
  * Class representing parameters for sending KRC-20 tokens.
  */
-class SendKrc20Pramas implements ISendKrc20Pramas {
+class SendKrc20Params implements ISendKrc20Params {
   sender: Address;
   krc20Amount: bigint;
   receiver: Address;
@@ -173,4 +173,4 @@ class SendKrc20Pramas implements ISendKrc20Pramas {
   }
 }
 
-export { SendKasPramas, SendKrc20Pramas };
+export { SendKasParams, SendKrc20Params };

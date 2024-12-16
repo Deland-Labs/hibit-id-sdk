@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Fees, Generator, SignableTransaction } from '../../src/lib/tx';
-import { kaspaToSompi, NetworkId, NetworkType, SendKrc20Pramas } from '../../src/lib';
+import { kaspaToSompi, NetworkId, NetworkType, SendKrc20Params } from '../../src/lib';
 import { parseTxsFromFile, parseUtxosFromFile } from './test-helper';
 import { SignedType } from '../../src/lib/tx/generator/model/signed-tx';
 
@@ -12,7 +12,7 @@ const PRIORITY_FEES = new Fees(kaspaToSompi(0.02));
 const OUTPUT_AMOUNT = kaspaToSompi(0.3);
 
 describe('Generator kas tx', () => {
-  const sentKrc20CommitTx = new SendKrc20Pramas(
+  const sentKrc20CommitTx = new SendKrc20Params(
     SENDER_ADDR,
     kaspaToSompi(101),
     RECEIVER_ADDR,
