@@ -9,6 +9,8 @@
     "build:coin-ethereum": "turbo run @delandlabs/coin-ethereum#build",
     "build:coin-ton": "turbo run @delandlabs/coin-ton#build",
     "build:coin-dfinity": "turbo run @delandlabs/coin-dfinity#build",
+    "build:coin-solana": "turbo run @delandlabs/coin-solana#build",
+    "build:coin-tron": "turbo run @delandlabs/coin-tron#build",
     "prepare": "husky install"
   },
   "workspaces": [

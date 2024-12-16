@@ -54,6 +54,22 @@
       "persistent": true
     },
 
+    "@delandlabs/coin-solana#build": {
+      "env": ["VITE_*"],
+      "dependsOn": [
+        "@delandlabs/coin-base#build"
+      ],
+      "outputs": ["dist/**"]
+    },
+
+    "@delandlabs/coin-tron#build": {
+      "env": ["VITE_*"],
+      "dependsOn": [
+        "@delandlabs/coin-base#build"
+      ],
+      "outputs": ["dist/**"]
+    },
+
     "@delandlabs/hibit-id-wallet-sdk#build": {
       "env": ["VITE_*"],
       "outputs": ["dist/**"]
