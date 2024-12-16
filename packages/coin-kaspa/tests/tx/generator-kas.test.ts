@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Fees, Generator, SignableTransaction } from '../../src/lib/tx';
-import { kaspaToSompi, NetworkId, NetworkType, SendKasPramas } from '../../src/lib';
+import { kaspaToSompi, NetworkId, NetworkType, SendKasParams } from '../../src/lib';
 import { parseTxsFromFile, parseUtxosFromFile } from './test-helper';
 
 const SENDER_ADDR = 'kaspatest:qzzzvv57j68mcv3rsd2reshhtv4rcw4xc8snhenp2k4wu4l30jfjxlgfr8qcz';
@@ -9,9 +9,9 @@ const TESTNET_10 = new NetworkId(NetworkType.Testnet, 10);
 const PRIORITY_FEES = new Fees(kaspaToSompi(0.02));
 
 describe('Generator kas tx', () => {
-  const sentKas10 = new SendKasPramas(SENDER_ADDR, kaspaToSompi(10), RECEIVER_ADDR, TESTNET_10, PRIORITY_FEES);
-  const send1Kas10K = new SendKasPramas(SENDER_ADDR, kaspaToSompi(10000), RECEIVER_ADDR, TESTNET_10, PRIORITY_FEES);
-  const sendKas1M = new SendKasPramas(SENDER_ADDR, kaspaToSompi(1000000), RECEIVER_ADDR, TESTNET_10, PRIORITY_FEES);
+  const sentKas10 = new SendKasParams(SENDER_ADDR, kaspaToSompi(10), RECEIVER_ADDR, TESTNET_10, PRIORITY_FEES);
+  const send1Kas10K = new SendKasParams(SENDER_ADDR, kaspaToSompi(10000), RECEIVER_ADDR, TESTNET_10, PRIORITY_FEES);
+  const sendKas1M = new SendKasParams(SENDER_ADDR, kaspaToSompi(1000000), RECEIVER_ADDR, TESTNET_10, PRIORITY_FEES);
   const testCases = [
     { name: '10 KAS', params: sentKas10 },
     { name: '10K KAS', params: send1Kas10K },
