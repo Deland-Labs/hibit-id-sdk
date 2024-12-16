@@ -1,40 +1,21 @@
 {
-  "name": "@delandlabs/hibit-id",
+  "name": "@delandlabs/hibit-id-sdk",
   "private": true,
   "scripts": {
-    "dev:wallet": "turbo run dev --filter=@delandlabs/hibit-id-wallet",
-    "build:wallet": "turbo run @delandlabs/hibit-id-wallet#build",
-    "preview:wallet": "turbo run @delandlabs/hibit-id-wallet#preview",
-    "test:wallet": "turbo run test --filter=@delandlabs/hibit-id-wallet",
-    "test:watch:wallet": "turbo run test:watch --filter=@delandlabs/hibit-id-wallet",
-    "dev:sdk": "turbo run dev --filter=@delandlabs/hibit-id-sdk",
-    "build:sdk": "turbo run @delandlabs/hibit-id-sdk#build",
-    "test:kaspa-rpc": "turbo run @delandlabs/coin-kaspa#test",
-    "build:kaspa-rpc": "turbo run @delandlabs/coin-kaspa#build",
+    "dev:sdk": "turbo run dev --filter=@delandlabs/hibit-id-wallet-sdk",
+    "build:sdk": "turbo run @delandlabs/hibit-id-wallet-sdk#build",
+    "test:coin-kaspa": "turbo run @delandlabs/coin-kaspa#test",
+    "build:coin-kaspa": "turbo run @delandlabs/coin-kaspa#build",
     "prepare": "husky install"
   },
   "workspaces": [
-    "apps/*",
     "packages/*"
   ],
   "dependencies": {
-    "@tanstack/react-query": "^5.29.0",
-    "axios": "^1.6.8",
     "bignumber.js": "^9.1.2",
-    "browser-unhandled-rejection": "^1.0.2",
-    "classnames": "^2.5.1",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.10",
-    "i18next": "^23.11.1",
-    "mobx": "^6.12.3",
-    "mobx-react": "^9.1.1",
-    "nanoid": "3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-i18next": "^14.1.0",
-    "react-router-dom": "^6.22.3",
-    "vconsole": "^3.15.1",
-    "web-utility": "^4.3.0"
+    "nanoid": "3"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
