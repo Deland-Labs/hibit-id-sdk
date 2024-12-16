@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import BigNumber from "bignumber.js";
-import { WalletAccount } from "@delandlabs/hibit-id-sdk";
-import { AssetInfo, ChainInfo } from "./types";
+import { AssetInfo, ChainInfo, WalletAccount } from "./types";
 
 export * from "./types"
 export * from "./enums"
