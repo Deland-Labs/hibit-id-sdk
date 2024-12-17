@@ -1227,10 +1227,10 @@
   resolved "https://registry.yarnpkg.com/@types/cookie/-/cookie-0.6.0.tgz#eac397f28bf1d6ae0ae081363eca2f425bedf0d5"
   integrity sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==
 
-"@types/create-hash@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@types/create-hash/-/create-hash-1.2.2.tgz#e87247083df8478f6b83655592bde0d709028235"
-  integrity sha512-Fg8/kfMJObbETFU/Tn+Y0jieYewryLrbKwLCEIwPyklZZVY2qB+64KFjhplGSw+cseZosfFXctXO+PyIYD8iZQ==
+"@types/create-hash@1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@types/create-hash/-/create-hash-1.2.6.tgz#ef9de147f4bf7d3fcfded4862726de949d8d44f4"
+  integrity sha512-/VIViZZAK3rAFvfGbWmcLaxwKfmU213W/XL2cr5VE0ac44jE5ky7+sHl54OJhd+bTz7sqi+Ev//8RU1F/S/ZJQ==
   dependencies:
     "@types/node" "*"
 
