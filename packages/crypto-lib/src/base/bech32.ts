@@ -6,7 +6,7 @@ export function toBech32(prefix: string, data: Buffer | Uint8Array | number[], l
 }
 
 export function fromBech32(data: string, limit?: number | false): [string, Buffer] {
-  const d = bech32.decode(data, limit);
+  const d = bech32.decode(data as any, limit);
   const bit8 = bech32.fromWords(d.words);
   return [d.prefix, Buffer.from(bit8)];
 }
