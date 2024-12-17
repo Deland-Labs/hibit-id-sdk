@@ -11,22 +11,17 @@
     "build:coin-dfinity": "turbo run @delandlabs/coin-dfinity#build",
     "build:coin-solana": "turbo run @delandlabs/coin-solana#build",
     "build:coin-tron": "turbo run @delandlabs/coin-tron#build",
+    "build:all": "turbo run build",
+    "test:all": "turbo run test",
     "prepare": "husky install"
   },
   "workspaces": [
     "packages/*"
   ],
   "dependencies": {
-    "bignumber.js": "^9.1.2",
-    "crypto-js": "^4.2.0",
-    "dayjs": "^1.11.10",
-    "nanoid": "3"
+    "bignumber.js": "^9.1.2"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.2.2",
-    "@types/react": "^18.2.75",
-    "@types/react-dom": "^18.2.24",
-    "@vitejs/plugin-react-swc": "^3.6.0",
     "dotenv": "^16.4.5",
     "husky": "^9.0.0",
     "lint-staged": "^15.2.2",
@@ -34,11 +29,10 @@
     "punycode": "^1.4.1",
     "turbo": "^2.0.9",
     "typescript": "^5.4.5",
-    "vite": "^5.2.8",
+    "vite": "^6.0.3",
     "vite-bundle-analyzer": "^0.10.0",
     "vite-plugin-node-polyfills": "^0.22.0",
-    "vite-plugin-svgr": "^4.2.0",
-    "vitest": "^2.0.5"
+    "vitest": "^2.1.8"
   },
   "version": "1.0.0",
   "packageManager": "yarn@1.22.22"
