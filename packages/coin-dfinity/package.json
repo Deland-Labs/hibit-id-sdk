@@ -37,7 +37,7 @@
     "@dfinity/ledger-icrc": "^2.5.0",
     "@dfinity/principal": "^2.1.1",
     "@dfinity/utils": "^2.5.0",
-    "@noble/secp256k1": "^1.7.0",
+    "@noble/secp256k1": "^2.0.0",
     "ic0": "^0.2.8",
     "cborg": "^4.2.4"
   },
