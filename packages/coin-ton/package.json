@@ -34,7 +34,7 @@
     "@orbs-network/ton-access": "^2.3.3",
     "@ton/core": "^0.56.3",
     "@ton/crypto": "^3.3.0",
-    "@ton/ton": "^14.0.0",
+    "@ton/ton": "^15.0.0",
     "tonweb": "^0.0.66",
     "tonweb-mnemonic": "^1.0.1",
     "tweetnacl": "^1.0.3"
