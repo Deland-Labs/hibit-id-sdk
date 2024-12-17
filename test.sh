@@ -8,4 +8,4 @@ npm run build:coin-dfinity &
 npm run build:coin-solana &
 npm run build:coin-tron &
 npm run build:all &
-npm run test:all &
+npm run test:all
