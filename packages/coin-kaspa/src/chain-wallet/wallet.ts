@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { AssetInfo, BaseChainWallet, Chain, ChainAssetType, ChainInfo, WalletAccount } from '@delandlabs/coin-base'
+import { AssetInfo, BaseChainWallet, ChainInfo, WalletAccount } from '@delandlabs/coin-base';
 import {
   Address,
   Encoding,
@@ -15,41 +15,38 @@ import {
   SendKrc20Params
 } from '..';
 import { HDNodeWallet } from 'ethers';
-import {
-  createTransactions,
-  kaspaNetworkToNetworkId,
-  rpcUtxosToUtxoEntries
-} from './utils';
+import { createTransactions, kaspaNetworkToNetworkId, rpcUtxosToUtxoEntries } from './utils';
 
-const DERIVING_PATH = "m/44'/111111'/0'/0/0";
+import { CHAIN, CHAIN_NAME, DERIVING_PATH, FT_ASSET, NATIVE_ASSET } from './defaults';
+
 const AMOUNT_FOR_INSCRIBE = kaspaToSompi('0.3');
 
 export class KaspaChainWallet extends BaseChainWallet {
-  private network: KaspaNetwork;
-  private networkId: NetworkId;
+  private readonly network: KaspaNetwork;
+  private readonly networkId: NetworkId;
   private rpcClient: KaspaRpc;
-  private keyPair: Keypair;
+  private readonly keyPair: Keypair;
   private encoding: Encoding = Encoding.JSON;
 
   constructor(chainInfo: ChainInfo, phrase: string) {
-    if (!chainInfo.chainId.type.equals(Chain.Kaspa)) {
-      throw new Error('Kaspa: invalid chain type');
+    if (!chainInfo.chainId.type.equals(CHAIN)) {
+      throw new Error(`${CHAIN_NAME}: invalid chain type`);
     }
     super(chainInfo, phrase);
     this.network = chainInfo.isMainnet ? 'mainnet' : 'testnet-10';
     this.networkId = kaspaNetworkToNetworkId(this.network);
-    const endpoint = this.network === 'mainnet'
-      ? import.meta.env.VITE_HIBIT_KASPA_MAINNET_ENDPOINT
-      : import.meta.env.VITE_HIBIT_KASPA_TESTNET_ENDPOINT;
+    const endpoint =
+      this.network === 'mainnet'
+        ? import.meta.env.VITE_HIBIT_KASPA_MAINNET_ENDPOINT
+        : import.meta.env.VITE_HIBIT_KASPA_TESTNET_ENDPOINT;
     this.rpcClient = new KaspaRpc(
       this.networkId,
       this.encoding,
-      endpoint, // ! TEMP: use endpoint for now
+      endpoint // ! TEMP: use endpoint for now
     );
     const hdWallet = HDNodeWallet.fromPhrase(phrase, undefined, DERIVING_PATH);
     const privKey = hdWallet.privateKey;
     this.keyPair = Keypair.fromPrivateKeyHex(privKey.slice(2));
-    console.debug(privKey, this.keyPair);
   }
 
   public override getAccount: () => Promise<WalletAccount> = async () => {
@@ -59,58 +56,41 @@ export class KaspaChainWallet extends BaseChainWallet {
     };
   };
 
-  public override signMessage: (message: string) => Promise<string> = async (
-    message
-  ) => {
-    const signature = this.keyPair.signMessageWithAuxData(
-      Buffer.from(message),
-      new Uint8Array(32).fill(0)
-    );
+  public override signMessage: (message: string) => Promise<string> = async (message) => {
+    const signature = this.keyPair.signMessageWithAuxData(Buffer.from(message), new Uint8Array(32).fill(0));
     return Buffer.from(signature).toString('hex');
   };
 
   public override balanceOf = async (address: string, assetInfo: AssetInfo) => {
-    if (!assetInfo.chain.equals(Chain.Kaspa)) {
-      throw new Error('Kaspa: invalid asset chain');
+    if (!assetInfo.chain.equals(CHAIN)) {
+      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
     }
     // native
-    if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+    if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
       try {
         const balance = await this.rpcClient.getBalance(address);
         return new BigNumber(balance).shiftedBy(-assetInfo.decimalPlaces.value);
-      }
-      catch (e) {
+      } catch (e) {
         console.error(e);
         return new BigNumber(0);
       }
     }
     // krc20
-    if (assetInfo.chainAssetType.equals(ChainAssetType.KRC20)) {
-      const balanceInfo = await this.rpcClient.getKrc20Balance(
-        address,
-        assetInfo.contractAddress
-      );
-      return balanceInfo
-        ? new BigNumber(balanceInfo.balance).shiftedBy(-Number(balanceInfo.dec))
-        : new BigNumber(0);
+    if (assetInfo.chainAssetType.equals(FT_ASSET)) {
+      const balanceInfo = await this.rpcClient.getKrc20Balance(address, assetInfo.contractAddress);
+      return balanceInfo ? new BigNumber(balanceInfo.balance).shiftedBy(-Number(balanceInfo.dec)) : new BigNumber(0);
     }
 
-    throw new Error(
-      `Kaspa: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`
-    );
+    throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   };
 
-  public override transfer = async (
-    toAddress: string,
-    amount: BigNumber,
-    assetInfo: AssetInfo
-  ): Promise<string> => {
-    if (!assetInfo.chain.equals(Chain.Kaspa)) {
-      throw new Error('Kaspa: invalid asset chain');
+  public override transfer = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<string> => {
+    if (!assetInfo.chain.equals(CHAIN)) {
+      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
     }
     try {
       // native
-      if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+      if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
         const sendParam = new SendKasParams(
           this.keyPair.toAddress(this.networkId.networkType),
           BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
@@ -132,7 +112,7 @@ export class KaspaChainWallet extends BaseChainWallet {
         return summary.finalTransactionId?.toString() ?? '';
       }
       // krc20
-      if (assetInfo.chainAssetType.equals(ChainAssetType.KRC20)) {
+      if (assetInfo.chainAssetType.equals(FT_ASSET)) {
         // inscribe transactions
         const sendKrc20Param = new SendKrc20Params(
           this.keyPair.toAddress(this.networkId.networkType),
@@ -168,18 +148,9 @@ export class KaspaChainWallet extends BaseChainWallet {
             (input) => Buffer.from(input.signatureScript).toString('hex') === ''
           );
           if (ourOutput !== -1) {
-            const signature = signedTx.transaction.createInputSignature(
-              ourOutput,
-              this.keyPair.privateKey!
-            );
-            const encodedSignature =
-              sendKrc20Param.script.encodePayToScriptHashSignatureScript(
-                signature
-              );
-            signedTx.transaction.fillInputSignature(
-              ourOutput,
-              encodedSignature
-            );
+            const signature = signedTx.transaction.createInputSignature(ourOutput, this.keyPair.privateKey!);
+            const encodedSignature = sendKrc20Param.script.encodePayToScriptHashSignatureScript(signature);
+            signedTx.transaction.fillInputSignature(ourOutput, encodedSignature);
           }
           const reqMessage = signedTx.toSubmitableJson();
           console.log('reqMessage', reqMessage);
@@ -198,9 +169,7 @@ export class KaspaChainWallet extends BaseChainWallet {
       throw e;
     }
 
-    throw new Error(
-      `Kaspa: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`
-    );
+    throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   };
 
   public override getEstimatedFee = async (
@@ -208,11 +177,11 @@ export class KaspaChainWallet extends BaseChainWallet {
     amount: BigNumber,
     assetInfo: AssetInfo
   ): Promise<BigNumber> => {
-    if (!assetInfo.chain.equals(Chain.Kaspa)) {
-      throw new Error('Kaspa: invalid asset chain');
+    if (!assetInfo.chain.equals(CHAIN)) {
+      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
     }
     // native
-    if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+    if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
       const sendKasParam = new SendKasParams(
         this.keyPair.toAddress(this.networkId.networkType),
         BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
@@ -220,14 +189,11 @@ export class KaspaChainWallet extends BaseChainWallet {
         this.networkId,
         new Fees(0n)
       );
-      const { priorityFee } =
-        await this.createTransactionsByOutputs(sendKasParam);
-      return new BigNumber(priorityFee.amount.toString()).shiftedBy(
-        -assetInfo.decimalPlaces.value
-      );
+      const { priorityFee } = await this.createTransactionsByOutputs(sendKasParam);
+      return new BigNumber(priorityFee.amount.toString()).shiftedBy(-assetInfo.decimalPlaces.value);
     }
     // krc20
-    if (assetInfo.chainAssetType.equals(ChainAssetType.KRC20)) {
+    if (assetInfo.chainAssetType.equals(FT_ASSET)) {
       const sendKrc20Param = new SendKrc20Params(
         this.keyPair.toAddress(this.networkId.networkType),
         BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
@@ -237,16 +203,11 @@ export class KaspaChainWallet extends BaseChainWallet {
         AMOUNT_FOR_INSCRIBE,
         new Fees(0n)
       );
-      const { priorityFee } =
-        await this.createTransactionsByOutputs(sendKrc20Param);
-      return new BigNumber(priorityFee.amount.toString()).shiftedBy(
-        -this.chainInfo.nativeAssetDecimals
-      );
+      const { priorityFee } = await this.createTransactionsByOutputs(sendKrc20Param);
+      return new BigNumber(priorityFee.amount.toString()).shiftedBy(-this.chainInfo.nativeAssetDecimals);
     }
 
-    throw new Error(
-      `Kaspa: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`
-    );
+    throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   };
 
   private createTransactionsByOutputs = async (
@@ -259,12 +220,10 @@ export class KaspaChainWallet extends BaseChainWallet {
     const isKrc20Tx = sendParam instanceof SendKrc20Params;
     const isReveal = commitTxId !== undefined;
     if (!isKrc20Tx && isReveal) {
-      throw new Error('Kaspa: invalid sendParam');
+      throw new Error(`${CHAIN_NAME}: invalid sendParam`);
     }
 
-    const utxos = await this.rpcClient.getUtxosByAddress(
-      sendParam.sender.toString()
-    );
+    const utxos = await this.rpcClient.getUtxosByAddress(sendParam.sender.toString());
     console.log(
       'utxos',
       utxos.map((utxo) => utxo.outpoint?.transactionId),
@@ -274,13 +233,8 @@ export class KaspaChainWallet extends BaseChainWallet {
     const settings: GeneratorSettings = !isKrc20Tx
       ? (sendParam as SendKasParams).toGeneratorSettings(utxoEntries)
       : !isReveal
-        ? (sendParam as SendKrc20Params).toCommitTxGeneratorSettings(
-            utxoEntries
-          )
-        : (sendParam as SendKrc20Params).toRevealTxGeneratorSettings(
-            utxoEntries,
-            Hash.fromHex(commitTxId)
-          );
+        ? (sendParam as SendKrc20Params).toCommitTxGeneratorSettings(utxoEntries)
+        : (sendParam as SendKrc20Params).toRevealTxGeneratorSettings(utxoEntries, Hash.fromHex(commitTxId));
     const txResult = createTransactions(settings);
     if (sendParam.priorityFee?.amount) {
       return {
@@ -291,12 +245,9 @@ export class KaspaChainWallet extends BaseChainWallet {
     // calculate fee if priorityFee is not set
     // and return actual transactions with calculated fee
     const feeSetting = await this.rpcClient.getFeeEstimate();
-    const mass =
-      txResult.transactions[txResult.transactions.length - 1].tx.mass;
+    const mass = txResult.transactions[txResult.transactions.length - 1].tx.mass;
     const sompiFee = mass * BigInt(feeSetting?.priorityBucket?.feerate ?? 1n);
-    const txResultWithFee = createTransactions(
-      settings.setPriorityFee(new Fees(sompiFee))
-    );
+    const txResultWithFee = createTransactions(settings.setPriorityFee(new Fees(sompiFee)));
     return {
       priorityFee: new Fees(sompiFee),
       result: txResultWithFee

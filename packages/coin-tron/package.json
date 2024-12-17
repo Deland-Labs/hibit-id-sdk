@@ -29,7 +29,9 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@delandlabs/coin-base": "*"
+    "@delandlabs/crypto-lib": "*",
+    "@delandlabs/coin-base": "*",
+    "tronweb": "^6.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

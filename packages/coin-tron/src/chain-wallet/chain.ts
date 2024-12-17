@@ -1,4 +1,4 @@
-import { ChainInfo, ChainId, Chain, ChainNetwork, Ecosystem, WalletSignatureSchema } from "@delandlabs/coin-base";
+import { ChainInfo, ChainId, Chain, ChainNetwork, Ecosystem, WalletSignatureSchema } from '@delandlabs/coin-base';
 
 export const Tron: ChainInfo = {
   chainId: new ChainId(Chain.Tron, ChainNetwork.TronMainNet),
@@ -15,18 +15,12 @@ export const Tron: ChainInfo = {
   rpcUrls: ['https://rpc.trongrid.io'],
   caseSensitiveAddress: true,
   getTxLink: (txId: string) => {
-    if (typeof txId !== 'string') {
-      return ''
-    }
     const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
-    return `https://tronscan.org/#/transaction/${hash}`
+    return `https://tronscan.org/#/transaction/${hash}`;
   },
   getAddressLink: (address: string) => {
-    if (typeof address !== 'string') {
-      return ''
-    }
-    return `https://tronscan.org/#/address/${address}`
-  },
+    return `https://tronscan.org/#/address/${address}`;
+  }
 };
 export const TronShasta: ChainInfo = {
   chainId: new ChainId(Chain.Tron, ChainNetwork.TronShastaTestNet),
@@ -43,18 +37,12 @@ export const TronShasta: ChainInfo = {
   rpcUrls: ['https://api.shasta.trongrid.io'],
   caseSensitiveAddress: true,
   getTxLink: (txId: string) => {
-    if (typeof txId !== 'string') {
-      return ''
-    }
     const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
-    return `https://shasta.tronscan.org/#/transaction/${hash}`
+    return `https://shasta.tronscan.org/#/transaction/${hash}`;
   },
   getAddressLink: (address: string) => {
-    if (typeof address !== 'string') {
-      return ''
-    }
-    return `https://shasta.tronscan.org/#/address/${address}`
-  },
+    return `https://shasta.tronscan.org/#/address/${address}`;
+  }
 };
 export const TronNile: ChainInfo = {
   chainId: new ChainId(Chain.Tron, ChainNetwork.TronNileTestNet),
@@ -71,16 +59,10 @@ export const TronNile: ChainInfo = {
   rpcUrls: ['https://api.nileex.io'],
   caseSensitiveAddress: true,
   getTxLink: (txId: string) => {
-    if (typeof txId !== 'string') {
-      return ''
-    }
     const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
-    return `https://nile.tronscan.org/#/transaction/${hash}`
+    return `https://nile.tronscan.org/#/transaction/${hash}`;
   },
   getAddressLink: (address: string) => {
-    if (typeof address !== 'string') {
-      return ''
-    }
-    return `https://nile.tronscan.org/#/address/${address}`
-  },
-}
+    return `https://nile.tronscan.org/#/address/${address}`;
+  }
+};
