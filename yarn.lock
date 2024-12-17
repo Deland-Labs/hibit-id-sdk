@@ -192,17 +192,7 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@dfinity/agent@^0.19.2":
-  version "0.19.3"
-  resolved "https://registry.yarnpkg.com/@dfinity/agent/-/agent-0.19.3.tgz#aa3f9c0f67d8e8f81714650ebb2a38e1b691021b"
-  integrity sha512-q410aNLoOA1ZkwdAMgSo6t++pjISn9TfSybRXhPRI5Ume7eG6+6qYr/rlvcXy7Nb2+Ar7LTsHNn34IULfjni7w==
-  dependencies:
-    "@noble/hashes" "^1.3.1"
-    base64-arraybuffer "^0.2.0"
-    borc "^2.1.1"
-    simple-cbor "^0.4.1"
-
-"@dfinity/agent@^2.1.1", "@dfinity/agent@^2.2.0":
+"@dfinity/agent@^2.1.1", "@dfinity/agent@^2.1.3", "@dfinity/agent@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@dfinity/agent/-/agent-2.2.0.tgz#3cb774091d166695eb4f97610dc17a47d7c2e48d"
   integrity sha512-B0qpHf5vfnVNG3JZARC3Q9Cs2zG51/3LuTpCF4uVZ+4AgeRYHl4Erk/jmczdHNbSLIz1pe+F9seAYICovAnRIQ==
@@ -214,12 +204,7 @@
     buffer "^6.0.3"
     simple-cbor "^0.4.1"
 
-"@dfinity/candid@^0.19.2":
-  version "0.19.3"
-  resolved "https://registry.yarnpkg.com/@dfinity/candid/-/candid-0.19.3.tgz#edc3491572d293824b821ce3a4fc50f5b4714f4d"
-  integrity sha512-yXfbLSWTeRd4G0bLLxYoDqpXH3Jim0P+1PPZOoktXNC1X1hB+ea3yrZebX75t4GVoQK7123F7mxWHiPjuV2tQQ==
-
-"@dfinity/candid@^2.1.1":
+"@dfinity/candid@^2.1.1", "@dfinity/candid@^2.1.3":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@dfinity/candid/-/candid-2.2.0.tgz#baf69d32f4f99296ee9d43c40930a24f13559147"
   integrity sha512-6r21ow4kI/JaS6PocMVSHP49UDRG32EHrmFK9Uvg11yXulyTiR+PLGjabajvJjwmPQhjXiF8VzBIFY7aHOHiqQ==
@@ -237,14 +222,14 @@
     asn1js "^3.0.5"
     bs58check "^3.0.1"
 
-"@dfinity/identity@^0.19.2":
-  version "0.19.3"
-  resolved "https://registry.yarnpkg.com/@dfinity/identity/-/identity-0.19.3.tgz#caec4a38b4a7d4567e662a7eb5bf2a9ae6466bdf"
-  integrity sha512-6XHrkNQ8tVN6+MERyXPy+avGHTd2zoX3l47bu6gSwreDdOZQnAnXpHVzLcXhnUptkBVetcC70YQEKCmqtuLriA==
+"@dfinity/identity@^2.1.3":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@dfinity/identity/-/identity-2.2.0.tgz#5455e1fb9e16c438641547f1c248481193128572"
+  integrity sha512-4L/i6pDYrGnpgnITHJR1Tb5umawqytZ8BhCE7G1MzG2ftWJ0SO1QJxRDwp5Nuj/fNZumq+ILSc3o3ItzaUs1iQ==
   dependencies:
+    "@noble/curves" "^1.2.0"
     "@noble/hashes" "^1.3.1"
     borc "^2.1.1"
-    tweetnacl "^1.0.1"
 
 "@dfinity/ledger-icp@^2.5.0":
   version "2.6.4"
@@ -256,14 +241,7 @@
   resolved "https://registry.yarnpkg.com/@dfinity/ledger-icrc/-/ledger-icrc-2.6.4.tgz#37d526725484559888c0060c34537236f24c41bb"
   integrity sha512-Q7B/D6NhmWQW4qFWZVaV8B6efuRto7hDa0GmT1hxeeUPcyXt42AtfNgyqByDu82Wsank90AW4hgBS0UhKGEB9Q==
 
-"@dfinity/principal@^0.19.2":
-  version "0.19.3"
-  resolved "https://registry.yarnpkg.com/@dfinity/principal/-/principal-0.19.3.tgz#428cfca3d2d2de9e1433b3b33498fd595fb441d8"
-  integrity sha512-+nixVvdGt7ECxRvLXDXsvU9q9sSPssBtDQ4bXa149SK6gcYcmZ6lfWIi3DJNqj3tGROxILVBsguel9tECappsA==
-  dependencies:
-    "@noble/hashes" "^1.3.1"
-
-"@dfinity/principal@^2.1.1":
+"@dfinity/principal@^2.1.1", "@dfinity/principal@^2.1.3":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@dfinity/principal/-/principal-2.2.0.tgz#36bd46e9e4d9d96eee8288b0c68762299e081dcf"
   integrity sha512-8Yxb/6B4BWvV64HJ7X8sbDjoBaEamAQgOZ0MK0I44lZiRHomAYeUJMrw3yBg9jI1T62lijLcl401FAXBOzciiQ==
@@ -744,7 +722,7 @@
   dependencies:
     "@noble/hashes" "1.3.2"
 
-"@noble/curves@^1.4.0", "@noble/curves@^1.4.2", "@noble/curves@~1.7.0":
+"@noble/curves@^1.2.0", "@noble/curves@^1.4.0", "@noble/curves@^1.4.2", "@noble/curves@~1.7.0":
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.7.0.tgz#0512360622439256df892f21d25b388f52505e45"
   integrity sha512-UTMhXK9SeDhFJVrHeUJ5uZlI6ajXg10O6Ddocf9S6GjbSBVZsJo88HzKwXznNfGpMTRDyJkqMjNDPYgf0qFWnw==
@@ -3133,15 +3111,15 @@ husky@^9.0.0:
   resolved "https://registry.yarnpkg.com/husky/-/husky-9.1.7.tgz#d46a38035d101b46a70456a850ff4201344c0b2d"
   integrity sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==
 
-ic0@^0.2.8:
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/ic0/-/ic0-0.2.8.tgz#9864d4926444c433960d6d454a8bf5c1b7a13149"
-  integrity sha512-IPtyrB79fvlb9uQcI8dlKDBsqc1eyCckMDsKzgbaiURrM/bVnDJaZ+dsB1CXxQNpsmb/qV3DXPXJRAhh6AVh3w==
+ic0@^0.3.0:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/ic0/-/ic0-0.3.2.tgz#b32760a216797334e1481e51601ca2ffe2201ff6"
+  integrity sha512-A+XczHylZzyYtE27/ED66XpQohsUikFrpCSue/wEdAenIx/ZoIkY0tOKaf1mrLGcdHAmAyaN+Q0WW+XEc/b/1g==
   dependencies:
-    "@dfinity/agent" "^0.19.2"
-    "@dfinity/candid" "^0.19.2"
-    "@dfinity/identity" "^0.19.2"
-    "@dfinity/principal" "^0.19.2"
+    "@dfinity/agent" "^2.1.3"
+    "@dfinity/candid" "^2.1.3"
+    "@dfinity/identity" "^2.1.3"
+    "@dfinity/principal" "^2.1.3"
     cross-fetch "^3.1.5"
 
 ieee754@^1.1.13, ieee754@^1.2.1:
@@ -5080,7 +5058,7 @@ tweetnacl-util@^0.15.1:
   resolved "https://registry.yarnpkg.com/tweetnacl-util/-/tweetnacl-util-0.15.1.tgz#b80fcdb5c97bcc508be18c44a4be50f022eea00b"
   integrity sha512-RKJBIj8lySrShN4w6i/BonWp2Z/uxwC3h4y7xsRrpP59ZboCd0GpEVsOnMDYLMmKBpYhb5TgHzZXy7wTfYFBRw==
 
-tweetnacl@1.0.3, tweetnacl@^1.0.1, tweetnacl@^1.0.3:
+tweetnacl@1.0.3, tweetnacl@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-1.0.3.tgz#ac0af71680458d8a6378d0d0d050ab1407d35596"
   integrity sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==
