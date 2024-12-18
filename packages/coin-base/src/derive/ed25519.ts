@@ -127,6 +127,10 @@ async function getEd25519DerivedPrivateKey(
   const derivedSeed = derivePath(hdPath, seed).key;
   const publicKey = signUtil.ed25519.publicKeyCreate(derivedSeed);
   const privateKey = concatPub ? base.concatBytes(derivedSeed, publicKey) : derivedSeed;
+  // Clear sensitive data
+  seed.fill(0);
+  derivedSeed.fill(0);
+  if (concatPub) publicKey.fill(0);
   return encode === 'base58' ? Promise.resolve(base.toBase58(privateKey)) : Promise.resolve(base.toHex(privateKey));
 }
 
