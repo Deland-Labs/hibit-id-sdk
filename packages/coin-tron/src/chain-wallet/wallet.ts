@@ -26,7 +26,14 @@ class TronChainWallet extends BaseChainWallet {
   };
 
   public override signMessage: (message: string) => Promise<string> = async (message) => {
-    return this.tronWeb.trx.signMessageV2(message);
+    if (!message || typeof message !== 'string') {
+      throw new Error(`${CHAIN_NAME}: Invalid message format`);
+    }
+    try {
+      return this.tronWeb.trx.signMessageV2(message);
+    } catch (error) {
+      throw new Error(`${CHAIN_NAME}: Message signing failed: ${error.message}`);
+    }
   };
 
   public override balanceOf = async (address: string, assetInfo: AssetInfo) => {
