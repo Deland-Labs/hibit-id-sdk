@@ -40,6 +40,8 @@ function getMasterKeyFromSeed(seed: Uint8Array) {
   const I = base.hmacSHA512('ed25519 seed', seed);
   const IL = I.slice(0, 32);
   const IR = I.slice(32);
+  // Clear sensitive data
+  I.fill(0);
   return {
     key: IL,
     chainCode: IR
