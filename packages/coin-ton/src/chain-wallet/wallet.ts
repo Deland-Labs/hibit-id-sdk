@@ -222,8 +222,6 @@ export class TonChainWallet extends BaseChainWallet {
     if (!assetInfo.chain.equals(CHAIN)) {
       throw new Error(`${CHAIN_NAME}: invalid asset chain`);
     }
-      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
-    }
     await this.readyPromise;
     const ownerAddress = (await this.getAccount()).address;
 
