@@ -109,6 +109,16 @@ async function getEd25519DerivedPrivateKey(
   concatPub: boolean,
   encode: 'hex' | 'base58'
 ): Promise<string> {
+  if (!mnemonic) {
+    throw new Error('Mnemonic is required');
+  }
+  if (!bip39.validateMnemonic(mnemonic)) {
+    throw new Error('Invalid mnemonic phrase');
+  }
+  if (!['hex', 'base58'].includes(encode)) {
+    throw new Error('Invalid encoding format');
+  }
+
   const seed = await bip39.mnemonicToSeed(mnemonic);
   const derivedSeed = derivePath(hdPath, seed).key;
   const publicKey = signUtil.ed25519.publicKeyCreate(derivedSeed);
