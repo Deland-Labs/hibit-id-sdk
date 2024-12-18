@@ -15,6 +15,7 @@ const App: FC = () => {
       env: 'dev',
       chains: [HibitIdChainId.EthereumSepolia, HibitIdChainId.TonTestnet],
       defaultChain: HibitIdChainId.EthereumSepolia,
+      embedMode: 'background',
     })
     setWallet(wallet)
     const handleChainChanged = (chainId: HibitIdChainId) => setChainId(chainId)

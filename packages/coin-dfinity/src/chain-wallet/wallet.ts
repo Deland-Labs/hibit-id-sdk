@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { Buffer } from 'buffer/';
-import { WalletAccount } from "@delandlabs/hibit-id-wallet-sdk";
 import { Secp256k1KeyIdentity } from '@dfinity/identity-secp256k1';
 import { createAgent } from '@dfinity/utils'
 import { HttpAgent, v3ResponseBody } from "@dfinity/agent";
@@ -11,7 +10,7 @@ import { Icrc25SupportedStandardsResult, Icrc49CallCanisterRequest, Icrc49CallCa
 import { buildJsonRpcError, buildJsonRpcResponse } from "./utils";
 import * as cbor from 'cborg';
 import ic from 'ic0'
-import { AssetInfo, BaseChainWallet, Chain, ChainAssetType, ChainInfo } from "@delandlabs/coin-base";
+import { AssetInfo, BaseChainWallet, Chain, ChainAssetType, ChainInfo, WalletAccount } from "@delandlabs/coin-base";
 
 const ICP_LEDGER_CANISTER_ID = Principal.fromText('ryjl3-tyaaa-aaaaa-aaaba-cai');
 
