@@ -21,15 +21,24 @@ export function ed25519SignTest(privateKey: Buffer) {
  * @returns string - Private key
  */
 function getRandomEd25519PrivateKey(concatPub: boolean, encode: 'hex' | 'base58'): string {
+  const MAX_ATTEMPTS = 100;
+  let attempts = 0;
   while (true) {
+    if (attempts++ >= MAX_ATTEMPTS) {
+      throw new Error('Failed to generate valid private key after maximum attempts');
+    }
     const randBytes = base.randomBytes(32);
     if (signUtil.ed25519.privateKeyVerify(randBytes)) {
       if (ed25519SignTest(randBytes)) {
         const publicKey = signUtil.ed25519.publicKeyCreate(randBytes);
         const privateKey: Uint8Array = concatPub ? base.concatBytes(randBytes, publicKey) : randBytes;
+        // Clear sensitive data
+        randBytes.fill(0);
+        if (concatPub) publicKey.fill(0);
         return encode === 'base58' ? base.toBase58(privateKey) : base.toHex(privateKey);
       }
     }
+    randBytes.fill(0);
   }
 }
 
