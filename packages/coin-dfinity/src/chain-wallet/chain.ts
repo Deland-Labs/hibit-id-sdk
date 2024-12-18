@@ -1,4 +1,4 @@
-import { ChainInfo, ChainId, Chain, ChainNetwork, Ecosystem, WalletSignatureSchema } from "@delandlabs/coin-base";
+import { ChainInfo, ChainId, Chain, ChainNetwork, Ecosystem, WalletSignatureSchema } from '@delandlabs/coin-base';
 
 export const Dfinity: ChainInfo = {
   chainId: new ChainId(Chain.Dfinity, ChainNetwork.DfinityMainNet),
@@ -14,16 +14,12 @@ export const Dfinity: ChainInfo = {
   explorer: 'https://dashboard.internetcomputer.org',
   rpcUrls: ['https://ic0.app'],
   getTxLink: (txId: string) => {
-    if (typeof txId !== 'string') {
-      return ''
-    }
+    if (!txId) return '';
     const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
-    return `https://dashboard.internetcomputer.org/transaction/${hash}`
+    return `https://dashboard.internetcomputer.org/transaction/${hash}`;
   },
   getAddressLink: (address: string) => {
-    if (typeof address !== 'string') {
-      return ''
-    }
-    return `https://dashboard.internetcomputer.org/account/${address}`
-  },
+    if (!address) return '';
+    return `https://dashboard.internetcomputer.org/account/${address}`;
+  }
 };

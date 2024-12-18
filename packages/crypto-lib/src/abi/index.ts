@@ -6,13 +6,14 @@
  *
  * */
 
-import ABI from "./abi.js"
-function RawEncode(types: string[], values: any[]): Buffer {
-    return ABI.rawEncode(types, values)
+import ABI from './abi.js';
+
+function RawEncode(types: string[], values: any[]): Uint8Array {
+  return ABI.rawEncode(types, values);
 }
 
-function SoliditySHA3(types: string[], values: any[]): Buffer {
-    return ABI.soliditySHA3(types, values)
+function SoliditySHA3(types: string[], values: any[]): Uint8Array {
+  return ABI.soliditySHA3(types, values);
 }
 
-export {ABI, RawEncode, SoliditySHA3}
+export { ABI, RawEncode, SoliditySHA3 };
