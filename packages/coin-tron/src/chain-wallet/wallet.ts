@@ -60,6 +60,9 @@ class TronChainWallet extends BaseChainWallet {
   };
 
   public override transfer = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo) => {
+    if (!amount || amount.isNaN() || amount.isZero() || amount.isNegative()) {
+      throw new Error(`${CHAIN_NAME}: invalid transfer amount`);
+    }
     if (!this.tronWeb.isAddress(toAddress)) {
       throw new Error(`${CHAIN_NAME}: invalid wallet address`);
     }
