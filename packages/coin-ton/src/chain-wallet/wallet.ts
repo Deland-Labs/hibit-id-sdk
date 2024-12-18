@@ -213,6 +213,13 @@ export class TonChainWallet extends BaseChainWallet {
     amount: BigNumber,
     assetInfo: AssetInfo
   ): Promise<BigNumber> => {
+    if (!toAddress || !amount || !assetInfo) {
+      throw new Error(`${CHAIN_NAME}: Invalid parameters for fee estimation`);
+    }
+    if (amount.isNaN() || amount.isNegative()) {
+      throw new Error(`${CHAIN_NAME}: Invalid amount for fee estimation`);
+    }
+    if (!assetInfo.chain.equals(CHAIN)) {
     if (!assetInfo.chain.equals(CHAIN)) {
       throw new Error(`${CHAIN_NAME}: invalid asset chain`);
     }
