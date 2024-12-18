@@ -103,6 +103,10 @@
       "env": [
         "VITE_*"
       ],
+      "dependsOn": [
+        "@delandlabs/coin-base#build",
+        "@delandlabs/coin-ton#build"
+      ],
       "outputs": [
         "dist/**"
       ]

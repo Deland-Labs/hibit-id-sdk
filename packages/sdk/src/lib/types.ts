@@ -153,6 +153,10 @@ export interface AccountsChangedRequest {
   account: WalletAccount | null
 }
 
+export interface PasswordChangedRequest {
+  success: boolean
+}
+
 export interface SwitchChainRequest {
   chainId: HibitIdChainId
 }

@@ -6,6 +6,7 @@ export enum SdkExposeRPCMethod {
   LOGIN_CHANGED = 'loginChanged',
   CHAIN_CHANGED = 'chainChanged',
   ACCOUNTS_CHANGED = 'accountsChanged',
+  PASSWORD_CHANGED = 'passwordChanged',
 }
 
 export enum WalletExposeRPCMethod {
@@ -21,6 +22,7 @@ export enum WalletExposeRPCMethod {
   SIGN_MESSAGE = 'signMessage',
   SWITCH_CHAIN = 'switchChain',
   SET_BACKGROUND_EMBED = 'setBackgroundEmbed',
+  SHOW_RESET_PASSWORD = 'showResetPassword',
 }
 
 // TODO: grow this list

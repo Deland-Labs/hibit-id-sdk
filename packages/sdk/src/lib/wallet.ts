@@ -16,6 +16,7 @@ import {
   HibitIdEventHandlerMap,
   HibitIdWalletOptions,
   LoginChangedRequest,
+  PasswordChangedRequest,
   SetBackgroundEmbedRequest,
   SignMessageRequest,
   SignMessageResponse,
@@ -327,10 +328,19 @@ export class HibitIdWallet {
 
   public setBackgroundEmbed = async (value: boolean) => {
     console.debug('[sdk call SetBackgroundEmbed]', { value });
-    if (this._options.embedMode === 'background') return
+    if (value && this._options.embedMode === 'background') return
+    if (!value && this._options.embedMode !== 'background') return
     await this._iframeReadyPromise.promise;
     await this._rpc?.call(WalletExposeRPCMethod.SET_BACKGROUND_EMBED, { value } as SetBackgroundEmbedRequest);
     this._options.embedMode = value ? 'background' : 'float';
+  }
+
+  public showResetPassword = async () => {
+    console.debug('[sdk call showResetPassword]');
+    await this._iframeReadyPromise.promise;
+    this.assertConnected();
+    await this._rpc?.call(WalletExposeRPCMethod.SHOW_RESET_PASSWORD, {});
+    this.showIframe();
   }
 
   public addEventListener = <K extends keyof HibitIdEventHandlerMap>(
@@ -403,6 +413,7 @@ export class HibitIdWallet {
       SdkExposeRPCMethod.ACCOUNTS_CHANGED,
       this.onRpcAccountsChanged
     );
+    rpc.expose(SdkExposeRPCMethod.PASSWORD_CHANGED, this.onRpcPasswordChanged);
     this._rpc = rpc;
 
     console.debug('[sdk rpc init]');
@@ -501,6 +512,13 @@ export class HibitIdWallet {
       handler(input.account);
     });
   };
+
+  private onRpcPasswordChanged = (input: PasswordChangedRequest) => {
+    console.debug('[sdk on PasswordChanged]', { input });
+    if (this._options.embedMode === 'background') {
+      this._iframe?.hide();
+    }
+  }
 
   private onRpcIframeReady = () => {
     console.debug('[sdk on IframeReady]');

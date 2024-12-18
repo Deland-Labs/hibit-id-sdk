@@ -44,6 +44,13 @@ const App: FC = () => {
       </div>
       <div>
         <button className="btn btn-sm" onClick={async () => {
+          await wallet?.showResetPassword()
+        }}>
+          reset password
+        </button>
+      </div>
+      <div>
+        <button className="btn btn-sm" onClick={async () => {
           const balance = await wallet?.getBalance()
           setBalance(balance ?? '')
           setTimeout(() => {
