@@ -1,5 +1,11 @@
 import { base, bip39, signUtil } from '@delandlabs/crypto-lib';
 
+/**
+ * WARNING: This function is for testing purposes only.
+ * DO NOT use this function for production signing operations.
+ * @param privateKey - The private key to test
+ * @returns boolean - Whether the test signature is valid
+ */
 export function ed25519SignTest(privateKey: Buffer) {
   const msgHash = base.sha256('ed25519-test');
   const publicKey = signUtil.ed25519.publicKeyCreate(privateKey);
