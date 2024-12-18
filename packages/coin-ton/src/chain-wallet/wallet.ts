@@ -24,7 +24,7 @@ import nacl from 'tweetnacl';
 import { AssetInfo, BaseChainWallet, ChainInfo, ChainNetwork, WalletAccount } from '@delandlabs/coin-base';
 import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from '../ton-connect';
 import { sleep } from './utils';
-import { CHAIN, CHAIN_NAME, FT_ASSET, NATIVE_ASSET } from './defaults';
+import { CHAIN, CHAIN_NAME, FT_ASSET, NATIVE_ASSET, MAGIC_BYTES } from './defaults';
 
 const JETTON_TRANSFER_AMOUNT = new BigNumber(0.1);
 const JETTON_FORWARD_AMOUNT = new BigNumber(0.0001);
@@ -68,7 +68,7 @@ export class TonChainWallet extends BaseChainWallet {
     /**
      * According: https://github.com/ton-foundation/specs/blob/main/specs/wtf-0002.md
      */
-    if (valueHash.length + 'ton-safe-sign-magic'.length >= 127) {
+    if (valueHash.length + MAGIC_BYTES >= 127) {
       throw new Error(`${CHAIN_NAME}: Too large personal message`);
     }
     const hex = Buffer.concat([Buffer.from([0xff, 0xff]), Buffer.from('ton-safe-sign-magic'), valueHash]).toString(
@@ -127,9 +127,15 @@ export class TonChainWallet extends BaseChainWallet {
       });
       // wait until confirmed
       let currentSeqno = seqno;
+      const MAX_RETRIES = 10;
+      let retries = 0;
       while (currentSeqno == seqno) {
+        if (retries >= MAX_RETRIES) {
+          throw new Error(`${CHAIN_NAME}: transaction confirmation timeout`);
+        }
         await sleep(3000);
         currentSeqno = (await this.wallet!.getSeqno()) || 0;
+        retries++;
       }
       return '';
     }
@@ -273,6 +279,15 @@ export class TonChainWallet extends BaseChainWallet {
   };
 
   public tonConnectSignData = async (payload: TonConnectSignDataPayload): Promise<TonConnectSignDataResult> => {
+    if (!payload?.cell || !payload?.schema_crc) {
+      throw new Error(`${CHAIN_NAME}: invalid TonConnect payload`);
+    }
+    // Validate cell data
+    try {
+      Cell.fromBase64(payload.cell);
+    } catch (e) {
+      throw new Error(`${CHAIN_NAME}: Invalid cell data`);
+    }
     const timestamp = Date.now() / 1000;
     const X: Cell = Cell.fromBase64(payload.cell); // Payload cell
     const prefix = Buffer.alloc(4 + 8); // version + timestamp

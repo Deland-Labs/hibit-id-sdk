@@ -8,13 +8,13 @@ export class EthereumChainWallet extends BaseChainWallet {
   private readonly provider: JsonRpcProvider;
   private wallet: HDNodeWallet;
 
-  constructor(chainInfo: ChainInfo, menmonic: string) {
+  constructor(chainInfo: ChainInfo, mnemonic: string) {
     if (!chainInfo.chainId.type.equals(CHAIN)) {
       throw new Error(`${CHAIN_NAME}: invalid chain type`);
     }
-    super(chainInfo, menmonic);
+    super(chainInfo, mnemonic);
     this.provider = new JsonRpcProvider(this.chainInfo.rpcUrls[0], this.chainInfo.chainId.network.value.toNumber());
-    this.wallet = HDNodeWallet.fromPhrase(this.menmonic);
+    this.wallet = HDNodeWallet.fromPhrase(this.mnemonic);
     this.wallet = this.wallet.connect(this.provider);
   }
 

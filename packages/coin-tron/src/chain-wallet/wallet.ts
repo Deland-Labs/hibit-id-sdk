@@ -1,13 +1,5 @@
 import { getChain } from './utils';
-import {
-  AssetInfo,
-  BaseChainWallet,
-  Chain,
-  ChainAssetType,
-  ChainId,
-  ChainInfo,
-  WalletAccount
-} from '@delandlabs/coin-base';
+import { AssetInfo, BaseChainWallet, ChainId, ChainInfo, WalletAccount } from '@delandlabs/coin-base';
 import { TronWeb } from 'tronweb';
 import BigNumber from 'bignumber.js';
 import { ADDRESS_PREFIX_BYTE, NATIVE_ASSET, FT_ASSET, CHAIN, CHAIN_NAME, DERIVING_PATH } from './defaults';
@@ -71,12 +63,12 @@ class TronChainWallet extends BaseChainWallet {
     if (!this.tronWeb.isAddress(toAddress)) {
       throw new Error(`${CHAIN_NAME}: invalid wallet address`);
     }
-    if (!assetInfo.chain.equals(Chain.Ethereum)) {
+    if (!assetInfo.chain.equals(CHAIN)) {
       throw new Error(`${CHAIN_NAME}: invalid asset chain`);
     }
     try {
       // native
-      if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+      if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
         const realAmount = amount.shiftedBy(assetInfo.decimalPlaces.value).toNumber();
         const tx = await this.tronWeb.trx.send(toAddress, realAmount);
         return tx.transaction.txID;
@@ -107,13 +99,13 @@ class TronChainWallet extends BaseChainWallet {
     if (!this.tronWeb.isAddress(toAddress)) {
       throw new Error(`${CHAIN_NAME}: invalid wallet address`);
     }
-    if (!assetInfo.chain.equals(Chain.Ethereum)) {
+    if (!assetInfo.chain.equals(CHAIN)) {
       throw new Error(`${CHAIN_NAME}: invalid asset chain`);
     }
     const from = await this.getAddress();
     const privateKey = await this.getEcdsaDerivedPrivateKey(DERIVING_PATH);
     // native
-    if (assetInfo.chainAssetType.equals(ChainAssetType.Native)) {
+    if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
       const tx = await this.tronWeb.transactionBuilder.sendTrx(toAddress, amount.toNumber(), from);
       // sign tx, because we need to estimate the bandwidth
       const signedTx = await this.tronWeb.trx.sign(tx, privateKey);

@@ -27,7 +27,7 @@ function getRandomEd25519PrivateKey(concatPub: boolean, encode: 'hex' | 'base58'
   }
 }
 
-const pathRegex = new RegExp("^m(\\/[0-9]+')+$");
+const pathRegex = /^m(\/[0-9]+')+$/;
 const replaceDerive = (val: string): string => val.replace("'", '');
 const HARDENED_OFFSET = 0x80000000;
 
@@ -68,7 +68,7 @@ const isValidPath = (path: string): boolean => {
     .split('/')
     .slice(1)
     .map(replaceDerive)
-    .some(isNaN as any /* ts T_T*/);
+    .some(Number.isNaN as any /* ts T_T*/);
 };
 
 function derivePath(path: string, seed: Buffer, offset = HARDENED_OFFSET): Keys {

@@ -8,15 +8,15 @@ export * from './enums';
 
 export abstract class BaseChainWallet {
   public readonly chainInfo: ChainInfo;
-  protected readonly menmonic: string;
+  protected readonly mnemonic: string;
 
   protected constructor(chainInfo: ChainInfo, phrase: string) {
     this.chainInfo = chainInfo;
-    this.menmonic = phrase;
+    this.mnemonic = phrase;
   }
 
   protected async getEcdsaDerivedPrivateKey(derivationPath: string): Promise<string> {
-    return getEcdsaDerivedPrivateKey(this.menmonic, derivationPath);
+    return getEcdsaDerivedPrivateKey(this.mnemonic, derivationPath);
   }
 
   protected async getEd25519DerivedPrivateKey(
@@ -24,7 +24,7 @@ export abstract class BaseChainWallet {
     concatPub: boolean,
     encode: 'hex' | 'base58'
   ): Promise<string> {
-    return getEd25519DerivedPrivateKey(this.menmonic, derivationPath, concatPub, encode);
+    return getEd25519DerivedPrivateKey(this.mnemonic, derivationPath, concatPub, encode);
   }
 
   public abstract getAccount: () => Promise<WalletAccount>;

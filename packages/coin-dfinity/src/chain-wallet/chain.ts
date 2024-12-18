@@ -14,10 +14,12 @@ export const Dfinity: ChainInfo = {
   explorer: 'https://dashboard.internetcomputer.org',
   rpcUrls: ['https://ic0.app'],
   getTxLink: (txId: string) => {
+    if (!txId) return '';
     const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
     return `https://dashboard.internetcomputer.org/transaction/${hash}`;
   },
   getAddressLink: (address: string) => {
+    if (!address) return '';
     return `https://dashboard.internetcomputer.org/account/${address}`;
   }
 };

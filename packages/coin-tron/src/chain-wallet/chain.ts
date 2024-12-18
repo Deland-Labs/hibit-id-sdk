@@ -15,10 +15,14 @@ export const Tron: ChainInfo = {
   rpcUrls: ['https://rpc.trongrid.io'],
   caseSensitiveAddress: true,
   getTxLink: (txId: string) => {
+    if (!txId?.trim()) return '';
+
     const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
     return `https://tronscan.org/#/transaction/${hash}`;
   },
   getAddressLink: (address: string) => {
+    if (!address?.trim()) return '';
+
     return `https://tronscan.org/#/address/${address}`;
   }
 };
@@ -37,10 +41,14 @@ export const TronShasta: ChainInfo = {
   rpcUrls: ['https://api.shasta.trongrid.io'],
   caseSensitiveAddress: true,
   getTxLink: (txId: string) => {
+    if (!txId?.trim()) return '';
+
     const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
     return `https://shasta.tronscan.org/#/transaction/${hash}`;
   },
   getAddressLink: (address: string) => {
+    if (!address?.trim()) return '';
+
     return `https://shasta.tronscan.org/#/address/${address}`;
   }
 };
@@ -59,10 +67,14 @@ export const TronNile: ChainInfo = {
   rpcUrls: ['https://api.nileex.io'],
   caseSensitiveAddress: true,
   getTxLink: (txId: string) => {
+    if (!txId?.trim()) return '';
+
     const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
     return `https://nile.tronscan.org/#/transaction/${hash}`;
   },
   getAddressLink: (address: string) => {
+    if (!address?.trim()) return '';
+
     return `https://nile.tronscan.org/#/address/${address}`;
   }
 };
