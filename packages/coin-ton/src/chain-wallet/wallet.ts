@@ -220,7 +220,8 @@ export class TonChainWallet extends BaseChainWallet {
       throw new Error(`${CHAIN_NAME}: Invalid amount for fee estimation`);
     }
     if (!assetInfo.chain.equals(CHAIN)) {
-    if (!assetInfo.chain.equals(CHAIN)) {
+      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
+    }
       throw new Error(`${CHAIN_NAME}: invalid asset chain`);
     }
     await this.readyPromise;
