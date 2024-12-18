@@ -194,11 +194,12 @@ export class TonChainWallet extends BaseChainWallet {
         }
         return '';
       } catch (e: any) {
+        const errMsg = e.response?.data?.error || e.message || 'Unknown error';
         if (e.response?.status === 500) {
-          const message: string = e.response?.data?.error || '';
-          if (/^LITE_SERVER_UNKNOWN:[.\s\S]*inbound external message rejected by transaction[.\s\S]*$/i.test(message)) {
+          if (/^LITE_SERVER_UNKNOWN:[.\s\S]*inbound external message rejected by transaction[.\s\S]*$/i.test(errMsg)) {
             throw new Error(`${CHAIN_NAME}: insufficient gas balance (at least ${minGas} Ton)`);
           }
+          throw new Error(`${CHAIN_NAME}: transaction failed - ${errMsg}`);
         }
         throw e;
       }
@@ -301,18 +302,22 @@ export class TonChainWallet extends BaseChainWallet {
   };
 
   private initWallet = async (phrase: string) => {
-    const endpoint = await getHttpEndpoint({
-      network: this.getIsTestNet() ? 'testnet' : 'mainnet'
-    });
-    this.client = new TonClient({ endpoint });
-    const mnemonic = phrase; // your 24 secret words (replace ... with the rest of the words)
-    this.keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
-    this.wallet = this.client.open(
-      WalletContractV4.create({
-        workchain: 0,
-        publicKey: this.keyPair.publicKey
-      })
-    );
+    try {
+      const endpoint = await getHttpEndpoint({
+        network: this.getIsTestNet() ? 'testnet' : 'mainnet'
+      });
+      this.client = new TonClient({ endpoint });
+      const mnemonic = phrase; // your 24 secret words (replace ... with the rest of the words)
+      this.keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
+      this.wallet = this.client.open(
+        WalletContractV4.create({
+          workchain: 0,
+          publicKey: this.keyPair.publicKey
+        })
+      );
+    } catch (e) {
+      throw new Error(`${CHAIN_NAME}: Failed to initialize wallet: ${e}`);
+    }
   };
 
   private getIsTestNet = () => {
