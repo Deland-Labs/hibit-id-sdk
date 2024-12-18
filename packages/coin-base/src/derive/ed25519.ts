@@ -7,10 +7,17 @@ import { base, bip39, signUtil } from '@delandlabs/crypto-lib';
  * @returns boolean - Whether the test signature is valid
  */
 export function ed25519SignTest(privateKey: Buffer) {
-  const msgHash = base.sha256('ed25519-test');
+  const testMsg = base.randomBytes(32);
+  const msgHash = base.sha256(testMsg);
   const publicKey = signUtil.ed25519.publicKeyCreate(privateKey);
   const signature = signUtil.ed25519.sign(msgHash, privateKey);
-  return signUtil.ed25519.verify(msgHash, signature, publicKey);
+  const result = signUtil.ed25519.verify(msgHash, signature, publicKey);
+  // Clear sensitive data
+  testMsg.fill(0);
+  msgHash.fill(0);
+  publicKey.fill(0);
+  signature.fill(0);
+  return result;
 }
 
 /**
