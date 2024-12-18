@@ -160,7 +160,12 @@ class TronChainWallet extends BaseChainWallet {
         from
       );
       const chainParams = await this.tronWeb.trx.getChainParameters();
-      const energyFee = chainParams.filter((item) => item.key === 'getEnergyFee')[0].value;
+      const chainParams = await this.tronWeb.trx.getChainParameters();
+      const energyFeeParam = chainParams.find((item) => item.key === 'getEnergyFee');
+      if (!energyFeeParam || typeof energyFeeParam.value !== 'number' || energyFeeParam.value <= 0) {
+        throw new Error(`${CHAIN_NAME}: Invalid energy fee parameter`);
+      }
+      const energyFee = energyFeeParam.value;
       const feeLimit = this.tronWeb.fromSun(energyEstimate.energy_required * energyFee);
       return feeLimit as BigNumber;
     }
