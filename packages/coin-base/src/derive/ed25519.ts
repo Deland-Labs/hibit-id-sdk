@@ -62,6 +62,10 @@ function CKDPriv({ key, chainCode }: Keys, index: number): Keys {
   const I = base.hmacSHA512(chainCode, data);
   const IL = I.slice(0, 32);
   const IR = I.slice(32);
+  // Clear sensitive data
+  I.fill(0);
+  data.fill(0);
+  indexBuffer.fill(0);
   return {
     key: IL,
     chainCode: IR
