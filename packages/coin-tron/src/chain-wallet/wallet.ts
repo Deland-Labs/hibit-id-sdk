@@ -60,6 +60,9 @@ class TronChainWallet extends BaseChainWallet {
       const getDecimals = await trc20.decimals().call();
       const getBalance = await trc20.balanceOf(address).call();
       const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
+      if (typeof decimals !== 'number' || decimals < 0 || decimals > 77) {
+        throw new Error(`${CHAIN_NAME}: Invalid token decimals`);
+      }
       return this.tronWeb.toBigNumber(balance).shiftedBy(-decimals);
     }
 
