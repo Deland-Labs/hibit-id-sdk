@@ -184,9 +184,13 @@ class TronChainWallet extends BaseChainWallet {
   async getBandwidthPrice() {
     const chainParameters = await this.tronWeb.trx.getChainParameters();
     const bandwidthPriceParam = chainParameters.find((param) => param.key === 'getBandwidthPrice');
-    if (bandwidthPriceParam) {
-      return bandwidthPriceParam.value / 1_000_000;
+    if (!bandwidthPriceParam) {
+      throw new Error(`${CHAIN_NAME}: bandwidth price parameter not found`);
     }
+    if (bandwidthPriceParam.value === 0) {
+      throw new Error(`${CHAIN_NAME}: invalid bandwidth price`);
+    }
+    return bandwidthPriceParam.value / 1_000_000;
   }
 }
 
