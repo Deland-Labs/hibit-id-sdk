@@ -3,6 +3,7 @@ import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
 import {
   AccountsChangedRequest,
+  BalanceChangeData,
   BridgePromise,
   ChainChangedRequest,
   ChainInfo,
@@ -27,7 +28,6 @@ import {
   TonConnectTransferResponse,
   TransferRequest,
   TransferResponse,
-  WalletAccount
 } from './types';
 import {
   SdkExposeRPCMethod,
@@ -35,10 +35,12 @@ import {
   HibitIdErrorCode,
   WalletExposeRPCMethod
 } from './enums';
-import { clamp } from './utils';
+import { clamp, parseBalanceRequest, stringifyBalanceRequest } from './utils';
 import { TonConnectSignDataResult } from '@delandlabs/coin-ton';
+import { WalletAccount } from '@delandlabs/coin-base';
 
 const LOGIN_SESSION_KEY = 'hibit-id-session';
+const BALANCE_POLL_INTERVAL = 5000;
 
 export class HibitIdWallet {
   private _options: HibitIdWalletOptions;
@@ -55,8 +57,13 @@ export class HibitIdWallet {
     chainChanged: Array<HibitIdEventHandlerMap['chainChanged']>;
   } = {
     accountsChanged: [],
-    chainChanged: []
+    chainChanged: [],
   };
+  private _balanceSubscribes: Record<string, {
+    lastBalance: string | null,
+    handlers: Array<(data: BalanceChangeData) => void>
+  }> = {}
+  private _balancePollIntervalId: any = null;
 
   constructor(options: HibitIdWalletOptions) {
     this._options = options;
@@ -362,6 +369,64 @@ export class HibitIdWallet {
       arr.splice(index, 1);
     }
   };
+
+  public subscribeBalanceChange = (request: GetBalanceRequest, handler: (data: BalanceChangeData) => void) => {
+    const id = stringifyBalanceRequest(request);
+    if (!this._balanceSubscribes[id]) {
+      this._balanceSubscribes[id] = {
+        lastBalance: null,
+        handlers: [handler]
+      };
+    } else {
+      this._balanceSubscribes[id].handlers.push(handler);
+    }
+    if (!this._balancePollIntervalId) {
+      this._balancePollIntervalId = setInterval(this.doBalancePoll, BALANCE_POLL_INTERVAL);
+    }
+  }
+
+  public unsubscribeBalanceChange = (request: GetBalanceRequest, handler: (data: BalanceChangeData) => void) => {
+    const id = stringifyBalanceRequest(request);
+    if (!this._balanceSubscribes[id]) return;
+    const index = this._balanceSubscribes[id].handlers.indexOf(handler);
+    if (index > -1) {
+      this._balanceSubscribes[id].handlers.splice(index, 1);
+    }
+    if (this._balanceSubscribes[id].handlers.length === 0) {
+      delete this._balanceSubscribes[id];
+    }
+    if (Object.keys(this._balanceSubscribes).length === 0) {
+      clearInterval(this._balancePollIntervalId);
+      this._balancePollIntervalId = null;
+    }
+  }
+
+  private doBalancePoll = async () => {
+    if (!this._connected) return;
+    await this._iframeReadyPromise.promise;
+    const requestPromises = Object.keys(this._balanceSubscribes).map(key => {
+      const request = parseBalanceRequest(key);
+      return this.getBalance(request);
+    });
+    const results = await Promise.allSettled(requestPromises);
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') return;
+      const balance = result.value;
+      const id = Object.keys(this._balanceSubscribes)[index];
+      const subscribe = this._balanceSubscribes[id];
+      if (balance === subscribe.lastBalance) {
+        return;
+      }
+      const data: BalanceChangeData = {
+        request: parseBalanceRequest(id),
+        balance,
+        lastBalance: subscribe.lastBalance
+      }
+      console.debug('[sdk] balance changed', data);
+      subscribe.handlers.forEach(handler => handler(data));
+      subscribe.lastBalance = balance;
+    })
+  }
 
   private assertConnected = () => {
     if (!this._connected) {

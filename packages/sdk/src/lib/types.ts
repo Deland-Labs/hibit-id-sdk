@@ -1,3 +1,4 @@
+import { WalletAccount } from "@delandlabs/coin-base"
 import { HibitIdAssetType, HibitIdChainId, HibitIdErrorCode } from "./enums"
 import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from "./tonconnect/types"
 
@@ -24,6 +25,12 @@ export interface HibitIdWalletOptions {
 export interface HibitIdAuth {
   token: string
   expiresAt: number
+}
+
+export interface BalanceChangeData {
+  request: GetBalanceRequest
+  balance: string
+  lastBalance: string | null
 }
 
 export interface HibitIdEventHandlerMap {
@@ -67,11 +74,6 @@ export interface AuthParty {
   key: string
   name: string
   icon: string
-}
-
-export interface WalletAccount {
-  address: string
-  publicKey?: string
 }
 
 export type RpcBaseResponse<T> = {

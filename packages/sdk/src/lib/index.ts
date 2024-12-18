@@ -15,7 +15,6 @@ export type {
   Language,
   FixDevMode,
   HibitIdWalletOptions,
-  WalletAccount,
   ConnectRequest,
   ConnectedRequest,
   GetAccountRequest,
