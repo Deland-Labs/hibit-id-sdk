@@ -31,8 +31,6 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@delandlabs/crypto-lib": "*",
-    "@delandlabs/coin-base": "*",
     "buffer": "^6.0.3",
     "long": "^5.2.3",
     "nice-grpc-web": "^3.3.5",
@@ -41,6 +39,8 @@
     "websocket-heartbeat-js": "^1.1.3"
   },
   "devDependencies": {
+    "@delandlabs/crypto-lib": "*",
+    "@delandlabs/coin-base": "*",
     "@eslint/js": "^9.16.0",
     "@rollup/plugin-typescript": "^12.1.1",
     "@typescript-eslint/eslint-plugin": "^8.16.0",
