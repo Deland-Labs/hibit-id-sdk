@@ -17,8 +17,9 @@ import {
 import { buildJsonRpcError, buildJsonRpcResponse } from './utils';
 import * as cbor from 'cborg';
 import ic from 'ic0';
-import { AssetInfo, BaseChainWallet, ChainInfo, WalletAccount } from '@delandlabs/coin-base';
-import { FT_ASSET, NATIVE_ASSET, CHAIN_NAME, CHAIN } from './defaults';
+import { AssetInfo, BaseChainWallet, ChainInfo, getEcdsaDerivedPrivateKey, WalletAccount } from '@delandlabs/coin-base';
+import { FT_ASSET, NATIVE_ASSET, CHAIN_NAME, CHAIN, DERIVING_PATH } from './defaults';
+import { base } from '@delandlabs/crypto-lib';
 
 const ICP_LEDGER_CANISTER_ID = Principal.fromText('ryjl3-tyaaa-aaaaa-aaaba-cai');
 
@@ -186,7 +187,9 @@ export class DfinityChainWallet extends BaseChainWallet {
   };
 
   private initWallet = async (phrase: string) => {
-    this.identity = Secp256k1KeyIdentity.fromSeedPhrase(phrase);
+    const privateKeyHex = await getEcdsaDerivedPrivateKey(phrase, DERIVING_PATH);
+    const privateKeyBytes = base.fromHex(privateKeyHex);
+    this.identity = Secp256k1KeyIdentity.fromSecretKey(privateKeyBytes);
     // this.agent = await createAgent({
     //   identity: this.identity,
     //   host: RUNTIME_ICRC_HOST || this.chainInfo.rpcUrls[0],

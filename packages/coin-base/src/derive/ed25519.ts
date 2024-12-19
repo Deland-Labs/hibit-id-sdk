@@ -54,12 +54,12 @@ const replaceDerive = (val: string): string => val.replace("'", '');
 const HARDENED_OFFSET = 0x80000000;
 
 type Keys = {
-  key: Buffer;
-  chainCode: Buffer;
+  key: Uint8Array;
+  chainCode: Uint8Array;
 };
 
 function getMasterKeyFromSeed(seed: Uint8Array) {
-  const I = base.hmacSHA512('ed25519 seed', seed);
+  const I = Uint8Array.from(base.hmacSHA512('ed25519 seed', seed));
   const IL = I.slice(0, 32);
   const IR = I.slice(32);
   // Clear sensitive data
@@ -75,7 +75,7 @@ function CKDPriv({ key, chainCode }: Keys, index: number): Keys {
   indexBuffer.writeUInt32BE(index, 0);
 
   const data = Buffer.concat([Buffer.alloc(1, 0), key, indexBuffer]);
-  const I = base.hmacSHA512(chainCode, data);
+  const I = Uint8Array.from(base.hmacSHA512(chainCode, data));
   const IL = I.slice(0, 32);
   const IR = I.slice(32);
   // Clear sensitive data
@@ -99,7 +99,7 @@ const isValidPath = (path: string): boolean => {
     .some(Number.isNaN as any /* ts T_T*/);
 };
 
-function derivePath(path: string, seed: Buffer, offset = HARDENED_OFFSET): Keys {
+function derivePath(path: string, seed: Uint8Array, offset = HARDENED_OFFSET): Keys {
   if (!isValidPath(path)) {
     throw new Error('Invalid derivation path');
   }
@@ -139,15 +139,15 @@ async function getEd25519DerivedPrivateKey(
     throw new Error('Invalid encoding format');
   }
 
-  const seed = await bip39.mnemonicToSeed(mnemonic);
+  const seed = await bip39.mnemonicToSeed(mnemonic) ;
   const derivedSeed = derivePath(hdPath, seed).key;
   const publicKey = signUtil.ed25519.publicKeyCreate(derivedSeed);
   const privateKey = concatPub ? base.concatBytes(derivedSeed, publicKey) : derivedSeed;
+
   // Clear sensitive data
   seed.fill(0);
-  derivedSeed.fill(0);
-  if (concatPub) publicKey.fill(0);
+
   return encode === 'base58' ? Promise.resolve(base.toBase58(privateKey)) : Promise.resolve(base.toHex(privateKey));
 }
 
-export { getEd25519DerivedPrivateKey, getRandomEd25519PrivateKey };
+export { isValidPath, getEd25519DerivedPrivateKey, getRandomEd25519PrivateKey };
