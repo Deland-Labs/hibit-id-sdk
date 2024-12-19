@@ -21,8 +21,8 @@
       }
     },
     "./dist/style.css": {
-      "import": "./dist/style.css",
-      "require": "./dist/style.css"
+      "import": "./dist/hibit-id-wallet-sdk.css",
+      "require": "./dist/hibit-id-wallet-sdk.css"
     }
   },
   "scripts": {
