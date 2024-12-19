@@ -32,8 +32,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@delandlabs/coin-base": "*",
+    "@delandlabs/coin-ton": "*",
     "@mixer/postmessage-rpc": "^1.1.4",
-    "@passwordless-id/webauthn": "^2.0.0",
     "@ton/core": "^0.59.0",
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.0.0",

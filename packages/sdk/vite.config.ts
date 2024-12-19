@@ -12,11 +12,15 @@ export default defineConfig({
     basicSsl(),
     nodePolyfills()
   ],
+  server: {
+    host: '127.0.0.1',
+    port: 6173,
+  },
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, 'src/lib/index.ts'),
-      name: 'HibitIDSdk',
+      name: 'HibitIDWalletSdk',
       // the proper extensions will be added
       fileName: 'hibit-id-wallet-sdk',
     },

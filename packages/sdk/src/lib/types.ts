@@ -1,10 +1,16 @@
+import { WalletAccount } from "@delandlabs/coin-base"
 import { HibitIdAssetType, HibitIdChainId, HibitIdErrorCode } from "./enums"
 import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from "./tonconnect/types"
 
 export type HibitEnv = 'dev' | 'test' | 'prod'
 
 export type Language = 'en' | 'cnt' | 'ja' | 'ru'
+// whether to fix the dev mode to 'off' or 'on'
 export type FixDevMode = 'on' | 'off' | 'unset'
+// float: show the wallet in a floating window with controller button
+// background: make wallet invisible most of the time except login process and password reset, only controllable through SDK
+// default to 'float'
+export type EmbedMode = 'float' | 'background'
 
 export interface HibitIdWalletOptions {
   env: HibitEnv
@@ -13,11 +19,18 @@ export interface HibitIdWalletOptions {
   lang?: Language
   fixDevMode?: FixDevMode
   iframeUrlAppendix?: string
+  embedMode?: EmbedMode
 }
 
 export interface HibitIdAuth {
   token: string
   expiresAt: number
+}
+
+export interface BalanceChangeData {
+  request: GetBalanceRequest
+  balance: string
+  lastBalance: string | null
 }
 
 export interface HibitIdEventHandlerMap {
@@ -61,11 +74,6 @@ export interface AuthParty {
   key: string
   name: string
   icon: string
-}
-
-export interface WalletAccount {
-  address: string
-  publicKey?: string
 }
 
 export type RpcBaseResponse<T> = {
@@ -147,6 +155,10 @@ export interface AccountsChangedRequest {
   account: WalletAccount | null
 }
 
+export interface PasswordChangedRequest {
+  success: boolean
+}
+
 export interface SwitchChainRequest {
   chainId: HibitIdChainId
 }
@@ -154,4 +166,8 @@ export interface SwitchChainRequest {
 export interface LoginChangedRequest {
   isLogin: boolean
   sub?: string  // required if isLogin is true
+}
+
+export interface SetBackgroundEmbedRequest {
+  value: boolean
 }

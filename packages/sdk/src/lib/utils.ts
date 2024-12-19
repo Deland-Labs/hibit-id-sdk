@@ -1,4 +1,5 @@
-import { AuthParty, HibitEnv } from "./types";
+import { HibitIdAssetType, HibitIdChainId } from "./enums";
+import { AuthParty, GetBalanceRequest, HibitEnv } from "./types";
 
 export const getSupportedAuthParties = (env: HibitEnv): AuthParty[] => {
   const url = getHibitIdUrl(env)
@@ -43,4 +44,18 @@ export const getHibitIdUrl = (env: HibitEnv) => {
 
 export const clamp = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max)
+}
+
+export const stringifyBalanceRequest = (request: GetBalanceRequest): string => {
+  return `${request.chainId ?? ''}|${request.assetType ?? ''}|${request.decimalPlaces ?? ''}|${request.contractAddress ?? ''}`
+}
+
+export const parseBalanceRequest = (request: string): GetBalanceRequest => {
+  const [chainId, assetType, decimalPlaces, contractAddress] = request.split('|')
+  return {
+    chainId: chainId !== '' ? chainId as HibitIdChainId : undefined,
+    assetType: assetType !== '' ? Number(assetType) as HibitIdAssetType : undefined,
+    decimalPlaces: decimalPlaces !== '' ? Number(decimalPlaces) : undefined,
+    contractAddress: contractAddress || undefined,
+  }
 }

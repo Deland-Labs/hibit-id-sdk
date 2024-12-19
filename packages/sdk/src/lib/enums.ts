@@ -1,4 +1,4 @@
-export enum ClientExposeRPCMethod {
+export enum SdkExposeRPCMethod {
   CLOSE = 'close',
   CONNECTED = 'connected',
   DISCONNECTED = 'disconnected',
@@ -6,9 +6,10 @@ export enum ClientExposeRPCMethod {
   LOGIN_CHANGED = 'loginChanged',
   CHAIN_CHANGED = 'chainChanged',
   ACCOUNTS_CHANGED = 'accountsChanged',
+  PASSWORD_CHANGED = 'passwordChanged',
 }
 
-export enum HibitIdExposeRPCMethod {
+export enum WalletExposeRPCMethod {
   GET_ACCOUNT = 'getAccount',
   GET_CHAIN_INFO = 'getChainInfo',
   CONNECT = 'connect',
@@ -20,6 +21,8 @@ export enum HibitIdExposeRPCMethod {
   DISCONNECT = 'disconnect',
   SIGN_MESSAGE = 'signMessage',
   SWITCH_CHAIN = 'switchChain',
+  SET_BACKGROUND_EMBED = 'setBackgroundEmbed',
+  SHOW_RESET_PASSWORD = 'showResetPassword',
 }
 
 // TODO: grow this list

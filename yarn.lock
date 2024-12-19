@@ -804,11 +804,6 @@
   dependencies:
     isomorphic-fetch "^3.0.0"
 
-"@passwordless-id/webauthn@^2.0.0":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@passwordless-id/webauthn/-/webauthn-2.1.2.tgz#011d0d03a1e2dd9e560d7b305bd9c749a435d761"
-  integrity sha512-Ahj+A3O0gP3EsLV4FRXjfhbzzP895d8CnHKmhT1hkAz1zLSBCRE/iXJsasL1kwGoriDFLJ+YtO6x1rok4SZH2g==
-
 "@peculiar/asn1-schema@^2.3.13", "@peculiar/asn1-schema@^2.3.8":
   version "2.3.13"
   resolved "https://registry.yarnpkg.com/@peculiar/asn1-schema/-/asn1-schema-2.3.13.tgz#ec8509cdcbc0da3abe73fd7e690556b57a61b8f4"
