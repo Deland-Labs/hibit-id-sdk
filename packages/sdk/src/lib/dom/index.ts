@@ -200,6 +200,7 @@ export class HibitIdIframe {
         height: '100%',
         bottom: 'unset',
         right: 'unset',
+        transform: 'unset',
       })
     } else {
       const isCentered = mode === 'centered' || !this.isDesktop
@@ -213,11 +214,14 @@ export class HibitIdIframe {
           height: '502px',
           right: `${floatingPos?.right ?? 50}px`,
           bottom: `${floatingPos?.bottom ?? 50}px`,
+          transform: 'unset',
         })
       } else {
         this.updateStyle({
           top: '50%',
           left: '50%',
+          maxWidth: '100%',
+          maxHeight: '100%',
           width: this.isDesktop ? '332px' : 'calc(100% - 32px)',
           height: this.isDesktop ? '502px' : '560px',
           bottom: 'unset',

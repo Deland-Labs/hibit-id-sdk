@@ -32,8 +32,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@delandlabs/coin-base": "*",
-    "@delandlabs/coin-ton": "*",
     "@mixer/postmessage-rpc": "^1.1.4",
     "@ton/core": "^0.59.0",
     "@ton/crypto": "^3.3.0",
@@ -46,6 +44,8 @@
     "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {
+    "@delandlabs/coin-base": "*",
+    "@delandlabs/coin-ton": "*",
     "@rollup/plugin-typescript": "^12.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
