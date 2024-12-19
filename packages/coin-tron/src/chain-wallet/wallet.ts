@@ -31,7 +31,7 @@ class TronChainWallet extends BaseChainWallet {
     }
     try {
       return this.tronWeb.trx.signMessageV2(message);
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(`${CHAIN_NAME}: Message signing failed: ${error.message}`);
     }
   };
