@@ -340,6 +340,22 @@ export class HibitIdWallet {
     await this._iframeReadyPromise.promise;
     await this._rpc?.call(WalletExposeRPCMethod.SET_BACKGROUND_EMBED, { value } as SetBackgroundEmbedRequest);
     this._options.embedMode = value ? 'background' : 'float';
+
+    const iframeVisible = this._iframe?.visible ?? false
+    // update controller and reposition iframe
+    if (!value) {
+      this._controller = new HibitIdController(
+        this.toggleIframe,
+        this.handleControllerMove
+      );
+    } else {
+      this._controller?.destroy();
+      this._controller = null;
+    }
+    this.showIframe()
+    if (!iframeVisible) {
+      this._iframe?.hide()
+    }
   }
 
   public showResetPassword = async () => {

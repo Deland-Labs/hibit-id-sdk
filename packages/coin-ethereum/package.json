@@ -29,10 +29,10 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@delandlabs/coin-base": "*",
     "ethers": "^6.13.1"
   },
   "devDependencies": {
+    "@delandlabs/coin-base": "*",
     "@eslint/js": "^9.16.0",
     "@rollup/plugin-typescript": "^12.1.1",
     "@typescript-eslint/eslint-plugin": "^8.16.0",
