@@ -1,7 +1,7 @@
 import { Chain, ChainAssetType } from '@delandlabs/coin-base';
 import { Buffer } from 'buffer';
 
-const DERIVING_PATH = "m/44'/607'/0'/0/0";
+const DERIVING_PATH = "m/44'/607'/0'";
 const CHAIN = Chain.Ton;
 const CHAIN_NAME = 'Ton';
 const NATIVE_ASSET = ChainAssetType.Native;

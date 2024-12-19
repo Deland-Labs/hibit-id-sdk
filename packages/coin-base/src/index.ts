@@ -5,6 +5,7 @@ import { getEcdsaDerivedPrivateKey, getEd25519DerivedPrivateKey } from './derive
 
 export * from './types';
 export * from './enums';
+export * from './derive';
 
 export abstract class BaseChainWallet {
   public readonly chainInfo: ChainInfo;
