@@ -27,6 +27,7 @@ jobs:
           export VITE_RELEASE_VERSION=$Version
           yarn install --frozen-lockfile
           yarn build:all
+          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/crypto-lib --access public
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-base --access public
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-dfinity --access public
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-ethereum --access public
