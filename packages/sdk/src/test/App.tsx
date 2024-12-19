@@ -11,13 +11,14 @@ const App: FC = () => {
   const [sig, setSig] = useState('')
   const [balance, setBalance] = useState('')
   const [chainId, setChainId] = useState('')
+  const [isBackgroundEmbed, setIsBackgroundEmbed] = useState(false)
 
   useEffect(() => {
     const wallet = new HibitIdWallet({
       env: 'dev',
       chains: [],
       defaultChain: HibitIdChainId.EthereumSepolia,
-      embedMode: 'background',
+      embedMode: 'float',
     })
     setWallet(wallet)
     const handleChainChanged = (chainId: HibitIdChainId) => setChainId(chainId)
@@ -64,6 +65,14 @@ const App: FC = () => {
           await wallet?.showResetPassword()
         }}>
           reset password
+        </button>
+      </div>
+      <div>
+        <button className="btn btn-sm" onClick={async () => {
+          await wallet?.setBackgroundEmbed(!isBackgroundEmbed)
+          setIsBackgroundEmbed(!isBackgroundEmbed)
+        }}>
+          toggle background embed({isBackgroundEmbed})
         </button>
       </div>
       <div>
