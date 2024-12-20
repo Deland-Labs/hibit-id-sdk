@@ -373,8 +373,4 @@ export class TonChainWallet extends BaseChainWallet {
     });
     return transfer;
   };
-
-  private seeIfBounceable = (address: string) => {
-    return Address.isFriendly(address) ? Address.parseFriendly(address).isBounceable : false;
-  };
 }
