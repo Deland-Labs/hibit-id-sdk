@@ -120,7 +120,8 @@ export class TonChainWallet extends BaseChainWallet {
         messages: [
           internal({
             value: toNano(amount.toString()),
-            to: Address.parse(toAddress)
+            to: Address.parse(toAddress),
+            bounce: this.getAddressBounceable(toAddress)
           })
         ],
         sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS
@@ -229,7 +230,8 @@ export class TonChainWallet extends BaseChainWallet {
     if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
       const body = internal({
         value: toNano(amount.toString()),
-        to: Address.parse(toAddress)
+        to: Address.parse(toAddress),
+        bounce: this.getAddressBounceable(toAddress)
       }).body;
       const feeData = await this.client?.estimateExternalMessageFee(Address.parse(ownerAddress), {
         body,
@@ -370,5 +372,9 @@ export class TonChainWallet extends BaseChainWallet {
       })
     });
     return transfer;
+  };
+
+  private seeIfBounceable = (address: string) => {
+    return Address.isFriendly(address) ? Address.parseFriendly(address).isBounceable : false;
   };
 }
