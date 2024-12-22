@@ -29,7 +29,11 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@solana/web3.js": "^1.94.0"
+    "@solana/web3.js": "^1.98.0",
+    "@solana/spl-token": "^0.4.9",
+    "bignumber.js": "^9.1.1",
+    "@delandlabs/coin-base": "*",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@delandlabs/coin-base": "*",
