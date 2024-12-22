@@ -123,6 +123,18 @@ export type TransferResponse = RpcBaseResponse<{
   txHash: string
 }>
 
+export type GetEstimatedFeeRequest = TransferRequest
+
+export type GetEstimatedFeeResponse = RpcBaseResponse<{
+  fee: string // in minimal unit (like wei for eth)
+}>
+
+export interface VerifyPasswordRequest {
+  password: string
+}
+
+export type VerifyPasswordResponse = RpcBaseResponse<null>
+
 export type TonConnectGetStateInitResponse = RpcBaseResponse<{
   stateInitBase64: string
 }>

@@ -10,33 +10,7 @@ export {
   HibitIdErrorCode,
 } from './enums';
 export { BridgePromise } from './types';
-export type {
-  HibitEnv,
-  Language,
-  FixDevMode,
-  HibitIdWalletOptions,
-  ConnectRequest,
-  ConnectedRequest,
-  GetAccountRequest,
-  GetAccountResponse,
-  GetChainInfoResponse,
-  SignMessageRequest,
-  SignMessageResponse,
-  GetBalanceRequest,
-  GetBalanceResponse,
-  TransferRequest,
-  TransferResponse,
-  TonConnectGetStateInitResponse,
-  TonConnectSignDataRequest,
-  TonConnectSignDataResponse,
-  TonConnectTransferRequest,
-  TonConnectTransferResponse,
-  SwitchChainRequest,
-  ChainChangedRequest,
-  AccountsChangedRequest,
-  LoginChangedRequest,
-  SetBackgroundEmbedRequest,
-} from './types';
+export type * from './types';
 export type {
   TonConnectTransactionPayload,
   TonConnectTransactionPayloadMessage,

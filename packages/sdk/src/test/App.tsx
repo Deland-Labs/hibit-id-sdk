@@ -69,6 +69,18 @@ const App: FC = () => {
       </div>
       <div>
         <button className="btn btn-sm" onClick={async () => {
+          try {
+            await wallet?.verifyPassword({ password: '123456' })
+            alert('password verified')
+          } catch (e: any) {
+            alert(e.message || e)
+          }
+        }}>
+          verify password
+        </button>
+      </div>
+      <div>
+        <button className="btn btn-sm" onClick={async () => {
           await wallet?.setBackgroundEmbed(!isBackgroundEmbed)
           setIsBackgroundEmbed(!isBackgroundEmbed)
         }}>

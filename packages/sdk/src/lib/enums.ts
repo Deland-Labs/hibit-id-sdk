@@ -15,6 +15,7 @@ export enum WalletExposeRPCMethod {
   CONNECT = 'connect',
   GET_BALANCE = 'getBalance',
   TRANSFER = 'transfer',
+  GET_ESTIMATED_FEE = 'getEstimatedFee',
   TONCONNECT_GET_STATE_INIT = 'tonConnectGetStateInit',
   TONCONNECT_TRANSFER = 'tonConnectTransfer',
   TONCONNECT_SIGN_DATA = 'tonConnectSignData',
@@ -23,6 +24,7 @@ export enum WalletExposeRPCMethod {
   SWITCH_CHAIN = 'switchChain',
   SET_BACKGROUND_EMBED = 'setBackgroundEmbed',
   SHOW_RESET_PASSWORD = 'showResetPassword',
+  VERIFY_PASSWORD = 'verifyPassword',
 }
 
 // TODO: grow this list
