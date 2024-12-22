@@ -249,13 +249,13 @@ class SolanaChainWallet extends BaseChainWallet {
       );
     }
 
-    const tokenAmount = amount.shiftedBy(assetInfo.decimalPlaces.value).toNumber();
+    const tokenAmount = BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString());
 
     const transferInstruction = createTransferInstruction(
       sourceATA,
       destinationATA,
       this.keypair!.publicKey,
-      Math.trunc(tokenAmount),
+      tokenAmount,
       [],
       tokenProgramId
     );
