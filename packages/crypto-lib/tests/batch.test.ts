@@ -1,13 +1,19 @@
 import { bip39, bip32, base, signUtil} from "../src"
 import * as fs from "fs"
 import { describe, test } from 'vitest'
+import { join } from 'path';
+import os from 'os';
+
+// 使用系统临时目录
+const tmpDir = os.tmpdir();
+const bip32Path = join(tmpDir, 'bip32.txt');
+const hashPath = join(tmpDir, 'hash.txt');
 
 describe("crypto", () => {
   // mnemonic root  child  secp256k1-public ed25519-public msg  secp256k1-signature ed25519-signature
   test("bip32", async () => {
-    const path = "./tests/bip32.txt"
-    if(fs.existsSync(path)) {
-       fs.unlinkSync(path)
+    if(fs.existsSync(bip32Path)) {
+       fs.unlinkSync(bip32Path)
     }
 
     for(let i = 0; i < 100; i++) {
@@ -38,16 +44,15 @@ describe("crypto", () => {
       items.push(base.toHex(s2))
 
      const line = items.join(",") + "\r\n"
-     fs.appendFileSync(path, line)
+     fs.appendFileSync(bip32Path, line)
      const info = `${i}  ${line}`
      console.info(info)
     }
   })
 
   test("hash", async () => {
-    const path = "./tests/hash.txt"
-    if(fs.existsSync(path)) {
-      fs.unlinkSync(path)
+    if(fs.existsSync(hashPath)) {
+      fs.unlinkSync(hashPath)
     }
 
     for(let i = 0; i < 100; i++) {
@@ -64,7 +69,7 @@ describe("crypto", () => {
 
       const items = [base.toHex(msg), s1, s2, s3, s4, s5, s6, s7, s8, s9]
       const line = items.join(",") + "\r\n"
-      fs.appendFileSync(path, line)
+      fs.appendFileSync(hashPath, line)
       const info = `${i}  ${line}`
       console.info(info)
     }
