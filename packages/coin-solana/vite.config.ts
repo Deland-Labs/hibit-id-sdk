@@ -20,7 +20,7 @@ export default defineConfig({
     },
     commonjsOptions: {
       transformMixedEsModules: true,
-      include: [/node_modules/]
+      include: [/node_modules/, /crypto-lib/]
     },
     rollupOptions: {
       plugins: [

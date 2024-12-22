@@ -13,6 +13,8 @@ import {
   GetBalanceRequest,
   GetBalanceResponse,
   GetChainInfoResponse,
+  GetEstimatedFeeRequest,
+  GetEstimatedFeeResponse,
   HibitIdError,
   HibitIdEventHandlerMap,
   HibitIdWalletOptions,
@@ -28,6 +30,8 @@ import {
   TonConnectTransferResponse,
   TransferRequest,
   TransferResponse,
+  VerifyPasswordRequest,
+  VerifyPasswordResponse,
 } from './types';
 import {
   SdkExposeRPCMethod,
@@ -230,6 +234,25 @@ export class HibitIdWallet {
     }
   };
 
+  public getEstimatedFee = async (option: GetEstimatedFeeRequest): Promise<string> => {
+    const request: GetEstimatedFeeRequest = option || {};
+    console.debug('[sdk call getEstimatedFee]', { request });
+    await this._iframeReadyPromise.promise;
+    this.assertConnected();
+    try {
+      const res = await this._rpc?.call<GetEstimatedFeeResponse>(
+        WalletExposeRPCMethod.GET_ESTIMATED_FEE,
+        request
+      );
+      if (!res?.success) {
+        throw new Error(res?.errMsg);
+      }
+      return res.data.fee ?? null;
+    } catch (e: any) {
+      throw new Error(`Get estimated fee failed: ${this.getRpcErrorMessage(e)}`);
+    }
+  }
+
   public tonConnectGetStateInit = async (): Promise<string> => {
     console.debug('[sdk call TonConnectGetStateInit]');
     await this._iframeReadyPromise.promise;
@@ -364,6 +387,25 @@ export class HibitIdWallet {
     this.assertConnected();
     await this._rpc?.call(WalletExposeRPCMethod.SHOW_RESET_PASSWORD, {});
     this.showIframe();
+  }
+
+  public verifyPassword = async (option: VerifyPasswordRequest): Promise<boolean> => {
+    const request: VerifyPasswordRequest = option || {};
+    console.debug('[sdk call verifyPassword]');
+    await this._iframeReadyPromise.promise;
+    this.assertConnected();
+    try {
+      const res = await this._rpc?.call<VerifyPasswordResponse>(
+        WalletExposeRPCMethod.VERIFY_PASSWORD,
+        request
+      );
+      if (!res?.success) {
+        throw new Error(res?.errMsg);
+      }
+      return true;
+    } catch (e: any) {
+      throw new Error(`Verify password failed: ${this.getRpcErrorMessage(e)}`);
+    }
   }
 
   public addEventListener = <K extends keyof HibitIdEventHandlerMap>(

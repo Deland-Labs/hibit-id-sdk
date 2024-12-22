@@ -24,6 +24,10 @@ export default defineConfig({
       // the proper extensions will be added
       fileName: 'hibit-id-wallet-sdk',
     },
+    commonjsOptions: {
+      transformMixedEsModules: true,
+      include: [/node_modules/, /crypto-lib/]
+    },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
