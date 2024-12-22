@@ -36,7 +36,6 @@
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
-    "@delandlabs/coin-base": "*",
     "@eslint/js": "^9.16.0",
     "@rollup/plugin-typescript": "^12.1.1",
     "@typescript-eslint/eslint-plugin": "^8.16.0",
