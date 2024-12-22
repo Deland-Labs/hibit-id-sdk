@@ -198,7 +198,7 @@ class SolanaChainWallet extends BaseChainWallet {
   private async getTokenProgramId(mint: PublicKey): Promise<PublicKey> {
     const accountInfo = await this.connection.getAccountInfo(mint);
     if (!accountInfo) {
-      throw new Error('Token mint not found');
+      throw new Error(`${CHAIN_NAME}: Token mint ${mint.toString()} not found`);
     }
 
     if (accountInfo.owner.equals(TOKEN_2022_PROGRAM_ID)) {
@@ -213,25 +213,19 @@ class SolanaChainWallet extends BaseChainWallet {
     amount: BigNumber,
     assetInfo: AssetInfo
   ): Promise<Transaction> {
+    if (!toAddress || !amount || !assetInfo) {
+      throw new Error(`${CHAIN_NAME}: Missing required parameters`);
+    }
+
     const mint = new PublicKey(assetInfo.contractAddress);
     const tokenProgramId = await this.getTokenProgramId(mint);
 
-    const sourceATA = await getAssociatedTokenAddress(
-      mint,
-      this.keypair!.publicKey,
-      false,
-      tokenProgramId,
-      ASSOCIATED_TOKEN_PROGRAM_ID
-    );
+    const [sourceATA, destinationATA] = await Promise.all([
+      getAssociatedTokenAddress(mint, this.keypair!.publicKey, false, tokenProgramId, ASSOCIATED_TOKEN_PROGRAM_ID),
+      getAssociatedTokenAddress(mint, new PublicKey(toAddress), false, tokenProgramId, ASSOCIATED_TOKEN_PROGRAM_ID)
+    ]);
 
     const destinationPubkey = new PublicKey(toAddress);
-    const destinationATA = await getAssociatedTokenAddress(
-      mint,
-      destinationPubkey,
-      false,
-      tokenProgramId,
-      ASSOCIATED_TOKEN_PROGRAM_ID
-    );
 
     const transaction = new Transaction();
 
