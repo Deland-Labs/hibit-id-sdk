@@ -8,7 +8,7 @@
     "module": "ESNext",
     "strict": true,
     "declaration": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     /* Additional Checks */

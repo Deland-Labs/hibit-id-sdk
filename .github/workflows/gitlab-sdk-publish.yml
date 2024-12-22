@@ -29,8 +29,14 @@ jobs:
           fi
           echo Version: $Version
           export VITE_RELEASE_VERSION=$Version
+
           yarn install --frozen-lockfile
+
+          # Replace * with actual version in package.json
+          node scripts/replaceVersions.js $Version
+          
           yarn build:all
+
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/crypto-lib
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-base
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-dfinity
