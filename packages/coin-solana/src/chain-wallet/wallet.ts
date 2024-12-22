@@ -255,7 +255,7 @@ class SolanaChainWallet extends BaseChainWallet {
       sourceATA,
       destinationATA,
       this.keypair!.publicKey,
-      Math.round(tokenAmount),
+      Math.trunc(tokenAmount),
       [],
       tokenProgramId
     );
