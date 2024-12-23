@@ -131,7 +131,7 @@ export class TonChainWallet extends BaseChainWallet {
       await this.wallet!.send(transfer);
 
       // Get transaction hash
-      const msgHash = transfer.hash().toString('base64');
+      const msgHash = transfer.hash().toString('hex');
 
       // Wait for confirmation
       let currentSeqno = seqno;
@@ -196,7 +196,7 @@ export class TonChainWallet extends BaseChainWallet {
         });
 
         await this.wallet!.send(transfer);
-        const msgHash = transfer.hash().toString('base64');
+        const msgHash = transfer.hash().toString('hex');
 
         // wait until confirmed
         let currentSeqno = seqno;
