@@ -26,7 +26,11 @@ export const EthereumSepolia: ChainInfo = {
   ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://sepolia.etherscan.io',
-  rpcUrls: ['https://ethereum-sepolia.blockpi.network/v1/rpc/public	']
+  rpcUrls: [
+    'https://ethereum-sepolia-rpc.publicnode.com',
+    'https://1rpc.io/sepolia',
+    'https://endpoints.omniatech.io/v1/eth/sepolia/public',
+  ]
 };
 
 export const EthereumBsc: ChainInfo = {
