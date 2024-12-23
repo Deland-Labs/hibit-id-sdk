@@ -114,7 +114,7 @@ export class TonChainWallet extends BaseChainWallet {
     // native
     if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
       const seqno = (await this.wallet!.getSeqno()) || 0;
-      await this.wallet!.sendTransfer({
+      const transfer = await this.wallet!.createTransfer({
         seqno: seqno,
         secretKey: this.keyPair!.secretKey,
         messages: [
@@ -126,7 +126,14 @@ export class TonChainWallet extends BaseChainWallet {
         ],
         sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS
       });
-      // wait until confirmed
+
+      // Send transaction
+      await this.wallet!.send(transfer);
+
+      // Get transaction hash
+      const msgHash = transfer.hash().toString('base64');
+
+      // Wait for confirmation
       let currentSeqno = seqno;
       const MAX_RETRIES = 10;
       let retries = 0;
@@ -138,7 +145,7 @@ export class TonChainWallet extends BaseChainWallet {
         currentSeqno = (await this.wallet!.getSeqno()) || 0;
         retries++;
       }
-      return '';
+      return msgHash;
     }
     // jetton
     if (assetInfo.chainAssetType.equals(FT_ASSET)) {
@@ -181,19 +188,23 @@ export class TonChainWallet extends BaseChainWallet {
       // send jetton
       const seqno = (await this.wallet!.getSeqno()) || 0;
       try {
-        await this.wallet!.sendTransfer({
+        const transfer = await this.wallet!.createTransfer({
           seqno: seqno,
           secretKey: this.keyPair!.secretKey,
           messages: [internalMessage],
           sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS
         });
+
+        await this.wallet!.send(transfer);
+        const msgHash = transfer.hash().toString('base64');
+
         // wait until confirmed
         let currentSeqno = seqno;
         while (currentSeqno == seqno) {
           await sleep(3000);
           currentSeqno = (await this.wallet!.getSeqno()) || 0;
         }
-        return '';
+        return msgHash;
       } catch (e: any) {
         const errMsg = e.response?.data?.error || e.message || 'Unknown error';
         if (e.response?.status === 500) {
@@ -245,9 +256,9 @@ export class TonChainWallet extends BaseChainWallet {
       const fee = fromNano(
         String(
           feeData.source_fees.fwd_fee +
-            feeData.source_fees.in_fwd_fee +
-            feeData.source_fees.storage_fee +
-            feeData.source_fees.gas_fee
+          feeData.source_fees.in_fwd_fee +
+          feeData.source_fees.storage_fee +
+          feeData.source_fees.gas_fee
         )
       );
       return new BigNumber(fee);
