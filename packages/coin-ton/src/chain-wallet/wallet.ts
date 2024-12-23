@@ -111,6 +111,9 @@ export class TonChainWallet extends BaseChainWallet {
     }
     await this.readyPromise;
 
+    const MAX_RETRIES = 10;
+    let retries = 0;
+
     // native
     if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
       const seqno = (await this.wallet!.getSeqno()) || 0;
@@ -135,8 +138,6 @@ export class TonChainWallet extends BaseChainWallet {
 
       // Wait for confirmation
       let currentSeqno = seqno;
-      const MAX_RETRIES = 10;
-      let retries = 0;
       while (currentSeqno == seqno) {
         if (retries >= MAX_RETRIES) {
           throw new Error(`${CHAIN_NAME}: transaction confirmation timeout`);
@@ -201,8 +202,12 @@ export class TonChainWallet extends BaseChainWallet {
         // wait until confirmed
         let currentSeqno = seqno;
         while (currentSeqno == seqno) {
+          if (retries >= MAX_RETRIES) {
+            throw new Error(`${CHAIN_NAME}: transaction confirmation timeout`);
+          }
           await sleep(3000);
           currentSeqno = (await this.wallet!.getSeqno()) || 0;
+          retries++;
         }
         return msgHash;
       } catch (e: any) {
