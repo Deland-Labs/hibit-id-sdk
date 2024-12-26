@@ -1,4 +1,4 @@
-import { CONTROLLER_CONTAINER_ID, IFRAME_CONTAINER_ID } from "../constants"
+import { CONTROLLER_CONTAINER_ID, IFRAME_BACKDROP_ID, IFRAME_CONTAINER_ID } from "../constants"
 import { HibitIdChainId } from "../enums"
 import { FixDevMode, HibitEnv, Language } from "../types"
 import { clamp, getHibitIdUrl } from "../utils"
@@ -153,15 +153,15 @@ export class HibitIdController {
 export class HibitIdIframe {
   public iframe: HTMLIFrameElement
   public readonly isDesktop: boolean
-  private container: HTMLDivElement
+  private _container: HTMLDivElement
   private _visible = false
 
   constructor(env: HibitEnv, chains: HibitIdChainId[] = [], urlAppendix: string = '', lang: Language | '' = '', fixDevMode: FixDevMode = 'unset' ) {
     this.isDesktop = window.innerWidth > 576
     const existed = document.getElementById(IFRAME_CONTAINER_ID)
     if (existed) {
-      this.container = existed as HTMLDivElement
-      this.iframe = this.container.querySelector('iframe') as HTMLIFrameElement
+      this._container = existed as HTMLDivElement
+      this.iframe = this._container.querySelector('iframe') as HTMLIFrameElement
       return
     }
     const container = document.createElement('div')
@@ -171,7 +171,7 @@ export class HibitIdIframe {
     iframe.allow='clipboard-write; publickey-credentials-get *; publickey-credentials-create *'
     container.appendChild(iframe)
     document.body.appendChild(container)
-    this.container = container
+    this._container = container
     this.iframe = iframe
     this.hide()
   }
@@ -184,13 +184,14 @@ export class HibitIdIframe {
     Object.keys(style).forEach((key) => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      this.container.style[key] = style[key]
+      this._container.style[key] = style[key]
     })
   }
 
   public show = (
     mode: 'fullscreen' | 'centered' | 'floating',
-    floatingPos?: { right: number, bottom: number }
+    floatingPos?: { right: number, bottom: number },
+    withBackdrop?: boolean
   ) => {
     if (mode === 'fullscreen') {
       this.updateStyle({
@@ -230,16 +231,22 @@ export class HibitIdIframe {
         })
       }
     }
+    if (withBackdrop && !document.getElementById(IFRAME_BACKDROP_ID)) {
+      const backdrop = document.createElement('div')
+      backdrop.id = IFRAME_BACKDROP_ID
+      document.body.appendChild(backdrop)
+    }
     this._visible = true
   }
 
   public hide = () => {
-    this.container.style.width = '0'
-    this.container.style.height = '0'
+    this._container.style.width = '0'
+    this._container.style.height = '0'
+    document.getElementById(IFRAME_BACKDROP_ID)?.remove()
     this._visible = false
   }
 
   public destroy = () => {
-    this.container?.remove()
+    this._container?.remove()
   }
 }
