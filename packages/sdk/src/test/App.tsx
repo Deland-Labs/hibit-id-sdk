@@ -18,7 +18,7 @@ const App: FC = () => {
       env: 'dev',
       chains: [],
       defaultChain: HibitIdChainId.EthereumSepolia,
-      embedMode: 'float',
+      embedMode: 'background',
     })
     setWallet(wallet)
     const handleChainChanged = (chainId: HibitIdChainId) => setChainId(chainId)

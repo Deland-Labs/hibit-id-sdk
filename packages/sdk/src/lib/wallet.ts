@@ -587,7 +587,8 @@ export class HibitIdWallet {
               right: window.innerWidth - controllerRect.right,
               bottom: window.innerHeight - controllerRect.top + 20
             }
-          : undefined
+          : undefined,
+        this._options.embedMode === 'background',
       );
     }
   };
