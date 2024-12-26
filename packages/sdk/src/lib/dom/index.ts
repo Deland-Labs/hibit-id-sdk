@@ -247,6 +247,7 @@ export class HibitIdIframe {
   }
 
   public destroy = () => {
+    this.hide()
     this._container?.remove()
   }
 }
