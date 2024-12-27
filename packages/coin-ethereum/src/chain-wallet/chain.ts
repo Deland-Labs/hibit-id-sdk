@@ -206,3 +206,18 @@ export const EthereumSwanTestnet: ChainInfo = {
   explorer: 'https://proxima-explorer.swanchain.io',
   rpcUrls: ['https://rpc-proxima.swanchain.io']
 };
+
+export const EthereumPanta: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmPantaNet),
+  name: 'Panta',
+  fullName: 'Panta Mainnet',
+  icon: '/chain-icons/Panta.svg',
+  nativeAssetSymbol: 'PANTA',
+  nativeAssetDecimals: 18,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'http://pantascan.xyz/',
+  rpcUrls: ['https://node2.panta.network'],
+  isMainnet: false,
+  isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
+};

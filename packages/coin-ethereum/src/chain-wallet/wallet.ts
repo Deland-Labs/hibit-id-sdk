@@ -35,25 +35,39 @@ export class EthereumChainWallet extends BaseChainWallet {
     if (!assetInfo.chain.equals(CHAIN)) {
       throw new Error(`${CHAIN_NAME}: invalid asset chain`);
     }
+
+    const chainInfo = getChain(new ChainId(assetInfo.chain, assetInfo.chainNetwork));
+    if (!chainInfo) {
+      throw new Error(
+        `${CHAIN_NAME}: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`
+      );
+    }
+    const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
+    
     // native
     if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
-      const balance = await this.provider.getBalance(address);
-      return new BigNumber(balance.toString()).shiftedBy(-assetInfo.decimalPlaces.value);
+      try {
+        const balance = await provider.getBalance(address);
+        return new BigNumber(balance.toString()).shiftedBy(-assetInfo.decimalPlaces.value);
+      } catch (e) {
+        console.error(e);
+        provider.destroy()
+        throw new Error(`${CHAIN_NAME}: failed to get native balance`);
+      }
     }
     // erc20
     if (assetInfo.chainAssetType.equals(FT_ASSET)) {
-      const chainInfo = getChain(new ChainId(assetInfo.chain, assetInfo.chainNetwork));
-      if (!chainInfo) {
-        throw new Error(
-          `${CHAIN_NAME}: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`
-        );
-      }
-      const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
       const contract = new Contract(assetInfo.contractAddress, erc20Abi, provider);
       const getDecimals = contract.decimals();
       const getBalance = contract.balanceOf(address);
-      const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
-      return new BigNumber(balance.toString()).shiftedBy(-Number(decimals));
+      try {
+        const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
+        return new BigNumber(balance.toString()).shiftedBy(-Number(decimals));
+      } catch (e) {
+        console.error(e);
+        provider.destroy()
+        throw new Error(`${CHAIN_NAME}: failed to get balance`);
+      }
     }
 
     throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
