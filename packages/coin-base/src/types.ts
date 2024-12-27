@@ -63,6 +63,7 @@ export class ChainNetwork {
   static EvmBitlayerTestNet = new ChainNetwork(new BigNumber(200810));
   static EvmSwanNet = new ChainNetwork(new BigNumber(254));
   static EvmSwanTestNet = new ChainNetwork(new BigNumber(20241133));
+  static EvmPantaNet = new ChainNetwork(new BigNumber(331));
 
   static SolanaMainNet = new ChainNetwork(new BigNumber(0x3));
   static SolanaTestNet = new ChainNetwork(new BigNumber(0x2));

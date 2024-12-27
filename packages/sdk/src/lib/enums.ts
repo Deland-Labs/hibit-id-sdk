@@ -69,6 +69,7 @@ export enum HibitIdChainId {
   EthereumScrollSepolia = '60_534351',
   EthereumBitlayer = '60_200901',
   EthereumBitlayerTestnet = '60_200810',
+  EthereumPanta = '60_331',
 
   SolanaMainnet = '501_3',
   SolanaTestnet = '501_2',

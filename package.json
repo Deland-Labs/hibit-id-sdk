@@ -2,6 +2,7 @@
   "name": "@delandlabs/hibit-id-sdk",
   "private": true,
   "scripts": {
+    "build:coin-base": "turbo run @delandlabs/coin-base#build",
     "dev:sdk": "turbo run dev --filter=@delandlabs/hibit-id-wallet-sdk",
     "build:sdk": "turbo run @delandlabs/hibit-id-wallet-sdk#build",
     "test:coin-kaspa": "turbo run @delandlabs/coin-kaspa#test",
