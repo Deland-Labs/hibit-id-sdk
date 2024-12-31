@@ -40,7 +40,7 @@ describe('validateHexString', () => {
     expect(validateHexString('0x1a2b3cf')).toBe(false);
   });
 
-  it('returns false for valid hex string without odd length', () => {
+  it('returns false for hex string with odd length (no 0x prefix)', () => {
     expect(validateHexString('1a2b3cf')).toBe(false);
   });
 });
