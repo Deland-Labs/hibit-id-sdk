@@ -38,6 +38,6 @@
     "protobufjs": "^7.2.4",
     "randombytes": "^2.1.0",
     "safe-buffer": "^5.1.1",
-    "wif": "^2.0.6"
+    "wif": "^5.0.0"
   }
 }
