@@ -26,13 +26,13 @@ describe('validateHexString', () => {
   it('returns false for 0X string', () => {
     expect(validateHexString('0X')).toBe(false);
   });
-  it('returns true for valid hex string with chinese', () => {
+  it('returns false for hex string with Chinese characters', () => {
     expect(validateHexString('0x1a2b3c中文')).toBe(false);
   });
-  it('returns true for valid hex string with space', () => {
+  it('returns false for hex string that contains spaces', () => {
     expect(validateHexString('0x1a2b3c abcdef')).toBe(false);
   });
-  it('returns true for valid hex string with chinese and space ', () => {
+  it('returns false for hex string containing Chinese and space', () => {
     expect(validateHexString('0x1a2b3c 中文')).toBe(false);
   });
 
@@ -40,7 +40,7 @@ describe('validateHexString', () => {
     expect(validateHexString('0x1a2b3cf')).toBe(false);
   });
 
-  it('returns false for valid hex string without odd length', () => {
+  it('returns false for hex string with odd length (no 0x prefix)', () => {
     expect(validateHexString('1a2b3cf')).toBe(false);
   });
 });
