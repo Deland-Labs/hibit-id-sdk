@@ -3,7 +3,8 @@ import { AssetInfo, BaseChainWallet, ChainId, ChainInfo, WalletAccount } from '@
 import { TronWeb } from 'tronweb';
 import BigNumber from 'bignumber.js';
 import { ADDRESS_PREFIX_BYTE, NATIVE_ASSET, FT_ASSET, CHAIN, CHAIN_NAME, DERIVING_PATH } from './defaults';
-import { base, signUtil } from '@delandlabs/crypto-lib';
+import { base } from '@delandlabs/crypto-lib';
+import * as secp256k1 from '@noble/secp256k1';
 
 class TronChainWallet extends BaseChainWallet {
   private readonly tronWeb: TronWeb;
@@ -177,7 +178,7 @@ class TronChainWallet extends BaseChainWallet {
 
   private async getPubKey(compressed: boolean) {
     const priKeyBytes = base.fromHex(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
-    return signUtil.secp256k1.publicKeyCreate(priKeyBytes, compressed);
+    return secp256k1.getPublicKey(priKeyBytes, compressed);
   }
 
   private async getAddress() {

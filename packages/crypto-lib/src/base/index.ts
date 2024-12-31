@@ -8,7 +8,6 @@ export * from "./hmac"
 export * from "./utf8"
 export * from './bignumber-plus'
 export * from './precondtion'
-export * as rlp from '../abi/rlp'
 export * from './helper'
 export * as md5 from "./md5"
 
