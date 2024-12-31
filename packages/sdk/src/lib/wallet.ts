@@ -325,7 +325,7 @@ export class HibitIdWallet {
     await this._iframeReadyPromise.promise;
     this._connected = false;
     // this._disconnectedPromise = new BridgePromise<boolean>()
-    // this._rpc?.call(HibitIdExposeRPCMethod.DISCONNECT, {})
+    await this._rpc?.call(WalletExposeRPCMethod.DISCONNECT, {})
     // await this._disconnectedPromise.promise
     // this.dispose()
   };
@@ -665,7 +665,6 @@ export class HibitIdWallet {
     console.debug('[sdk on Disconnected]');
     this._connected = false;
     this._disconnectedPromise?.resolve(true);
-    this._disconnectedPromise = null;
   };
 
   private getRpcErrorMessage = (e: any) => {
