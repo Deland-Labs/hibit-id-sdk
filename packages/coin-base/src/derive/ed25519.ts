@@ -1,17 +1,18 @@
-import { base, bip39, signUtil } from '@delandlabs/crypto-lib';
-
+import { base, bip39 } from '@delandlabs/crypto-lib';
+import * as ed25519 from '@noble/ed25519';
+ed25519.etc.sha512Sync = base.sha512;
 /**
  * WARNING: This function is for testing purposes only.
  * DO NOT use this function for production signing operations.
  * @param privateKey - The private key to test
  * @returns boolean - Whether the test signature is valid
  */
-export function ed25519SignTest(privateKey: Buffer) {
+export function ed25519SignTest(privateKey: Uint8Array) {
   const testMsg = base.randomBytes(32);
   const msgHash = base.sha256(testMsg);
-  const publicKey = signUtil.ed25519.publicKeyCreate(privateKey);
-  const signature = signUtil.ed25519.sign(msgHash, privateKey);
-  const result = signUtil.ed25519.verify(msgHash, signature, publicKey);
+  const publicKey = ed25519.getPublicKey(base.toHex(privateKey));
+  const signature = ed25519.sign(msgHash, privateKey);
+  const result = ed25519.verify(msgHash, signature, publicKey);
   // Clear sensitive data
   testMsg.fill(0);
   msgHash.fill(0);
@@ -34,18 +35,16 @@ function getRandomEd25519PrivateKey(concatPub: boolean, encode: 'hex' | 'base58'
     if (attempts++ >= MAX_ATTEMPTS) {
       throw new Error('Failed to generate valid private key after maximum attempts');
     }
-    const randBytes = base.randomBytes(32);
-    if (signUtil.ed25519.privateKeyVerify(randBytes)) {
-      if (ed25519SignTest(randBytes)) {
-        const publicKey = signUtil.ed25519.publicKeyCreate(randBytes);
-        const privateKey: Uint8Array = concatPub ? base.concatBytes(randBytes, publicKey) : randBytes;
-        // Clear sensitive data
-        randBytes.fill(0);
-        if (concatPub) publicKey.fill(0);
-        return encode === 'base58' ? base.toBase58(privateKey) : base.toHex(privateKey);
-      }
+    const randBytes = ed25519.utils.randomPrivateKey();
+
+    if (ed25519SignTest(randBytes)) {
+      const publicKey = ed25519.getPublicKey(base.toHex(randBytes));
+      const privateKey: Uint8Array = concatPub ? base.concatBytes(randBytes, publicKey) : randBytes;
+      // Clear sensitive data
+      randBytes.fill(0);
+      if (concatPub) publicKey.fill(0);
+      return encode === 'base58' ? base.toBase58(privateKey) : base.toHex(privateKey);
     }
-    randBytes.fill(0);
   }
 }
 
@@ -139,13 +138,10 @@ async function getEd25519DerivedPrivateKey(
     throw new Error('Invalid encoding format');
   }
 
-  const seed = await bip39.mnemonicToSeed(mnemonic) ;
+  const seed = await bip39.mnemonicToSeed(mnemonic);
   const derivedSeed = derivePath(hdPath, seed).key;
-  const publicKey = signUtil.ed25519.publicKeyCreate(derivedSeed);
+  const publicKey = ed25519.getPublicKey(base.toHex(derivedSeed));
   const privateKey = concatPub ? base.concatBytes(derivedSeed, publicKey) : derivedSeed;
-
-  // Clear sensitive data
-  seed.fill(0);
 
   return encode === 'base58' ? Promise.resolve(base.toBase58(privateKey)) : Promise.resolve(base.toHex(privateKey));
 }

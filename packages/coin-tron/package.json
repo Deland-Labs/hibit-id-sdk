@@ -29,8 +29,9 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@delandlabs/crypto-lib": "*",
     "@delandlabs/coin-base": "*",
+    "@delandlabs/crypto-lib": "*",
+    "@noble/secp256k1": "^2.1.0",
     "tronweb": "^6.0.0"
   },
   "devDependencies": {
