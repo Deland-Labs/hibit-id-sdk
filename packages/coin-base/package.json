@@ -31,6 +31,8 @@
   "dependencies": {
     "@delandlabs/crypto-lib": "*",
     "@noble/ed25519": "^2.1.0",
+    "@scure/bip32": "^1.6.0",
+    "@scure/bip39": "^1.5.0",
     "class-transformer": "^0.5.1",
     "reflect-metadata": "^0.2.2"
   },

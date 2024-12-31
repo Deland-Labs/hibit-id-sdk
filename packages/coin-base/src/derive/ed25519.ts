@@ -1,5 +1,8 @@
-import { base, bip39 } from '@delandlabs/crypto-lib';
+import { base } from '@delandlabs/crypto-lib';
 import * as ed25519 from '@noble/ed25519';
+import * as bip39 from '@scure/bip39';
+import { wordlist } from '@scure/bip39/wordlists/english';
+
 ed25519.etc.sha512Sync = base.sha512;
 /**
  * WARNING: This function is for testing purposes only.
@@ -131,7 +134,7 @@ async function getEd25519DerivedPrivateKey(
   if (!mnemonic) {
     throw new Error('Mnemonic is required');
   }
-  if (!bip39.validateMnemonic(mnemonic)) {
+  if (!bip39.validateMnemonic(mnemonic, wordlist)) {
     throw new Error('Invalid mnemonic phrase');
   }
   if (!['hex', 'base58'].includes(encode)) {

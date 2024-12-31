@@ -1,15 +1,19 @@
-import { base, bip32, bip39 } from '@delandlabs/crypto-lib';
+import { base } from '@delandlabs/crypto-lib';
+import { HDKey } from '@scure/bip32';
+import * as bip39 from '@scure/bip39';
+import { wordlist } from '@scure/bip39/wordlists/english';
 
 const getEcdsaDerivedPrivateKey = async (mnemonic: string, derivationPath: string): Promise<string> => {
   if (!mnemonic || !derivationPath) {
     throw new Error('Invalid parameters: mnemonic and derivationPath are required');
   }
-  if (!bip39.validateMnemonic(mnemonic)) {
+  if (!bip39.validateMnemonic(mnemonic, wordlist)) {
     throw new Error('Invalid mnemonic phrase');
   }
   const masterSeed = await bip39.mnemonicToSeed(mnemonic);
   try {
-    const childKey = bip32.fromSeed(masterSeed).derivePath(derivationPath);
+    const masterKey = HDKey.fromMasterSeed(masterSeed);
+    const childKey = masterKey.derive(derivationPath);
     if (!childKey.privateKey) {
       throw new Error('Failed to derive private key');
     }
