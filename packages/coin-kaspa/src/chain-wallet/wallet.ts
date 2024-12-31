@@ -78,7 +78,7 @@ export class KaspaChainWallet extends BaseChainWallet {
       if (res.message !== 'successful') throw new Error(`${CHAIN_NAME}: getKrc20Balance failed`);
 
       for (const balanceInfo of res.result) {
-        if (balanceInfo.tick.toUpperCase() !== assetInfo.contractAddress.toUpperCase()) {
+        if (balanceInfo.tick.toUpperCase() === assetInfo.contractAddress.toUpperCase()) {
           return new BigNumber(balanceInfo.balance).shiftedBy(-Number(balanceInfo.dec));
         }
       }
