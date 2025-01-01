@@ -6,6 +6,6 @@
       "src/*": ["src/*"]
     }
   },
-  "include": ["src", "tests/wallet.test.ts"],
+  "include": ["src"],
   "exclude": ["**/node_modules"]
 }
