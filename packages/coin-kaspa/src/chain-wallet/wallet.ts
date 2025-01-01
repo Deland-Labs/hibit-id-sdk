@@ -31,9 +31,10 @@ export class KaspaChainWallet extends BaseChainWallet {
     }
     super(chainInfo, phrase);
     this.networkId = chainInfo.isMainnet ? NetworkId.Mainnet : NetworkId.Testnet10;
-    const endpoint = chainInfo.isMainnet
-      ? import.meta.env.VITE_HIBIT_KASPA_MAINNET_ENDPOINT
-      : import.meta.env.VITE_HIBIT_KASPA_TESTNET_ENDPOINT;
+    const endpoint="wss://charm-11.kaspa.blue/kaspa/testnet-11/wrpc/json";
+    // const endpoint = chainInfo.isMainnet
+    //   ? import.meta.env.VITE_HIBIT_KASPA_MAINNET_ENDPOINT
+    //   : import.meta.env.VITE_HIBIT_KASPA_TESTNET_ENDPOINT;
     this.rpcClient = new RpcClient({
       networkId: this.networkId,
       endpoint // ! TEMP: use endpoint for now

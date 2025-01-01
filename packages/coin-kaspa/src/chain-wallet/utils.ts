@@ -1,9 +1,4 @@
-import {
-  GeneratorSettings,
-  SignableTransaction,
-  GeneratorSummary,
-  Generator
-} from '@kcoin/kaspa-web3.js';
+import { GeneratorSettings, SignableTransaction, GeneratorSummary, Generator } from '@kcoin/kaspa-web3.js';
 
 export const createTransactions = (
   settings: GeneratorSettings
