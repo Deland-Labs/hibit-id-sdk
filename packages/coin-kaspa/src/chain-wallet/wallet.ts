@@ -12,7 +12,8 @@ import {
   Krc20RpcClient,
   Krc20TransferOptions,
   Krc20TransferParams,
-  SendKasParams
+  SendKasParams,
+  Resolver
 } from '@kcoin/kaspa-web3.js';
 import { createTransactions } from './utils';
 import { CHAIN, CHAIN_NAME, DERIVING_PATH, FT_ASSET, NATIVE_ASSET } from './defaults';
@@ -30,9 +31,10 @@ export class KaspaChainWallet extends BaseChainWallet {
     super(chainInfo, phrase);
     this.validateChain(chainInfo);
     this.networkId = chainInfo.isMainnet ? NetworkId.Mainnet : NetworkId.Testnet10;
+    const resolver = new Resolver();
     this.rpcClient = new RpcClient({
       networkId: this.networkId,
-      endpoint: this.getEndpoint(chainInfo)
+      resolver: resolver.createWithEndpoints([this.getEndpoint(chainInfo)])
     });
     this.krc20RpcClient = new Krc20RpcClient({ networkId: this.networkId });
   }
