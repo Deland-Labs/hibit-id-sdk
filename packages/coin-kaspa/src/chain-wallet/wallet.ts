@@ -292,7 +292,7 @@ export class KaspaChainWallet extends BaseChainWallet {
       : isReveal
         ? sendParam.commitTxPriorityFee
         : sendParam.revealPriorityFee;
-    if (priorityFee) {
+    if (priorityFee?.amount) {
       return {
         priorityFee,
         result: txResult
