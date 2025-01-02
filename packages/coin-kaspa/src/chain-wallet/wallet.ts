@@ -65,10 +65,10 @@ export class KaspaChainWallet extends BaseChainWallet {
 
   public override balanceOf = async (address: string, assetInfo: AssetInfo): Promise<BigNumber> => {
     this.validateAssetChain(assetInfo);
-    switch (assetInfo.chainAssetType) {
-      case NATIVE_ASSET:
+    switch (assetInfo.chainAssetType.toString()) {
+      case NATIVE_ASSET.toString():
         return this.getNativeBalance(address, assetInfo);
-      case FT_ASSET:
+      case FT_ASSET.toString():
         return this.getKrc20Balance(address, assetInfo);
       default:
         throw new Error(`${CHAIN_NAME}: invalid chain asset type`);
