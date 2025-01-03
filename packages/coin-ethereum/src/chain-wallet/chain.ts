@@ -92,7 +92,7 @@ export const EthereumScrollSepolia: ChainInfo = {
 };
 
 export const EthereumBase: ChainInfo = {
-  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmBscNet),
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmBaseNet),
   name: 'Base',
   fullName: 'Base Mainnet',
   icon: '/chain-icons/Base.svg',
