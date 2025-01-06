@@ -364,7 +364,7 @@ export class HibitIdWallet {
     await this._rpc?.call(WalletExposeRPCMethod.SET_BACKGROUND_EMBED, { value } as SetBackgroundEmbedRequest);
     this._options.embedMode = value ? 'background' : 'float';
 
-    const iframeVisible = this._iframe?.visible ?? false
+    const iframeVisible = (value ? false : this._iframe?.visible) ?? false
     // update controller and reposition iframe
     if (!value) {
       this._controller = new HibitIdController(
