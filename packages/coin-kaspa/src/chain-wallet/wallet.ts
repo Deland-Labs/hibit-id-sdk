@@ -31,10 +31,9 @@ export class KaspaChainWallet extends BaseChainWallet {
     super(chainInfo, phrase);
     this.validateChain(chainInfo);
     this.networkId = chainInfo.isMainnet ? NetworkId.Mainnet : NetworkId.Testnet10;
-    const resolver = new Resolver();
     this.rpcClient = new RpcClient({
       networkId: this.networkId,
-      resolver: resolver.createWithEndpoints([this.getEndpoint(chainInfo)])
+      resolver: Resolver.createWithEndpoints([this.getEndpoint(chainInfo)])
     });
     this.krc20RpcClient = new Krc20RpcClient({ networkId: this.networkId });
   }
@@ -95,7 +94,7 @@ export class KaspaChainWallet extends BaseChainWallet {
 
   private async getKrc20Balance(address: string, assetInfo: AssetInfo): Promise<BigNumber> {
     const res = await this.krc20RpcClient.getKrc20Balance(address, assetInfo.contractAddress);
-    if (res.message !== 'successful') throw new Error(`${CHAIN_NAME}: getKrc20Balance failed`);
+    if (res.message !== 'successful' || !res.result) throw new Error(`${CHAIN_NAME}: getKrc20Balance failed`);
 
     for (const balanceInfo of res.result) {
       if (balanceInfo.tick.toUpperCase() === assetInfo.contractAddress.toUpperCase()) {

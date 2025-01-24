@@ -628,10 +628,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@kcoin/kaspa-web3.js@^0.1.7":
-  version "0.1.8"
-  resolved "https://registry.npmmirror.com/@kcoin/kaspa-web3.js/-/kaspa-web3.js-0.1.8.tgz#22f7d1bac62a30cc5e798ae8d05d3d046dfcace6"
-  integrity sha512-xS47KhRbZGwxVoE1MnzakYaXO9MnX/a7TEpFsEygAVrjpIhFVAdPmVWLQKEX6ET0Eof91u6rMFDY8xbHk64trA==
+"@kcoin/kaspa-web3.js@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.npmmirror.com/@kcoin/kaspa-web3.js/-/kaspa-web3.js-0.1.9.tgz#6f40463797e9aa815f34ecfd91b5414a63a4d041"
+  integrity sha512-WDPMfubHmaYvsRTsmTDCucLyuEIQ5lHlo4uc9ys07lcMt1IwVyyTLokPAKOjr75G9h/N5xgWslme7Em4jRXe2w==
   dependencies:
     "@noble/curves" "^1.7.0"
     "@noble/hashes" "^1.6.1"
