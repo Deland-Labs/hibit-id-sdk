@@ -190,7 +190,7 @@ class SolanaChainWallet extends BaseChainWallet {
   }
 
   private async initWallet(): Promise<void> {
-    const privateKeyHex = await this.getEcdsaDerivedPrivateKey(DERIVING_PATH);
+    const privateKeyHex = await this.getEd25519DerivedPrivateKey(DERIVING_PATH, true, 'hex');
     const secretKey = Buffer.from(privateKeyHex, 'hex');
     this.keypair = Keypair.fromSecretKey(secretKey);
   }
