@@ -13,18 +13,15 @@ import {
 } from '@solana/spl-token';
 
 class SolanaChainWallet extends BaseChainWallet {
-  private readonly connection: Connection;
-  private keypair: Keypair | null = null;
   private readonly readyPromise: Promise<void>;
+  private connection: Connection | null = null;
+  private keypair: Keypair | null = null;
 
   constructor(chainInfo: ChainInfo, phrase: string) {
     if (!chainInfo.chainId.type.equals(CHAIN)) {
       throw new Error(`${CHAIN_NAME}: invalid chain type`);
     }
     super(chainInfo, phrase);
-    this.connection = new Connection(chainInfo.rpcUrls[0], {
-      commitment: DEFAULT_COMMITMENT
-    });
     this.readyPromise = this.initWallet();
   }
 
@@ -108,12 +105,14 @@ class SolanaChainWallet extends BaseChainWallet {
   };
 
   private async getNativeBalance(address: string, assetInfo: AssetInfo): Promise<BigNumber> {
+    await this.readyPromise
     const pubkey = new PublicKey(address);
-    const balance = await this.connection.getBalance(pubkey);
+    const balance = await this.connection!.getBalance(pubkey);
     return new BigNumber(balance).shiftedBy(-assetInfo.decimalPlaces.value);
   }
 
   private async getSplTokenBalance(assetInfo: AssetInfo): Promise<BigNumber> {
+    await this.readyPromise
     const mint = new PublicKey(assetInfo.contractAddress);
     const tokenProgramId = await this.getTokenProgramId(mint);
     const sourceATA = await getAssociatedTokenAddress(
@@ -123,15 +122,16 @@ class SolanaChainWallet extends BaseChainWallet {
       tokenProgramId,
       ASSOCIATED_TOKEN_PROGRAM_ID
     );
-    const balance = await this.connection.getTokenAccountBalance(sourceATA);
+    const balance = await this.connection!.getTokenAccountBalance(sourceATA);
     return new BigNumber(balance.value.amount).shiftedBy(-assetInfo.decimalPlaces.value);
   }
 
   private async transferNative(toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<string> {
+    await this.readyPromise
     const recipientPubKey = new PublicKey(toAddress);
     const lamports = amount.shiftedBy(assetInfo.decimalPlaces.value).toNumber();
 
-    const { blockhash, lastValidBlockHeight } = await this.connection.getLatestBlockhash(DEFAULT_COMMITMENT);
+    const { blockhash, lastValidBlockHeight } = await this.connection!.getLatestBlockhash(DEFAULT_COMMITMENT);
 
     const transaction = new Transaction().add(
       SystemProgram.transfer({
@@ -144,24 +144,26 @@ class SolanaChainWallet extends BaseChainWallet {
     transaction.lastValidBlockHeight = lastValidBlockHeight;
     transaction.feePayer = this.keypair!.publicKey;
 
-    return await sendAndConfirmTransaction(this.connection, transaction, [this.keypair!], {
+    return await sendAndConfirmTransaction(this.connection!, transaction, [this.keypair!], {
       commitment: DEFAULT_COMMITMENT
     });
   }
 
   private async transferSplToken(toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<string> {
+    await this.readyPromise
     const transaction = await this.prepareSplTokenTransaction(toAddress, amount, assetInfo);
 
-    const { blockhash } = await this.connection.getLatestBlockhash(DEFAULT_COMMITMENT);
+    const { blockhash } = await this.connection!.getLatestBlockhash(DEFAULT_COMMITMENT);
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = this.keypair!.publicKey;
 
-    return await sendAndConfirmTransaction(this.connection, transaction, [this.keypair!], {
+    return await sendAndConfirmTransaction(this.connection!, transaction, [this.keypair!], {
       commitment: DEFAULT_COMMITMENT
     });
   }
 
   private async estimateNativeFee(assetInfo: AssetInfo): Promise<BigNumber> {
+    await this.readyPromise
     const transaction = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: this.keypair!.publicKey,
@@ -170,33 +172,86 @@ class SolanaChainWallet extends BaseChainWallet {
       })
     );
 
-    const { blockhash } = await this.connection.getLatestBlockhash(DEFAULT_COMMITMENT);
+    const { blockhash } = await this.connection!.getLatestBlockhash(DEFAULT_COMMITMENT);
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = this.keypair!.publicKey;
 
-    const fee = await this.connection.getFeeForMessage(transaction.compileMessage(), DEFAULT_COMMITMENT);
+    const fee = await this.connection!.getFeeForMessage(transaction.compileMessage(), DEFAULT_COMMITMENT);
     return new BigNumber(fee?.value || 0).shiftedBy(-assetInfo.decimalPlaces.value);
   }
 
   private async estimateSplTokenFee(toAddress: string, assetInfo: AssetInfo): Promise<BigNumber> {
+    await this.readyPromise
     const transaction = await this.prepareSplTokenTransaction(toAddress, new BigNumber(0), assetInfo);
 
-    const { blockhash } = await this.connection.getLatestBlockhash(DEFAULT_COMMITMENT);
+    const { blockhash } = await this.connection!.getLatestBlockhash(DEFAULT_COMMITMENT);
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = this.keypair!.publicKey;
 
-    const fee = await this.connection.getFeeForMessage(transaction.compileMessage(), DEFAULT_COMMITMENT);
+    const fee = await this.connection!.getFeeForMessage(transaction.compileMessage(), DEFAULT_COMMITMENT);
     return new BigNumber(fee?.value || 0).shiftedBy(-assetInfo.decimalPlaces.value);
   }
 
   private async initWallet(): Promise<void> {
+    const endpoint = await this.getRpcEndpoint();
+    // Update connection with the fastest RPC
+    this.connection = new Connection(endpoint || this.chainInfo.rpcUrls[0], {
+      commitment: DEFAULT_COMMITMENT
+    });
     const privateKeyHex = await this.getEd25519DerivedPrivateKey(DERIVING_PATH, true, 'hex');
     const secretKey = Buffer.from(privateKeyHex, 'hex');
     this.keypair = Keypair.fromSecretKey(secretKey);
   }
 
+  private async getRpcEndpoint(): Promise<string | null> {
+    // Test all RPCs and select the fastest one
+    const rpc = await Promise.race(
+      this.chainInfo.rpcUrls.map((rpc) => {
+        return new Promise<string | null>((resolve) => {
+          fetch(rpc, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              id: 1,
+              method: 'getHealth',
+            }),
+          }).then((res) => {
+            res.json().then((resJson) => {
+              if (resJson.result !== 'ok') {
+                setTimeout(() => {
+                  console.debug('[fail]', rpc, resJson)
+                  resolve(null)
+                }, 5000)
+                return
+              }
+              console.debug('[ok]', rpc)
+              resolve(rpc)
+            }).catch((e) => {
+              setTimeout(() => {
+                console.debug('[fail]', rpc, e)
+                resolve(null)
+              }, 5000)
+            });
+          }).catch((e) => {
+            setTimeout(() => {
+              console.debug('[fail]', rpc, e)
+              resolve(null)
+            }, 5000)
+          });
+        })
+      })
+    );
+    // Find the fastest responding RPC
+    console.debug('[winner]', rpc)
+    return rpc
+  }
+
   private async getTokenProgramId(mint: PublicKey): Promise<PublicKey> {
-    const accountInfo = await this.connection.getAccountInfo(mint);
+    await this.readyPromise
+    const accountInfo = await this.connection!.getAccountInfo(mint);
     if (!accountInfo) {
       throw new Error(`${CHAIN_NAME}: Token mint ${mint.toString()} not found`);
     }
@@ -216,7 +271,7 @@ class SolanaChainWallet extends BaseChainWallet {
     if (!toAddress || !amount || !assetInfo) {
       throw new Error(`${CHAIN_NAME}: Missing required parameters`);
     }
-
+    await this.readyPromise
     const mint = new PublicKey(assetInfo.contractAddress);
     const tokenProgramId = await this.getTokenProgramId(mint);
 
@@ -229,7 +284,7 @@ class SolanaChainWallet extends BaseChainWallet {
 
     const transaction = new Transaction();
 
-    const destinationAccount = await this.connection.getAccountInfo(destinationATA);
+    const destinationAccount = await this.connection!.getAccountInfo(destinationATA);
     if (!destinationAccount) {
       transaction.add(
         createAssociatedTokenAccountInstruction(
