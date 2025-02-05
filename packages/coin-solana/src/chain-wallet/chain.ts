@@ -15,7 +15,6 @@ export const Solana: ChainInfo = {
   explorer: 'https://explorer.solana.com',
   // rpcUrls: [clusterApiUrl('mainnet-beta')],
   rpcUrls: [
-    'https://solana.drpc.org/',
     'https://go.getblock.io/4136d34f90a6488b84214ae26f0ed5f4',
     'https://solana-rpc.publicnode.com',
     'https://api.blockeden.xyz/solana/67nCBdZQSH9z3YqDDjdm',
