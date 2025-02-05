@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, SystemProgram, Transaction } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, SolanaJSONRPCError, SystemProgram, Transaction } from '@solana/web3.js';
 import { AssetInfo, BaseChainWallet, ChainInfo, WalletAccount } from '@delandlabs/coin-base';
 import { CHAIN, CHAIN_NAME, DERIVING_PATH, FT_ASSET, NATIVE_ASSET, DEFAULT_COMMITMENT } from './defaults';
 import nacl from 'tweetnacl';
@@ -122,8 +122,16 @@ class SolanaChainWallet extends BaseChainWallet {
       tokenProgramId,
       ASSOCIATED_TOKEN_PROGRAM_ID
     );
-    const balance = await this.connection!.getTokenAccountBalance(sourceATA);
-    return new BigNumber(balance.value.amount).shiftedBy(-assetInfo.decimalPlaces.value);
+    try {
+      const balance = await this.connection!.getTokenAccountBalance(sourceATA);
+      return new BigNumber(balance.value.amount).shiftedBy(-assetInfo.decimalPlaces.value);
+    } catch (e) {
+      if (e instanceof SolanaJSONRPCError && e.code === -32602) {
+        // Token account not found
+        return new BigNumber(0).shiftedBy(-assetInfo.decimalPlaces.value);
+      }
+      throw e
+    }
   }
 
   private async transferNative(toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<string> {
