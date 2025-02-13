@@ -37,7 +37,8 @@ import {
   SdkExposeRPCMethod,
   HibitIdChainId,
   HibitIdErrorCode,
-  WalletExposeRPCMethod
+  WalletExposeRPCMethod,
+  AuthenticatorType
 } from './enums';
 import { clamp, parseBalanceRequest, stringifyBalanceRequest } from './utils';
 import { TonConnectSignDataResult } from '@delandlabs/coin-ton';
@@ -90,7 +91,7 @@ export class HibitIdWallet {
     return this._connected;
   }
 
-  public connect = async (chainId: HibitIdChainId) => {
+  public connect = async (chainId: HibitIdChainId, authType?: AuthenticatorType) => {
     console.debug('[sdk call Connect]', { chainId });
     await this._iframeReadyPromise.promise;
 
@@ -109,7 +110,8 @@ export class HibitIdWallet {
       this.showIframe(!this._hasSession);
       this._connectPromise = new BridgePromise<WalletAccount | null>();
       this._rpc!.call(WalletExposeRPCMethod.CONNECT, {
-        chainId
+        chainId,
+        authType
       });
       const res = await this._connectPromise?.promise;
       // this._iframe!.hide()

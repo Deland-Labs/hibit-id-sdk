@@ -31,8 +31,8 @@ export enum WalletExposeRPCMethod {
 export enum AuthenticatorType {
   Telegram = 'Telegram',
   Google = 'Google',
-  Facebook = 'Facebook',
-  Apple = 'Apple',
+  // Facebook = 'Facebook',
+  // Apple = 'Apple',
   X = 'X',
   // Add more authenticators here
 }
