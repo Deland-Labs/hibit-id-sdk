@@ -1,5 +1,5 @@
 import { WalletAccount } from "@delandlabs/coin-base"
-import { HibitIdAssetType, HibitIdChainId, HibitIdErrorCode } from "./enums"
+import { AuthenticatorType, HibitIdAssetType, HibitIdChainId, HibitIdErrorCode } from "./enums"
 import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from "./tonconnect/types"
 
 export type HibitEnv = 'dev' | 'test' | 'prod'
@@ -86,6 +86,7 @@ export type RpcBaseResponse<T> = {
 
 export interface ConnectRequest {
   chainId: HibitIdChainId
+  authType?: AuthenticatorType
 }
 
 export interface ConnectedRequest extends WalletAccount {}
