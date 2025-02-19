@@ -89,8 +89,13 @@ class TronChainWallet extends BaseChainWallet {
     try {
       // native
       if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
+        const from = await this.getAddress();
+        const privateKey = await this.getEcdsaDerivedPrivateKey(DERIVING_PATH);
         const realAmount = amount.shiftedBy(assetInfo.decimalPlaces.value).toNumber();
-        const tx = await this.tronWeb.trx.send(toAddress, realAmount);
+        const tx = await this.tronWeb.trx.send(toAddress, realAmount, {
+          address: from,
+          privateKey
+        });
         return tx.transaction.txID;
       }
       // trc20
@@ -131,18 +136,14 @@ class TronChainWallet extends BaseChainWallet {
       // sign tx, because we need to estimate the bandwidth
       const signedTx = await this.tronWeb.trx.sign(tx, privateKey);
       const bandwidthPrice = (await this.getBandwidthPrice())!;
-      const account = await this.tronWeb.trx.getAccount(from);
-      const freeNetUsage = account.free_net_usage;
-      const netUsage = account.net_usage;
-      const remainingFreeBandwidth = Math.max(0, freeNetUsage - netUsage);
+      const accountResources = await this.tronWeb.trx.getAccountResources(from);
+      const freeNetLimit = accountResources.freeNetLimit ?? 0;
+      const freeNetUsage = accountResources.freeNetUsed ?? 0;
+      const remainingFreeBandwidth = Math.max(0, freeNetLimit - freeNetUsage);
       const bandwidthCost = signedTx.raw_data_hex.length / 2;
-      let estimatedBandwith = 0;
-
-      if (bandwidthCost > freeNetUsage) {
-        estimatedBandwith = Math.max(0, bandwidthCost - remainingFreeBandwidth);
-      }
-
-      return new BigNumber(estimatedBandwith).times(bandwidthPrice);
+      
+      const estimatedBandwidth = Math.max(0, bandwidthCost - remainingFreeBandwidth);
+      return new BigNumber(estimatedBandwidth).times(bandwidthPrice);
     }
 
     // trc20
@@ -207,15 +208,12 @@ class TronChainWallet extends BaseChainWallet {
   }
 
   async getBandwidthPrice() {
-    const chainParameters = await this.tronWeb.trx.getChainParameters();
-    const bandwidthPriceParam = chainParameters.find((param) => param.key === 'getBandwidthPrice');
-    if (!bandwidthPriceParam) {
-      throw new Error(`${CHAIN_NAME}: bandwidth price parameter not found`);
-    }
-    if (bandwidthPriceParam.value === 0) {
+    const address = await this.getAddress();
+    const bandwidth = await this.tronWeb.trx.getBandwidth(address);
+    if (bandwidth === 0) {
       throw new Error(`${CHAIN_NAME}: invalid bandwidth price`);
     }
-    return bandwidthPriceParam.value / 1_000_000;
+    return bandwidth / 1_000_000;
   }
 }
 
