@@ -47,7 +47,7 @@ class TronChainWallet extends BaseChainWallet {
     // native
     if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
       const balance = await this.tronWeb.trx.getBalance(address);
-      return this.tronWeb.fromSun(balance) as BigNumber;
+      return new BigNumber(this.tronWeb.fromSun(balance));
     }
     // trc20
     if (assetInfo.chainAssetType.equals(FT_ASSET)) {
@@ -57,14 +57,20 @@ class TronChainWallet extends BaseChainWallet {
           `${CHAIN_NAME}: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`
         );
       }
-      const trc20 = await this.tronWeb.contract().at(assetInfo.contractAddress);
-      const getDecimals = await trc20.decimals().call();
-      const getBalance = await trc20.balanceOf(address).call();
-      const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
-      if (typeof decimals !== 'number' || decimals < 0 || decimals > 77) {
-        throw new Error(`${CHAIN_NAME}: Invalid token decimals`);
+      try {
+        const trc20 = await this.tronWeb.contract().at(assetInfo.contractAddress);
+        this.tronWeb.setAddress(assetInfo.contractAddress)
+        const getDecimals = trc20.decimals().call();
+        const getBalance = trc20.balanceOf(address).call();
+        const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
+        if (typeof decimals !== 'bigint' || decimals < 0 || decimals > 77) {
+          throw new Error(`${CHAIN_NAME}: Invalid token decimals`);
+        }
+        return this.tronWeb.toBigNumber(balance).shiftedBy(Number(-decimals));
+      } catch (e) {
+        console.error(e);
+        throw new Error(`${CHAIN_NAME}: Failed to get balance`);
       }
-      return this.tronWeb.toBigNumber(balance).shiftedBy(-decimals);
     }
 
     throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
@@ -90,6 +96,7 @@ class TronChainWallet extends BaseChainWallet {
       // trc20
       if (assetInfo.chainAssetType.equals(FT_ASSET)) {
         const trc20 = await this.tronWeb.contract().at(assetInfo.contractAddress);
+        this.tronWeb.setAddress(assetInfo.contractAddress)
         const realAmount = amount.shiftedBy(assetInfo.decimalPlaces.value);
         const tx = await trc20.transfer(toAddress, realAmount).send();
         return tx.hash;
