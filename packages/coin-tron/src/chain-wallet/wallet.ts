@@ -227,12 +227,13 @@ class TronChainWallet extends BaseChainWallet {
 
   async getBandwidthPrice() {
     await this.readyPromise;
-    const address = await this.getAddress();
-    const bandwidth = await this.tronWeb!.trx.getBandwidth(address);
-    if (bandwidth === 0) {
+    const pricePairs = await this.tronWeb!.trx.getBandwidthPrices();
+    const latestPair = pricePairs.split(',').pop() ?? '0:1000';
+    const price = latestPair.split(':')[1];
+    if (!price) {
       throw new Error(`${CHAIN_NAME}: invalid bandwidth price`);
     }
-    return bandwidth / 1_000_000;
+    return new BigNumber(price).div(1_000_000).toNumber();
   }
 }
 
