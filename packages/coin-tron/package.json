@@ -32,7 +32,7 @@
     "@delandlabs/coin-base": "*",
     "@delandlabs/crypto-lib": "*",
     "@noble/secp256k1": "^2.1.0",
-    "tronweb": "^6.0.0"
+    "tronweb": "^6.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

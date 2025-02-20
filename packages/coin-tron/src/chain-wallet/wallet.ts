@@ -7,14 +7,15 @@ import { base } from '@delandlabs/crypto-lib';
 import * as secp256k1 from '@noble/secp256k1';
 
 class TronChainWallet extends BaseChainWallet {
-  private readonly tronWeb: TronWeb;
+  private readonly readyPromise: Promise<void>;
+  private tronWeb: TronWeb | null = null;
 
   constructor(chainInfo: ChainInfo, phrase: string) {
     if (!chainInfo.chainId.type.equals(CHAIN)) {
       throw new Error(`${CHAIN_NAME}: invalid chain type`);
     }
     super(chainInfo, phrase);
-    this.tronWeb = new TronWeb(this.chainInfo.rpcUrls[0], this.chainInfo.rpcUrls[0]);
+    this.readyPromise = this.initWallet();
   }
 
   public override getAccount: () => Promise<WalletAccount> = async () => {
@@ -27,18 +28,20 @@ class TronChainWallet extends BaseChainWallet {
   };
 
   public override signMessage: (message: string) => Promise<string> = async (message) => {
+    await this.readyPromise;
     if (!message || typeof message !== 'string') {
       throw new Error(`${CHAIN_NAME}: Invalid message format`);
     }
     try {
-      return this.tronWeb.trx.signMessageV2(message);
+      return this.tronWeb!.trx.signMessageV2(message, await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
     } catch (error: any) {
       throw new Error(`${CHAIN_NAME}: Message signing failed: ${error.message}`);
     }
   };
 
   public override balanceOf = async (address: string, assetInfo: AssetInfo) => {
-    if (!this.tronWeb.isAddress(address)) {
+    await this.readyPromise;
+    if (!this.tronWeb!.isAddress(address)) {
       throw new Error(`${CHAIN_NAME}: invalid wallet address`);
     }
     if (!assetInfo.chain.equals(CHAIN)) {
@@ -46,8 +49,8 @@ class TronChainWallet extends BaseChainWallet {
     }
     // native
     if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
-      const balance = await this.tronWeb.trx.getBalance(address);
-      return this.tronWeb.fromSun(balance) as BigNumber;
+      const balance = await this.tronWeb!.trx.getBalance(address);
+      return new BigNumber(this.tronWeb!.fromSun(balance));
     }
     // trc20
     if (assetInfo.chainAssetType.equals(FT_ASSET)) {
@@ -57,24 +60,31 @@ class TronChainWallet extends BaseChainWallet {
           `${CHAIN_NAME}: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`
         );
       }
-      const trc20 = await this.tronWeb.contract().at(assetInfo.contractAddress);
-      const getDecimals = await trc20.decimals().call();
-      const getBalance = await trc20.balanceOf(address).call();
-      const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
-      if (typeof decimals !== 'number' || decimals < 0 || decimals > 77) {
-        throw new Error(`${CHAIN_NAME}: Invalid token decimals`);
+      try {
+        const trc20 = await this.tronWeb!.contract().at(assetInfo.contractAddress);
+        this.tronWeb!.setAddress(assetInfo.contractAddress)
+        const getDecimals = trc20.decimals().call();
+        const getBalance = trc20.balanceOf(address).call();
+        const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
+        if (typeof decimals !== 'bigint' || decimals < 0 || decimals > 77) {
+          throw new Error(`${CHAIN_NAME}: Invalid token decimals`);
+        }
+        return this.tronWeb!.toBigNumber(balance).shiftedBy(Number(-decimals));
+      } catch (e) {
+        console.error(e);
+        throw new Error(`${CHAIN_NAME}: Failed to get balance`);
       }
-      return this.tronWeb.toBigNumber(balance).shiftedBy(-decimals);
     }
 
     throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   };
 
   public override transfer = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo) => {
+    await this.readyPromise;
     if (!amount || amount.isNaN() || amount.isZero() || amount.isNegative()) {
       throw new Error(`${CHAIN_NAME}: invalid transfer amount`);
     }
-    if (!this.tronWeb.isAddress(toAddress)) {
+    if (!this.tronWeb!.isAddress(toAddress)) {
       throw new Error(`${CHAIN_NAME}: invalid wallet address`);
     }
     if (!assetInfo.chain.equals(CHAIN)) {
@@ -83,16 +93,26 @@ class TronChainWallet extends BaseChainWallet {
     try {
       // native
       if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
+        const from = await this.getAddress();
+        const privateKey = await this.getEcdsaDerivedPrivateKey(DERIVING_PATH);
         const realAmount = amount.shiftedBy(assetInfo.decimalPlaces.value).toNumber();
-        const tx = await this.tronWeb.trx.send(toAddress, realAmount);
+        const tx = await this.tronWeb!.trx.send(toAddress, realAmount, {
+          address: from,
+          privateKey
+        });
         return tx.transaction.txID;
       }
       // trc20
       if (assetInfo.chainAssetType.equals(FT_ASSET)) {
-        const trc20 = await this.tronWeb.contract().at(assetInfo.contractAddress);
-        const realAmount = amount.shiftedBy(assetInfo.decimalPlaces.value);
+        const trc20 = await this.tronWeb!.contract().at(assetInfo.contractAddress);
+        this.tronWeb!.setPrivateKey(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
+        const decimals = await trc20.decimals().call();
+        if (typeof decimals !== 'bigint' || decimals < 0 || decimals > 77) {
+          throw new Error(`${CHAIN_NAME}: Invalid token decimals`);
+        }
+        const realAmount = BigInt(amount.shiftedBy(Number(decimals)).toString());
         const tx = await trc20.transfer(toAddress, realAmount).send();
-        return tx.hash;
+        return tx;
       }
     } catch (e) {
       console.error(e);
@@ -110,7 +130,8 @@ class TronChainWallet extends BaseChainWallet {
     amount: BigNumber,
     assetInfo: AssetInfo
   ): Promise<BigNumber> => {
-    if (!this.tronWeb.isAddress(toAddress)) {
+    await this.readyPromise;
+    if (!this.tronWeb!.isAddress(toAddress)) {
       throw new Error(`${CHAIN_NAME}: invalid wallet address`);
     }
     if (!assetInfo.chain.equals(CHAIN)) {
@@ -120,22 +141,19 @@ class TronChainWallet extends BaseChainWallet {
     const privateKey = await this.getEcdsaDerivedPrivateKey(DERIVING_PATH);
     // native
     if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
-      const tx = await this.tronWeb.transactionBuilder.sendTrx(toAddress, amount.toNumber(), from);
+      const realAmount = amount.shiftedBy(assetInfo.decimalPlaces.value).toNumber();
+      const tx = await this.tronWeb!.transactionBuilder.sendTrx(toAddress, realAmount, from);
       // sign tx, because we need to estimate the bandwidth
-      const signedTx = await this.tronWeb.trx.sign(tx, privateKey);
+      const signedTx = await this.tronWeb!.trx.sign(tx, privateKey);
       const bandwidthPrice = (await this.getBandwidthPrice())!;
-      const account = await this.tronWeb.trx.getAccount(from);
-      const freeNetUsage = account.free_net_usage;
-      const netUsage = account.net_usage;
-      const remainingFreeBandwidth = Math.max(0, freeNetUsage - netUsage);
+      const accountResources = await this.tronWeb!.trx.getAccountResources(from);
+      const freeNetLimit = accountResources.freeNetLimit ?? 0;
+      const freeNetUsage = accountResources.freeNetUsed ?? 0;
+      const remainingFreeBandwidth = Math.max(0, freeNetLimit - freeNetUsage);
       const bandwidthCost = signedTx.raw_data_hex.length / 2;
-      let estimatedBandwith = 0;
 
-      if (bandwidthCost > freeNetUsage) {
-        estimatedBandwith = Math.max(0, bandwidthCost - remainingFreeBandwidth);
-      }
-
-      return new BigNumber(estimatedBandwith).times(bandwidthPrice);
+      const estimatedBandwidth = Math.max(0, bandwidthCost - remainingFreeBandwidth);
+      return new BigNumber(estimatedBandwidth).times(bandwidthPrice);
     }
 
     // trc20
@@ -149,32 +167,40 @@ class TronChainWallet extends BaseChainWallet {
       const parameter = [
         {
           type: 'address',
-          value: this.getHexAddress()
+          value: await this.getHexAddress()
         },
         {
           type: 'uint256',
           value: 100
         }
       ];
-      const energyEstimate = await this.tronWeb.transactionBuilder.estimateEnergy(
+      const energyEstimate = await this.tronWeb!.transactionBuilder.estimateEnergy(
         assetInfo.contractAddress,
         'transfer(address,uint256)',
         {},
         parameter,
         from
       );
-      const chainParams = await this.tronWeb.trx.getChainParameters();
+      const chainParams = await this.tronWeb!.trx.getChainParameters();
       const energyFeeParam = chainParams.find((item) => item.key === 'getEnergyFee');
       if (!energyFeeParam || energyFeeParam.value <= 0) {
         throw new Error(`${CHAIN_NAME}: Invalid energy fee parameter`);
       }
       const energyFee = energyFeeParam.value;
-      const feeLimit = this.tronWeb.fromSun(energyEstimate.energy_required * energyFee);
-      return feeLimit as BigNumber;
+      const feeLimit = this.tronWeb!.fromSun(energyEstimate.energy_required * energyFee);
+      return new BigNumber(feeLimit);
     }
 
     throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
   };
+
+  private async initWallet(): Promise<void> {
+    this.tronWeb = new TronWeb({
+      fullNode: this.chainInfo.rpcUrls[0],
+      solidityNode: this.chainInfo.rpcUrls[0],
+    });
+    this.tronWeb.setPrivateKey(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
+  }
 
   private async getPubKey(compressed: boolean) {
     const priKeyBytes = base.fromHex(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
@@ -200,15 +226,14 @@ class TronChainWallet extends BaseChainWallet {
   }
 
   async getBandwidthPrice() {
-    const chainParameters = await this.tronWeb.trx.getChainParameters();
-    const bandwidthPriceParam = chainParameters.find((param) => param.key === 'getBandwidthPrice');
-    if (!bandwidthPriceParam) {
-      throw new Error(`${CHAIN_NAME}: bandwidth price parameter not found`);
-    }
-    if (bandwidthPriceParam.value === 0) {
+    await this.readyPromise;
+    const pricePairs = await this.tronWeb!.trx.getBandwidthPrices();
+    const latestPair = pricePairs.split(',').pop() ?? '0:1000';
+    const price = latestPair.split(':')[1];
+    if (!price) {
       throw new Error(`${CHAIN_NAME}: invalid bandwidth price`);
     }
-    return bandwidthPriceParam.value / 1_000_000;
+    return new BigNumber(price).div(1_000_000).toNumber();
   }
 }
 
