@@ -221,3 +221,32 @@ export const EthereumPanta: ChainInfo = {
   isNativeGas: true,
   ecosystem: Ecosystem.EVM,
 };
+
+export const EthereumNeoX: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmNeoXNet),
+  name: 'NeoX',
+  fullName: 'NeoX Mainnet',
+  icon: '/chain-icons/neo-x.png',
+  nativeAssetSymbol: 'GAS',
+  nativeAssetDecimals: 18,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'https://xexplorer.neo.org/',
+  rpcUrls: ['https://mainnet-1.rpc.banelabs.org'],
+  isMainnet: true,
+  isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
+};
+export const EthereumNeoXTestnet: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmNeoXTestNet),
+  name: 'NeoX Testnet',
+  fullName: 'NeoX Testnet',
+  icon: '/chain-icons/neo-x.png',
+  nativeAssetSymbol: 'GAS',
+  nativeAssetDecimals: 18,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'https://xt4scan.ngd.network/',
+  rpcUrls: ['https://neoxt4seed1.ngd.network'],
+  isMainnet: false,
+  isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
+};
