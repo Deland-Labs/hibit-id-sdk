@@ -31,6 +31,6 @@ export abstract class BaseChainWallet {
   public abstract getAccount: () => Promise<WalletAccount>;
   public abstract signMessage: (message: string) => Promise<string>;
   public abstract balanceOf: (address: string, assetInfo: AssetInfo) => Promise<BigNumber>;
-  public abstract transfer: (toAddress: string, amount: BigNumber, assetInfo: AssetInfo) => Promise<string>;
+  public abstract transfer: (toAddress: string, amount: BigNumber, assetInfo: AssetInfo, payload?: string) => Promise<string>;
   public abstract getEstimatedFee: (toAddress: string, amount: BigNumber, assetInfo: AssetInfo) => Promise<BigNumber>;
 }

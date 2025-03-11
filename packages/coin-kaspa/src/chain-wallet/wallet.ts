@@ -104,11 +104,11 @@ export class KaspaChainWallet extends BaseChainWallet {
     throw new Error(`${CHAIN_NAME}: KRC20 balance not found`);
   }
 
-  public override transfer = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<string> => {
+  public override transfer = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo, payload?: string): Promise<string> => {
     this.validateAssetChain(assetInfo);
     const keypair = await this.getKeypair();
     return assetInfo.chainAssetType.equals(NATIVE_ASSET)
-      ? this.transferNative(toAddress, amount, assetInfo, keypair)
+      ? this.transferNative(toAddress, amount, assetInfo, keypair, payload)
       : this.transferKrc20(toAddress, amount, assetInfo, keypair);
   };
 
@@ -116,14 +116,16 @@ export class KaspaChainWallet extends BaseChainWallet {
     toAddress: string,
     amount: BigNumber,
     assetInfo: AssetInfo,
-    keypair: Keypair
+    keypair: Keypair,
+    payload?: string
   ): Promise<string> {
     const sendParam = new SendKasParams(
       keypair.toAddress(this.networkId.networkType),
       BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
       Address.fromString(toAddress),
       this.networkId,
-      DEFAULT_FEES
+      DEFAULT_FEES,
+      payload ? Buffer.from(payload) : undefined
     );
     const {
       result: { transactions, summary }
@@ -303,10 +305,10 @@ export class KaspaChainWallet extends BaseChainWallet {
     // and return actual transactions with calculated fee
     const res = await this.rpcClient.getFeeEstimate();
     const mass = txResult.transactions[txResult.transactions.length - 1].tx.mass;
-    const sompiFee = mass * BigInt(res.estimate?.priorityBucket?.feerate ?? 1n);
-    const txResultWithFee = createTransactions(settings.setPriorityFee(new Fees(sompiFee)));
+    const sompiFee = new BigNumber(mass.toString()).times(res.estimate?.priorityBucket?.feerate ?? 1).toFixed(0);
+    const txResultWithFee = createTransactions(settings.setPriorityFee(new Fees(BigInt(sompiFee))));
     return {
-      priorityFee: new Fees(sompiFee),
+      priorityFee: new Fees(BigInt(sompiFee)),
       result: txResultWithFee
     };
   };

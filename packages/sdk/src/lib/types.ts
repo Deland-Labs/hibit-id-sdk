@@ -118,6 +118,7 @@ export interface TransferRequest {
   chainId?: HibitIdChainId
   contractAddress?: string
   decimalPlaces?: number
+  payload?: string
 }
 
 export type TransferResponse = RpcBaseResponse<{
