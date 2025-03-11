@@ -33,7 +33,7 @@
   "dependencies": {
     "@delandlabs/coin-base": "*",
     "@delandlabs/crypto-lib": "*",
-    "@kcoin/kaspa-web3.js": "^0.1.9",
+    "@kcoin/kaspa-web3.js": "^1.1.0",
     "buffer": "^6.0.3"
   },
   "devDependencies": {
