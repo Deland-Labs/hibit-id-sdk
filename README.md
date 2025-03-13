@@ -98,7 +98,3 @@ yarn test:coin-kaspa
 ## Contributing
 
 We welcome contributions from the community! Please feel free to submit issues and pull requests.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
