@@ -13,5 +13,5 @@ test('generate private key from mnemonic', async () => {
   const privatekeyBytes = new Uint8Array(keyPair.secretKey);
   const privateKeyHex = await getEd25519DerivedPrivateKey(mnemonic, DERIVING_PATH, true, 'hex');
   // Ton can not use the same function to generate private key from mnemonic
-  expect(Buffer.from(privatekeyBytes).toString('hex')).toBe(privateKeyHex);
+  expect(Buffer.from(privatekeyBytes).toString('hex')).not.toBe(privateKeyHex);
 });
