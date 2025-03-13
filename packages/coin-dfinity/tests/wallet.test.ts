@@ -4,7 +4,6 @@ import { secp256k1 } from '@noble/curves/secp256k1';
 import { sha256 } from '@noble/hashes/sha256';
 import { getEcdsaDerivedPrivateKey } from '@delandlabs/coin-base';
 import { DERIVING_PATH } from '../src/chain-wallet/defaults';
-import { base } from '@delandlabs/crypto-lib';
 // set timeout to 60 seconds
 vitest.setConfig({
   testTimeout: 60000
@@ -52,5 +51,5 @@ test('generate private key from mnemonic', async () => {
   const identity = Secp256k1KeyIdentity.fromSeedPhrase(mnemonic);
   const privatekeyBytes = new Uint8Array(identity.getKeyPair().secretKey);
   const privateKeyHex = await getEcdsaDerivedPrivateKey(mnemonic, DERIVING_PATH);
-  expect(base.toHex(privatekeyBytes)).toBe(privateKeyHex);
+  expect(Buffer.from(privatekeyBytes).toString('hex')).toBe(privateKeyHex);
 });
