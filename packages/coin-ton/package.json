@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@delandlabs/coin-base": "*",
+    "@delandlabs/crypto-lib": "*",
     "@openproduct/web-sdk": "^0.23.0",
     "@orbs-network/ton-access": "^2.3.3",
     "@ton/core": "^0.59.0",
@@ -48,7 +49,7 @@
     "globals": "^15.12.0",
     "typescript": "~5.7.0",
     "typescript-eslint": "^8.16.0",
-    "vite": "^6.0.1",
-    "vitest": "^2.1.6"
+    "vite": "^6.2.1",
+    "vitest": "^3.0.8"
   }
 }

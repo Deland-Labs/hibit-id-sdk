@@ -1,7 +1,6 @@
 import { expect, test, vitest } from 'vitest';
 import { getEd25519DerivedPrivateKey } from '@delandlabs/coin-base';
 import { DERIVING_PATH } from '../src/chain-wallet/defaults';
-import { base } from '@delandlabs/crypto-lib';
 import { mnemonicToPrivateKey } from '@ton/crypto';
 // set timeout to 60 seconds
 vitest.setConfig({
@@ -14,5 +13,5 @@ test('generate private key from mnemonic', async () => {
   const privatekeyBytes = new Uint8Array(keyPair.secretKey);
   const privateKeyHex = await getEd25519DerivedPrivateKey(mnemonic, DERIVING_PATH, true, 'hex');
   // Ton can not use the same function to generate private key from mnemonic
-  expect(base.toHex(privatekeyBytes)===privateKeyHex).toBe(false);
+  expect(Buffer.from(privatekeyBytes).toString('hex')).not.toBe(privateKeyHex);
 });
