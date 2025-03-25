@@ -11,17 +11,17 @@ export const Kaspa: ChainInfo = {
   isNativeGas: true,
   ecosystem: Ecosystem.Kaspa,
   supportedSignaturesSchemas: [WalletSignatureSchema.KaspaSchnorr],
-  explorer: 'https://explorer.kaspa.org',
+  explorer: 'https://kas.fyi',
   rpcUrls: [],
   getTxLink: (txId: string) => {
     if (!txId?.trim()) return '';
 
-    return `https://explorer.kaspa.org/txs/${txId}`;
+    return `https://kas.fyi/transaction/${txId}`;
   },
   getAddressLink: (address: string) => {
     if (!address?.trim()) return '';
 
-    return `https://explorer.kaspa.org/addresses/${address}`;
+    return `https://kas.fyi/address/${address}`;
   }
 };
 export const KaspaTestnet: ChainInfo = {
