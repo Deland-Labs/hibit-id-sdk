@@ -12,7 +12,7 @@ export const Solana: ChainInfo = {
   isNativeGas: true,
   ecosystem: Ecosystem.Solana,
   supportedSignaturesSchemas: [WalletSignatureSchema.SolanaEddsa],
-  explorer: 'https://explorer.solana.com',
+  explorer: 'https://solscan.io',
   // rpcUrls: [clusterApiUrl('mainnet-beta')],
   rpcUrls: [
     'https://go.getblock.io/4136d34f90a6488b84214ae26f0ed5f4',
@@ -35,7 +35,7 @@ export const SolanaTestnet: ChainInfo = {
   isNativeGas: true,
   ecosystem: Ecosystem.Solana,
   supportedSignaturesSchemas: [WalletSignatureSchema.SolanaEddsa],
-  explorer: 'https://explorer.solana.com?cluster=testnet',
+  explorer: 'https://solscan.io?cluster=testnet',
   rpcUrls: [clusterApiUrl('testnet')],
   caseSensitiveAddress: true
 };
