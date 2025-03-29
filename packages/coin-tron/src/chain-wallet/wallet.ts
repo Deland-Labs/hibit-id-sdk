@@ -197,7 +197,7 @@ class TronChainWallet extends BaseChainWallet {
   private async initWallet(): Promise<void> {
     this.tronWeb = new TronWeb({
       fullNode: this.chainInfo.rpcUrls[0],
-      solidityNode: this.chainInfo.isMainnet ? 'https://tron-solidity-rpc.publicnode.com' : this.chainInfo.rpcUrls[0],
+      solidityNode: this.chainInfo.rpcUrls[0],
     });
     this.tronWeb.setPrivateKey(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
   }
