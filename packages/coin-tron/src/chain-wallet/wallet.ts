@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 import { ADDRESS_PREFIX_BYTE, NATIVE_ASSET, FT_ASSET, CHAIN, CHAIN_NAME, DERIVING_PATH } from './defaults';
 import { base } from '@delandlabs/crypto-lib';
 import * as secp256k1 from '@noble/secp256k1';
+import { TRC20_DEFAULT_ABI } from './trc20-default-abi';
 
 class TronChainWallet extends BaseChainWallet {
   private readonly readyPromise: Promise<void>;
@@ -63,6 +64,9 @@ class TronChainWallet extends BaseChainWallet {
       try {
         const trc20 = await this.tronWeb!.contract().at(assetInfo.contractAddress);
         this.tronWeb!.setAddress(assetInfo.contractAddress)
+        if (!trc20.decimals || !trc20.balanceOf) {
+          trc20.loadAbi(TRC20_DEFAULT_ABI as any);
+        }
         const getDecimals = trc20.decimals().call();
         const getBalance = trc20.balanceOf(address).call();
         const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
@@ -106,6 +110,9 @@ class TronChainWallet extends BaseChainWallet {
       if (assetInfo.chainAssetType.equals(FT_ASSET)) {
         const trc20 = await this.tronWeb!.contract().at(assetInfo.contractAddress);
         this.tronWeb!.setPrivateKey(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
+        if (!trc20.decimals || !trc20.transfer) {
+          trc20.loadAbi(TRC20_DEFAULT_ABI as any);
+        }
         const decimals = await trc20.decimals().call();
         if (typeof decimals !== 'bigint' || decimals < 0 || decimals > 77) {
           throw new Error(`${CHAIN_NAME}: Invalid token decimals`);
