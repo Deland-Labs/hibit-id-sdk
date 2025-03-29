@@ -12,7 +12,7 @@ export const Tron: ChainInfo = {
   ecosystem: Ecosystem.Tron,
   supportedSignaturesSchemas: [WalletSignatureSchema.TronEcdsa],
   explorer: 'https://tronscan.org',
-  rpcUrls: ['https://rpc.trongrid.io'],
+  rpcUrls: ['https://tron-rpc.publicnode.com'],
   caseSensitiveAddress: true,
   getTxLink: (txId: string) => {
     if (!txId?.trim()) return '';
