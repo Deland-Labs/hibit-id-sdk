@@ -20,6 +20,7 @@ export interface HibitIdWalletOptions {
   fixDevMode?: FixDevMode
   iframeUrlAppendix?: string
   embedMode?: EmbedMode
+  controllerDefaultPosition?: { right: number, bottom: number }
 }
 
 export interface HibitIdAuth {
