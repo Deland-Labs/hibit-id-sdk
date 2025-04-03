@@ -100,7 +100,7 @@ export class DfinityChainWallet extends BaseChainWallet {
         to: AccountIdentifier.fromPrincipal({
           principal: Principal.fromText(toAddress)
         }),
-        amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString())
+        amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toFixed(0, BigNumber.ROUND_FLOOR))
       });
       console.debug(`${CHAIN_NAME}: ICP transfer blockHeight ${blockHeight}`);
       return String(blockHeight);
@@ -115,7 +115,7 @@ export class DfinityChainWallet extends BaseChainWallet {
           owner: Principal.fromText(toAddress),
           subaccount: []
         },
-        amount: BigInt(amount.shiftedBy(decimals).toString())
+        amount: BigInt(amount.shiftedBy(decimals).toFixed(0, BigNumber.ROUND_FLOOR))
       });
       console.debug(`${CHAIN_NAME}: ICRC transfer blockIndex ${blockIndex}`);
       return String(blockIndex);

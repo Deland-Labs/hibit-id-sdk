@@ -121,7 +121,7 @@ export class KaspaChainWallet extends BaseChainWallet {
   ): Promise<string> {
     const sendParam = new SendKasParams(
       keypair.toAddress(this.networkId.networkType),
-      BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
+      BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toFixed(0, BigNumber.ROUND_FLOOR)),
       Address.fromString(toAddress),
       this.networkId,
       DEFAULT_FEES,
@@ -150,7 +150,7 @@ export class KaspaChainWallet extends BaseChainWallet {
     const transferOptions: Krc20TransferOptions = {
       tick: assetInfo.contractAddress,
       to: toAddress,
-      amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString())
+      amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toFixed(0, BigNumber.ROUND_FLOOR))
     };
     const krc20TransferParams = new Krc20TransferParams(
       keypair.toAddress(this.networkId.networkType),
@@ -233,7 +233,7 @@ export class KaspaChainWallet extends BaseChainWallet {
   ): Promise<BigNumber> {
     const sendKasParam = new SendKasParams(
       keypair.toAddress(this.networkId.networkType),
-      BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString()),
+      BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toFixed(0, BigNumber.ROUND_FLOOR)),
       Address.fromString(toAddress),
       this.networkId,
       DEFAULT_FEES
@@ -251,7 +251,7 @@ export class KaspaChainWallet extends BaseChainWallet {
     const transferOptions: Krc20TransferOptions = {
       tick: assetInfo.contractAddress,
       to: toAddress,
-      amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString())
+      amount: BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toFixed(0, BigNumber.ROUND_FLOOR))
     };
     const krc20TransferParams = new Krc20TransferParams(
       keypair.toAddress(this.networkId.networkType),
