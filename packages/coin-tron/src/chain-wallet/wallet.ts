@@ -99,7 +99,7 @@ class TronChainWallet extends BaseChainWallet {
       if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
         const from = await this.getAddress();
         const privateKey = await this.getEcdsaDerivedPrivateKey(DERIVING_PATH);
-        const realAmount = amount.shiftedBy(assetInfo.decimalPlaces.value).toNumber();
+        const realAmount = amount.shiftedBy(assetInfo.decimalPlaces.value).dp(0, BigNumber.ROUND_FLOOR).toNumber();
         const tx = await this.tronWeb!.trx.send(toAddress, realAmount, {
           address: from,
           privateKey
@@ -117,7 +117,7 @@ class TronChainWallet extends BaseChainWallet {
         if (typeof decimals !== 'bigint' || decimals < 0 || decimals > 77) {
           throw new Error(`${CHAIN_NAME}: Invalid token decimals`);
         }
-        const realAmount = BigInt(amount.shiftedBy(Number(decimals)).toString());
+        const realAmount = BigInt(amount.shiftedBy(Number(decimals)).toFixed(0, BigNumber.ROUND_FLOOR));
         const tx = await trc20.transfer(toAddress, realAmount).send();
         return tx;
       }

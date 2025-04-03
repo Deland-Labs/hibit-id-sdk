@@ -170,7 +170,7 @@ export class TonChainWallet extends BaseChainWallet {
       const messageBody = beginCell()
         .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
         .storeUint(0, 64) // query id
-        .storeCoins(BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString())) // jetton amount
+        .storeCoins(BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toFixed(0, BigNumber.ROUND_FLOOR))) // jetton amount
         .storeAddress(Address.parse(toAddress))
         .storeAddress(Address.parse(ownerAddress)) // response destination
         .storeBit(0) // no custom payload

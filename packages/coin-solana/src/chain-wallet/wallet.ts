@@ -306,7 +306,7 @@ class SolanaChainWallet extends BaseChainWallet {
       );
     }
 
-    const tokenAmount = BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toString());
+    const tokenAmount = BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toFixed(0, BigNumber.ROUND_FLOOR));
 
     const transferInstruction = createTransferInstruction(
       sourceATA,
