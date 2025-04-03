@@ -81,7 +81,8 @@ export class HibitIdWallet {
       if (this._hasSession && this._options.embedMode !== 'background') {
         this._controller = new HibitIdController(
           this.toggleIframe,
-          this.handleControllerMove
+          this.handleControllerMove,
+          this._options.controllerDefaultPosition
         );
       }
     });
@@ -371,7 +372,8 @@ export class HibitIdWallet {
     if (!value) {
       this._controller = new HibitIdController(
         this.toggleIframe,
-        this.handleControllerMove
+        this.handleControllerMove,
+        this._options.controllerDefaultPosition
       );
     } else {
       this._controller?.destroy();
@@ -615,7 +617,8 @@ export class HibitIdWallet {
       if (!this._controller && this._options.embedMode !== 'background') {
         this._controller = new HibitIdController(
           this.toggleIframe,
-          this.handleControllerMove
+          this.handleControllerMove,
+          this._options.controllerDefaultPosition
         );
       }
       if (this._connectPromise) {

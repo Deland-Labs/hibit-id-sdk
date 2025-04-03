@@ -16,7 +16,7 @@ export class HibitIdController {
   private onClick: () => void
   private onMove: (x: number, y: number) => void
 
-  constructor(onClick: () => void, onMove: (x: number, y: number) => void) {
+  constructor(onClick: () => void, onMove: (x: number, y: number) => void, defaultPosition?: { right: number, bottom: number }) {
     this.onClick = onClick
     this.onMove = onMove
     this.isDesktop = window.innerWidth > 576
@@ -26,11 +26,17 @@ export class HibitIdController {
 
     const existed = document.getElementById(CONTROLLER_CONTAINER_ID)
     existed?.remove()
+
     const container = document.createElement('div')
     container.id = CONTROLLER_CONTAINER_ID
     if (this.isDesktop) {
       container.classList.add('desktop')
     }
+    if (defaultPosition) {
+      container.style.right = `${defaultPosition.right}px`
+      container.style.bottom = `${defaultPosition.bottom}px`
+    }
+
     const button = document.createElement('button')
     button.classList.add('hidden')
     if (this.isTouchDevice) {
@@ -38,21 +44,11 @@ export class HibitIdController {
     } else {
       button.addEventListener('mousedown', this.handleMouseDown)
     }
+
     container.appendChild(button)
     document.body.appendChild(container)
-    
     this.container = container
     this.button = button
-  }
-
-  get defaultPosition() {
-    return this.isDesktop ? {
-      right: 50,
-      bottom: 50,
-    } : {
-      right: 16,
-      bottom: 16,
-    }
   }
 
   public getBoundingRect = () => {
