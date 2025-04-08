@@ -1,21 +1,27 @@
 import BigNumber from 'bignumber.js';
-import { Contract, formatEther, HDNodeWallet, isAddress, JsonRpcProvider, parseEther, parseUnits } from 'ethers';
+import { Contract, formatEther, HDNodeWallet, isAddress, JsonRpcProvider, parseEther, parseUnits, WebSocketProvider } from 'ethers';
 import { erc20Abi, getChain } from './utils';
 import { AssetInfo, BaseChainWallet, ChainId, ChainInfo, WalletAccount } from '@delandlabs/coin-base';
 import { CHAIN, NATIVE_ASSET, FT_ASSET, CHAIN_NAME } from './defaults';
 
 export class EthereumChainWallet extends BaseChainWallet {
-  private readonly provider: JsonRpcProvider;
   private wallet: HDNodeWallet;
+  private readonly providerMap: Record<string, JsonRpcProvider | WebSocketProvider> = {};
 
   constructor(chainInfo: ChainInfo, mnemonic: string) {
     if (!chainInfo.chainId.type.equals(CHAIN)) {
       throw new Error(`${CHAIN_NAME}: invalid chain type`);
     }
     super(chainInfo, mnemonic);
-    this.provider = new JsonRpcProvider(this.chainInfo.rpcUrls[0], this.chainInfo.chainId.network.value.toNumber());
     this.wallet = HDNodeWallet.fromPhrase(this.mnemonic);
-    this.wallet = this.wallet.connect(this.provider);
+    this.wallet = this.wallet.connect(this.getProvider(this.chainInfo));
+    setInterval(() => {
+      Object.values(this.providerMap).forEach(provider => {
+        if (provider instanceof WebSocketProvider) {
+          provider.getBlockNumber();
+        }
+      });
+    }, 30000); // Ping ws providers every 30 seconds
   }
 
   public override getAccount: () => Promise<WalletAccount> = async () => {
@@ -42,7 +48,7 @@ export class EthereumChainWallet extends BaseChainWallet {
         `${CHAIN_NAME}: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`
       );
     }
-    const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
+    const provider = this.getProvider(chainInfo);
     
     // native
     if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
@@ -51,7 +57,6 @@ export class EthereumChainWallet extends BaseChainWallet {
         return new BigNumber(balance.toString()).shiftedBy(-assetInfo.decimalPlaces.value);
       } catch (e) {
         console.error(e);
-        provider.destroy()
         throw new Error(`${CHAIN_NAME}: failed to get native balance`);
       }
     }
@@ -65,7 +70,6 @@ export class EthereumChainWallet extends BaseChainWallet {
         return new BigNumber(balance.toString()).shiftedBy(-Number(decimals));
       } catch (e) {
         console.error(e);
-        provider.destroy()
         throw new Error(`${CHAIN_NAME}: failed to get balance`);
       }
     }
@@ -97,7 +101,7 @@ export class EthereumChainWallet extends BaseChainWallet {
             `${CHAIN_NAME}: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`
           );
         }
-        const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
+        const provider = this.getProvider(chainInfo);
         const token = new Contract(assetInfo.contractAddress, erc20Abi, this.wallet.connect(provider));
         const decimals = await token.decimals();
         const tx = await token.getFunction('transfer')(toAddress, parseUnits(amount.toString(), decimals));
@@ -144,7 +148,7 @@ export class EthereumChainWallet extends BaseChainWallet {
           `${CHAIN_NAME}: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`
         );
       }
-      const provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
+      const provider = this.getProvider(chainInfo);
       const feeData = await provider!.getFeeData();
       const price = new BigNumber(feeData.gasPrice!.toString());
       const token = new Contract(assetInfo.contractAddress, erc20Abi, this.wallet.connect(provider));
@@ -156,5 +160,37 @@ export class EthereumChainWallet extends BaseChainWallet {
     }
 
     throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
+  };
+
+  private getProvider = (chainInfo: ChainInfo) => {
+    let provider = this.providerMap[chainInfo.chainId.toString()]
+    if (provider) {
+      return provider;
+    }
+    if (chainInfo.wsRpcUrls?.length) {
+      const wsProvider = new WebSocketProvider(chainInfo.wsRpcUrls[0], chainInfo.chainId.network.value.toNumber());
+
+      // TODO: reconnect(https://github.com/ethers-io/ethers.js/issues/1053#issuecomment-2402226658)
+      // wsProvider.websocket.onopen = () => {
+      //   console.debug("[EVM WS] RPC provider websocket connected");
+      // };
+  
+      // // Reconnect on error or close
+      // wsProvider.websocket.onmessage = ((event: any) => {
+      //   console.error("[EVM WS] RPC message:", event);
+      //   // this.providerMap[chainInfo.chainId.toString()] = this.getProvider(chainInfo);
+      // });
+  
+      // wsProvider.websocket.onerror = ((error: any) => {
+      //   console.error("[EVM WS] RPC provider websocket error:", error);
+      //   // this.providerMap[chainInfo.chainId.toString()] = this.getProvider(chainInfo);
+      // });
+      
+      provider = wsProvider;
+    } else {
+      provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
+    }
+    this.providerMap[chainInfo.chainId.toString()] = provider;
+    return provider;
   };
 }

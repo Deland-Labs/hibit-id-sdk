@@ -12,7 +12,8 @@ export const Ethereum: ChainInfo = {
   ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://etherscan.io',
-  rpcUrls: ['https://ethereum.blockpi.network/v1/rpc/public']
+  rpcUrls: ['https://ethereum.blockpi.network/v1/rpc/public'],
+  wsRpcUrls: ['wss://ethereum-rpc.publicnode.com']
 };
 export const EthereumSepolia: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmSepoliaNet),
@@ -30,6 +31,9 @@ export const EthereumSepolia: ChainInfo = {
     'https://ethereum-sepolia-rpc.publicnode.com',
     'https://1rpc.io/sepolia',
     'https://endpoints.omniatech.io/v1/eth/sepolia/public',
+  ],
+  wsRpcUrls: [
+    'wss://ethereum-sepolia-rpc.publicnode.com',
   ]
 };
 
@@ -45,7 +49,8 @@ export const EthereumBsc: ChainInfo = {
   ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://bscscan.com',
-  rpcUrls: ['https://bsc-dataseed.binance.org']
+  rpcUrls: ['https://bsc-dataseed.binance.org'],
+  wsRpcUrls: ['wss://bsc-rpc.publicnode.com']
 };
 export const EthereumBscTestnet: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmBscTestNet),
@@ -59,7 +64,8 @@ export const EthereumBscTestnet: ChainInfo = {
   ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://testnet.bscscan.com',
-  rpcUrls: ['https://bsc-testnet.publicnode.com']
+  rpcUrls: ['https://bsc-testnet.publicnode.com'],
+  wsRpcUrls: ['wss://bsc-testnet-rpc.publicnode.com']
 };
 
 export const EthereumScroll: ChainInfo = {
@@ -74,7 +80,8 @@ export const EthereumScroll: ChainInfo = {
   ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://scroll.l2scan.co',
-  rpcUrls: ['https://rpc.scroll.io']
+  rpcUrls: ['https://rpc.scroll.io'],
+  wsRpcUrls: ['wss://scroll-rpc.publicnode.com']
 };
 export const EthereumScrollSepolia: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmScrollSepoliaNet),
@@ -88,7 +95,8 @@ export const EthereumScrollSepolia: ChainInfo = {
   ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://scroll-sepolia.l2scan.co',
-  rpcUrls: ['https://sepolia-rpc.scroll.io']
+  rpcUrls: ['https://sepolia-rpc.scroll.io'],
+  wsRpcUrls: ['wss://scroll-sepolia-rpc.publicnode.com']
 };
 
 export const EthereumBase: ChainInfo = {
@@ -103,7 +111,8 @@ export const EthereumBase: ChainInfo = {
   ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://basescan.org',
-  rpcUrls: ['https://mainnet.base.org']
+  rpcUrls: ['https://mainnet.base.org'],
+  wsRpcUrls: ['wss://base-rpc.publicnode.com']
 };
 export const EthereumBaseSepolia: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmBaseSepoliaNet),
@@ -117,7 +126,8 @@ export const EthereumBaseSepolia: ChainInfo = {
   ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://sepolia.basescan.org',
-  rpcUrls: ['https://sepolia.base.org']
+  rpcUrls: ['https://sepolia.base.org'],
+  wsRpcUrls: ['wss://base-sepolia-rpc.publicnode.com']
 };
 
 export const EthereumAvalanche: ChainInfo = {
@@ -132,7 +142,8 @@ export const EthereumAvalanche: ChainInfo = {
   ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://snowtrace.io',
-  rpcUrls: ['https://api.avax.network/ext/bc/C/rpc']
+  rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+  wsRpcUrls: ['wss://avalanche-c-chain-rpc.publicnode.com']
 };
 export const EthereumAvalancheFuji: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmAvalancheFujiNet),
@@ -146,7 +157,8 @@ export const EthereumAvalancheFuji: ChainInfo = {
   ecosystem: Ecosystem.EVM,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://subnets-test.avax.network/c-chain',
-  rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc']
+  rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
+  wsRpcUrls: ['wss://avalanche-fuji-c-chain-rpc.publicnode.com']
 };
 
 export const EthereumBitlayer: ChainInfo = {
@@ -161,7 +173,8 @@ export const EthereumBitlayer: ChainInfo = {
   ecosystem: Ecosystem.Bitcoin,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://btrscan.com',
-  rpcUrls: ['https://rpc.bitlayer.org']
+  rpcUrls: ['https://rpc.bitlayer.org'],
+  wsRpcUrls: ['wss://ws.bitlayer.org']
 };
 export const EthereumBitlayerTestnet: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmBitlayerTestNet),
@@ -175,7 +188,8 @@ export const EthereumBitlayerTestnet: ChainInfo = {
   ecosystem: Ecosystem.Bitcoin,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://testnet.btrscan.com',
-  rpcUrls: ['https://testnet-rpc.bitlayer.org']
+  rpcUrls: ['https://testnet-rpc.bitlayer.org'],
+  wsRpcUrls: ['wss://testnet-ws.bitlayer.org']
 };
 
 export const EthereumSwan: ChainInfo = {
@@ -232,6 +246,7 @@ export const EthereumNeoX: ChainInfo = {
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://xexplorer.neo.org/',
   rpcUrls: ['https://mainnet-1.rpc.banelabs.org'],
+  wsRpcUrls: ['wss://mainnet.wss1.banelabs.org'],
   isMainnet: true,
   isNativeGas: true,
   ecosystem: Ecosystem.EVM,
@@ -246,6 +261,7 @@ export const EthereumNeoXTestnet: ChainInfo = {
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://xt4scan.ngd.network/',
   rpcUrls: ['https://neoxt4seed1.ngd.network'],
+  wsRpcUrls: ['wss://neoxt4wss1.ngd.network'],
   isMainnet: false,
   isNativeGas: true,
   ecosystem: Ecosystem.EVM,
