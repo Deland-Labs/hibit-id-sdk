@@ -15,13 +15,14 @@ export class EthereumChainWallet extends BaseChainWallet {
     super(chainInfo, mnemonic);
     this.wallet = HDNodeWallet.fromPhrase(this.mnemonic);
     this.wallet = this.wallet.connect(this.getProvider(this.chainInfo));
+    // Ping ws providers every 15 seconds
     setInterval(() => {
       Object.values(this.providerMap).forEach(provider => {
         if (provider instanceof WebSocketProvider) {
           provider.getBlockNumber();
         }
       });
-    }, 30000); // Ping ws providers every 30 seconds
+    }, 15000);
   }
 
   public override getAccount: () => Promise<WalletAccount> = async () => {
@@ -168,25 +169,7 @@ export class EthereumChainWallet extends BaseChainWallet {
       return provider;
     }
     if (chainInfo.wsRpcUrls?.length) {
-      const wsProvider = new WebSocketProvider(chainInfo.wsRpcUrls[0], chainInfo.chainId.network.value.toNumber());
-
-      // TODO: reconnect(https://github.com/ethers-io/ethers.js/issues/1053#issuecomment-2402226658)
-      // wsProvider.websocket.onopen = () => {
-      //   console.debug("[EVM WS] RPC provider websocket connected");
-      // };
-  
-      // // Reconnect on error or close
-      // wsProvider.websocket.onmessage = ((event: any) => {
-      //   console.error("[EVM WS] RPC message:", event);
-      //   // this.providerMap[chainInfo.chainId.toString()] = this.getProvider(chainInfo);
-      // });
-  
-      // wsProvider.websocket.onerror = ((error: any) => {
-      //   console.error("[EVM WS] RPC provider websocket error:", error);
-      //   // this.providerMap[chainInfo.chainId.toString()] = this.getProvider(chainInfo);
-      // });
-      
-      provider = wsProvider;
+      provider = new WebSocketProvider(chainInfo.wsRpcUrls[0], chainInfo.chainId.network.value.toNumber());
     } else {
       provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
     }
