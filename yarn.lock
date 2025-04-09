@@ -2732,7 +2732,7 @@ ethers@^6.13.1:
     tslib "2.7.0"
     ws "8.17.1"
 
-ethers@^6.13.4:
+ethers@^6.13.4, ethers@^6.13.5:
   version "6.13.5"
   resolved "https://registry.npmmirror.com/ethers/-/ethers-6.13.5.tgz#8c1d6ac988ac08abc3c1d8fabbd4b8b602851ac4"
   integrity sha512-+knKNieu5EKRThQJWwqaJ10a6HE9sSehGeqWN65//wE7j47ZpFhKAnHB/JJFibwwg61I/koxaPsXbXpD/skNOQ==

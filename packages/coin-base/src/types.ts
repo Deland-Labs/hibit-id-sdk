@@ -215,6 +215,7 @@ export class ChainInfo {
   supportedSignaturesSchemas!: WalletSignatureSchema[];
   explorer!: string;
   rpcUrls!: string[];
+  wsRpcUrls?: string[];
   isMainnet!: boolean
   isNativeGas!: boolean;
   ecosystem!: Ecosystem;
