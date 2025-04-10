@@ -269,9 +269,9 @@ export const EthereumNeoXTestnet: ChainInfo = {
 
 export const EthereumKaia: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmKaiaNet),
-  name: 'Kaia',
-  fullName: 'Kaia Mainnet',
-  icon: '/chain-icons/Kaia.png',
+  name: 'Igra',
+  fullName: 'Igra Mainnet',
+  icon: '/chain-icons/Igra.png',
   nativeAssetSymbol: 'KAIA',
   nativeAssetDecimals: 18,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
@@ -280,13 +280,13 @@ export const EthereumKaia: ChainInfo = {
   wsRpcUrls: ['wss://klaytn.drpc.org'],
   isMainnet: true,
   isNativeGas: true,
-  ecosystem: Ecosystem.EVM,
+  ecosystem: Ecosystem.Kaspa,
 };
 export const EthereumKaiaTestnet: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmKaiaKairosTestNet),
-  name: 'Kaia Testnet',
-  fullName: 'Kaia Kairos Testnet',
-  icon: '/chain-icons/Kaia.png',
+  name: 'Igra Testnet',
+  fullName: 'Igra Testnet',
+  icon: '/chain-icons/Igra.png',
   nativeAssetSymbol: 'KAIA',
   nativeAssetDecimals: 18,
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
@@ -295,5 +295,5 @@ export const EthereumKaiaTestnet: ChainInfo = {
   wsRpcUrls: ['wss://responsive-green-emerald.kaia-kairos.quiknode.pro'],
   isMainnet: false,
   isNativeGas: true,
-  ecosystem: Ecosystem.EVM,
+  ecosystem: Ecosystem.Kaspa,
 };
