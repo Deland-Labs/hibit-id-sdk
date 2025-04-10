@@ -266,3 +266,34 @@ export const EthereumNeoXTestnet: ChainInfo = {
   isNativeGas: true,
   ecosystem: Ecosystem.EVM,
 };
+
+export const EthereumKaia: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmKaiaNet),
+  name: 'Kaia',
+  fullName: 'Kaia Mainnet',
+  icon: '/chain-icons/Kaia.png',
+  nativeAssetSymbol: 'KAIA',
+  nativeAssetDecimals: 18,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'https://kaiascan.io/',
+  rpcUrls: ['https://public-en.node.kaia.io'],
+  wsRpcUrls: ['wss://public-en.node.kaia.io/ws'],
+  isMainnet: true,
+  isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
+};
+export const EthereumKaiaTestnet: ChainInfo = {
+  chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmKaiaKairosTestNet),
+  name: 'Kaia Testnet',
+  fullName: 'Kaia Kairos Testnet',
+  icon: '/chain-icons/Kaia.png',
+  nativeAssetSymbol: 'KAIA',
+  nativeAssetDecimals: 18,
+  supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
+  explorer: 'https://kairos.kaiascan.io/',
+  rpcUrls: ['https://public-en-kairos.node.kaia.io'],
+  wsRpcUrls: ['wss://responsive-green-emerald.kaia-kairos.quiknode.pro'],
+  isMainnet: false,
+  isNativeGas: true,
+  ecosystem: Ecosystem.EVM,
+};
