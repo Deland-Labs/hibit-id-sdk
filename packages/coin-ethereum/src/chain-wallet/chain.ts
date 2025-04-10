@@ -277,7 +277,7 @@ export const EthereumKaia: ChainInfo = {
   supportedSignaturesSchemas: [WalletSignatureSchema.EvmEcdsa],
   explorer: 'https://kaiascan.io/',
   rpcUrls: ['https://public-en.node.kaia.io'],
-  wsRpcUrls: ['wss://public-en.node.kaia.io/ws'],
+  wsRpcUrls: ['wss://klaytn.drpc.org'],
   isMainnet: true,
   isNativeGas: true,
   ecosystem: Ecosystem.EVM,
