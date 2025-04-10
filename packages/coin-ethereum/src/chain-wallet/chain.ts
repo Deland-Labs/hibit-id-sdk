@@ -293,7 +293,7 @@ export const EthereumKaiaTestnet: ChainInfo = {
   explorer: 'https://kairos.kaiascan.io/',
   rpcUrls: ['https://public-en-kairos.node.kaia.io'],
   wsRpcUrls: ['wss://responsive-green-emerald.kaia-kairos.quiknode.pro'],
-  isMainnet: true,
+  isMainnet: false,
   isNativeGas: true,
   ecosystem: Ecosystem.EVM,
 };
