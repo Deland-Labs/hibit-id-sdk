@@ -29,7 +29,7 @@ export default defineConfig({
       include: [/node_modules/, /crypto-lib/]
     },
     rollupOptions: {
-      external: ['@delandlabs/coin-base'],
+      external: ['@delandlabs/coin-base', 'bignumber.js'],
       output: {
         preserveModules: true,
       },
