@@ -1,4 +1,4 @@
-import { ChainId, ChainInfo } from '@delandlabs/coin-base';
+import { ChainId, ChainInfo } from '@delandlabs/coin-base/model';
 import * as EthereumChains from '../chains'
 
 export const erc20Abi = [

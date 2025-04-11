@@ -1,4 +1,4 @@
-import { Chain, ChainAssetType } from '@delandlabs/coin-base';
+import { Chain, ChainAssetType } from '@delandlabs/coin-base/model';
 import { Commitment } from '@solana/web3.js';
 
 export const CHAIN_NAME = 'Solana';

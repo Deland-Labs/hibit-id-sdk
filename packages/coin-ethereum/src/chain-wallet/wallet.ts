@@ -1,8 +1,9 @@
 import BigNumber from 'bignumber.js';
 import { Contract, formatEther, HDNodeWallet, isAddress, JsonRpcProvider, parseEther, parseUnits, WebSocketProvider } from 'ethers';
 import { erc20Abi, getChain } from './utils';
-import { AssetInfo, BaseChainWallet, ChainId, ChainInfo, WalletAccount } from '@delandlabs/coin-base';
+import { AssetInfo, ChainId, ChainInfo, WalletAccount } from '@delandlabs/coin-base/model';
 import { CHAIN, NATIVE_ASSET, FT_ASSET, CHAIN_NAME } from './defaults';
+import { BaseChainWallet } from '@delandlabs/coin-base';
 
 export class EthereumChainWallet extends BaseChainWallet {
   private wallet: HDNodeWallet;

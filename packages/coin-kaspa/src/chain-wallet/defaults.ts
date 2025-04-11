@@ -1,4 +1,4 @@
-import { Chain, ChainAssetType } from '@delandlabs/coin-base';
+import { Chain, ChainAssetType } from '@delandlabs/coin-base/model';
 
 const DERIVING_PATH = "m/44'/111111'/0'/0/0";
 const CHAIN = Chain.Kaspa;

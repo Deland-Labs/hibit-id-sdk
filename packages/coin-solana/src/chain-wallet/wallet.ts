@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, SolanaJSONRPCError, SystemProgram, Transaction } from '@solana/web3.js';
-import { AssetInfo, BaseChainWallet, ChainInfo, WalletAccount } from '@delandlabs/coin-base';
+import { AssetInfo, ChainInfo, WalletAccount } from '@delandlabs/coin-base/model';
+import { BaseChainWallet } from '@delandlabs/coin-base';
 import { CHAIN, CHAIN_NAME, DERIVING_PATH, FT_ASSET, NATIVE_ASSET, DEFAULT_COMMITMENT } from './defaults';
 import nacl from 'tweetnacl';
 import {
