@@ -1,5 +1,5 @@
 import { ChainId, ChainInfo } from '@delandlabs/coin-base/model';
-import * as TronChains from './chain';
+import * as TronChains from '../chains';
 
 export const erc20Abi = [
   'function name() view returns (string)',

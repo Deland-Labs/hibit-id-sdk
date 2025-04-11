@@ -30,9 +30,6 @@ export default defineConfig({
     },
     rollupOptions: {
       external: ['bignumber.js'],
-      output: {
-        preserveModules: true
-      },
       plugins: [
         typescript({
           target: 'es2020',
