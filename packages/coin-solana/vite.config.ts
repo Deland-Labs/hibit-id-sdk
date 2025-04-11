@@ -13,16 +13,23 @@ export default defineConfig({
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        chains: resolve(__dirname, 'src/chains.ts')
+      },
       name: 'CoinSolana',
       // the proper extensions will be added
-      fileName: 'coin-solana'
+      fileName: (mod, entry) => {
+        const filename = entry.replace(/node_modules\//g, 'external/')
+        return mod === 'cjs' ? `${filename}.umd.cjs` : `${filename}.js`
+      }
     },
     commonjsOptions: {
       transformMixedEsModules: true,
       include: [/node_modules/, /crypto-lib/]
     },
     rollupOptions: {
+      external: ['@delandlabs/coin-base', 'bignumber.js'],
       plugins: [
         typescript({
           target: 'es2020',

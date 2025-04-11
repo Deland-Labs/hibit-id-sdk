@@ -6,18 +6,28 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/coin-solana.umd.cjs",
-  "module": "./dist/coin-solana.js",
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/coin-solana.js"
+        "default": "./dist/index.js"
       },
       "require": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/coin-solana.umd.cjs"
+        "default": "./dist/index.umd.cjs"
+      }
+    },
+    "./chains": {
+      "import": {
+        "types": "./dist/chains.d.ts",
+        "default": "./dist/chains.js"
+      },
+      "require": {
+        "types": "./dist/chains.d.ts",
+        "default": "./dist/chains.umd.cjs"
       }
     }
   },
@@ -31,9 +41,10 @@
   "dependencies": {
     "@solana/web3.js": "^1.98.0",
     "@solana/spl-token": "^0.4.9",
-    "bignumber.js": "^9.1.1",
-    "@delandlabs/coin-base": "*",
     "tweetnacl": "^1.0.3"
+  },
+  "peerDependencies": {
+    "@delandlabs/coin-base": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
