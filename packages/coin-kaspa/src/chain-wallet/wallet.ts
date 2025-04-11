@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
-import { AssetInfo, BaseChainWallet, ChainInfo, WalletAccount } from '@delandlabs/coin-base';
+import { AssetInfo, ChainInfo, WalletAccount } from '@delandlabs/coin-base/model';
+import { BaseChainWallet } from '@delandlabs/coin-base';
 import {
   Address,
   Fees,

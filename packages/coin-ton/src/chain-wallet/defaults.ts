@@ -1,4 +1,4 @@
-import { Chain, ChainAssetType } from '@delandlabs/coin-base';
+import { Chain, ChainAssetType } from '@delandlabs/coin-base/model';
 import { Buffer } from 'buffer';
 
 const DERIVING_PATH = "m/44'/607'/0'";

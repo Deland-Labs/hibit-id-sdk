@@ -1,4 +1,4 @@
-import { ChainInfo, ChainId, Chain, ChainNetwork, Ecosystem, WalletSignatureSchema } from '@delandlabs/coin-base';
+import { ChainInfo, ChainId, Chain, ChainNetwork, Ecosystem, WalletSignatureSchema } from '@delandlabs/coin-base/model';
 
 export const Tron: ChainInfo = {
   chainId: new ChainId(Chain.Tron, ChainNetwork.TronMainNet),

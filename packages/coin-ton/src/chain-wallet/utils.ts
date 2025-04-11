@@ -1,4 +1,4 @@
-import { ChainId, ChainInfo } from '@delandlabs/coin-base';
+import { ChainId, ChainInfo } from '@delandlabs/coin-base/model';
 import * as TonChains from './chain'
 
 export function getChain(chainId: ChainId | null): ChainInfo | null {

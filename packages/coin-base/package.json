@@ -6,18 +6,28 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/coin-base.umd.cjs",
-  "module": "./dist/coin-base.js",
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/coin-base.js"
+        "default": "./dist/index.js"
       },
       "require": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/coin-base.umd.cjs"
+        "default": "./dist/index.umd.cjs"
+      }
+    },
+    "./model": {
+      "import": {
+        "types": "./dist/model.d.ts",
+        "default": "./dist/model.js"
+      },
+      "require": {
+        "types": "./dist/model.d.ts",
+        "default": "./dist/model.umd.cjs"
       }
     }
   },

@@ -20,14 +20,19 @@ export default defineConfig({
       name: 'CoinEthereum',
       // the proper extensions will be added
       fileName: (mod, entry) => {
-        return mod === 'cjs' ? `${entry}.umd.cjs` : `${entry}.js`
-      }
+        const filename = entry.replace(/node_modules\//g, 'external/')
+        return mod === 'cjs' ? `${filename}.umd.cjs` : `${filename}.js`
+      },
     },
     commonjsOptions: {
       transformMixedEsModules: true,
       include: [/node_modules/, /crypto-lib/]
     },
     rollupOptions: {
+      external: ['@delandlabs/coin-base'],
+      output: {
+        preserveModules: true,
+      },
       plugins: [
         typescript({
           target: 'es2020',

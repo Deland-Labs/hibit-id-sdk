@@ -21,7 +21,8 @@ import {
 import { KeyPair, mnemonicToPrivateKey } from '@ton/crypto';
 import { external, storeStateInit } from '@ton/core';
 import nacl from 'tweetnacl';
-import { AssetInfo, BaseChainWallet, ChainInfo, ChainNetwork, WalletAccount } from '@delandlabs/coin-base';
+import { AssetInfo, ChainInfo, ChainNetwork, WalletAccount } from '@delandlabs/coin-base/model';
+import { BaseChainWallet } from '@delandlabs/coin-base';
 import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from '../ton-connect';
 import { sleep } from './utils';
 import { CHAIN, CHAIN_NAME, FT_ASSET, NATIVE_ASSET, MAGIC_BYTES } from './defaults';

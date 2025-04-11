@@ -13,16 +13,25 @@ export default defineConfig({
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        'index': resolve(__dirname, 'src/index.ts'),
+        'model': resolve(__dirname, 'src/model.ts')
+      },
       name: 'CoinBase',
       // the proper extensions will be added
-      fileName: 'coin-base'
+      fileName: (mod, entry) => {
+        return mod === 'cjs' ? `${entry}.umd.cjs` : `${entry}.js`
+      }
     },
     commonjsOptions: {
       transformMixedEsModules: true,
       include: [/node_modules/, /crypto-lib/]
     },
     rollupOptions: {
+      external: ['bignumber.js'],
+      output: {
+        preserveModules: true
+      },
       plugins: [
         typescript({
           target: 'es2020',

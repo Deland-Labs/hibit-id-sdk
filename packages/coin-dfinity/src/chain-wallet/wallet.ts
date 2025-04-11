@@ -17,7 +17,8 @@ import {
 import { buildJsonRpcError, buildJsonRpcResponse } from './utils';
 import * as cbor from 'cborg';
 import ic from 'ic0';
-import { AssetInfo, BaseChainWallet, ChainInfo, getEcdsaDerivedPrivateKey, WalletAccount } from '@delandlabs/coin-base';
+import { AssetInfo, ChainInfo, WalletAccount } from '@delandlabs/coin-base/model';
+import { BaseChainWallet, getEcdsaDerivedPrivateKey } from '@delandlabs/coin-base';
 import { FT_ASSET, NATIVE_ASSET, CHAIN_NAME, CHAIN, DERIVING_PATH } from './defaults';
 import { base } from '@delandlabs/crypto-lib';
 

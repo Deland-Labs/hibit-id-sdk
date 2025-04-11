@@ -1,5 +1,6 @@
 import { getChain } from './utils';
-import { AssetInfo, BaseChainWallet, ChainId, ChainInfo, WalletAccount } from '@delandlabs/coin-base';
+import { AssetInfo, ChainId, ChainInfo, WalletAccount } from '@delandlabs/coin-base/model';
+import { BaseChainWallet } from '@delandlabs/coin-base';
 import { TronWeb } from 'tronweb';
 import BigNumber from 'bignumber.js';
 import { ADDRESS_PREFIX_BYTE, NATIVE_ASSET, FT_ASSET, CHAIN, CHAIN_NAME, DERIVING_PATH } from './defaults';

@@ -1,4 +1,4 @@
-import { ChainInfo, ChainId, Chain, ChainNetwork, Ecosystem, WalletSignatureSchema } from "@delandlabs/coin-base";
+import { ChainInfo, ChainId, Chain, ChainNetwork, Ecosystem, WalletSignatureSchema } from '@delandlabs/coin-base/model';
 import { clusterApiUrl } from '@solana/web3.js';
 
 export const Solana: ChainInfo = {
