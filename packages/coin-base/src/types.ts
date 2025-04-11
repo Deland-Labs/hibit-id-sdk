@@ -137,9 +137,24 @@ export class ChainId {
 
 export class ChainAssetType {
   value: BigNumber;
+  name: string
 
   constructor(value: BigNumber) {
     this.value = value;
+    switch (value.toString()) {
+      case '0': this.name = 'Native';break;
+      case '1': this.name = 'NativeGas';break;
+      case '3': this.name = 'ERC20';break;
+      case '4': this.name = 'ERC721';break;
+      case '5': this.name = 'ICP';break;
+      case '6': this.name = 'ICRC3';break;
+      case '7': this.name = 'BRC20';break;
+      case '8': this.name = 'SPL';break;
+      case '9': this.name = 'TRC20';break;
+      case '10': this.name = 'Jetton';break;
+      case '11': this.name = 'KRC20';break;
+      default: this.name = 'Unknown';break;
+    }
   }
 
   static Native = new ChainAssetType(new BigNumber(0));
