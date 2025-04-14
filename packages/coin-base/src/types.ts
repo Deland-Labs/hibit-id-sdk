@@ -28,6 +28,10 @@ export class Chain {
     return this.value.toString();
   }
 
+  serialize(): string {
+    return this.toString();
+  }
+
   equals(other: Chain): boolean {
     if (!other) {
       return false;
@@ -95,6 +99,10 @@ export class ChainNetwork {
     return this.value.toString();
   }
 
+  serialize(): string {
+    return this.toString();
+  }
+
   equals(other: ChainNetwork): boolean {
     if (!other) {
       return false;
@@ -125,6 +133,10 @@ export class ChainId {
 
   toString(): string {
     return `${this.type.toString()}_${this.network.toString()}`;
+  }
+
+  serialize(): string {
+    return this.toString();
   }
 
   equals(other: ChainId): boolean {
@@ -180,6 +192,10 @@ export class ChainAssetType {
     return this.value.toString();
   }
 
+  serialize(): string {
+    return this.toString();
+  }
+
   equals(other: ChainAssetType): boolean {
     if (!other) {
       return false;
@@ -201,6 +217,10 @@ export class DecimalPlaces {
 
   toString(): string {
     return this.value.toString();
+  }
+
+  serialize(): string {
+    return this.toString();
   }
 
   equals(other: DecimalPlaces): boolean {
