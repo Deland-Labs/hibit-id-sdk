@@ -2,9 +2,9 @@ import { Transform, Type } from 'class-transformer';
 import { WalletSignatureSchema, Ecosystem } from "./enums";
 
 export class Chain {
-  value: BigInt;
+  value: bigint;
 
-  constructor(value: BigInt) {
+  constructor(value: bigint) {
     this.value = value;
   }
 
@@ -40,9 +40,9 @@ export class Chain {
 }
 
 export class ChainNetwork {
-  value: BigInt;
+  value: bigint;
 
-  constructor(value: BigInt) {
+  constructor(value: bigint) {
     this.value = value;
   }
 
@@ -147,10 +147,10 @@ export class ChainId {
 }
 
 export class ChainAssetType {
-  value: BigInt;
+  value: bigint;
   name: string
 
-  constructor(value: BigInt) {
+  constructor(value: bigint) {
     this.value = value;
     switch (value.toString()) {
       case '0': this.name = 'Native';break;
