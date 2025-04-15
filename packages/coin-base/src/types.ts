@@ -1,27 +1,26 @@
-import BigNumber from "bignumber.js";
 import { Transform, Type } from 'class-transformer';
 import { WalletSignatureSchema, Ecosystem } from "./enums";
 
 export class Chain {
-  value: BigNumber;
+  value: bigint;
 
-  constructor(value: BigNumber) {
+  constructor(value: bigint) {
     this.value = value;
   }
 
-  static Bitcoin = new Chain(new BigNumber(0));
-  static Ethereum = new Chain(new BigNumber(60));
-  static Solana = new Chain(new BigNumber(501));
-  static Dfinity = new Chain(new BigNumber(223));
-  static Ton = new Chain(new BigNumber(607));
-  static Tron = new Chain(new BigNumber(195));
-  static Kaspa = new Chain(new BigNumber(111111));
+  static Bitcoin = new Chain(0n);
+  static Ethereum = new Chain(60n);
+  static Solana = new Chain(501n);
+  static Dfinity = new Chain(223n);
+  static Ton = new Chain(607n);
+  static Tron = new Chain(195n);
+  static Kaspa = new Chain(111111n);
 
   static fromString(value: string): Chain | null {
     if (!value) {
       return null;
     }
-    return new Chain(new BigNumber(value));
+    return new Chain(BigInt(value));
   }
 
   toString(): string {
@@ -36,63 +35,63 @@ export class Chain {
     if (!other) {
       return false;
     }
-    return this.value.isEqualTo(other.value);
+    return this.value === other.value;
   }
 }
 
 export class ChainNetwork {
-  value: BigNumber;
+  value: bigint;
 
-  constructor(value: BigNumber) {
+  constructor(value: bigint) {
     this.value = value;
   }
 
-  static MainNet = new ChainNetwork(new BigNumber(1));
-  static TestNet = new ChainNetwork(new BigNumber(0));
+  static MainNet = new ChainNetwork(1n);
+  static TestNet = new ChainNetwork(0n);
 
-  static BtcMainNet = new ChainNetwork(new BigNumber(1));
-  static BtcTestNet = new ChainNetwork(new BigNumber(2));
+  static BtcMainNet = new ChainNetwork(1n);
+  static BtcTestNet = new ChainNetwork(2n);
 
-  static EvmMainNet = new ChainNetwork(new BigNumber(0x1));
-  static EvmSepoliaNet = new ChainNetwork(new BigNumber(0xaa36a7));
-  static EvmBscNet = new ChainNetwork(new BigNumber(0x38));
-  static EvmBscTestNet = new ChainNetwork(new BigNumber(97));
-  static EvmBaseNet = new ChainNetwork(new BigNumber(8453));
-  static EvmBaseSepoliaNet = new ChainNetwork(new BigNumber(84532));
-  static EvmAvalancheNet = new ChainNetwork(new BigNumber(43114));
-  static EvmAvalancheFujiNet = new ChainNetwork(new BigNumber(43113));
-  static EvmScrollNet = new ChainNetwork(new BigNumber(534352));
-  static EvmScrollSepoliaNet = new ChainNetwork(new BigNumber(534351));
-  static EvmBitlayerNet = new ChainNetwork(new BigNumber(200901));
-  static EvmBitlayerTestNet = new ChainNetwork(new BigNumber(200810));
-  static EvmSwanNet = new ChainNetwork(new BigNumber(254));
-  static EvmSwanTestNet = new ChainNetwork(new BigNumber(20241133));
-  static EvmPantaNet = new ChainNetwork(new BigNumber(331));
-  static EvmNeoXNet = new ChainNetwork(new BigNumber(47763));
-  static EvmNeoXTestNet = new ChainNetwork(new BigNumber(12227332));
-  static EvmKaiaNet = new ChainNetwork(new BigNumber(8217));
-  static EvmKaiaKairosTestNet = new ChainNetwork(new BigNumber(1001));
+  static EvmMainNet = new ChainNetwork(0x1n);
+  static EvmSepoliaNet = new ChainNetwork(0xaa36a7n);
+  static EvmBscNet = new ChainNetwork(0x38n);
+  static EvmBscTestNet = new ChainNetwork(97n);
+  static EvmBaseNet = new ChainNetwork(8453n);
+  static EvmBaseSepoliaNet = new ChainNetwork(84532n);
+  static EvmAvalancheNet = new ChainNetwork(43114n);
+  static EvmAvalancheFujiNet = new ChainNetwork(43113n);
+  static EvmScrollNet = new ChainNetwork(534352n);
+  static EvmScrollSepoliaNet = new ChainNetwork(534351n);
+  static EvmBitlayerNet = new ChainNetwork(200901n);
+  static EvmBitlayerTestNet = new ChainNetwork(200810n);
+  static EvmSwanNet = new ChainNetwork(254n);
+  static EvmSwanTestNet = new ChainNetwork(20241133n);
+  static EvmPantaNet = new ChainNetwork(331n);
+  static EvmNeoXNet = new ChainNetwork(47763n);
+  static EvmNeoXTestNet = new ChainNetwork(12227332n);
+  static EvmKaiaNet = new ChainNetwork(8217n);
+  static EvmKaiaKairosTestNet = new ChainNetwork(1001n);
 
-  static SolanaMainNet = new ChainNetwork(new BigNumber(0x3));
-  static SolanaTestNet = new ChainNetwork(new BigNumber(0x2));
+  static SolanaMainNet = new ChainNetwork(0x3n);
+  static SolanaTestNet = new ChainNetwork(0x2n);
 
-  static TonMainNet = new ChainNetwork(new BigNumber(1));
-  static TonTestNet = new ChainNetwork(new BigNumber(2));
+  static TonMainNet = new ChainNetwork(1n);
+  static TonTestNet = new ChainNetwork(2n);
 
-  static TronMainNet = new ChainNetwork(new BigNumber(0x2b6653dc));
-  static TronShastaTestNet = new ChainNetwork(new BigNumber(0x94a9059e));
-  static TronNileTestNet = new ChainNetwork(new BigNumber(0xcd8690dc));
+  static TronMainNet = new ChainNetwork(0x2b6653dcn);
+  static TronShastaTestNet = new ChainNetwork(0x94a9059en);
+  static TronNileTestNet = new ChainNetwork(0xcd8690dcn);
 
-  static DfinityMainNet = new ChainNetwork(new BigNumber(1));
+  static DfinityMainNet = new ChainNetwork(1n);
 
-  static KaspaMainNet = new ChainNetwork(new BigNumber(0));
-  static KaspaTestNet = new ChainNetwork(new BigNumber(1));
+  static KaspaMainNet = new ChainNetwork(0n);
+  static KaspaTestNet = new ChainNetwork(1n);
 
   static fromString(value: string): ChainNetwork | null {
     if (!value) {
       return null;
     }
-    return new ChainNetwork(new BigNumber(value));
+    return new ChainNetwork(BigInt(value));
   }
 
   toString(): string {
@@ -107,7 +106,7 @@ export class ChainNetwork {
     if (!other) {
       return false;
     }
-    return this.value.isEqualTo(other.value);
+    return this.value === other.value;
   }
 }
 
@@ -148,10 +147,10 @@ export class ChainId {
 }
 
 export class ChainAssetType {
-  value: BigNumber;
+  value: bigint;
   name: string
 
-  constructor(value: BigNumber) {
+  constructor(value: bigint) {
     this.value = value;
     switch (value.toString()) {
       case '0': this.name = 'Native';break;
@@ -169,23 +168,23 @@ export class ChainAssetType {
     }
   }
 
-  static Native = new ChainAssetType(new BigNumber(0));
-  static NativeGas = new ChainAssetType(new BigNumber(1));
-  static ERC20 = new ChainAssetType(new BigNumber(3));
-  static ERC721 = new ChainAssetType(new BigNumber(4));
-  static ICP = new ChainAssetType(new BigNumber(5));
-  static ICRC3 = new ChainAssetType(new BigNumber(6));
-  static BRC20 = new ChainAssetType(new BigNumber(7));
-  static SPL = new ChainAssetType(new BigNumber(8));
-  static TRC20 = new ChainAssetType(new BigNumber(9));
-  static Jetton = new ChainAssetType(new BigNumber(10));
-  static KRC20 = new ChainAssetType(new BigNumber(11));
+  static Native = new ChainAssetType(0n);
+  static NativeGas = new ChainAssetType(1n);
+  static ERC20 = new ChainAssetType(3n);
+  static ERC721 = new ChainAssetType(4n);
+  static ICP = new ChainAssetType(5n);
+  static ICRC3 = new ChainAssetType(6n);
+  static BRC20 = new ChainAssetType(7n);
+  static SPL = new ChainAssetType(8n);
+  static TRC20 = new ChainAssetType(9n);
+  static Jetton = new ChainAssetType(10n);
+  static KRC20 = new ChainAssetType(11n);
 
   static fromString(value: string): ChainAssetType | null {
     if (!value) {
       return null;
     }
-    return new ChainAssetType(new BigNumber(value));
+    return new ChainAssetType(BigInt(value));
   }
 
   toString(): string {
@@ -200,7 +199,7 @@ export class ChainAssetType {
     if (!other) {
       return false;
     }
-    return this.value.isEqualTo(other.value);
+    return this.value === other.value;
   }
 }
 

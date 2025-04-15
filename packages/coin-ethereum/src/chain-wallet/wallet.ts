@@ -170,9 +170,9 @@ export class EthereumChainWallet extends BaseChainWallet {
       return provider;
     }
     if (chainInfo.wsRpcUrls?.length) {
-      provider = new WebSocketProvider(chainInfo.wsRpcUrls[0], chainInfo.chainId.network.value.toNumber());
+      provider = new WebSocketProvider(chainInfo.wsRpcUrls[0], Number(chainInfo.chainId.network.value));
     } else {
-      provider = new JsonRpcProvider(chainInfo.rpcUrls[0], chainInfo.chainId.network.value.toNumber());
+      provider = new JsonRpcProvider(chainInfo.rpcUrls[0], Number(chainInfo.chainId.network.value));
     }
     this.providerMap[chainInfo.chainId.toString()] = provider;
     return provider;
