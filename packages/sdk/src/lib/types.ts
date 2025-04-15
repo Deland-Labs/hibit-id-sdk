@@ -1,4 +1,4 @@
-import { WalletAccount } from "@delandlabs/coin-base"
+import { WalletAccount } from "@delandlabs/coin-base/model"
 import { AuthenticatorType, HibitIdAssetType, HibitIdChainId, HibitIdErrorCode } from "./enums"
 import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from "./tonconnect/types"
 

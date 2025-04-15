@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { HibitIdWallet } from "../lib/wallet";
 import { HibitIdAssetType, HibitIdChainId } from "../lib";
-import { WalletAccount } from "@delandlabs/coin-base";
+import { WalletAccount } from "@delandlabs/coin-base/model";
 import { BalanceChangeData } from "../lib/types";
 
 const App: FC = () => {

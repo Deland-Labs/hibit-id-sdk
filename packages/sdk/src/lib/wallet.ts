@@ -42,7 +42,7 @@ import {
 } from './enums';
 import { clamp, parseBalanceRequest, stringifyBalanceRequest } from './utils';
 import { TonConnectSignDataResult } from '@delandlabs/coin-ton';
-import { WalletAccount } from '@delandlabs/coin-base';
+import { WalletAccount } from '@delandlabs/coin-base/model';
 
 const LOGIN_SESSION_KEY = 'hibit-id-session';
 const BALANCE_POLL_INTERVAL = 5000;
