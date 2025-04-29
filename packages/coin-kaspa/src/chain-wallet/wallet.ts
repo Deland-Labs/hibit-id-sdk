@@ -27,6 +27,7 @@ export class KaspaChainWallet extends BaseChainWallet {
   private rpcClient: RpcClient;
   private krc20RpcClient: Krc20RpcClient;
   private keyPair?: Keypair;
+  private balanceCacheMap: Record<string, Record<string, BigNumber>> = {};
 
   constructor(chainInfo: ChainInfo, phrase: string) {
     super(chainInfo, phrase);
@@ -35,6 +36,14 @@ export class KaspaChainWallet extends BaseChainWallet {
     this.rpcClient = new RpcClient({
       networkId: this.networkId,
       resolver: Resolver.createWithEndpoints([this.getEndpoint(chainInfo)])
+    });
+    this.rpcClient.addEventListener('UtxosChanged', (data) => {
+      console.log('[KASPA Utxo changed]', data)
+      Object.keys(this.balanceCacheMap).forEach(address => {
+        if (data.added.find(item => item.address === address) || data.removed.find(item => item.address === address)) {
+          this.balanceCacheMap[address] = {};
+        }
+      })
     });
     this.krc20RpcClient = new Krc20RpcClient({ networkId: this.networkId });
   }
@@ -67,14 +76,19 @@ export class KaspaChainWallet extends BaseChainWallet {
 
   public override balanceOf = async (address: string, assetInfo: AssetInfo): Promise<BigNumber> => {
     this.validateAssetChain(assetInfo);
+    let balance: BigNumber | null = null
     switch (assetInfo.chainAssetType.toString()) {
       case NATIVE_ASSET.toString():
-        return this.getNativeBalance(address, assetInfo);
+        balance = await this.getNativeBalance(address, assetInfo);
+        break
       case FT_ASSET.toString():
-        return this.getKrc20Balance(address, assetInfo);
+        balance = await this.getKrc20Balance(address, assetInfo);
+        break
       default:
         throw new Error(`${CHAIN_NAME}: invalid chain asset type`);
     }
+    await this.refreshUtxoSubscription(address)
+    return balance
   };
 
   private validateAssetChain(assetInfo: AssetInfo): void {
@@ -85,8 +99,19 @@ export class KaspaChainWallet extends BaseChainWallet {
 
   private async getNativeBalance(address: string, assetInfo: AssetInfo): Promise<BigNumber> {
     try {
+      const cache = this.balanceCacheMap[address]
+      if (cache && cache['native']) {
+        console.log('[KASPA native balance cache hit]', cache)
+        return cache['native']
+      }
       const res = await this.rpcClient.getBalanceByAddress(address);
-      return new BigNumber(res.balance).shiftedBy(-assetInfo.decimalPlaces.value);
+      const balance = new BigNumber(res.balance).shiftedBy(-assetInfo.decimalPlaces.value);
+      if (cache) {
+        cache['native'] = balance
+      } else {
+        this.balanceCacheMap[address] = { native: balance }
+      }
+      return balance
     } catch (e) {
       console.error(e);
       return new BigNumber(0);
@@ -94,12 +119,24 @@ export class KaspaChainWallet extends BaseChainWallet {
   }
 
   private async getKrc20Balance(address: string, assetInfo: AssetInfo): Promise<BigNumber> {
+    const tick = assetInfo.contractAddress?.toUpperCase() ?? ''
+    const cache = this.balanceCacheMap[address]
+    if (cache && cache[tick]) {
+      console.log('[KASPA KRC20 balance cache hit]', cache)
+      return cache[tick]
+    }
     const res = await this.krc20RpcClient.getKrc20Balance(address, assetInfo.contractAddress);
     if (res.message !== 'successful' || !res.result) throw new Error(`${CHAIN_NAME}: getKrc20Balance failed`);
 
     for (const balanceInfo of res.result) {
       if (balanceInfo.tick.toUpperCase() === assetInfo.contractAddress.toUpperCase()) {
-        return new BigNumber(balanceInfo.balance).shiftedBy(-Number(balanceInfo.dec));
+        const balance = new BigNumber(balanceInfo.balance).shiftedBy(-Number(balanceInfo.dec));
+        if (cache) {
+          cache[tick] = balance
+        } else {
+          this.balanceCacheMap[address] = { [tick]: balance }
+        }
+        return balance
       }
     }
     throw new Error(`${CHAIN_NAME}: KRC20 balance not found`);
@@ -321,4 +358,20 @@ export class KaspaChainWallet extends BaseChainWallet {
     this.keyPair = Keypair.fromPrivateKeyHex(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
     return this.keyPair;
   };
+
+  private refreshUtxoSubscription = async (address: string) => {
+    try {
+      if (!this.balanceCacheMap[address]) {
+        if (Object.keys(this.balanceCacheMap).length > 0) {
+          await this.rpcClient.unsubscribeUtxosChanged(Object.keys(this.balanceCacheMap));
+          console.log('[KASPA unsubscribed utxo]', address)
+        }
+        this.balanceCacheMap[address] = {};
+        await this.rpcClient.subscribeUtxosChanged(Object.keys(this.balanceCacheMap));
+        console.log('[KASPA subscribed utxo]', address)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
 }
