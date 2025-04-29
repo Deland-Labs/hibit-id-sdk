@@ -76,19 +76,15 @@ export class KaspaChainWallet extends BaseChainWallet {
 
   public override balanceOf = async (address: string, assetInfo: AssetInfo): Promise<BigNumber> => {
     this.validateAssetChain(assetInfo);
-    let balance: BigNumber | null = null
+    await this.refreshUtxoSubscription(address)
     switch (assetInfo.chainAssetType.toString()) {
       case NATIVE_ASSET.toString():
-        balance = await this.getNativeBalance(address, assetInfo);
-        break
+        return await this.getNativeBalance(address, assetInfo);
       case FT_ASSET.toString():
-        balance = await this.getKrc20Balance(address, assetInfo);
-        break
+        return await this.getKrc20Balance(address, assetInfo);
       default:
         throw new Error(`${CHAIN_NAME}: invalid chain asset type`);
     }
-    await this.refreshUtxoSubscription(address)
-    return balance
   };
 
   private validateAssetChain(assetInfo: AssetInfo): void {
