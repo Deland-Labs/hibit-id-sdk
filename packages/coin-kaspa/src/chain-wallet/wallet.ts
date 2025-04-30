@@ -40,7 +40,8 @@ export class KaspaChainWallet extends BaseChainWallet {
     this.rpcClient.addEventListener('UtxosChanged', (data) => {
       console.log('[KASPA Utxo changed]', data)
       Object.keys(this.balanceCacheMap).forEach(address => {
-        if (data.added.find(item => item.address === address) || data.removed.find(item => item.address === address)) {
+        // @ts-expect-error type mismatch
+        if (data.UtxosChanged.added.find(item => item.address === address) || data.UtxosChanged.removed.find(item => item.address === address)) {
           this.balanceCacheMap[address] = {};
         }
       })
