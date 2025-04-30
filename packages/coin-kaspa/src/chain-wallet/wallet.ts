@@ -38,7 +38,7 @@ export class KaspaChainWallet extends BaseChainWallet {
       resolver: Resolver.createWithEndpoints([this.getEndpoint(chainInfo)])
     });
     this.rpcClient.addEventListener('UtxosChanged', (data) => {
-      console.log('[KASPA Utxo changed]', data)
+      console.debug('[KASPA Utxo changed]', data)
       Object.keys(this.balanceCacheMap).forEach(address => {
         // @ts-expect-error type mismatch
         if (data.UtxosChanged.added.find(item => item.address === address) || data.UtxosChanged.removed.find(item => item.address === address)) {
@@ -98,7 +98,6 @@ export class KaspaChainWallet extends BaseChainWallet {
     try {
       const cache = this.balanceCacheMap[address]
       if (cache && cache['native']) {
-        console.log('[KASPA native balance cache hit]', cache)
         return cache['native']
       }
       const res = await this.rpcClient.getBalanceByAddress(address);
@@ -119,7 +118,6 @@ export class KaspaChainWallet extends BaseChainWallet {
     const tick = assetInfo.contractAddress?.toUpperCase() ?? ''
     const cache = this.balanceCacheMap[address]
     if (cache && cache[tick]) {
-      console.log('[KASPA KRC20 balance cache hit]', cache)
       return cache[tick]
     }
     const res = await this.krc20RpcClient.getKrc20Balance(address, assetInfo.contractAddress);
@@ -361,11 +359,11 @@ export class KaspaChainWallet extends BaseChainWallet {
       if (!this.balanceCacheMap[address]) {
         if (Object.keys(this.balanceCacheMap).length > 0) {
           await this.rpcClient.unsubscribeUtxosChanged(Object.keys(this.balanceCacheMap));
-          console.log('[KASPA unsubscribed utxo]', address)
+          console.debug('[KASPA unsubscribed utxo]', address)
         }
         this.balanceCacheMap[address] = {};
         await this.rpcClient.subscribeUtxosChanged(Object.keys(this.balanceCacheMap));
-        console.log('[KASPA subscribed utxo]', address)
+        console.debug('[KASPA subscribed utxo]', address)
       }
     } catch (e) {
       console.error(e)
