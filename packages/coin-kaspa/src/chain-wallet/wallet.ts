@@ -28,6 +28,7 @@ export class KaspaChainWallet extends BaseChainWallet {
   private krc20RpcClient: Krc20RpcClient;
   private keyPair?: Keypair;
   private balanceCacheMap: Record<string, Record<string, BigNumber>> = {};
+  private pingInterval: any = null
 
   constructor(chainInfo: ChainInfo, phrase: string) {
     super(chainInfo, phrase);
@@ -364,6 +365,9 @@ export class KaspaChainWallet extends BaseChainWallet {
         this.balanceCacheMap[address] = {};
         await this.rpcClient.subscribeUtxosChanged(Object.keys(this.balanceCacheMap));
         console.debug('[KASPA subscribed utxo]', address)
+        if (!this.pingInterval) {
+          this.pingInterval = setInterval(this.rpcClient.ping, 10000)
+        }
       }
     } catch (e) {
       console.error(e)
