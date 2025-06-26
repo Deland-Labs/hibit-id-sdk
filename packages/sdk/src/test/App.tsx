@@ -1,6 +1,8 @@
 import { FC, useEffect, useState } from "react";
 import { HibitIdWallet } from "../lib/wallet";
-import { HibitIdChainId, WalletAccount } from "../lib";
+import { HibitIdAssetType, HibitIdChainId } from "../lib";
+import { WalletAccount } from "@delandlabs/coin-base/model";
+import { BalanceChangeData } from "../lib/types";
 
 const App: FC = () => {
   const [wallet, setWallet] = useState<HibitIdWallet | null>(null)
@@ -9,19 +11,37 @@ const App: FC = () => {
   const [sig, setSig] = useState('')
   const [balance, setBalance] = useState('')
   const [chainId, setChainId] = useState('')
+  const [isBackgroundEmbed, setIsBackgroundEmbed] = useState(false)
 
   useEffect(() => {
     const wallet = new HibitIdWallet({
       env: 'dev',
-      chains: [HibitIdChainId.EthereumSepolia, HibitIdChainId.TonTestnet],
+      chains: [],
       defaultChain: HibitIdChainId.EthereumSepolia,
+      embedMode: 'float',
+      controllerDefaultPosition: { right: 100, bottom: 100 }
     })
     setWallet(wallet)
     const handleChainChanged = (chainId: HibitIdChainId) => setChainId(chainId)
     wallet.addEventListener('chainChanged', handleChainChanged)
+    const handleBalanceChanged = (data: BalanceChangeData) => {
+      console.log(data)
+    }
+    wallet.subscribeBalanceChange({
+      assetType: HibitIdAssetType.ERC20,
+      chainId: HibitIdChainId.EthereumBscTestnet,
+      contractAddress: '0x4becfca57c5728536fc4746645f7b4410d1cc5f7',
+      decimalPlaces: 18
+    }, handleBalanceChanged)
 
     return () => {
       wallet.removeEventListener('chainChanged', handleChainChanged)
+      wallet.unsubscribeBalanceChange({
+        assetType: HibitIdAssetType.ERC20,
+        chainId: HibitIdChainId.EthereumBscTestnet,
+        contractAddress: '0x4becfca57c5728536fc4746645f7b4410d1cc5f7',
+        decimalPlaces: 18
+      }, handleBalanceChanged)
     }
   }, [])
 
@@ -40,6 +60,33 @@ const App: FC = () => {
       <div>
         <p>account:</p>
         <pre>{JSON.stringify(account, null, 2)}</pre>
+      </div>
+      <div>
+        <button className="btn btn-sm" onClick={async () => {
+          await wallet?.showResetPassword()
+        }}>
+          reset password
+        </button>
+      </div>
+      <div>
+        <button className="btn btn-sm" onClick={async () => {
+          try {
+            await wallet?.verifyPassword({ password: '123456' })
+            alert('password verified')
+          } catch (e: any) {
+            alert(e.message || e)
+          }
+        }}>
+          verify password
+        </button>
+      </div>
+      <div>
+        <button className="btn btn-sm" onClick={async () => {
+          await wallet?.setBackgroundEmbed(!isBackgroundEmbed)
+          setIsBackgroundEmbed(!isBackgroundEmbed)
+        }}>
+          toggle background embed({isBackgroundEmbed})
+        </button>
       </div>
       <div>
         <button className="btn btn-sm" onClick={async () => {

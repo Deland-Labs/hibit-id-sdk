@@ -1,4 +1,4 @@
-name: publish hibit-id-sdk package to npm
+name: publish hibit-id-sdk packages to npm
 on:
   release:
     types: [ published ]
@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           registry-url: https://npm.pkg.github.com
           cache: yarn
       - run: |
@@ -25,6 +25,20 @@ jobs:
           Version=$(git describe --tags --abbrev=0)
           echo Version: $Version
           export VITE_RELEASE_VERSION=$Version
+
           yarn install --frozen-lockfile
-          yarn build:sdk
+
+          # Replace * with actual version in package.json
+          node scripts/replaceVersions.js $Version
+
+          yarn build:all
+          
+          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/crypto-lib --access public
+          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-base --access public
+          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-dfinity --access public
+          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-ethereum --access public
+          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-kaspa --access public
+          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-solana --access public
+          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-ton --access public
+          yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-tron --access public
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/sdk --access public

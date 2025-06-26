@@ -1,0 +1,56 @@
+{
+  "name": "@delandlabs/coin-ethereum",
+  "private": false,
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.umd.cjs"
+      }
+    },
+    "./chains": {
+      "import": {
+        "types": "./dist/chains.d.ts",
+        "default": "./dist/chains.js"
+      },
+      "require": {
+        "types": "./dist/chains.d.ts",
+        "default": "./dist/chains.umd.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest",
+    "build": "vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "ethers": "^6.13.5"
+  },
+  "peerDependencies": {
+    "@delandlabs/coin-base": "*"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "@rollup/plugin-typescript": "^12.1.1",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
+    "eslint": "^9.16.0",
+    "globals": "^15.12.0",
+    "typescript-eslint": "^8.16.0"
+  }
+}

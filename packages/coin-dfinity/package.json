@@ -1,0 +1,66 @@
+{
+  "name": "@delandlabs/coin-dfinity",
+  "private": false,
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.umd.cjs"
+      }
+    },
+    "./chains": {
+      "import": {
+        "types": "./dist/chains.d.ts",
+        "default": "./dist/chains.js"
+      },
+      "require": {
+        "types": "./dist/chains.d.ts",
+        "default": "./dist/chains.umd.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest",
+    "build": "vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@delandlabs/crypto-lib": "*",
+    "@dfinity/agent": "^2.1.1",
+    "@dfinity/candid": "^2.1.1",
+    "@dfinity/identity-secp256k1": "^2.1.1",
+    "@dfinity/ledger-icp": "^2.5.0",
+    "@dfinity/ledger-icrc": "^2.5.0",
+    "@dfinity/principal": "^2.1.1",
+    "@dfinity/utils": "^2.5.0",
+    "@noble/secp256k1": "^2.0.0",
+    "cborg": "^4.2.4",
+    "ic0": "^0.3.0"
+  },
+  "peerDependencies": {
+    "@delandlabs/coin-base": "*"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "@rollup/plugin-typescript": "^12.1.1",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
+    "eslint": "^9.16.0",
+    "globals": "^15.12.0",
+    "typescript-eslint": "^8.16.0"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "name": "@delandlabs/coin-kaspa",
+  "private": false,
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.umd.cjs"
+      }
+    },
+    "./chains": {
+      "import": {
+        "types": "./dist/chains.d.ts",
+        "default": "./dist/chains.js"
+      },
+      "require": {
+        "types": "./dist/chains.d.ts",
+        "default": "./dist/chains.umd.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest",
+    "build": "vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "proto-gen": "./scripts/proto-gen.sh",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@delandlabs/crypto-lib": "*",
+    "@kcoin/kaspa-web3.js": "^1.1.2",
+    "buffer": "^6.0.3"
+  },
+  "peerDependencies": {
+    "@delandlabs/coin-base": "*"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "@rollup/plugin-typescript": "^12.1.1",
+    "@scure/bip39": "^1.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
+    "eslint": "^9.16.0",
+    "globals": "^15.12.0",
+    "grpc-tools": "^1.12.4",
+    "ts-proto": "^2.4.2",
+    "typescript-eslint": "^8.16.0"
+  }
+}

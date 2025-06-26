@@ -1,17 +1,113 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
-    "@delandlabs/hibit-id-sdk#build": {
-      "env": ["VITE_*"],
-      "outputs": ["dist/**"]
+    "@delandlabs/crypto-lib#build:esm": {
+      "outputs": [
+        "dist/**"
+      ],
+      "cache": false
     },
-    "@delandlabs/hibit-id-wallet#build": {
-      "env": ["VITE_*"],
-      "dependsOn": ["@delandlabs/hibit-id-sdk#build"],
-      "outputs": ["dist/**"]
+    "@delandlabs/crypto-lib#build:common": {
+      "outputs": [
+        "dist/**"
+      ],
+      "cache": false
     },
-    "@delandlabs/hibit-id-wallet#preview": {
-      "dependsOn": ["@delandlabs/hibit-id-wallet#build"]
+    "@delandlabs/coin-base#build": {
+      "outputs": [
+        "dist/**"
+      ],
+      "dependsOn": [
+        "@delandlabs/crypto-lib#build:esm"
+      ]
+    },
+    "@delandlabs/coin-base#test": {
+      "env": [
+        "VITE_*"
+      ],
+      "dependsOn": [
+        "@delandlabs/crypto-lib#build:common"
+      ],
+      "persistent": true
+    },
+    "@delandlabs/coin-ethereum#build": {
+      "env": [
+        "VITE_*"
+      ],
+      "dependsOn": [
+        "@delandlabs/coin-base#build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "@delandlabs/coin-ton#build": {
+      "env": [
+        "VITE_*"
+      ],
+      "dependsOn": [
+        "@delandlabs/coin-base#build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "@delandlabs/coin-dfinity#build": {
+      "env": [
+        "VITE_*"
+      ],
+      "dependsOn": [
+        "@delandlabs/coin-base#build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "@delandlabs/coin-kaspa#build": {
+      "env": [
+        "VITE_*"
+      ],
+      "dependsOn": [
+        "@delandlabs/coin-base#build",
+        "@delandlabs/crypto-lib#build:esm"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "@delandlabs/coin-solana#build": {
+      "env": [
+        "VITE_*"
+      ],
+      "dependsOn": [
+        "@delandlabs/coin-base#build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "@delandlabs/coin-tron#build": {
+      "env": [
+        "VITE_*"
+      ],
+      "dependsOn": [
+        "@delandlabs/coin-base#build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "@delandlabs/hibit-id-wallet-sdk#build": {
+      "env": [
+        "VITE_*"
+      ],
+      "dependsOn": [
+        "@delandlabs/coin-base#build",
+        "@delandlabs/coin-ton#build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
     },
     "lint": {},
     "dev": {

@@ -12,13 +12,21 @@ export default defineConfig({
     basicSsl(),
     nodePolyfills()
   ],
+  server: {
+    host: '127.0.0.1',
+    port: 6173,
+  },
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, 'src/lib/index.ts'),
-      name: 'HibitIDSdk',
+      name: 'HibitIDWalletSdk',
       // the proper extensions will be added
-      fileName: 'hibit-id-sdk',
+      fileName: 'hibit-id-wallet-sdk',
+    },
+    commonjsOptions: {
+      transformMixedEsModules: true,
+      include: [/node_modules/, /crypto-lib/]
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

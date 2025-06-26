@@ -1,95 +1,100 @@
-# Introduction
-HiBit ID is a web-based multi-chain crypto wallet, with SDK for DApp integration.
+# Hibit ID SDKs
 
-It supports a variety of popular third-party login methods which links user's Web2 accounts seamlessly to the Web3 world.
+[![npm version](https://img.shields.io/npm/v/@delandlabs/hibit-id-sdk)](https://www.npmjs.com/package/@delandlabs/hibit-id-sdk)
+[![Build Status](https://github.com/deland-labs/hibit-id-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/deland-labs/hibit-id-sdk/actions)
+[![Test Status](https://img.shields.io/github/actions/workflow/status/deland-labs/hibit-id-sdk/test.yml?label=tests)](https://github.com/deland-labs/hibit-id-sdk/actions)
+[![License](https://img.shields.io/github/license/deland-labs/hibit-id-sdk)](LICENSE)
+## Introduction
 
-# Supported Third-party Login Methods
-- [x] Telegram
-- [x] Google
-- [ ] Facebook
-- [x] X
-- [ ] Apple
-- [ ] Github
-- and more...
+Hibit ID is a non-custodial multi-chain wallet solution developed by DeLand Labs. This monorepo contains the official SDK that enables seamless integration with various blockchain networks, allowing developers to incorporate Hibit ID into their DApps.
 
-# Supported Chains
-- [x] Ethereum
-- [x] BNB Smart Chain
-- [x] Base
-- [x] Avalanche
-- [x] Scroll
-- [x] Bitlayer
-- [x] Ton
-- [x] Internet Computer
-- [ ] Solana
-- [ ] Bitcoin
-- [ ] Tron
-- and more...
+Hibit ID bridges Web2 and Web3 by supporting various third-party login methods, making blockchain technologies accessible to mainstream users while maintaining enterprise-grade security.
 
-# Integration
-## Install SDK
+## Features
+
+- **Multi-chain Support**: Connect to various blockchain networks through a unified interface
+- **Non-custodial**: Users maintain full control of their private keys
+- **Web2 Login Integration**: Connect existing Web2 accounts to Web3 wallets
+- **Simple API**: Easy-to-use developer interfaces for DApp integration
+
+## Supported Third-party Login Methods
+
+- ✅ Telegram
+- ✅ Google
+- ✅ X
+- 🔄 Facebook (coming soon)
+- 🔄 Apple (coming soon)
+- 🔄 Github (coming soon)
+
+
+## Supported Chains
+
+- ✅ Ethereum
+- ✅ BNB Smart Chain
+- ✅ Base
+- ✅ Avalanche
+- ✅ Scroll
+- ✅ Bitlayer
+- ✅ Swan
+- ✅ Panta
+- ✅ Neo X
+- ✅ Bit Layer
+- ✅ Ton
+- ✅ Solana
+- ✅ Tron
+- ✅ ICP
+- ✅ Kaspa
+
+## Project Structure
+
+```
+packages/
+  ├── coin-base/       # Base functionality for blockchain connectors
+  ├── coin-dfinity/    # Internet Computer (ICP) integration
+  ├── coin-ethereum/   # Ethereum and EVM chains integration
+  ├── coin-kaspa/      # Kaspa blockchain integration
+  ├── coin-solana/     # Solana blockchain integration
+  ├── coin-ton/        # TON blockchain integration
+  ├── coin-tron/       # Tron blockchain integration
+  ├── crypto-lib/      # Core cryptographic functionality
+  └── sdk/             # Main SDK for developer integration
+```
+
+## Installation
+
 ```bash
+# Install the SDK
 yarn add @delandlabs/hibit-id-sdk
+
+# Or using npm
+npm install @delandlabs/hibit-id-sdk
 ```
-## Usage
-```js
-import {
-  HibitIdWallet,
-  HibitIdChainId,
-  WalletAccount,
-  HibitIdAssetType,
-} from "@delandlabs/hibit-id-sdk"
-// remember to import styles for the wallet
-import '@delandlabs/hibit-id-sdk/dist/style.css';
+## Examples
 
-// init hibitid wallet
-const hibitId = new HibitIdWallet({
-  env: 'prod',  // 'prod' or 'test'
-  chains: [
-    HibitIdChainId.Ethereum,
-    HibitIdChainId.Ton,
-  ],
-  defaultChain: HibitIdChainId.Ethereum,
-})
+Check out our [examples repository](https://github.com/Deland-Labs/hibit-id-examples) for complete integration examples with various frameworks and platforms.
 
-// connect
-const walletAccount: WalletAccount = await hibitId.connect(HibitIdChainId.Ethereum)
 
-// sign
-const signature: string = await hibitId.signMessage(msg)
+## For Developers
 
-// get balance
-const balance: string = await hibitId.getBalance({
-  assetType: HibitIdAssetType.ERC20,
-  chainId: HibitIdChainId.Ethereum,
-  contractAddress: '0x......',  // required for non-native tokens
-  decimalPlaces: 18,
-})
+### Building the Project
+```bash
+# Build all packages
+yarn build:all
 
-// transfer
-const txId: string = await hibitId.transfer({
-  toAddress: '0x......',
-  amount: '0.1',
-  assetType: HibitIdAssetType.ERC20,
-  contractAddress: '0x......',  // required for non-native tokens
-  decimalPlaces: 18,
-})
-
-// switch chain
-await hibitId.switchToChain(HibitIdChainId.TonMainnet)
-
-// listen to events
-hibitId.addEventListener('chainChanged', (chainId: HibitIdChainId) => {
-  console.log(chainId)
-});
-hibitId.addEventListener('accountsChanged', (account: WalletAccount | null) => {
-  console.log(account)
-});
-
-// remove event listeners
-hibitId.removeEventListener('chainChanged', chainChangedHandler);
-hibitId.removeEventListener('accountsChanged', accountsChangedHandler);
+# Build specific package
+yarn build:sdk
+yarn build:coin-ethereum
 ```
 
-## TonConnect integration
-Please refer to [hibit-id-examples](https://github.com/Deland-Labs/hibit-id-examples) for TonConnect integration.
+### Running Tests
+```bash
+# Run all tests
+yarn test:all
+
+# Test specific package
+yarn test:coin-kaspa
+```
+
+## Contributing
+
+We welcome contributions from the community! Please feel free to submit issues and pull requests.
