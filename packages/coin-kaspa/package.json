@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@delandlabs/crypto-lib": "*",
-    "@kcoin/kaspa-web3.js": "^1.1.1",
+    "@kcoin/kaspa-web3.js": "^1.1.2",
     "buffer": "^6.0.3"
   },
   "peerDependencies": {
