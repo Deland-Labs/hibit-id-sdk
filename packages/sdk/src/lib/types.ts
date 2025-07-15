@@ -1,6 +1,10 @@
 import { WalletAccount } from "@delandlabs/coin-base/model"
+import { MnemonicError } from "@delandlabs/coin-base"
 import { AuthenticatorType, HibitIdAssetType, HibitIdChainId, HibitIdErrorCode } from "./enums"
 import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from "./tonconnect/types"
+
+// Re-export MnemonicError from coin-base for consistency
+export { MnemonicError }
 
 export type HibitEnv = 'dev' | 'test' | 'prod'
 
@@ -55,17 +59,6 @@ export class BridgePromise<T> {
 export class HibitIdError extends Error {
   constructor(public code: HibitIdErrorCode, message: string) {
     super(message) 
-  }
-}
-
-export class MnemonicError extends Error {
-  constructor(
-    public code: HibitIdErrorCode,
-    message: string,
-    public details?: any
-  ) {
-    super(message);
-    this.name = 'MnemonicError';
   }
 }
 

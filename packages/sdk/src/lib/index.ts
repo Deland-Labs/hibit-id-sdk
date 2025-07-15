@@ -9,7 +9,7 @@ export {
   HibitIdChainId,
   HibitIdErrorCode,
 } from './enums';
-export { BridgePromise } from './types';
+export { BridgePromise, MnemonicError } from './types';
 export type * from './types';
 export type {
   TonConnectTransactionPayload,
