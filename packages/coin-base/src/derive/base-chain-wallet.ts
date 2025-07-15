@@ -2,12 +2,30 @@ import BigNumber from "bignumber.js";
 import { AssetInfo, ChainInfo, WalletAccount } from "../model";
 import { getEcdsaDerivedPrivateKey } from "./ecdsa";
 import { getEd25519DerivedPrivateKey } from "./ed25519";
+import { MnemonicError, HibitIdErrorCode } from "../errors";
 
 export abstract class BaseChainWallet {
   public readonly chainInfo: ChainInfo;
   protected readonly mnemonic: string;
 
   protected constructor(chainInfo: ChainInfo, phrase: string) {
+    // Add basic validation
+    if (!phrase?.trim()) {
+      throw new MnemonicError(
+        HibitIdErrorCode.INVALID_MNEMONIC,
+        `${chainInfo.name}: Mnemonic cannot be empty`
+      );
+    }
+    
+    // Pre-validate mnemonic format
+    const words = phrase.trim().split(/\s+/);
+    if (words.length !== 12 && words.length !== 24) {
+      throw new MnemonicError(
+        HibitIdErrorCode.INVALID_MNEMONIC,
+        `${chainInfo.name}: Invalid mnemonic length (got ${words.length} words, expected 12 or 24)`
+      );
+    }
+    
     this.chainInfo = chainInfo;
     this.mnemonic = phrase;
   }

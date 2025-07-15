@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, SolanaJSONRPCError, SystemProgram, Transaction } from '@solana/web3.js';
 import { AssetInfo, ChainInfo, WalletAccount } from '@delandlabs/coin-base/model';
-import { BaseChainWallet } from '@delandlabs/coin-base';
+import { BaseChainWallet, MnemonicError } from '@delandlabs/coin-base';
 import { CHAIN, CHAIN_NAME, DERIVING_PATH, FT_ASSET, NATIVE_ASSET, DEFAULT_COMMITMENT } from './defaults';
 import nacl from 'tweetnacl';
 import {
@@ -27,12 +27,19 @@ class SolanaChainWallet extends BaseChainWallet {
   }
 
   public override getAccount: () => Promise<WalletAccount> = async () => {
-    await this.readyPromise;
-    const address = this.keypair!.publicKey.toString();
-    return {
-      address,
-      publicKey: Buffer.from(this.keypair!.publicKey.toBytes()).toString('hex')
-    };
+    try {
+      await this.readyPromise;
+      const address = this.keypair!.publicKey.toString();
+      return {
+        address,
+        publicKey: Buffer.from(this.keypair!.publicKey.toBytes()).toString('hex')
+      };
+    } catch (error) {
+      if (error instanceof MnemonicError) {
+        throw error; // Pass through mnemonic errors
+      }
+      throw new Error(`${CHAIN_NAME}: ${error.message}`);
+    }
   };
 
   public override signMessage: (message: string) => Promise<string> = async (message) => {
@@ -202,14 +209,21 @@ class SolanaChainWallet extends BaseChainWallet {
   }
 
   private async initWallet(): Promise<void> {
-    const endpoint = await this.getRpcEndpoint();
-    // Update connection with the fastest RPC
-    this.connection = new Connection(endpoint || this.chainInfo.rpcUrls[0], {
-      commitment: DEFAULT_COMMITMENT
-    });
-    const privateKeyHex = await this.getEd25519DerivedPrivateKey(DERIVING_PATH, true, 'hex');
-    const secretKey = Buffer.from(privateKeyHex, 'hex');
-    this.keypair = Keypair.fromSecretKey(secretKey);
+    try {
+      const endpoint = await this.getRpcEndpoint();
+      // Update connection with the fastest RPC
+      this.connection = new Connection(endpoint || this.chainInfo.rpcUrls[0], {
+        commitment: DEFAULT_COMMITMENT
+      });
+      const privateKeyHex = await this.getEd25519DerivedPrivateKey(DERIVING_PATH, true, 'hex');
+      const secretKey = Buffer.from(privateKeyHex, 'hex');
+      this.keypair = Keypair.fromSecretKey(secretKey);
+    } catch (error) {
+      if (error instanceof MnemonicError) {
+        throw error; // Pass through mnemonic errors
+      }
+      throw new Error(`${CHAIN_NAME}: Failed to initialize wallet: ${error.message}`);
+    }
   }
 
   private async getRpcEndpoint(): Promise<string | null> {

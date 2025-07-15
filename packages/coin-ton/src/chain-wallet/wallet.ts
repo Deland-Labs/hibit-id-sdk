@@ -22,7 +22,7 @@ import { KeyPair, mnemonicToPrivateKey } from '@ton/crypto';
 import { external, storeStateInit } from '@ton/core';
 import nacl from 'tweetnacl';
 import { AssetInfo, ChainInfo, ChainNetwork, WalletAccount } from '@delandlabs/coin-base/model';
-import { BaseChainWallet } from '@delandlabs/coin-base';
+import { BaseChainWallet, MnemonicError, HibitIdErrorCode } from '@delandlabs/coin-base';
 import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from '../ton-connect';
 import { sleep } from './utils';
 import { CHAIN, CHAIN_NAME, FT_ASSET, NATIVE_ASSET, MAGIC_BYTES } from './defaults';
@@ -340,8 +340,18 @@ export class TonChainWallet extends BaseChainWallet {
           publicKey: this.keyPair.publicKey
         })
       );
-    } catch (e) {
-      throw new Error(`${CHAIN_NAME}: Failed to initialize wallet: ${e}`);
+    } catch (e: any) {
+      if (e instanceof MnemonicError) {
+        throw e; // Pass through mnemonic errors
+      }
+      // Check if it's a mnemonic-related error from TON crypto
+      if (e.message?.includes('mnemonic') || e.message?.includes('Invalid seed phrase')) {
+        throw new MnemonicError(
+          HibitIdErrorCode.INVALID_MNEMONIC,
+          `${CHAIN_NAME}: Invalid mnemonic format`
+        );
+      }
+      throw new Error(`${CHAIN_NAME}: Failed to initialize wallet: ${e.message || e}`);
     }
   };
 

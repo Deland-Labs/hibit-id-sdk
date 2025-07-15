@@ -58,6 +58,17 @@ export class HibitIdError extends Error {
   }
 }
 
+export class MnemonicError extends Error {
+  constructor(
+    public code: HibitIdErrorCode,
+    message: string,
+    public details?: any
+  ) {
+    super(message);
+    this.name = 'MnemonicError';
+  }
+}
+
 export interface ChainInfo {
   chainId: {
     type: number
