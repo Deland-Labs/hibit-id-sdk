@@ -262,9 +262,9 @@ export class TonChainWallet extends BaseChainWallet {
       const fee = fromNano(
         String(
           feeData.source_fees.fwd_fee +
-          feeData.source_fees.in_fwd_fee +
-          feeData.source_fees.storage_fee +
-          feeData.source_fees.gas_fee
+            feeData.source_fees.in_fwd_fee +
+            feeData.source_fees.storage_fee +
+            feeData.source_fees.gas_fee
         )
       );
       return new BigNumber(fee);
@@ -346,10 +346,7 @@ export class TonChainWallet extends BaseChainWallet {
       }
       // Check if it's a mnemonic-related error from TON crypto
       if (e.message?.includes('mnemonic') || e.message?.includes('Invalid seed phrase')) {
-        throw new MnemonicError(
-          HibitIdErrorCode.INVALID_MNEMONIC,
-          `${CHAIN_NAME}: Invalid mnemonic format`
-        );
+        throw new MnemonicError(HibitIdErrorCode.INVALID_MNEMONIC, `${CHAIN_NAME}: Invalid mnemonic format`);
       }
       throw new Error(`${CHAIN_NAME}: Failed to initialize wallet: ${e.message || e}`);
     }

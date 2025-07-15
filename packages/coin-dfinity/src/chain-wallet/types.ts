@@ -25,7 +25,7 @@ export enum IcrcErrorCode {
   PermissionNotGranted = 3000,
   ActionAborted = 3001,
   NetworkError = 4000,
-  TransportChannelClosed = 4001,
+  TransportChannelClosed = 4001
 }
 
 export const IcrcErrorCodeMessages: Record<IcrcErrorCode, string> = {
@@ -34,8 +34,8 @@ export const IcrcErrorCodeMessages: Record<IcrcErrorCode, string> = {
   [IcrcErrorCode.PermissionNotGranted]: 'Permission not granted',
   [IcrcErrorCode.ActionAborted]: 'Action aborted',
   [IcrcErrorCode.NetworkError]: 'Network error',
-  [IcrcErrorCode.TransportChannelClosed]: 'Transport channel closed',
-}
+  [IcrcErrorCode.TransportChannelClosed]: 'Transport channel closed'
+};
 
 export type JsonRpcRequest = {
   id: number;
@@ -47,7 +47,7 @@ export type JsonRpcRequest = {
 export type JsonRpcResponseSuccess<TResult> = {
   id: number;
   jsonrpc: '2.0';
-  result: TResult
+  result: TResult;
 };
 
 export type JsonRpcResponseError = {
@@ -72,73 +72,73 @@ export type Icrc25RequestPermissionsResult = {
     scope: {
       method: IcrcMethods;
     };
-    state: IcrcPermissionState
+    state: IcrcPermissionState;
   }>;
 };
 
 export type Icrc25PermissionsRequest = JsonRpcRequest & {
   method: IcrcMethods.ICRC25_PERMISSIONS;
-  params: undefined
+  params: undefined;
 };
 
-export type Icrc25PermissionsResult = Icrc25RequestPermissionsResult
+export type Icrc25PermissionsResult = Icrc25RequestPermissionsResult;
 
 export type Icrc25SupportedStandardsRequest = JsonRpcRequest & {
   method: IcrcMethods.ICRC25_SUPPORTED_STANDARDS;
-  params: undefined
+  params: undefined;
 };
 
 export type Icrc25SupportedStandardsResult = {
   supportedStandards: Array<{
-    name: string,
-    url: string
+    name: string;
+    url: string;
   }>;
 };
 
 export type Icrc27AccountsRequest = JsonRpcRequest & {
   method: IcrcMethods.ICRC27_ACCOUNTS;
-  params: undefined
+  params: undefined;
 };
 
 export type Icrc27AccountsResult = {
   accounts: Array<{
-    owner: string
-    subaccount?: string
+    owner: string;
+    subaccount?: string;
   }>;
 };
 
 export type Icrc29StatusRequest = JsonRpcRequest & {
   method: IcrcMethods.ICRC29_STATUS;
-  params: undefined
+  params: undefined;
 };
 
-export type Icrc29StatusResult = "ready"
+export type Icrc29StatusResult = 'ready';
 
 export type Icrc32SignChallengeRequest = JsonRpcRequest & {
   method: IcrcMethods.ICRC32_SIGN_CHALLENGE;
   params: {
-    principal: string
-    challenge: string // base64 encoded
-  }
+    principal: string;
+    challenge: string; // base64 encoded
+  };
 };
 
 export type Icrc32SignChallengeResult = {
-  publicKey: string
-  signature: string
+  publicKey: string;
+  signature: string;
 };
 
 export type Icrc49CallCanisterRequest = JsonRpcRequest & {
-  method: IcrcMethods.ICRC49_CALL_CANISTER
+  method: IcrcMethods.ICRC49_CALL_CANISTER;
   params: {
-    canisterId: string
-    sender: string
-    method: string
-    arg: string // base64 encoded
-    nonce?: string // base64 encoded
-  }
-}
+    canisterId: string;
+    sender: string;
+    method: string;
+    arg: string; // base64 encoded
+    nonce?: string; // base64 encoded
+  };
+};
 
 export type Icrc49CallCanisterResult = {
-  contentMap: string  // base64 encoded
-  certificate: string // base64 encoded
-}
+  contentMap: string; // base64 encoded
+  certificate: string; // base64 encoded
+};

@@ -13,39 +13,27 @@ describe('ECDSA Key Derivation', () => {
   });
 
   test('should throw MnemonicError for empty mnemonic', async () => {
-    await expect(
-      getEcdsaDerivedPrivateKey('', DERIVING_PATH)
-    ).rejects.toThrow(MnemonicError);
-    
-    await expect(
-      getEcdsaDerivedPrivateKey('', DERIVING_PATH)
-    ).rejects.toMatchObject({
+    await expect(getEcdsaDerivedPrivateKey('', DERIVING_PATH)).rejects.toThrow(MnemonicError);
+
+    await expect(getEcdsaDerivedPrivateKey('', DERIVING_PATH)).rejects.toMatchObject({
       code: HibitIdErrorCode.INVALID_MNEMONIC,
       message: 'Mnemonic is required'
     });
   });
 
   test('should throw MnemonicError for invalid mnemonic', async () => {
-    await expect(
-      getEcdsaDerivedPrivateKey('invalid words here', DERIVING_PATH)
-    ).rejects.toThrow(MnemonicError);
-    
-    await expect(
-      getEcdsaDerivedPrivateKey('invalid words here', DERIVING_PATH)
-    ).rejects.toMatchObject({
+    await expect(getEcdsaDerivedPrivateKey('invalid words here', DERIVING_PATH)).rejects.toThrow(MnemonicError);
+
+    await expect(getEcdsaDerivedPrivateKey('invalid words here', DERIVING_PATH)).rejects.toMatchObject({
       code: HibitIdErrorCode.INVALID_MNEMONIC,
       message: 'Invalid mnemonic phrase'
     });
   });
 
   test('should throw error for empty derivation path', async () => {
-    await expect(
-      getEcdsaDerivedPrivateKey(VALID_MNEMONIC, '')
-    ).rejects.toThrow(MnemonicError);
-    
-    await expect(
-      getEcdsaDerivedPrivateKey(VALID_MNEMONIC, '')
-    ).rejects.toMatchObject({
+    await expect(getEcdsaDerivedPrivateKey(VALID_MNEMONIC, '')).rejects.toThrow(MnemonicError);
+
+    await expect(getEcdsaDerivedPrivateKey(VALID_MNEMONIC, '')).rejects.toMatchObject({
       code: HibitIdErrorCode.INVALID_DERIVATION_PATH,
       message: 'Derivation path is required'
     });
@@ -60,7 +48,7 @@ describe('ECDSA Key Derivation', () => {
   test('should generate different keys for different paths', async () => {
     const key1 = await getEcdsaDerivedPrivateKey(VALID_MNEMONIC, "m/44'/60'/0'/0/0");
     const key2 = await getEcdsaDerivedPrivateKey(VALID_MNEMONIC, "m/44'/60'/0'/0/1");
-    
+
     expect(key1).not.toBe(key2);
   });
 });
@@ -68,11 +56,11 @@ describe('ECDSA Key Derivation', () => {
 describe('ECDSA Memory Cleanup Verification', () => {
   const TEST_MNEMONIC = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
   const TEST_PATH = "m/44'/60'/0'/0/0";
-  
+
   test('memory cleanup should not affect returned private key', async () => {
     const privateKey1 = await getEcdsaDerivedPrivateKey(TEST_MNEMONIC, TEST_PATH);
     const privateKey2 = await getEcdsaDerivedPrivateKey(TEST_MNEMONIC, TEST_PATH);
-    
+
     expect(privateKey1).toBe(privateKey2);
     expect(privateKey1.length).toBe(64); // 32 bytes = 64 hex chars
     expect(privateKey1).not.toMatch(/^0+$/); // Ensure it's not all zeros

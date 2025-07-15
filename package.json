@@ -13,7 +13,8 @@
     "build:coin-solana": "turbo run @delandlabs/coin-solana#build",
     "build:coin-tron": "turbo run @delandlabs/coin-tron#build",
     "build:all": "turbo run build",
-    "test:all": "turbo run test",
+    "test:all": "turbo run test:ci",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
     "prepare": "husky install"
   },
   "workspaces": [

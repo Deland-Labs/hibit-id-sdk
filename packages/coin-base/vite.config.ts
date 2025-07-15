@@ -14,14 +14,14 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: {
-        'index': resolve(__dirname, 'src/index.ts'),
-        'model': resolve(__dirname, 'src/model.ts')
+        index: resolve(__dirname, 'src/index.ts'),
+        model: resolve(__dirname, 'src/model.ts')
       },
       name: 'CoinBase',
       // the proper extensions will be added
       fileName: (mod, entry) => {
-        const filename = entry.replace(/node_modules\//g, 'external/')
-        return mod === 'cjs' ? `${filename}.umd.cjs` : `${filename}.js`
+        const filename = entry.replace(/node_modules\//g, 'external/');
+        return mod === 'cjs' ? `${filename}.umd.cjs` : `${filename}.js`;
       }
     },
     commonjsOptions: {

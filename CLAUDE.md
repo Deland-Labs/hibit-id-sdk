@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ### Build Commands
+
 ```bash
 # Build all packages
 yarn build:all
@@ -21,12 +22,14 @@ yarn build:coin-kaspa    # Kaspa integration
 ```
 
 ### Development
+
 ```bash
 # Run SDK in development mode with hot reload
 yarn dev:sdk
 ```
 
 ### Testing
+
 ```bash
 # Run all tests
 yarn test:all
@@ -40,13 +43,16 @@ yarn test:coin-kaspa
 This is a monorepo for Hibit ID, a non-custodial multi-chain wallet SDK. The architecture follows a modular design where each blockchain has its own package while sharing common functionality.
 
 ### Package Structure
+
 - **packages/crypto-lib**: Core cryptographic operations used across all chains
 - **packages/coin-base**: Base classes and interfaces that all blockchain integrations extend
 - **packages/coin-[blockchain]**: Individual blockchain integrations (ethereum, ton, solana, etc.)
 - **packages/sdk**: Main SDK that aggregates all blockchain integrations for developers
 
 ### Build Dependencies
+
 The build system uses Turborepo with a specific dependency chain:
+
 1. `crypto-lib` builds first (both ESM and CommonJS formats)
 2. `coin-base` depends on `crypto-lib`
 3. All blockchain packages depend on `coin-base`

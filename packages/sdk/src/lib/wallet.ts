@@ -31,7 +31,7 @@ import {
   TransferRequest,
   TransferResponse,
   VerifyPasswordRequest,
-  VerifyPasswordResponse,
+  VerifyPasswordResponse
 } from './types';
 import {
   SdkExposeRPCMethod,
@@ -43,6 +43,7 @@ import {
 import { clamp, parseBalanceRequest, stringifyBalanceRequest } from './utils';
 import { TonConnectSignDataResult } from '@delandlabs/coin-ton';
 import { WalletAccount } from '@delandlabs/coin-base/model';
+import { logger } from './utils/logger';
 
 const LOGIN_SESSION_KEY = 'hibit-id-session';
 const BALANCE_POLL_INTERVAL = 5000;
@@ -62,12 +63,15 @@ export class HibitIdWallet {
     chainChanged: Array<HibitIdEventHandlerMap['chainChanged']>;
   } = {
     accountsChanged: [],
-    chainChanged: [],
+    chainChanged: []
   };
-  private _balanceSubscribes: Record<string, {
-    lastBalance: string | null,
-    handlers: Array<(data: BalanceChangeData) => void>
-  }> = {}
+  private _balanceSubscribes: Record<
+    string,
+    {
+      lastBalance: string | null;
+      handlers: Array<(data: BalanceChangeData) => void>;
+    }
+  > = {};
   private _balancePollIntervalId: any = null;
 
   constructor(options: HibitIdWalletOptions) {
@@ -92,8 +96,11 @@ export class HibitIdWallet {
     return this._connected;
   }
 
-  public connect = async (chainId: HibitIdChainId, authType?: AuthenticatorType) => {
-    console.debug('[sdk call Connect]', { chainId });
+  public connect = async (
+    chainId: HibitIdChainId,
+    authType?: AuthenticatorType
+  ) => {
+    logger.debug('[sdk call Connect]', { chainId });
     await this._iframeReadyPromise.promise;
 
     if (this._connected) {
@@ -119,7 +126,7 @@ export class HibitIdWallet {
       // this._controller?.setOpen(false)
       if (res?.address) {
         this._connected = true;
-        console.debug('[sdk connected]');
+        logger.debug('[sdk connected]');
 
         return {
           address: res.address,
@@ -138,7 +145,7 @@ export class HibitIdWallet {
   public getAccount = async (
     chainId?: HibitIdChainId
   ): Promise<WalletAccount> => {
-    console.debug('[sdk call GetAccount]');
+    logger.debug('[sdk call GetAccount]');
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -158,7 +165,7 @@ export class HibitIdWallet {
   };
 
   public getChainInfo = async (): Promise<ChainInfo> => {
-    console.debug('[sdk call GetChainInfo]');
+    logger.debug('[sdk call GetChainInfo]');
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -179,7 +186,7 @@ export class HibitIdWallet {
     message: string,
     chainId?: HibitIdChainId
   ): Promise<string> => {
-    console.debug('[sdk call SignMessage]', { message });
+    logger.debug('[sdk call SignMessage]', { message });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -201,7 +208,7 @@ export class HibitIdWallet {
 
   public getBalance = async (option?: GetBalanceRequest): Promise<string> => {
     const request: GetBalanceRequest = option || {};
-    console.debug('[sdk call GetBalance]', { request });
+    logger.debug('[sdk call GetBalance]', { request });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -219,7 +226,7 @@ export class HibitIdWallet {
   };
 
   public transfer = async (option: TransferRequest): Promise<string> => {
-    console.debug('[sdk call Transfer]', { option });
+    logger.debug('[sdk call Transfer]', { option });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -232,14 +239,16 @@ export class HibitIdWallet {
       }
       return res.data.txHash ?? null;
     } catch (e: any) {
-      console.error(e, JSON.stringify(e));
+      logger.error('Operation failed', JSON.stringify(e));
       throw new Error(`Transfer failed: ${this.getRpcErrorMessage(e)}`);
     }
   };
 
-  public getEstimatedFee = async (option: GetEstimatedFeeRequest): Promise<string> => {
+  public getEstimatedFee = async (
+    option: GetEstimatedFeeRequest
+  ): Promise<string> => {
     const request: GetEstimatedFeeRequest = option || {};
-    console.debug('[sdk call getEstimatedFee]', { request });
+    logger.debug('[sdk call getEstimatedFee]', { request });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -252,12 +261,14 @@ export class HibitIdWallet {
       }
       return res.data.fee ?? null;
     } catch (e: any) {
-      throw new Error(`Get estimated fee failed: ${this.getRpcErrorMessage(e)}`);
+      throw new Error(
+        `Get estimated fee failed: ${this.getRpcErrorMessage(e)}`
+      );
     }
-  }
+  };
 
   public tonConnectGetStateInit = async (): Promise<string> => {
-    console.debug('[sdk call TonConnectGetStateInit]');
+    logger.debug('[sdk call TonConnectGetStateInit]');
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -270,7 +281,7 @@ export class HibitIdWallet {
       }
       return res.data.stateInitBase64 ?? null;
     } catch (e: any) {
-      console.error(e, JSON.stringify(e));
+      logger.error('Operation failed', e);
       throw new Error(
         `TonConnectGetStateInit failed: ${this.getRpcErrorMessage(e)}`
       );
@@ -280,7 +291,7 @@ export class HibitIdWallet {
   public tonConnectTransfer = async (
     payload: TonConnectTransferRequest
   ): Promise<string> => {
-    console.debug('[sdk call TonConnectTransfer]', { option: payload });
+    logger.debug('[sdk call TonConnectTransfer]', { option: payload });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -293,7 +304,7 @@ export class HibitIdWallet {
       }
       return res.data.message ?? null;
     } catch (e: any) {
-      console.error(e, JSON.stringify(e));
+      logger.error('Operation failed', JSON.stringify(e));
       throw new Error(
         `TonConnectTransfer failed: ${this.getRpcErrorMessage(e)}`
       );
@@ -303,7 +314,7 @@ export class HibitIdWallet {
   public tonConnectSignData = async (
     payload: TonConnectSignDataRequest
   ): Promise<TonConnectSignDataResult> => {
-    console.debug('[sdk call TonConnectSignData]', { option: payload });
+    logger.debug('[sdk call TonConnectSignData]', { option: payload });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -316,7 +327,7 @@ export class HibitIdWallet {
       }
       return res.data ?? null;
     } catch (e: any) {
-      console.error(e, JSON.stringify(e));
+      logger.error('Operation failed', JSON.stringify(e));
       throw new Error(
         `TonConnectSignData failed: ${this.getRpcErrorMessage(e)}`
       );
@@ -324,17 +335,17 @@ export class HibitIdWallet {
   };
 
   public disconnect = async () => {
-    console.debug('[sdk call Disconnect]');
+    logger.debug('[sdk call Disconnect]');
     await this._iframeReadyPromise.promise;
     this._connected = false;
     // this._disconnectedPromise = new BridgePromise<boolean>()
-    await this._rpc?.call(WalletExposeRPCMethod.DISCONNECT, {})
+    await this._rpc?.call(WalletExposeRPCMethod.DISCONNECT, {});
     // await this._disconnectedPromise.promise
     // this.dispose()
   };
 
   public dispose = async () => {
-    console.debug('[sdk call Dispose]');
+    logger.debug('[sdk call Dispose]');
     sessionStorage.removeItem(LOGIN_SESSION_KEY);
     this._controller?.destroy();
     this._controller = null;
@@ -349,7 +360,7 @@ export class HibitIdWallet {
   };
 
   public switchToChain = async (chainId: HibitIdChainId) => {
-    console.debug('[sdk call SwitchToChain]', { chainId });
+    logger.debug('[sdk call SwitchToChain]', { chainId });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     const currentChain = await this.getChainInfo();
@@ -360,14 +371,16 @@ export class HibitIdWallet {
   };
 
   public setBackgroundEmbed = async (value: boolean) => {
-    console.debug('[sdk call SetBackgroundEmbed]', { value });
-    if (value && this._options.embedMode === 'background') return
-    if (!value && this._options.embedMode !== 'background') return
+    logger.debug('[sdk call SetBackgroundEmbed]', { value });
+    if (value && this._options.embedMode === 'background') return;
+    if (!value && this._options.embedMode !== 'background') return;
     await this._iframeReadyPromise.promise;
-    await this._rpc?.call(WalletExposeRPCMethod.SET_BACKGROUND_EMBED, { value } as SetBackgroundEmbedRequest);
+    await this._rpc?.call(WalletExposeRPCMethod.SET_BACKGROUND_EMBED, {
+      value
+    } as SetBackgroundEmbedRequest);
     this._options.embedMode = value ? 'background' : 'float';
 
-    const iframeVisible = (value ? false : this._iframe?.visible) ?? false
+    const iframeVisible = (value ? false : this._iframe?.visible) ?? false;
     // update controller and reposition iframe
     if (!value) {
       this._controller = new HibitIdController(
@@ -379,23 +392,25 @@ export class HibitIdWallet {
       this._controller?.destroy();
       this._controller = null;
     }
-    this.showIframe()
+    this.showIframe();
     if (!iframeVisible) {
-      this._iframe?.hide()
+      this._iframe?.hide();
     }
-  }
+  };
 
   public showResetPassword = async () => {
-    console.debug('[sdk call showResetPassword]');
+    logger.debug('[sdk call showResetPassword]');
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     await this._rpc?.call(WalletExposeRPCMethod.SHOW_RESET_PASSWORD, {});
     this.showIframe();
-  }
+  };
 
-  public verifyPassword = async (option: VerifyPasswordRequest): Promise<boolean> => {
+  public verifyPassword = async (
+    option: VerifyPasswordRequest
+  ): Promise<boolean> => {
     const request: VerifyPasswordRequest = option || {};
-    console.debug('[sdk call verifyPassword]');
+    logger.debug('[sdk call verifyPassword]');
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -410,7 +425,7 @@ export class HibitIdWallet {
     } catch (e: any) {
       throw new Error(`Verify password failed: ${this.getRpcErrorMessage(e)}`);
     }
-  }
+  };
 
   public addEventListener = <K extends keyof HibitIdEventHandlerMap>(
     event: K,
@@ -432,7 +447,10 @@ export class HibitIdWallet {
     }
   };
 
-  public subscribeBalanceChange = (request: GetBalanceRequest, handler: (data: BalanceChangeData) => void) => {
+  public subscribeBalanceChange = (
+    request: GetBalanceRequest,
+    handler: (data: BalanceChangeData) => void
+  ) => {
     const id = stringifyBalanceRequest(request);
     if (!this._balanceSubscribes[id]) {
       this._balanceSubscribes[id] = {
@@ -443,11 +461,17 @@ export class HibitIdWallet {
       this._balanceSubscribes[id].handlers.push(handler);
     }
     if (!this._balancePollIntervalId) {
-      this._balancePollIntervalId = setInterval(this.doBalancePoll, BALANCE_POLL_INTERVAL);
+      this._balancePollIntervalId = setInterval(
+        this.doBalancePoll,
+        BALANCE_POLL_INTERVAL
+      );
     }
-  }
+  };
 
-  public unsubscribeBalanceChange = (request: GetBalanceRequest, handler: (data: BalanceChangeData) => void) => {
+  public unsubscribeBalanceChange = (
+    request: GetBalanceRequest,
+    handler: (data: BalanceChangeData) => void
+  ) => {
     const id = stringifyBalanceRequest(request);
     if (!this._balanceSubscribes[id]) return;
     const index = this._balanceSubscribes[id].handlers.indexOf(handler);
@@ -461,12 +485,12 @@ export class HibitIdWallet {
       clearInterval(this._balancePollIntervalId);
       this._balancePollIntervalId = null;
     }
-  }
+  };
 
   private doBalancePoll = async () => {
     if (!this._connected) return;
     await this._iframeReadyPromise.promise;
-    const requestPromises = Object.keys(this._balanceSubscribes).map(key => {
+    const requestPromises = Object.keys(this._balanceSubscribes).map((key) => {
       const request = parseBalanceRequest(key);
       return this.getBalance(request);
     });
@@ -483,12 +507,12 @@ export class HibitIdWallet {
         request: parseBalanceRequest(id),
         balance,
         lastBalance: subscribe.lastBalance
-      }
-      console.debug('[sdk] balance changed', data);
-      subscribe.handlers.forEach(handler => handler(data));
+      };
+      logger.debug('[sdk] balance changed', data);
+      subscribe.handlers.forEach((handler) => handler(data));
       subscribe.lastBalance = balance;
-    })
-  }
+    });
+  };
 
   private assertConnected = () => {
     if (!this._connected) {
@@ -536,25 +560,21 @@ export class HibitIdWallet {
     rpc.expose(SdkExposeRPCMethod.IFRAME_READY, this.onRpcIframeReady);
     rpc.expose(SdkExposeRPCMethod.LOGIN_CHANGED, this.onRpcLoginChanged);
     rpc.expose(SdkExposeRPCMethod.CHAIN_CHANGED, this.onRpcChainChanged);
-    rpc.expose(
-      SdkExposeRPCMethod.ACCOUNTS_CHANGED,
-      this.onRpcAccountsChanged
-    );
+    rpc.expose(SdkExposeRPCMethod.ACCOUNTS_CHANGED, this.onRpcAccountsChanged);
     rpc.expose(SdkExposeRPCMethod.PASSWORD_CHANGED, this.onRpcPasswordChanged);
     this._rpc = rpc;
 
-    console.debug('[sdk rpc init]');
+    logger.debug('[sdk rpc init]');
     await rpc.isReady;
     await this._iframeReadyPromise.promise;
 
     if (this._options.embedMode === 'background') {
-      await this._rpc.call(
-        WalletExposeRPCMethod.SET_BACKGROUND_EMBED,
-        { value: true } as SetBackgroundEmbedRequest,
-      )
-      console.debug('[sdk request background embed]');
+      await this._rpc.call(WalletExposeRPCMethod.SET_BACKGROUND_EMBED, {
+        value: true
+      } as SetBackgroundEmbedRequest);
+      logger.debug('[sdk request background embed]');
     }
-    console.debug('[sdk rpc ready]');
+    logger.debug('[sdk rpc ready]');
   };
 
   private handleControllerMove = (x: number, y: number) => {
@@ -592,19 +612,19 @@ export class HibitIdWallet {
               bottom: window.innerHeight - controllerRect.top + 20
             }
           : undefined,
-        this._options.embedMode === 'background',
+        this._options.embedMode === 'background'
       );
     }
   };
 
   private onRpcClose = () => {
-    console.debug('[sdk on Close]');
+    logger.debug('[sdk on Close]');
     this._iframe?.hide();
     this._controller?.setOpen(false);
   };
 
   private onRpcLoginChanged = (input: LoginChangedRequest) => {
-    console.debug('[sdk on LoginChanged]', { input });
+    logger.debug('[sdk on LoginChanged]', { input });
     // only show iframe during connection
     this._hasSession = input.isLogin;
     if (!input.isLogin) {
@@ -629,33 +649,33 @@ export class HibitIdWallet {
   };
 
   private onRpcChainChanged = (input: ChainChangedRequest) => {
-    console.debug('[sdk on ChainChanged]', { input });
+    logger.debug('[sdk on ChainChanged]', { input });
     this._eventHandlers.chainChanged.forEach((handler) => {
       handler(input.chainId);
     });
   };
 
   private onRpcAccountsChanged = (input: AccountsChangedRequest) => {
-    console.debug('[sdk on AccountsChanged]', { input });
+    logger.debug('[sdk on AccountsChanged]', { input });
     this._eventHandlers.accountsChanged.forEach((handler) => {
       handler(input.account);
     });
   };
 
   private onRpcPasswordChanged = (input: PasswordChangedRequest) => {
-    console.debug('[sdk on PasswordChanged]', { input });
+    logger.debug('[sdk on PasswordChanged]', { input });
     if (this._options.embedMode === 'background') {
       this._iframe?.hide();
     }
-  }
+  };
 
   private onRpcIframeReady = () => {
-    console.debug('[sdk on IframeReady]');
+    logger.debug('[sdk on IframeReady]');
     this._iframeReadyPromise.resolve(true);
   };
 
   private onRpcConnected = (input: ConnectedRequest | null) => {
-    console.debug('[sdk on Connected]');
+    logger.debug('[sdk on Connected]');
     if (input) {
       this._connected = true;
     }
@@ -667,14 +687,16 @@ export class HibitIdWallet {
   };
 
   private onRpcDisconnected = () => {
-    console.debug('[sdk on Disconnected]');
+    logger.debug('[sdk on Disconnected]');
     this._connected = false;
     this._disconnectedPromise?.resolve(true);
   };
 
   private getRpcErrorMessage = (e: any) => {
-    return (
-      (e.message as string)?.split('\n')[0].replace('Error: ', '') || String(e)
-    );
+    const rawMessage =
+      (e.message as string)?.split('\n')[0].replace('Error: ', '') || String(e);
+
+    // Sanitize error message to remove sensitive data
+    return logger.sanitizeErrorMessage(rawMessage);
   };
 }

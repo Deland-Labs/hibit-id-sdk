@@ -6,7 +6,7 @@ export enum SdkExposeRPCMethod {
   LOGIN_CHANGED = 'loginChanged',
   CHAIN_CHANGED = 'chainChanged',
   ACCOUNTS_CHANGED = 'accountsChanged',
-  PASSWORD_CHANGED = 'passwordChanged',
+  PASSWORD_CHANGED = 'passwordChanged'
 }
 
 export enum WalletExposeRPCMethod {
@@ -24,7 +24,7 @@ export enum WalletExposeRPCMethod {
   SWITCH_CHAIN = 'switchChain',
   SET_BACKGROUND_EMBED = 'setBackgroundEmbed',
   SHOW_RESET_PASSWORD = 'showResetPassword',
-  VERIFY_PASSWORD = 'verifyPassword',
+  VERIFY_PASSWORD = 'verifyPassword'
 }
 
 // TODO: grow this list
@@ -33,7 +33,7 @@ export enum AuthenticatorType {
   Google = 'Google',
   // Facebook = 'Facebook',
   // Apple = 'Apple',
-  X = 'X',
+  X = 'X'
   // Add more authenticators here
 }
 
@@ -49,7 +49,7 @@ export enum HibitIdAssetType {
   SPL = 8,
   TRC20 = 9,
   Jetton = 10,
-  KRC20 = 11,
+  KRC20 = 11
 }
 
 // TODO: grow this list
@@ -86,7 +86,7 @@ export enum HibitIdChainId {
   TronNileTestnet = '195_3448148188',
 
   KaspaMainnet = '111111_0',
-  KaspaTestnet = '111111_1',
+  KaspaTestnet = '111111_1'
 }
 
 export enum HibitIdErrorCode {
@@ -94,5 +94,5 @@ export enum HibitIdErrorCode {
   WALLET_NOT_CONNECTED = 'WALLET_NOT_CONNECTED',
   INVALID_MNEMONIC = 'INVALID_MNEMONIC',
   MNEMONIC_DERIVATION_FAILED = 'MNEMONIC_DERIVATION_FAILED',
-  INVALID_DERIVATION_PATH = 'INVALID_DERIVATION_PATH',
+  INVALID_DERIVATION_PATH = 'INVALID_DERIVATION_PATH'
 }

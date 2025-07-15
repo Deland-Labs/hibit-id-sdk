@@ -7,7 +7,7 @@ export {
   AuthenticatorType,
   HibitIdAssetType,
   HibitIdChainId,
-  HibitIdErrorCode,
+  HibitIdErrorCode
 } from './enums';
 export { BridgePromise, MnemonicError } from './types';
 export type * from './types';

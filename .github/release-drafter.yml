@@ -1,43 +1,43 @@
-name-template: "$RESOLVED_VERSION 🌈"
-tag-template: "$RESOLVED_VERSION"
+name-template: '$RESOLVED_VERSION 🌈'
+tag-template: '$RESOLVED_VERSION'
 categories:
-  - title: "💥 Breaking Changes"
-    label: "💥 Breaking Change"
+  - title: '💥 Breaking Changes'
+    label: '💥 Breaking Change'
 
-  - title: "🌟 New Features"
-    label: "🌟 New Feature"
+  - title: '🌟 New Features'
+    label: '🌟 New Feature'
 
-  - title: "⭐ Features"
-    label: "⭐ Feature"
+  - title: '⭐ Features'
+    label: '⭐ Feature'
 
-  - title: "🐞 Bug Fixes"
-    label: "🐞 Bug Fix"
+  - title: '🐞 Bug Fixes'
+    label: '🐞 Bug Fix'
 
-  - title: "🛠 Improvements"
-    label: "🛠 Improvement"
+  - title: '🛠 Improvements'
+    label: '🛠 Improvement'
 
-  - title: "🌀 External Changes"
-    label: "🔌 3rd Party Plugin"
+  - title: '🌀 External Changes'
+    label: '🔌 3rd Party Plugin'
 
-  - title: "📖 Documentation"
-    label: "📖 Docs"
+  - title: '📖 Documentation'
+    label: '📖 Docs'
 
-  - title: "🌍 Localization"
-    label: "🌍 i18n"
-change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
+  - title: '🌍 Localization'
+    label: '🌍 i18n'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 exclude-labels:
   - 'skip-changelog'
 version-resolver:
   major:
     labels:
-      - "major"
+      - 'major'
   minor:
     labels:
-      - "minor"
+      - 'minor'
   patch:
     labels:
-      - "patch"
+      - 'patch'
   default: patch
 template: |
   ## Changes

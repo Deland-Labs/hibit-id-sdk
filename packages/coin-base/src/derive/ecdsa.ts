@@ -6,23 +6,14 @@ import { MnemonicError, HibitIdErrorCode } from '../errors';
 
 const getEcdsaDerivedPrivateKey = async (mnemonic: string, derivationPath: string): Promise<string> => {
   if (!mnemonic?.trim()) {
-    throw new MnemonicError(
-      HibitIdErrorCode.INVALID_MNEMONIC,
-      'Mnemonic is required'
-    );
+    throw new MnemonicError(HibitIdErrorCode.INVALID_MNEMONIC, 'Mnemonic is required');
   }
   if (!derivationPath?.trim()) {
-    throw new MnemonicError(
-      HibitIdErrorCode.INVALID_DERIVATION_PATH,
-      'Derivation path is required'
-    );
+    throw new MnemonicError(HibitIdErrorCode.INVALID_DERIVATION_PATH, 'Derivation path is required');
   }
   const trimmedMnemonic = mnemonic.trim();
   if (!bip39.validateMnemonic(trimmedMnemonic, wordlist)) {
-    throw new MnemonicError(
-      HibitIdErrorCode.INVALID_MNEMONIC,
-      'Invalid mnemonic phrase'
-    );
+    throw new MnemonicError(HibitIdErrorCode.INVALID_MNEMONIC, 'Invalid mnemonic phrase');
   }
   const masterSeed = await bip39.mnemonicToSeed(trimmedMnemonic);
   try {

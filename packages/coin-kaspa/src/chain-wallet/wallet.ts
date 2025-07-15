@@ -28,7 +28,7 @@ export class KaspaChainWallet extends BaseChainWallet {
   private krc20RpcClient: Krc20RpcClient;
   private keyPair?: Keypair;
   private balanceCacheMap: Record<string, Record<string, BigNumber>> = {};
-  private pingInterval: any = null
+  private pingInterval: any = null;
 
   constructor(chainInfo: ChainInfo, phrase: string) {
     super(chainInfo, phrase);
@@ -39,13 +39,16 @@ export class KaspaChainWallet extends BaseChainWallet {
       resolver: Resolver.createWithEndpoints([this.getEndpoint(chainInfo)])
     });
     this.rpcClient.addEventListener('UtxosChanged', (data) => {
-      console.debug('[KASPA Utxo changed]', data)
-      Object.keys(this.balanceCacheMap).forEach(address => {
+      console.debug('[KASPA Utxo changed]', data);
+      Object.keys(this.balanceCacheMap).forEach((address) => {
         // @ts-expect-error type mismatch
-        if (data.UtxosChanged.added.find(item => item.address === address) || data.UtxosChanged.removed.find(item => item.address === address)) {
+        if (
+          data.UtxosChanged.added.find((item) => item.address === address) ||
+          data.UtxosChanged.removed.find((item) => item.address === address)
+        ) {
           this.balanceCacheMap[address] = {};
         }
-      })
+      });
     });
     this.krc20RpcClient = new Krc20RpcClient({ networkId: this.networkId });
   }
@@ -78,7 +81,7 @@ export class KaspaChainWallet extends BaseChainWallet {
 
   public override balanceOf = async (address: string, assetInfo: AssetInfo): Promise<BigNumber> => {
     this.validateAssetChain(assetInfo);
-    await this.refreshUtxoSubscription(address)
+    await this.refreshUtxoSubscription(address);
     switch (assetInfo.chainAssetType.toString()) {
       case NATIVE_ASSET.toString():
         return await this.getNativeBalance(address, assetInfo);
@@ -97,18 +100,18 @@ export class KaspaChainWallet extends BaseChainWallet {
 
   private async getNativeBalance(address: string, assetInfo: AssetInfo): Promise<BigNumber> {
     try {
-      const cache = this.balanceCacheMap[address]
+      const cache = this.balanceCacheMap[address];
       if (cache && cache['native']) {
-        return cache['native']
+        return cache['native'];
       }
       const res = await this.rpcClient.getBalanceByAddress(address);
       const balance = new BigNumber(res.balance).shiftedBy(-assetInfo.decimalPlaces.value);
       if (cache) {
-        cache['native'] = balance
+        cache['native'] = balance;
       } else {
-        this.balanceCacheMap[address] = { native: balance }
+        this.balanceCacheMap[address] = { native: balance };
       }
-      return balance
+      return balance;
     } catch (e) {
       console.error(e);
       return new BigNumber(0);
@@ -116,10 +119,10 @@ export class KaspaChainWallet extends BaseChainWallet {
   }
 
   private async getKrc20Balance(address: string, assetInfo: AssetInfo): Promise<BigNumber> {
-    const tick = assetInfo.contractAddress?.toUpperCase() ?? ''
-    const cache = this.balanceCacheMap[address]
+    const tick = assetInfo.contractAddress?.toUpperCase() ?? '';
+    const cache = this.balanceCacheMap[address];
     if (cache && cache[tick]) {
-      return cache[tick]
+      return cache[tick];
     }
     const res = await this.krc20RpcClient.getKrc20Balance(address, assetInfo.contractAddress);
     if (res.message !== 'successful' || !res.result) throw new Error(`${CHAIN_NAME}: getKrc20Balance failed`);
@@ -128,17 +131,22 @@ export class KaspaChainWallet extends BaseChainWallet {
       if (balanceInfo.tick.toUpperCase() === assetInfo.contractAddress.toUpperCase()) {
         const balance = new BigNumber(balanceInfo.balance).shiftedBy(-Number(balanceInfo.dec));
         if (cache) {
-          cache[tick] = balance
+          cache[tick] = balance;
         } else {
-          this.balanceCacheMap[address] = { [tick]: balance }
+          this.balanceCacheMap[address] = { [tick]: balance };
         }
-        return balance
+        return balance;
       }
     }
     throw new Error(`${CHAIN_NAME}: KRC20 balance not found`);
   }
 
-  public override transfer = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo, payload?: string): Promise<string> => {
+  public override transfer = async (
+    toAddress: string,
+    amount: BigNumber,
+    assetInfo: AssetInfo,
+    payload?: string
+  ): Promise<string> => {
     this.validateAssetChain(assetInfo);
     const keypair = await this.getKeypair();
     return assetInfo.chainAssetType.equals(NATIVE_ASSET)
@@ -360,17 +368,17 @@ export class KaspaChainWallet extends BaseChainWallet {
       if (!this.balanceCacheMap[address]) {
         if (Object.keys(this.balanceCacheMap).length > 0) {
           await this.rpcClient.unsubscribeUtxosChanged(Object.keys(this.balanceCacheMap));
-          console.debug('[KASPA unsubscribed utxo]', address)
+          console.debug('[KASPA unsubscribed utxo]', address);
         }
         this.balanceCacheMap[address] = {};
         await this.rpcClient.subscribeUtxosChanged(Object.keys(this.balanceCacheMap));
-        console.debug('[KASPA subscribed utxo]', address)
+        console.debug('[KASPA subscribed utxo]', address);
         if (!this.pingInterval) {
-          this.pingInterval = setInterval(this.rpcClient.ping, 10000)
+          this.pingInterval = setInterval(this.rpcClient.ping, 10000);
         }
       }
     } catch (e) {
-      console.error(e)
+      console.error(e);
     }
-  }
+  };
 }

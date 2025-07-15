@@ -104,10 +104,7 @@ const isValidPath = (path: string): boolean => {
 
 function derivePath(path: string, seed: Uint8Array, offset = HARDENED_OFFSET): Keys {
   if (!isValidPath(path)) {
-    throw new MnemonicError(
-      HibitIdErrorCode.INVALID_DERIVATION_PATH,
-      `Invalid derivation path: ${path}`
-    );
+    throw new MnemonicError(HibitIdErrorCode.INVALID_DERIVATION_PATH, `Invalid derivation path: ${path}`);
   }
 
   const { key, chainCode } = getMasterKeyFromSeed(seed);
@@ -137,21 +134,15 @@ async function getEd25519DerivedPrivateKey(
 ): Promise<string> {
   // Parameter validation
   if (!mnemonic?.trim()) {
-    throw new MnemonicError(
-      HibitIdErrorCode.INVALID_MNEMONIC,
-      'Mnemonic is required'
-    );
+    throw new MnemonicError(HibitIdErrorCode.INVALID_MNEMONIC, 'Mnemonic is required');
   }
-  
+
   // Validate mnemonic
   const trimmedMnemonic = mnemonic.trim();
   if (!bip39.validateMnemonic(trimmedMnemonic, wordlist)) {
-    throw new MnemonicError(
-      HibitIdErrorCode.INVALID_MNEMONIC,
-      'Invalid mnemonic phrase'
-    );
+    throw new MnemonicError(HibitIdErrorCode.INVALID_MNEMONIC, 'Invalid mnemonic phrase');
   }
-  
+
   if (!['hex', 'base58'].includes(encode)) {
     throw new Error('Invalid encoding format');
   }
@@ -163,11 +154,11 @@ async function getEd25519DerivedPrivateKey(
   try {
     // Generate seed
     seed = await bip39.mnemonicToSeed(trimmedMnemonic);
-    
+
     // Derive key
     const derived = derivePath(hdPath, seed);
     derivedSeed = derived.key;
-    
+
     // Get public key
     publicKey = ed25519.getPublicKey(base.toHex(derivedSeed));
     const privateKey = concatPub ? base.concatBytes(derivedSeed, publicKey) : derivedSeed;

@@ -20,8 +20,8 @@ export default defineConfig({
       name: 'CoinKaspa',
       // the proper extensions will be added
       fileName: (mod, entry) => {
-        const filename = entry.replace(/node_modules\//g, 'external/')
-        return mod === 'cjs' ? `${filename}.umd.cjs` : `${filename}.js`
+        const filename = entry.replace(/node_modules\//g, 'external/');
+        return mod === 'cjs' ? `${filename}.umd.cjs` : `${filename}.js`;
       }
     },
     commonjsOptions: {
