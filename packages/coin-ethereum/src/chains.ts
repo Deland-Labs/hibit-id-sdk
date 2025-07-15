@@ -1,4 +1,4 @@
-import { ChainInfo, ChainId, Chain, ChainNetwork, Ecosystem, WalletSignatureSchema } from "@delandlabs/coin-base/model";
+import { ChainInfo, ChainId, Chain, ChainNetwork, Ecosystem, WalletSignatureSchema } from '@delandlabs/coin-base/model';
 
 export const Ethereum: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmMainNet),
@@ -30,11 +30,9 @@ export const EthereumSepolia: ChainInfo = {
   rpcUrls: [
     'https://ethereum-sepolia-rpc.publicnode.com',
     'https://1rpc.io/sepolia',
-    'https://endpoints.omniatech.io/v1/eth/sepolia/public',
+    'https://endpoints.omniatech.io/v1/eth/sepolia/public'
   ],
-  wsRpcUrls: [
-    'wss://ethereum-sepolia-rpc.publicnode.com',
-  ]
+  wsRpcUrls: ['wss://ethereum-sepolia-rpc.publicnode.com']
 };
 
 export const EthereumBsc: ChainInfo = {
@@ -233,7 +231,7 @@ export const EthereumPanta: ChainInfo = {
   rpcUrls: ['https://node2.panta.network'],
   isMainnet: false,
   isNativeGas: true,
-  ecosystem: Ecosystem.EVM,
+  ecosystem: Ecosystem.EVM
 };
 
 export const EthereumNeoX: ChainInfo = {
@@ -249,7 +247,7 @@ export const EthereumNeoX: ChainInfo = {
   wsRpcUrls: ['wss://mainnet.wss1.banelabs.org'],
   isMainnet: true,
   isNativeGas: true,
-  ecosystem: Ecosystem.EVM,
+  ecosystem: Ecosystem.EVM
 };
 export const EthereumNeoXTestnet: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmNeoXTestNet),
@@ -264,7 +262,7 @@ export const EthereumNeoXTestnet: ChainInfo = {
   wsRpcUrls: ['wss://neoxt4wss1.ngd.network'],
   isMainnet: false,
   isNativeGas: true,
-  ecosystem: Ecosystem.EVM,
+  ecosystem: Ecosystem.EVM
 };
 
 export const EthereumKaia: ChainInfo = {
@@ -280,7 +278,7 @@ export const EthereumKaia: ChainInfo = {
   wsRpcUrls: ['wss://klaytn.drpc.org'],
   isMainnet: true,
   isNativeGas: true,
-  ecosystem: Ecosystem.Kaspa,
+  ecosystem: Ecosystem.Kaspa
 };
 export const EthereumKaiaTestnet: ChainInfo = {
   chainId: new ChainId(Chain.Ethereum, ChainNetwork.EvmKaiaKairosTestNet),
@@ -295,5 +293,5 @@ export const EthereumKaiaTestnet: ChainInfo = {
   wsRpcUrls: ['wss://responsive-green-emerald.kaia-kairos.quiknode.pro'],
   isMainnet: false,
   isNativeGas: true,
-  ecosystem: Ecosystem.Kaspa,
+  ecosystem: Ecosystem.Kaspa
 };

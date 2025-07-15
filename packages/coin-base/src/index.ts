@@ -1,1 +1,2 @@
-export * from './derive'
+export * from './derive';
+export * from './errors';

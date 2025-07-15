@@ -19,7 +19,7 @@ export const Solana: ChainInfo = {
     'https://api.blockeden.xyz/solana/67nCBdZQSH9z3YqDDjdm',
     'https://endpoints.omniatech.io/v1/sol/mainnet/public',
     'https://solana.api.onfinality.io/public',
-    'https://api.mainnet-beta.solana.com',
+    'https://api.mainnet-beta.solana.com'
   ],
   caseSensitiveAddress: true
 };

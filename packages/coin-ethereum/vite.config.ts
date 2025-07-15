@@ -14,15 +14,15 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: {
-        'index': resolve(__dirname, 'src/index.ts'),
-        'chains': resolve(__dirname, 'src/chains.ts')
+        index: resolve(__dirname, 'src/index.ts'),
+        chains: resolve(__dirname, 'src/chains.ts')
       },
       name: 'CoinEthereum',
       // the proper extensions will be added
       fileName: (mod, entry) => {
-        const filename = entry.replace(/node_modules\//g, 'external/')
-        return mod === 'cjs' ? `${filename}.umd.cjs` : `${filename}.js`
-      },
+        const filename = entry.replace(/node_modules\//g, 'external/');
+        return mod === 'cjs' ? `${filename}.umd.cjs` : `${filename}.js`;
+      }
     },
     commonjsOptions: {
       transformMixedEsModules: true,

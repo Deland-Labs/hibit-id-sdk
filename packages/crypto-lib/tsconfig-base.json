@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "lib": [
-      "es2020"
-    ],
+    "lib": ["es2020"],
     "moduleResolution": "node",
     "module": "ESNext",
     "strict": true,
@@ -21,12 +19,8 @@
     "listFiles": false,
     "pretty": false,
     "removeComments": true,
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "typeRoots": ["node_modules/@types"],
     "skipLibCheck": true
   },
-  "exclude": [
-    "**/node_modules"
-  ]
+  "exclude": ["**/node_modules"]
 }

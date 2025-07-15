@@ -1,1 +1,1 @@
-export * from './chain-wallet'
+export * from './chain-wallet';

@@ -64,7 +64,7 @@ class TronChainWallet extends BaseChainWallet {
       }
       try {
         const trc20 = await this.tronWeb!.contract().at(assetInfo.contractAddress);
-        this.tronWeb!.setAddress(assetInfo.contractAddress)
+        this.tronWeb!.setAddress(assetInfo.contractAddress);
         if (!trc20.decimals || !trc20.balanceOf) {
           trc20.loadAbi(TRC20_DEFAULT_ABI as any);
         }
@@ -205,7 +205,7 @@ class TronChainWallet extends BaseChainWallet {
   private async initWallet(): Promise<void> {
     this.tronWeb = new TronWeb({
       fullNode: this.chainInfo.rpcUrls[0],
-      solidityNode: this.chainInfo.rpcUrls[0],
+      solidityNode: this.chainInfo.rpcUrls[0]
     });
     this.tronWeb.setPrivateKey(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
   }

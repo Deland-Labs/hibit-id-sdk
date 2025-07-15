@@ -1,49 +1,56 @@
-import { ConnectEventError, DeviceInfo, DisconnectEvent, DisconnectRpcResponseError, SendTransactionRpcResponseError, SignDataRpcResponseError } from "@tonconnect/protocol";
+import {
+  ConnectEventError,
+  DeviceInfo,
+  DisconnectEvent,
+  DisconnectRpcResponseError,
+  SendTransactionRpcResponseError,
+  SignDataRpcResponseError
+} from '@tonconnect/protocol';
 
-const getPlatform = (): DeviceInfo["platform"] => {
+const getPlatform = (): DeviceInfo['platform'] => {
   const platform =
     (window.navigator as any)?.userAgentData?.platform ||
     window.navigator.platform;
 
   const userAgent = window.navigator.userAgent;
 
-  const macosPlatforms = ["macOS", "Macintosh", "MacIntel", "MacPPC", "Mac68K"];
-  const windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"];
-  const iphonePlatforms = ["iPhone"];
-  const iosPlatforms = ["iPad", "iPod"];
+  const macosPlatforms = ['macOS', 'Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
+  const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
+  const iphonePlatforms = ['iPhone'];
+  const iosPlatforms = ['iPad', 'iPod'];
 
-  let os: DeviceInfo["platform"] | null = null;
+  let os: DeviceInfo['platform'] | null = null;
 
   if (macosPlatforms.indexOf(platform) !== -1) {
-    os = "mac";
+    os = 'mac';
   } else if (iphonePlatforms.indexOf(platform) !== -1) {
-    os = "iphone";
+    os = 'iphone';
   } else if (iosPlatforms.indexOf(platform) !== -1) {
-    os = "ipad";
+    os = 'ipad';
   } else if (windowsPlatforms.indexOf(platform) !== -1) {
-    os = "windows";
+    os = 'windows';
   } else if (/Android/.test(userAgent)) {
-    os = "linux";
+    os = 'linux';
   } else if (/Linux/.test(platform)) {
-    os = "linux";
+    os = 'linux';
   }
 
   return os!;
-}
+};
 
 export const getDeviceInfo = (): DeviceInfo => {
   return {
     platform: getPlatform()!,
-    appName: "hibitid",
+    appName: 'hibitid',
     appVersion: import.meta.env.VITE_RELEASE_VERSION,
     maxProtocolVersion: 2,
     features: [
-      "SendTransaction",
+      'SendTransaction',
       {
-        name: "SendTransaction",
-        maxMessages: 4,
-      },
-    ],
+        name: 'SendTransaction',
+        maxMessages: 4
+      }
+    ]
   };
 };
 
@@ -55,51 +62,67 @@ export function* generateEventId(): Generator<number, number, number> {
   }
 }
 
-export const makeConnectErrorEvent = (id: number, code: number, message: string): ConnectEventError => {
+export const makeConnectErrorEvent = (
+  id: number,
+  code: number,
+  message: string
+): ConnectEventError => {
   return {
     event: 'connect_error',
     id,
     payload: {
       code,
-      message,
+      message
     }
-  }
-}
+  };
+};
 
-export const makeTransactionResponseError = (id: string, code: number, message: string): SendTransactionRpcResponseError => {
+export const makeTransactionResponseError = (
+  id: string,
+  code: number,
+  message: string
+): SendTransactionRpcResponseError => {
   return {
     error: {
       code,
-      message,
+      message
     },
-    id,
-  }
-}
+    id
+  };
+};
 
-export const makeSignDataResponseError = (id: string, code: number, message: string): SignDataRpcResponseError => {
+export const makeSignDataResponseError = (
+  id: string,
+  code: number,
+  message: string
+): SignDataRpcResponseError => {
   return {
     error: {
       code,
-      message,
+      message
     },
-    id,
-  }
-}
+    id
+  };
+};
 
-export const makeDisconnectResponseError = (id: string, code: number, message: string): DisconnectRpcResponseError => {
+export const makeDisconnectResponseError = (
+  id: string,
+  code: number,
+  message: string
+): DisconnectRpcResponseError => {
   return {
     error: {
       code,
-      message,
+      message
     },
-    id,
-  }
-}
+    id
+  };
+};
 
 export const makeDisconnectEvent = (id: number): DisconnectEvent => {
   return {
     event: 'disconnect',
     id,
-    payload: {},
-  }
-}
+    payload: {}
+  };
+};

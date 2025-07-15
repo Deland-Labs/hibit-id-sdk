@@ -1,9 +1,18 @@
 import BigNumber from 'bignumber.js';
-import { Contract, formatEther, HDNodeWallet, isAddress, JsonRpcProvider, parseEther, parseUnits, WebSocketProvider } from 'ethers';
+import {
+  Contract,
+  formatEther,
+  HDNodeWallet,
+  isAddress,
+  JsonRpcProvider,
+  parseEther,
+  parseUnits,
+  WebSocketProvider
+} from 'ethers';
 import { erc20Abi, getChain } from './utils';
 import { AssetInfo, ChainId, ChainInfo, WalletAccount } from '@delandlabs/coin-base/model';
 import { CHAIN, NATIVE_ASSET, FT_ASSET, CHAIN_NAME } from './defaults';
-import { BaseChainWallet } from '@delandlabs/coin-base';
+import { BaseChainWallet, MnemonicError, HibitIdErrorCode } from '@delandlabs/coin-base';
 
 export class EthereumChainWallet extends BaseChainWallet {
   private wallet: HDNodeWallet;
@@ -14,11 +23,27 @@ export class EthereumChainWallet extends BaseChainWallet {
       throw new Error(`${CHAIN_NAME}: invalid chain type`);
     }
     super(chainInfo, mnemonic);
-    this.wallet = HDNodeWallet.fromPhrase(this.mnemonic);
-    this.wallet = this.wallet.connect(this.getProvider(this.chainInfo));
+
+    try {
+      this.wallet = HDNodeWallet.fromPhrase(this.mnemonic);
+      this.wallet = this.wallet.connect(this.getProvider(this.chainInfo));
+    } catch (error: any) {
+      // Provide more specific error messages
+      if (error.message?.includes('invalid mnemonic') || error.message?.includes('mnemonic')) {
+        throw new MnemonicError(
+          HibitIdErrorCode.INVALID_MNEMONIC,
+          `${CHAIN_NAME}: Invalid mnemonic format (expected 12 or 24 words)`
+        );
+      }
+      throw new MnemonicError(
+        HibitIdErrorCode.MNEMONIC_DERIVATION_FAILED,
+        `${CHAIN_NAME}: Failed to initialize wallet from mnemonic: ${error.message}`
+      );
+    }
+
     // Ping ws providers every 15 seconds
     setInterval(() => {
-      Object.values(this.providerMap).forEach(provider => {
+      Object.values(this.providerMap).forEach((provider) => {
         if (provider instanceof WebSocketProvider) {
           provider.getBlockNumber();
         }
@@ -51,7 +76,7 @@ export class EthereumChainWallet extends BaseChainWallet {
       );
     }
     const provider = this.getProvider(chainInfo);
-    
+
     // native
     if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
       try {
@@ -165,7 +190,7 @@ export class EthereumChainWallet extends BaseChainWallet {
   };
 
   private getProvider = (chainInfo: ChainInfo) => {
-    let provider = this.providerMap[chainInfo.chainId.toString()]
+    let provider = this.providerMap[chainInfo.chainId.toString()];
     if (provider) {
       return provider;
     }
