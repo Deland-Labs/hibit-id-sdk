@@ -43,6 +43,6 @@ export function concatBytes(b1: Uint8Array | Buffer, b2: Uint8Array | Buffer): U
   return utils.concatBytes(Uint8Array.from(b1), Uint8Array.from(b2));
 }
 
-export function randomBytes(length: Number): Buffer {
+export function randomBytes(length: number): Buffer {
   return _randomBytes(length);
 }
