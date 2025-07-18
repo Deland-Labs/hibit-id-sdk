@@ -1190,9 +1190,9 @@
     "@solana/codecs" "2.0.0-rc.1"
 
 "@solana/spl-token@^0.4.9":
-  version "0.4.9"
-  resolved "https://registry.npmmirror.com/@solana/spl-token/-/spl-token-0.4.9.tgz#24d032d2935f237925c3b058ba6bb1e1ece5428c"
-  integrity sha512-g3wbj4F4gq82YQlwqhPB0gHFXfgsC6UmyGMxtSLf/BozT/oKd59465DbnlUK8L8EcimKMavxsVAMoLcEdeCicg==
+  version "0.4.13"
+  resolved "https://registry.npmmirror.com/@solana/spl-token/-/spl-token-0.4.13.tgz#8f65c3c2b315e1a00a91b8d0f60922c6eb71de62"
+  integrity sha512-cite/pYWQZZVvLbg5lsodSovbetK/eA24gaR0eeUeMuBAMNrT8XFCwaygKy0N2WSg3gSyjjNpIeAGBAKZaY/1w==
   dependencies:
     "@solana/buffer-layout" "^4.0.0"
     "@solana/buffer-layout-utils" "^0.2.0"
