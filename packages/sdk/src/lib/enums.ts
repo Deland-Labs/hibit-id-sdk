@@ -72,6 +72,7 @@ export enum HibitIdChainId {
   EthereumPanta = '60_331',
   EthereumNeoX = '60_47763',
   EthereumNeoXTestnet = '60_12227332',
+  EthereumKasplexL2Testnet = '60_3327681135',
 
   SolanaMainnet = '501_3',
   SolanaTestnet = '501_2',
