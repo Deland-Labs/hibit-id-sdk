@@ -48,7 +48,7 @@
       "dependsOn": ["@delandlabs/coin-base#build"],
       "outputs": ["dist/**"]
     },
-    "hibit-id-sdk#build": {
+    "@delandlabs/hibit-id-sdk#build": {
       "env": ["VITE_*"],
       "dependsOn": ["@delandlabs/coin-base#build", "@delandlabs/coin-ton#build"],
       "outputs": ["dist/**"]
