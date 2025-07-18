@@ -42,14 +42,14 @@
     "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",
-    "ethers": "^6.13.1",
-    "tailwind-merge": "^2.3.0"
+    "ethers": "^6.13.1"
   },
   "devDependencies": {
+    "tailwind-merge": "^2.3.0",
     "@rollup/plugin-typescript": "^12.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
-    "@vitejs/plugin-basic-ssl": "^1.2.0",
+    "@vitejs/plugin-basic-ssl": "^2.1.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.12.10",
