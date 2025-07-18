@@ -16,7 +16,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
           cache: yarn
       - run: |
-          rm .npmrc
           npm config set ${REGISTRY}:_authToken ${{ secrets.NPM_PACKAGE_TOKEN }}
           npm config set @delandlabs:registry https:${REGISTRY}
         env:
