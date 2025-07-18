@@ -4,7 +4,7 @@ on:
     types: [published]
   push:
     branches:
-      - npm-release
+      - main
 jobs:
   Build-and-Publish:
     runs-on: ubuntu-latest
@@ -16,13 +16,16 @@ jobs:
           registry-url: https://npm.pkg.github.com
           cache: yarn
       - run: |
-          rm .npmrc
           npm config set ${REGISTRY}:_authToken ${{ secrets.NPM_PACKAGE_TOKEN }}
           npm config set @delandlabs:registry https:${REGISTRY}
         env:
           REGISTRY: //registry.npmjs.org/
       - run: |
-          Version=$(git describe --tags --abbrev=0)
+          if [ "${{ github.event_name }}" = "release" ]; then
+            Version=$(git describe --tags --abbrev=0)
+          else
+            Version=1.1.0-alpha.$(date +"%Y%m%d%H%M%S")
+          fi
           echo Version: $Version
           export VITE_RELEASE_VERSION=$Version
 
