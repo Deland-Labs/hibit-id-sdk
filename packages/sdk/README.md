@@ -1,126 +1,35 @@
-# Hibit ID SDK
+# @delandlabs/hibit-id-sdk
 
-The main SDK package for integrating Hibit ID non-custodial wallet into your DApp.
+The main SDK package for integrating Hibit ID wallet into your DApp. For project overview and complete documentation, see the [main README](../../README.md).
 
 ## Installation
 
 ```bash
-# Using npm (published as @delandlabs/hibit-id-sdk)
 npm install @delandlabs/hibit-id-sdk
-
-# Using yarn
-yarn add @delandlabs/hibit-id-sdk
+# Don't forget to import the required styles in your app
 ```
 
-## Quick Start
+## Usage
 
 ```javascript
 import { HibitIdWallet, HibitIdChainId, HibitIdAssetType } from '@delandlabs/hibit-id-sdk';
-// Important: Import the required styles
-import '@delandlabs/hibit-id-sdk/dist/style.css';
+import '@delandlabs/hibit-id-sdk/dist/style.css'; // Required for wallet UI
 
-// Initialize the wallet
+// Initialize
 const wallet = new HibitIdWallet({
-  env: 'prod',  // Use 'test' for testnet environments
-  chains: [
-    HibitIdChainId.Ethereum,
-    HibitIdChainId.BSC,
-    HibitIdChainId.Solana,
-    HibitIdChainId.Ton
-  ],
+  env: 'prod',  // 'prod' | 'test'
+  chains: [HibitIdChainId.Ethereum, HibitIdChainId.BSC],
   defaultChain: HibitIdChainId.Ethereum
 });
 
-// Connect wallet
+// Connect
 const account = await wallet.connect(HibitIdChainId.Ethereum);
-console.log('Connected address:', account.address);
 
-// Sign a message
-const signature = await wallet.signMessage('Hello Hibit ID!');
-
-// Get balance (native token)
-const balance = await wallet.getBalance({
-  assetType: HibitIdAssetType.Native,
-  chainId: HibitIdChainId.Ethereum
-});
-
-// Get ERC20 token balance
-const tokenBalance = await wallet.getBalance({
-  assetType: HibitIdAssetType.ERC20,
-  chainId: HibitIdChainId.Ethereum,
-  contractAddress: '0x...',  // Token contract address
-  decimalPlaces: 18
-});
-
-// Transfer native tokens
-const txId = await wallet.transfer({
-  toAddress: '0x...',
-  amount: '0.1',
-  assetType: HibitIdAssetType.Native
-});
-
-// Transfer ERC20 tokens
-const tokenTxId = await wallet.transfer({
-  toAddress: '0x...',
-  amount: '100',
-  assetType: HibitIdAssetType.ERC20,
-  contractAddress: '0x...',
-  decimalPlaces: 18
-});
-
-// Switch chains
-await wallet.switchToChain(HibitIdChainId.BSC);
-
-// Event listeners
-wallet.addEventListener('chainChanged', (chainId) => {
-  console.log('Chain changed:', chainId);
-});
-
-wallet.addEventListener('accountsChanged', (account) => {
-  console.log('Account changed:', account?.address);
-});
+// Basic operations
+const signature = await wallet.signMessage('Hello Web3!');
+const balance = await wallet.getBalance({ assetType: HibitIdAssetType.Native });
+const txId = await wallet.transfer({ toAddress: '0x...', amount: '0.1' });
 ```
-
-## Supported Features
-
-### Authentication Methods
-- ✅ **Telegram** - Full integration with Telegram Mini Apps
-- ✅ **Google** - OAuth-based authentication
-- ✅ **X (Twitter)** - OAuth-based authentication
-- 🔜 Facebook, Apple, GitHub (Coming soon)
-
-### Blockchain Networks
-
-#### EVM Compatible
-- Ethereum (Mainnet, Sepolia)
-- BNB Smart Chain (Mainnet, Testnet)
-- Base (Mainnet, Sepolia)
-- Avalanche (Mainnet, Fuji)
-- Scroll (Mainnet, Sepolia)
-- Bitlayer (Mainnet, Testnet)
-- Panta
-- Neo X (Mainnet, Testnet)
-- Kasplex L2 (Testnet)
-
-#### Non-EVM
-- Bitcoin (Mainnet, Testnet)
-- Solana (Mainnet, Testnet)
-- TON (Mainnet, Testnet)
-- Tron (Mainnet, Shasta, Nile)
-- Kaspa (Mainnet, Testnet)
-- ICP/Dfinity (Mainnet)
-
-### Asset Types
-
-| Chain | Native | Tokens | NFTs |
-|-------|--------|--------|------|
-| EVM | ✅ | ERC20, ERC721 | ✅ |
-| Solana | ✅ | SPL | ✅ |
-| TON | ✅ | Jetton | - |
-| Tron | ✅ | TRC20 | - |
-| Kaspa | ✅ | KRC20 | - |
-| ICP | ✅ | ICRC1, DFT | - |
-| Bitcoin | ✅ | BRC20 | - |
 
 ## API Reference
 
@@ -186,23 +95,105 @@ try {
 }
 ```
 
-## Important Notes
+## Key Exports
 
-1. **Always import the CSS file** - The wallet UI requires the styles to function properly
-2. **Use HTTPS in production** - The SDK requires secure contexts
-3. **Handle errors gracefully** - All async methods can throw errors
-4. **Remove event listeners** - Clean up listeners when components unmount
+```typescript
+// Main class
+export class HibitIdWallet { ... }
 
-## Examples
+// Enums
+export enum HibitIdChainId { ... }
+export enum HibitIdAssetType { ... }
+export enum HibitIdErrorCode { ... }
+export enum AuthenticatorType { ... }
 
-For complete integration examples with various frameworks:
-- [React Example](https://github.com/Deland-Labs/hibit-id-examples/tree/main/react)
-- [Vue Example](https://github.com/Deland-Labs/hibit-id-examples/tree/main/vue)
-- [Next.js Example](https://github.com/Deland-Labs/hibit-id-examples/tree/main/nextjs)
-- [TonConnect Integration](https://github.com/Deland-Labs/hibit-id-examples/tree/main/tonconnect)
+// Types
+export type WalletAccount = { ... }
+export type TransferParams = { ... }
+export type BalanceParams = { ... }
+export type HibitIdError = { ... }
 
-## Support
+// Utilities
+export function getSupportedAuthParties(): AuthParty[]
+```
 
-- [GitHub Issues](https://github.com/deland-labs/hibit-id-sdk/issues)
-- [Discord Community](https://discord.gg/hibitid)
-- [Documentation](https://docs.hibit.id)
+## Advanced Usage
+
+### Custom Transaction Parameters
+
+```javascript
+// With gas settings (EVM chains)
+const txId = await wallet.transfer({
+  toAddress: '0x...',
+  amount: '0.1',
+  assetType: HibitIdAssetType.Native,
+  gasPrice: '20000000000', // wei
+  gasLimit: '21000'
+});
+
+// Token transfers with approval
+const tokenTxId = await wallet.transfer({
+  toAddress: '0x...',
+  amount: '100',
+  assetType: HibitIdAssetType.ERC20,
+  contractAddress: '0x...',
+  decimalPlaces: 18
+});
+```
+
+### Error Handling
+
+```javascript
+import { HibitIdErrorCode } from '@delandlabs/hibit-id-sdk';
+
+try {
+  await wallet.connect(HibitIdChainId.Ethereum);
+} catch (error) {
+  switch (error.code) {
+    case HibitIdErrorCode.UserRejected:
+      console.log('User cancelled connection');
+      break;
+    case HibitIdErrorCode.ChainNotSupported:
+      console.log('Chain not supported');
+      break;
+    default:
+      console.error('Unknown error:', error);
+  }
+}
+```
+
+### Chain-Specific Features
+
+For chain-specific implementations and features, this SDK uses the following internal packages:
+- `@delandlabs/coin-ethereum` - EVM chains support
+- `@delandlabs/coin-solana` - Solana integration
+- `@delandlabs/coin-ton` - TON blockchain support
+- `@delandlabs/coin-tron` - Tron network
+- `@delandlabs/coin-kaspa` - Kaspa blockchain
+- `@delandlabs/coin-dfinity` - ICP/Internet Computer
+- `@delandlabs/coin-bitcoin` - Bitcoin support
+
+## Development
+
+### Building from Source
+
+```bash
+# From monorepo root
+yarn build:sdk
+
+# Watch mode
+yarn dev
+```
+
+### Testing
+
+```bash
+# Run SDK tests
+yarn test:sdk
+```
+
+## Links
+
+- [Main Documentation](../../README.md)
+- [Examples](https://github.com/Deland-Labs/hibit-id-examples)
+- [NPM Package](https://www.npmjs.com/package/@delandlabs/hibit-id-sdk)
