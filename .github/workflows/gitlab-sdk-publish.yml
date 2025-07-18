@@ -23,15 +23,21 @@ jobs:
         env:
           REGISTRY: //gitlab.com/api/v4/projects/37663507/packages/npm/
       - run: |
-          # Get the base version from latest tag
-          BaseVersion=$(git describe --tags --abbrev=0)
-          echo "Base Version: $BaseVersion"
+          # Get the latest tag and increment patch version
+          LatestTag=$(git tag -l | sort -V | tail -1)
+          echo "Latest Tag: $LatestTag"
           
           # For release events, use the tag version
           if [[ "${{ github.event_name }}" == "release" ]]; then
-            Version=$BaseVersion
+            Version=${{ github.event.release.tag_name }}
           else
-            # For main/release branches, generate alpha version
+            # For main/release branches, increment patch version and add alpha suffix
+            # Extract major, minor, and patch version numbers
+            IFS='.' read -r major minor patch <<< "$LatestTag"
+            # Increment patch version
+            NextPatch=$((patch + 1))
+            BaseVersion="${major}.${minor}.${NextPatch}"
+            # Generate alpha version with timestamp
             Timestamp=$(date -u +%Y%m%d%H%M%S)
             Version="${BaseVersion}-alpha.${Timestamp}"
           fi
