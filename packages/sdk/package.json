@@ -1,5 +1,5 @@
 {
-  "name": "hibit-id-sdk",
+  "name": "@delandlabs/hibit-id-sdk",
   "private": false,
   "version": "1.0.0",
   "type": "module",
