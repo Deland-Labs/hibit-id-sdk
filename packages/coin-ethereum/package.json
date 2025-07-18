@@ -40,7 +40,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "ethers": "^6.13.5"
+    "ethers": "^6.15.0"
   },
   "peerDependencies": {
     "@delandlabs/coin-base": "*"
@@ -51,7 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^8.16.0",
     "@typescript-eslint/parser": "^8.16.0",
     "eslint": "^9.16.0",
-    "globals": "^15.12.0",
+    "globals": "^16.3.0",
     "typescript-eslint": "^8.16.0"
   }
 }
