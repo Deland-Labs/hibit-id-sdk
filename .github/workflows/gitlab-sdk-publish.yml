@@ -23,8 +23,8 @@ jobs:
         env:
           REGISTRY: //gitlab.com/api/v4/projects/37663507/packages/npm/
       - run: |
-          # Get the base version from latest tag
-          BaseVersion=$(git describe --tags --abbrev=0)
+          # Get the base version from latest tag (sorted by version)
+          BaseVersion=$(git tag -l | sort -V | tail -1)
           echo "Base Version: $BaseVersion"
           
           # For release events, use the tag version
