@@ -33,7 +33,7 @@ It supports a variety of popular third-party login methods which links user's We
 ## Install SDK
 
 ```bash
-yarn add @delandlabs/hibit-id-wallet-sdk
+yarn add hibit-id-sdk
 ```
 
 ## Usage
@@ -44,9 +44,9 @@ import {
   HibitIdChainId,
   WalletAccount,
   HibitIdAssetType,
-} from "@delandlabs/hibit-id-wallet-sdk"
+} from "hibit-id-sdk"
 // remember to import styles for the wallet
-import '@delandlabs/hibit-id-wallet-sdk/dist/style.css';
+import 'hibit-id-sdk/dist/style.css';
 
 // init hibitid wallet
 const hibitId = new HibitIdWallet({
