@@ -10,7 +10,8 @@
     "tsc:esm": "tsc -p tsconfig-esm.json",
     "tsc:common": "tsc -p tsconfig.json",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "test": "vitest"
+    "test": "vitest",
+    "test:ci": "vitest run"
   },
   "files": [
     "dist"

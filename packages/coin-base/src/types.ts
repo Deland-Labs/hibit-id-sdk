@@ -1,5 +1,5 @@
 import { Transform, Type } from 'class-transformer';
-import { WalletSignatureSchema, Ecosystem } from "./enums";
+import { WalletSignatureSchema, Ecosystem } from './enums';
 
 export class Chain {
   value: bigint;
@@ -124,10 +124,7 @@ export class ChainId {
       return null;
     }
     const [type, network] = value.split('_');
-    return new ChainId(
-      Chain.fromString(type)!,
-      ChainNetwork.fromString(network)!
-    );
+    return new ChainId(Chain.fromString(type)!, ChainNetwork.fromString(network)!);
   }
 
   toString(): string {
@@ -148,23 +145,47 @@ export class ChainId {
 
 export class ChainAssetType {
   value: bigint;
-  name: string
+  name: string;
 
   constructor(value: bigint) {
     this.value = value;
     switch (value.toString()) {
-      case '0': this.name = 'Native';break;
-      case '1': this.name = 'NativeGas';break;
-      case '3': this.name = 'ERC20';break;
-      case '4': this.name = 'ERC721';break;
-      case '5': this.name = 'ICP';break;
-      case '6': this.name = 'ICRC3';break;
-      case '7': this.name = 'BRC20';break;
-      case '8': this.name = 'SPL';break;
-      case '9': this.name = 'TRC20';break;
-      case '10': this.name = 'Jetton';break;
-      case '11': this.name = 'KRC20';break;
-      default: this.name = 'Unknown';break;
+      case '0':
+        this.name = 'Native';
+        break;
+      case '1':
+        this.name = 'NativeGas';
+        break;
+      case '3':
+        this.name = 'ERC20';
+        break;
+      case '4':
+        this.name = 'ERC721';
+        break;
+      case '5':
+        this.name = 'ICP';
+        break;
+      case '6':
+        this.name = 'ICRC3';
+        break;
+      case '7':
+        this.name = 'BRC20';
+        break;
+      case '8':
+        this.name = 'SPL';
+        break;
+      case '9':
+        this.name = 'TRC20';
+        break;
+      case '10':
+        this.name = 'Jetton';
+        break;
+      case '11':
+        this.name = 'KRC20';
+        break;
+      default:
+        this.name = 'Unknown';
+        break;
     }
   }
 
@@ -236,12 +257,9 @@ export class ChainInfo {
    * @type {ChainId} https://github.com/satoshilabs/slips/blob/master/slip-0044.md.
    */
   @Type(() => ChainId)
-  @Transform(
-    ({ value }) => ChainId.fromString(`${value.type.value}_${value.network.value}`),
-    {
-      toClassOnly: true
-    }
-  )
+  @Transform(({ value }) => ChainId.fromString(`${value.type.value}_${value.network.value}`), {
+    toClassOnly: true
+  })
   chainId!: ChainId;
   name!: string;
   fullName!: string;
@@ -252,13 +270,13 @@ export class ChainInfo {
   explorer!: string;
   rpcUrls!: string[];
   wsRpcUrls?: string[];
-  isMainnet!: boolean
+  isMainnet!: boolean;
   isNativeGas!: boolean;
   ecosystem!: Ecosystem;
   caseSensitiveAddress?: boolean;
-  getServerFormatAddress?: (address: string) => string | null
-  getTxLink?: (txId: string) => string
-  getAddressLink?: (address: string) => string
+  getServerFormatAddress?: (address: string) => string | null;
+  getTxLink?: (txId: string) => string;
+  getAddressLink?: (address: string) => string;
 }
 
 export class AssetInfo {

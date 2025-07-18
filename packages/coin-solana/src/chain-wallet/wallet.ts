@@ -1,7 +1,15 @@
 import BigNumber from 'bignumber.js';
-import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, SolanaJSONRPCError, SystemProgram, Transaction } from '@solana/web3.js';
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  sendAndConfirmTransaction,
+  SolanaJSONRPCError,
+  SystemProgram,
+  Transaction
+} from '@solana/web3.js';
 import { AssetInfo, ChainInfo, WalletAccount } from '@delandlabs/coin-base/model';
-import { BaseChainWallet } from '@delandlabs/coin-base';
+import { BaseChainWallet, MnemonicError } from '@delandlabs/coin-base';
 import { CHAIN, CHAIN_NAME, DERIVING_PATH, FT_ASSET, NATIVE_ASSET, DEFAULT_COMMITMENT } from './defaults';
 import nacl from 'tweetnacl';
 import {
@@ -27,12 +35,19 @@ class SolanaChainWallet extends BaseChainWallet {
   }
 
   public override getAccount: () => Promise<WalletAccount> = async () => {
-    await this.readyPromise;
-    const address = this.keypair!.publicKey.toString();
-    return {
-      address,
-      publicKey: Buffer.from(this.keypair!.publicKey.toBytes()).toString('hex')
-    };
+    try {
+      await this.readyPromise;
+      const address = this.keypair!.publicKey.toString();
+      return {
+        address,
+        publicKey: Buffer.from(this.keypair!.publicKey.toBytes()).toString('hex')
+      };
+    } catch (error) {
+      if (error instanceof MnemonicError) {
+        throw error; // Pass through mnemonic errors
+      }
+      throw new Error(`${CHAIN_NAME}: ${error.message}`);
+    }
   };
 
   public override signMessage: (message: string) => Promise<string> = async (message) => {
@@ -106,14 +121,14 @@ class SolanaChainWallet extends BaseChainWallet {
   };
 
   private async getNativeBalance(address: string, assetInfo: AssetInfo): Promise<BigNumber> {
-    await this.readyPromise
+    await this.readyPromise;
     const pubkey = new PublicKey(address);
     const balance = await this.connection!.getBalance(pubkey);
     return new BigNumber(balance).shiftedBy(-assetInfo.decimalPlaces.value);
   }
 
   private async getSplTokenBalance(assetInfo: AssetInfo): Promise<BigNumber> {
-    await this.readyPromise
+    await this.readyPromise;
     const mint = new PublicKey(assetInfo.contractAddress);
     const tokenProgramId = await this.getTokenProgramId(mint);
     const sourceATA = await getAssociatedTokenAddress(
@@ -131,12 +146,12 @@ class SolanaChainWallet extends BaseChainWallet {
         // Token account not found
         return new BigNumber(0).shiftedBy(-assetInfo.decimalPlaces.value);
       }
-      throw e
+      throw e;
     }
   }
 
   private async transferNative(toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<string> {
-    await this.readyPromise
+    await this.readyPromise;
     const recipientPubKey = new PublicKey(toAddress);
     const lamports = amount.shiftedBy(assetInfo.decimalPlaces.value).toNumber();
 
@@ -159,7 +174,7 @@ class SolanaChainWallet extends BaseChainWallet {
   }
 
   private async transferSplToken(toAddress: string, amount: BigNumber, assetInfo: AssetInfo): Promise<string> {
-    await this.readyPromise
+    await this.readyPromise;
     const transaction = await this.prepareSplTokenTransaction(toAddress, amount, assetInfo);
 
     const { blockhash } = await this.connection!.getLatestBlockhash(DEFAULT_COMMITMENT);
@@ -172,7 +187,7 @@ class SolanaChainWallet extends BaseChainWallet {
   }
 
   private async estimateNativeFee(assetInfo: AssetInfo): Promise<BigNumber> {
-    await this.readyPromise
+    await this.readyPromise;
     const transaction = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: this.keypair!.publicKey,
@@ -190,7 +205,7 @@ class SolanaChainWallet extends BaseChainWallet {
   }
 
   private async estimateSplTokenFee(toAddress: string, assetInfo: AssetInfo): Promise<BigNumber> {
-    await this.readyPromise
+    await this.readyPromise;
     const transaction = await this.prepareSplTokenTransaction(toAddress, new BigNumber(0), assetInfo);
 
     const { blockhash } = await this.connection!.getLatestBlockhash(DEFAULT_COMMITMENT);
@@ -202,14 +217,21 @@ class SolanaChainWallet extends BaseChainWallet {
   }
 
   private async initWallet(): Promise<void> {
-    const endpoint = await this.getRpcEndpoint();
-    // Update connection with the fastest RPC
-    this.connection = new Connection(endpoint || this.chainInfo.rpcUrls[0], {
-      commitment: DEFAULT_COMMITMENT
-    });
-    const privateKeyHex = await this.getEd25519DerivedPrivateKey(DERIVING_PATH, true, 'hex');
-    const secretKey = Buffer.from(privateKeyHex, 'hex');
-    this.keypair = Keypair.fromSecretKey(secretKey);
+    try {
+      const endpoint = await this.getRpcEndpoint();
+      // Update connection with the fastest RPC
+      this.connection = new Connection(endpoint || this.chainInfo.rpcUrls[0], {
+        commitment: DEFAULT_COMMITMENT
+      });
+      const privateKeyHex = await this.getEd25519DerivedPrivateKey(DERIVING_PATH, true, 'hex');
+      const secretKey = Buffer.from(privateKeyHex, 'hex');
+      this.keypair = Keypair.fromSecretKey(secretKey);
+    } catch (error) {
+      if (error instanceof MnemonicError) {
+        throw error; // Pass through mnemonic errors
+      }
+      throw new Error(`${CHAIN_NAME}: Failed to initialize wallet: ${error.message}`);
+    }
   }
 
   private async getRpcEndpoint(): Promise<string | null> {
@@ -220,46 +242,51 @@ class SolanaChainWallet extends BaseChainWallet {
           fetch(rpc, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               jsonrpc: '2.0',
               id: 1,
-              method: 'getHealth',
-            }),
-          }).then((res) => {
-            res.json().then((resJson) => {
-              if (resJson.result !== 'ok') {
-                setTimeout(() => {
-                  console.debug('[fail]', rpc, resJson)
-                  resolve(null)
-                }, 5000)
-                return
-              }
-              console.debug('[ok]', rpc)
-              resolve(rpc)
-            }).catch((e) => {
+              method: 'getHealth'
+            })
+          })
+            .then((res) => {
+              res
+                .json()
+                .then((resJson) => {
+                  if (resJson.result !== 'ok') {
+                    setTimeout(() => {
+                      console.debug('[fail]', rpc, resJson);
+                      resolve(null);
+                    }, 5000);
+                    return;
+                  }
+                  console.debug('[ok]', rpc);
+                  resolve(rpc);
+                })
+                .catch((e) => {
+                  setTimeout(() => {
+                    console.debug('[fail]', rpc, e);
+                    resolve(null);
+                  }, 5000);
+                });
+            })
+            .catch((e) => {
               setTimeout(() => {
-                console.debug('[fail]', rpc, e)
-                resolve(null)
-              }, 5000)
+                console.debug('[fail]', rpc, e);
+                resolve(null);
+              }, 5000);
             });
-          }).catch((e) => {
-            setTimeout(() => {
-              console.debug('[fail]', rpc, e)
-              resolve(null)
-            }, 5000)
-          });
-        })
+        });
       })
     );
     // Find the fastest responding RPC
-    console.debug('[winner]', rpc)
-    return rpc
+    console.debug('[winner]', rpc);
+    return rpc;
   }
 
   private async getTokenProgramId(mint: PublicKey): Promise<PublicKey> {
-    await this.readyPromise
+    await this.readyPromise;
     const accountInfo = await this.connection!.getAccountInfo(mint);
     if (!accountInfo) {
       throw new Error(`${CHAIN_NAME}: Token mint ${mint.toString()} not found`);
@@ -280,7 +307,7 @@ class SolanaChainWallet extends BaseChainWallet {
     if (!toAddress || !amount || !assetInfo) {
       throw new Error(`${CHAIN_NAME}: Missing required parameters`);
     }
-    await this.readyPromise
+    await this.readyPromise;
     const mint = new PublicKey(assetInfo.contractAddress);
     const tokenProgramId = await this.getTokenProgramId(mint);
 

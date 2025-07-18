@@ -1,20 +1,16 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import basicSsl from '@vitejs/plugin-basic-ssl'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
-import { resolve } from 'path'
-import typescript from '@rollup/plugin-typescript'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import basicSsl from '@vitejs/plugin-basic-ssl';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { resolve } from 'path';
+import typescript from '@rollup/plugin-typescript';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    basicSsl(),
-    nodePolyfills()
-  ],
+  plugins: [react(), basicSsl(), nodePolyfills()],
   server: {
     host: '127.0.0.1',
-    port: 6173,
+    port: 6173
   },
   build: {
     lib: {
@@ -22,7 +18,7 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/lib/index.ts'),
       name: 'HibitIDWalletSdk',
       // the proper extensions will be added
-      fileName: 'hibit-id-wallet-sdk',
+      fileName: 'hibit-id-wallet-sdk'
     },
     commonjsOptions: {
       transformMixedEsModules: true,
@@ -42,10 +38,10 @@ export default defineConfig({
       // },
       plugins: [
         typescript({
-          'target': 'es2020',
-          'rootDir': resolve(__dirname, 'src'),
-          'declaration': true,
-          'declarationDir': resolve(__dirname, 'dist'),
+          target: 'es2020',
+          rootDir: resolve(__dirname, 'src'),
+          declaration: true,
+          declarationDir: resolve(__dirname, 'dist'),
           exclude: [
             resolve(__dirname, 'node_modules/**'),
             resolve(__dirname, 'src/test/**')
@@ -53,6 +49,6 @@ export default defineConfig({
           allowSyntheticDefaultImports: true
         })
       ]
-    },
-  },
-})
+    }
+  }
+});

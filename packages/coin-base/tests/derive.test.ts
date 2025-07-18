@@ -8,7 +8,7 @@ test('validate derivation path', async () => {
   // Invalid paths
   expect(isValidPath('')).equals(false);
   expect(isValidPath('invalid')).equals(false);
-  expect(isValidPath('m/44/195/0/0')).equals(false);  // missing hardened indices
+  expect(isValidPath('m/44/195/0/0')).equals(false); // missing hardened indices
 
   // Different valid formats
   expect(isValidPath(`m/44'/0'/0'/0'`)).equals(true);

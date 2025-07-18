@@ -9,12 +9,12 @@ if (!version) {
 
 const packagesDir = path.resolve(__dirname, '../packages');
 
-fs.readdirSync(packagesDir).forEach(packageName => {
+fs.readdirSync(packagesDir).forEach((packageName) => {
   const packageJsonPath = path.join(packagesDir, packageName, 'package.json');
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     // Update dependencies to the new version if they are in the packages list
-    Object.keys(packageJson.dependencies || {}).forEach(dep => {
+    Object.keys(packageJson.dependencies || {}).forEach((dep) => {
       if (dep.startsWith('@delandlabs/')) {
         packageJson.dependencies[dep] = version;
       }

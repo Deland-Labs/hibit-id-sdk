@@ -4,6 +4,7 @@
 [![Build Status](https://github.com/deland-labs/hibit-id-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/deland-labs/hibit-id-sdk/actions)
 [![Test Status](https://img.shields.io/github/actions/workflow/status/deland-labs/hibit-id-sdk/test.yml?label=tests)](https://github.com/deland-labs/hibit-id-sdk/actions)
 [![License](https://img.shields.io/github/license/deland-labs/hibit-id-sdk)](LICENSE)
+
 ## Introduction
 
 Hibit ID is a non-custodial multi-chain wallet solution developed by DeLand Labs. This monorepo contains the official SDK that enables seamless integration with various blockchain networks, allowing developers to incorporate Hibit ID into their DApps.
@@ -22,10 +23,6 @@ Hibit ID bridges Web2 and Web3 by supporting various third-party login methods, 
 - ✅ Telegram
 - ✅ Google
 - ✅ X
-- 🔄 Facebook (coming soon)
-- 🔄 Apple (coming soon)
-- 🔄 Github (coming soon)
-
 
 ## Supported Chains
 
@@ -69,14 +66,15 @@ yarn add @delandlabs/hibit-id-sdk
 # Or using npm
 npm install @delandlabs/hibit-id-sdk
 ```
+
 ## Examples
 
 Check out our [examples repository](https://github.com/Deland-Labs/hibit-id-examples) for complete integration examples with various frameworks and platforms.
 
-
 ## For Developers
 
 ### Building the Project
+
 ```bash
 # Build all packages
 yarn build:all
@@ -87,6 +85,7 @@ yarn build:coin-ethereum
 ```
 
 ### Running Tests
+
 ```bash
 # Run all tests
 yarn test:all

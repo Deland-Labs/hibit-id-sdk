@@ -1,7 +1,7 @@
 name: publish hibit-id-sdk packages to gitlab
 on:
   release:
-    types: [ published ]
+    types: [published]
   push:
     branches:
       - main
@@ -34,7 +34,7 @@ jobs:
 
           # Replace * with actual version in package.json
           node scripts/replaceVersions.js $Version
-          
+
           yarn build:all
 
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/crypto-lib

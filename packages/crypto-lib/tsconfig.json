@@ -2,17 +2,11 @@
   "extends": "./tsconfig-base.json",
   "compilerOptions": {
     "module": "CommonJS",
-    "allowJs": true,                       // allow build javascript files
-    "resolveJsonModule" : true,
+    "allowJs": true,
+    "resolveJsonModule": true,
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.js",
-    "src/**/*.json"
-  ],
-  "exclude": [
-    "**/node_modules"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.json"],
+  "exclude": ["**/node_modules"]
 }

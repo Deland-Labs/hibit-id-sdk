@@ -1,9 +1,11 @@
 # Introduction
+
 HiBit ID is a web-based multi-chain crypto wallet, with SDK for DApp integration.
 
 It supports a variety of popular third-party login methods which links user's Web2 accounts seamlessly to the Web3 world.
 
 # Supported Third-party Login Methods
+
 - [x] Telegram
 - [ ] Google
 - [ ] Facebook
@@ -13,6 +15,7 @@ It supports a variety of popular third-party login methods which links user's We
 - and more...
 
 # Supported Chains
+
 - [x] Ethereum
 - [x] BNB Smart Chain
 - [x] Base
@@ -26,11 +29,15 @@ It supports a variety of popular third-party login methods which links user's We
 - and more...
 
 # Integration
+
 ## Install SDK
+
 ```bash
 yarn add @delandlabs/hibit-id-wallet-sdk
 ```
+
 ## Usage
+
 ```js
 import {
   HibitIdWallet,
@@ -91,4 +98,5 @@ hibitId.removeEventListener('accountsChanged', accountsChangedHandler);
 ```
 
 ## TonConnect integration
+
 Please refer to [hibit-id-examples](https://github.com/Deland-Labs/hibit-id-examples) for TonConnect integration.

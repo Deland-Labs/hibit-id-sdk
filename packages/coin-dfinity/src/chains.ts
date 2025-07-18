@@ -11,15 +11,15 @@ export const Dfinity: ChainInfo = {
   isNativeGas: false,
   ecosystem: Ecosystem.IC,
   supportedSignaturesSchemas: [WalletSignatureSchema.IcpEddsa],
-  explorer: 'https://dashboard.internetcomputer.org',
+  explorer: 'https://www.icexplorer.io',
   rpcUrls: ['https://ic0.app'],
   getTxLink: (txId: string) => {
     if (!txId) return '';
     const hash = txId.startsWith('0x') ? txId.slice(2) : txId;
-    return `https://dashboard.internetcomputer.org/transaction/${hash}`;
+    return `https://www.icexplorer.io/transactions/details/${hash}`;
   },
   getAddressLink: (address: string) => {
     if (!address) return '';
-    return `https://dashboard.internetcomputer.org/account/${address}`;
+    return `https://www.icexplorer.io/address/details/${address}`;
   }
 };

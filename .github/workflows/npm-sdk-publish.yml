@@ -1,7 +1,7 @@
 name: publish hibit-id-sdk packages to npm
 on:
   release:
-    types: [ published ]
+    types: [published]
   push:
     branches:
       - npm-release
@@ -32,7 +32,7 @@ jobs:
           node scripts/replaceVersions.js $Version
 
           yarn build:all
-          
+
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/crypto-lib --access public
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-base --access public
           yarn publish --frozen-lockfile --non-interactive --no-git-tag-version --no-commit-hooks --new-version ${Version} packages/coin-dfinity --access public
