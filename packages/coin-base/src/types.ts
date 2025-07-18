@@ -87,7 +87,7 @@ export class ChainNetwork {
 
   static KaspaMainNet = new ChainNetwork(0n);
   static KaspaTestNet = new ChainNetwork(1n);
-  static EvmKasplexL2TestNet = new ChainNetwork(0xc655458fn);
+  static EvmKasplexL2TestNet = new ChainNetwork(0x28c64n);
 
   static fromString(value: string): ChainNetwork | null {
     if (!value) {
