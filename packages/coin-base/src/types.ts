@@ -69,8 +69,9 @@ export class ChainNetwork {
   static EvmPantaNet = new ChainNetwork(331n);
   static EvmNeoXNet = new ChainNetwork(47763n);
   static EvmNeoXTestNet = new ChainNetwork(12227332n);
-  static EvmKaiaNet = new ChainNetwork(8217n);
-  static EvmKaiaKairosTestNet = new ChainNetwork(1001n);
+  // Kaia/IGRA networks - commented for future use
+  // static EvmKaiaNet = new ChainNetwork(8217n);
+  // static EvmKaiaKairosTestNet = new ChainNetwork(1001n);
 
   static SolanaMainNet = new ChainNetwork(0x3n);
   static SolanaTestNet = new ChainNetwork(0x2n);
@@ -86,6 +87,7 @@ export class ChainNetwork {
 
   static KaspaMainNet = new ChainNetwork(0n);
   static KaspaTestNet = new ChainNetwork(1n);
+  static EvmKasplexL2TestNet = new ChainNetwork(0xc655458fn);
 
   static fromString(value: string): ChainNetwork | null {
     if (!value) {
