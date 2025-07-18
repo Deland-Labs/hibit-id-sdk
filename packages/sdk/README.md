@@ -1,102 +1,208 @@
-# Introduction
+# Hibit ID SDK
 
-HiBit ID is a web-based multi-chain crypto wallet, with SDK for DApp integration.
+The main SDK package for integrating Hibit ID non-custodial wallet into your DApp.
 
-It supports a variety of popular third-party login methods which links user's Web2 accounts seamlessly to the Web3 world.
-
-# Supported Third-party Login Methods
-
-- [x] Telegram
-- [ ] Google
-- [ ] Facebook
-- [ ] X
-- [ ] Apple
-- [ ] Github
-- and more...
-
-# Supported Chains
-
-- [x] Ethereum
-- [x] BNB Smart Chain
-- [x] Base
-- [x] Avalanche
-- [x] Scroll
-- [x] Bitlayer
-- [x] Ton
-- [ ] Solana
-- [ ] Bitcoin
-- [ ] Tron
-- and more...
-
-# Integration
-
-## Install SDK
+## Installation
 
 ```bash
-yarn add hibit-id-sdk
+# Using npm (published as @delandlabs/hibit-id-sdk)
+npm install @delandlabs/hibit-id-sdk
+
+# Using yarn
+yarn add @delandlabs/hibit-id-sdk
 ```
 
-## Usage
+## Quick Start
 
-```js
-import {
-  HibitIdWallet,
-  HibitIdChainId,
-  WalletAccount,
-  HibitIdAssetType,
-} from "hibit-id-sdk"
-// remember to import styles for the wallet
-import 'hibit-id-sdk/dist/style.css';
+```javascript
+import { HibitIdWallet, HibitIdChainId, HibitIdAssetType } from '@delandlabs/hibit-id-sdk';
+// Important: Import the required styles
+import '@delandlabs/hibit-id-sdk/dist/style.css';
 
-// init hibitid wallet
-const hibitId = new HibitIdWallet({
-  env: 'prod',  // 'prod' or 'test'
+// Initialize the wallet
+const wallet = new HibitIdWallet({
+  env: 'prod',  // Use 'test' for testnet environments
   chains: [
     HibitIdChainId.Ethereum,
-    HibitIdChainId.Ton,
+    HibitIdChainId.BSC,
+    HibitIdChainId.Solana,
+    HibitIdChainId.Ton
   ],
-  defaultChain: HibitIdChainId.Ethereum,
-})
+  defaultChain: HibitIdChainId.Ethereum
+});
 
-// connect
-const walletAccount: WalletAccount = await hibitId.connect(HibitIdChainId.Ethereum)
+// Connect wallet
+const account = await wallet.connect(HibitIdChainId.Ethereum);
+console.log('Connected address:', account.address);
 
-// sign
-const signature: string = await hibitId.signMessage(msg)
+// Sign a message
+const signature = await wallet.signMessage('Hello Hibit ID!');
 
-// get balance
-const balance: string = await hibitId.getBalance({
+// Get balance (native token)
+const balance = await wallet.getBalance({
+  assetType: HibitIdAssetType.Native,
+  chainId: HibitIdChainId.Ethereum
+});
+
+// Get ERC20 token balance
+const tokenBalance = await wallet.getBalance({
   assetType: HibitIdAssetType.ERC20,
   chainId: HibitIdChainId.Ethereum,
-  contractAddress: '0x......',  // required for non-native tokens
-  decimalPlaces: 18,
-})
+  contractAddress: '0x...',  // Token contract address
+  decimalPlaces: 18
+});
 
-// transfer
-const txId: string = await hibitId.transfer({
-  toAddress: '0x......',
+// Transfer native tokens
+const txId = await wallet.transfer({
+  toAddress: '0x...',
   amount: '0.1',
+  assetType: HibitIdAssetType.Native
+});
+
+// Transfer ERC20 tokens
+const tokenTxId = await wallet.transfer({
+  toAddress: '0x...',
+  amount: '100',
   assetType: HibitIdAssetType.ERC20,
-  contractAddress: '0x......',  // required for non-native tokens
-  decimalPlaces: 18,
-})
-
-// switch chain
-await hibitId.switchToChain(HibitIdChainId.TonMainnet)
-
-// listen to events
-hibitId.addEventListener('chainChanged', (chainId: HibitIdChainId) => {
-  console.log(chainId)
-});
-hibitId.addEventListener('accountsChanged', (account: WalletAccount | null) => {
-  console.log(account)
+  contractAddress: '0x...',
+  decimalPlaces: 18
 });
 
-// remove event listeners
-hibitId.removeEventListener('chainChanged', chainChangedHandler);
-hibitId.removeEventListener('accountsChanged', accountsChangedHandler);
+// Switch chains
+await wallet.switchToChain(HibitIdChainId.BSC);
+
+// Event listeners
+wallet.addEventListener('chainChanged', (chainId) => {
+  console.log('Chain changed:', chainId);
+});
+
+wallet.addEventListener('accountsChanged', (account) => {
+  console.log('Account changed:', account?.address);
+});
 ```
 
-## TonConnect integration
+## Supported Features
 
-Please refer to [hibit-id-examples](https://github.com/Deland-Labs/hibit-id-examples) for TonConnect integration.
+### Authentication Methods
+- ✅ **Telegram** - Full integration with Telegram Mini Apps
+- ✅ **Google** - OAuth-based authentication
+- ✅ **X (Twitter)** - OAuth-based authentication
+- 🔜 Facebook, Apple, GitHub (Coming soon)
+
+### Blockchain Networks
+
+#### EVM Compatible
+- Ethereum (Mainnet, Sepolia)
+- BNB Smart Chain (Mainnet, Testnet)
+- Base (Mainnet, Sepolia)
+- Avalanche (Mainnet, Fuji)
+- Scroll (Mainnet, Sepolia)
+- Bitlayer (Mainnet, Testnet)
+- Panta
+- Neo X (Mainnet, Testnet)
+- Kasplex L2 (Testnet)
+
+#### Non-EVM
+- Bitcoin (Mainnet, Testnet)
+- Solana (Mainnet, Testnet)
+- TON (Mainnet, Testnet)
+- Tron (Mainnet, Shasta, Nile)
+- Kaspa (Mainnet, Testnet)
+- ICP/Dfinity (Mainnet)
+
+### Asset Types
+
+| Chain | Native | Tokens | NFTs |
+|-------|--------|--------|------|
+| EVM | ✅ | ERC20, ERC721 | ✅ |
+| Solana | ✅ | SPL | ✅ |
+| TON | ✅ | Jetton | - |
+| Tron | ✅ | TRC20 | - |
+| Kaspa | ✅ | KRC20 | - |
+| ICP | ✅ | ICRC1, DFT | - |
+| Bitcoin | ✅ | BRC20 | - |
+
+## API Reference
+
+### Initialization Options
+
+```typescript
+interface HibitIdWalletOptions {
+  env: 'prod' | 'test';           // Network environment
+  chains: HibitIdChainId[];       // Supported chains
+  defaultChain: HibitIdChainId;   // Initial chain
+  embedMode?: 'floating' | 'background';  // UI mode
+}
+```
+
+### Core Methods
+
+- `connect(chainId: HibitIdChainId): Promise<WalletAccount>`
+- `disconnect(): Promise<void>`
+- `signMessage(message: string): Promise<string>`
+- `getBalance(params: BalanceParams): Promise<string>`
+- `transfer(params: TransferParams): Promise<string>`
+- `switchToChain(chainId: HibitIdChainId): Promise<void>`
+- `addEventListener(event: string, handler: Function): void`
+- `removeEventListener(event: string, handler: Function): void`
+
+### Events
+
+- `chainChanged` - Fired when the active chain changes
+- `accountsChanged` - Fired when the connected account changes
+
+## TypeScript Support
+
+Full TypeScript support with comprehensive type definitions:
+
+```typescript
+import type {
+  WalletAccount,
+  TransferParams,
+  BalanceParams,
+  HibitIdError,
+  HibitIdChainId,
+  HibitIdAssetType
+} from '@delandlabs/hibit-id-sdk';
+```
+
+## Special Integrations
+
+### TON Connect
+
+For TON blockchain integration with TonConnect protocol, see our [examples repository](https://github.com/Deland-Labs/hibit-id-examples).
+
+## Error Handling
+
+```javascript
+try {
+  const account = await wallet.connect(HibitIdChainId.Ethereum);
+} catch (error) {
+  if (error.code === HibitIdErrorCode.UserRejected) {
+    console.log('User rejected the connection');
+  } else {
+    console.error('Connection error:', error.message);
+  }
+}
+```
+
+## Important Notes
+
+1. **Always import the CSS file** - The wallet UI requires the styles to function properly
+2. **Use HTTPS in production** - The SDK requires secure contexts
+3. **Handle errors gracefully** - All async methods can throw errors
+4. **Remove event listeners** - Clean up listeners when components unmount
+
+## Examples
+
+For complete integration examples with various frameworks:
+- [React Example](https://github.com/Deland-Labs/hibit-id-examples/tree/main/react)
+- [Vue Example](https://github.com/Deland-Labs/hibit-id-examples/tree/main/vue)
+- [Next.js Example](https://github.com/Deland-Labs/hibit-id-examples/tree/main/nextjs)
+- [TonConnect Integration](https://github.com/Deland-Labs/hibit-id-examples/tree/main/tonconnect)
+
+## Support
+
+- [GitHub Issues](https://github.com/deland-labs/hibit-id-sdk/issues)
+- [Discord Community](https://discord.gg/hibitid)
+- [Documentation](https://docs.hibit.id)
