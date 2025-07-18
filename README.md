@@ -1,6 +1,6 @@
 # Hibit ID SDK
 
-[![npm version](https://img.shields.io/npm/v/@delandlabs/hibit-id-sdk)](https://www.npmjs.com/package/@delandlabs/hibit-id-sdk)
+[![npm version](https://img.shields.io/npm/v/@delandlabs/hibit-id-sdk)](https://registry.npmjs.org/@delandlabs/hibit-id-sdk)
 [![Build Status](https://github.com/deland-labs/hibit-id-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/deland-labs/hibit-id-sdk/actions)
 [![Test Status](https://img.shields.io/github/actions/workflow/status/deland-labs/hibit-id-sdk/test.yml?label=tests)](https://github.com/deland-labs/hibit-id-sdk/actions)
 [![License](https://img.shields.io/github/license/deland-labs/hibit-id-sdk)](LICENSE)
