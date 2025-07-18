@@ -5369,10 +5369,10 @@ validator@13.12.0:
   resolved "https://registry.npmmirror.com/validator/-/validator-13.12.0.tgz#7d78e76ba85504da3fee4fd1922b385914d4b35f"
   integrity sha512-c1Q0mCiPlgdTVVVIJIrBuxNicYE+t/7oKeI9MWLj3fh/uq2Pxh/3eeWbVZ4OcGW1TUf53At0njHw5SMdA3tmMg==
 
-vite-bundle-analyzer@^0.15.0:
-  version "0.15.2"
-  resolved "https://registry.npmmirror.com/vite-bundle-analyzer/-/vite-bundle-analyzer-0.15.2.tgz#176cbe1dd04f3d5aef42de5338a0b447354e191e"
-  integrity sha512-AwFOewhvf7EkTACa9c/inbxMrJOWwyVF4nUMITwN26lM5TAYkcnJC4KFgZXym3sYRAWe1Qgvk8X4OFTw4HPaJw==
+vite-bundle-analyzer@^0.23.0:
+  version "0.23.0"
+  resolved "https://registry.npmmirror.com/vite-bundle-analyzer/-/vite-bundle-analyzer-0.23.0.tgz#d18b5c67a3718748aa25ea181301b1a9ce28abfb"
+  integrity sha512-G5chWCtFS546c7c6MCNdzXVWIMDfeUdJHA3LvCwTrhzdfwqbf6ppsIcNW4CnNrpdEAHQ9KgmdkNFV4u3UurXtQ==
 
 vite-node@3.2.4:
   version "3.2.4"
