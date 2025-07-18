@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -21,7 +23,12 @@ jobs:
         env:
           REGISTRY: //registry.npmjs.org/
       - run: |
-          Version=$(git describe --tags --abbrev=0)
+          if [ "${{ github.event_name }}" = "release" ]; then
+            Version=$(git describe --tags --abbrev=0)
+          else
+            # For branch pushes, use a dev version
+            Version=0.0.0-dev.$(date +"%Y%m%d%H%M%S")
+          fi
           echo Version: $Version
           export VITE_RELEASE_VERSION=$Version
 
