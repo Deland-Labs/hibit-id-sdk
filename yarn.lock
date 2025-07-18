@@ -261,9 +261,9 @@
   integrity sha512-Py/fpmT7+LVhrGYgKapuPz2l0+6HoVvuyN6xCr6MAu6DA8375cWJmXKeCWLz5qWPRu+D7zjKeitWdhUfxAy/cA==
 
 "@dfinity/ledger-icrc@^2.5.0":
-  version "2.9.0"
-  resolved "https://registry.npmmirror.com/@dfinity/ledger-icrc/-/ledger-icrc-2.9.0.tgz#05090a57481e5caa2faa74bcd5cfb64c79a4f013"
-  integrity sha512-ITdMc/hTQHkkUIecIOihDvppetXOoXvWggDODahM9fJGfThBKuGesX9eEkGYvBw9s4loUnr5aw94QqpgcOfYHg==
+  version "2.9.1"
+  resolved "https://registry.npmmirror.com/@dfinity/ledger-icrc/-/ledger-icrc-2.9.1.tgz#9684e81b4d8f55f73213d51c3c44183d5af68c0c"
+  integrity sha512-3qqCPoohzBJDymawb5PI8m+wj98N6FMpfHIVFjUmkx93usRPHgy3ZeOVnQi1E6hkZ9mhFv2dMDsfh/IXnOOtvg==
 
 "@dfinity/principal@^2.1.1", "@dfinity/principal@^2.1.3":
   version "2.4.1"
