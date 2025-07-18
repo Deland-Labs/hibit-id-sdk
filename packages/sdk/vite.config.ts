@@ -16,9 +16,9 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, 'src/lib/index.ts'),
-      name: 'HibitIDWalletSdk',
+      name: 'HibitIDSdk',
       // the proper extensions will be added
-      fileName: 'hibit-id-wallet-sdk'
+      fileName: 'hibit-id-sdk'
     },
     commonjsOptions: {
       transformMixedEsModules: true,

@@ -1,28 +1,28 @@
 {
-  "name": "@delandlabs/hibit-id-wallet-sdk",
+  "name": "hibit-id-sdk",
   "private": false,
   "version": "1.0.0",
   "type": "module",
   "files": [
     "dist"
   ],
-  "main": "./dist/hibit-id-wallet-sdk.umd.cjs",
-  "module": "./dist/hibit-id-wallet-sdk.js",
+  "main": "./dist/hibit-id-sdk.umd.cjs",
+  "module": "./dist/hibit-id-sdk.js",
   "types": "dist/lib/index.d.ts",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/lib/index.d.ts",
-        "default": "./dist/hibit-id-wallet-sdk.js"
+        "default": "./dist/hibit-id-sdk.js"
       },
       "require": {
         "types": "./dist/lib/index.d.ts",
-        "default": "./dist/hibit-id-wallet-sdk.umd.cjs"
+        "default": "./dist/hibit-id-sdk.umd.cjs"
       }
     },
     "./dist/style.css": {
-      "import": "./dist/hibit-id-wallet-sdk.css",
-      "require": "./dist/hibit-id-wallet-sdk.css"
+      "import": "./dist/hibit-id-sdk.css",
+      "require": "./dist/hibit-id-sdk.css"
     }
   },
   "scripts": {
