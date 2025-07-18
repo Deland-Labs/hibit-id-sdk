@@ -45,7 +45,7 @@
     "@dfinity/candid": "^2.4.1",
     "@dfinity/identity-secp256k1": "^2.4.1",
     "@dfinity/ledger-icp": "^2.6.0",
-    "@dfinity/ledger-icrc": "^2.9.0",
+    "@dfinity/ledger-icrc": "^2.5.0",
     "@dfinity/principal": "^2.4.1",
     "@dfinity/utils": "^2.5.0",
     "@noble/secp256k1": "^2.0.0",
