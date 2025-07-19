@@ -1139,10 +1139,10 @@
   dependencies:
     tslib "^2.8.0"
 
-"@ton/core@^0.59.0":
-  version "0.59.1"
-  resolved "https://registry.npmmirror.com/@ton/core/-/core-0.59.1.tgz#fe568069ccdf2f4191da1eadc930076c0c012789"
-  integrity sha512-SxFBAvutYJaIllTkv82vbHTJhJI6NxzqUhi499CDEjJEZ9i6i9lHJiK2df4dlLAb/4SiWX6+QUzESkK4DEdnCw==
+"@ton/core@^0.61.0":
+  version "0.61.0"
+  resolved "https://registry.npmmirror.com/@ton/core/-/core-0.61.0.tgz#09b37801cb2f5a942020fcc992be1e99f4b16689"
+  integrity sha512-0qyVfP2dDue2bq80ydXggo2MlufcmzuFk6G94qRrZxvyQ3NSe4UeBTeRf1gQmN7tywgTsX2gS61e4yvJrlUu4Q==
   dependencies:
     symbol.inspect "1.0.1"
 
