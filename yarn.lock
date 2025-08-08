@@ -5176,9 +5176,9 @@ ts-proto-descriptors@2.0.0:
     "@bufbuild/protobuf" "^2.0.0"
 
 ts-proto@^2.4.2:
-  version "2.7.3"
-  resolved "https://registry.npmmirror.com/ts-proto/-/ts-proto-2.7.3.tgz#621463c2f59b32f94b2802659bb2f577f68c87f8"
-  integrity sha512-gopIK/QC0dK/zi5D7LKmwyqKFZ8V2LBj3HZslzfjQ58TC2g6M0VRGgHBMksRJYy3166Xus+QBeZIlcTbeJFHiw==
+  version "2.7.6"
+  resolved "https://registry.npmmirror.com/ts-proto/-/ts-proto-2.7.6.tgz#3c1a180938059103034092d0ce18cccfcd7d8d30"
+  integrity sha512-nNYfQEPjcGRKmD+hdKS9vn9z9GO3ooOVUOVKRlNOTOzYFo5T3ot/dlGaOK9yyJoekEeFIrpj007ZmElviOMFfA==
   dependencies:
     "@bufbuild/protobuf" "^2.0.0"
     case-anything "^2.1.13"
