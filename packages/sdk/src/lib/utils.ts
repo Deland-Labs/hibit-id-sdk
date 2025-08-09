@@ -1,5 +1,6 @@
-import { HibitIdAssetType, HibitIdChainId } from './enums';
-import { AuthParty, GetBalanceRequest, HibitEnv } from './types';
+import { ChainAssetType, ChainId } from '@delandlabs/hibit-basic-types';
+import { HibitIdSdkErrorCode } from '@delandlabs/coin-base';
+import { AuthParty, GetBalanceRequest, HibitEnv, HibitIdError } from './types';
 
 export const getSupportedAuthParties = (env: HibitEnv): AuthParty[] => {
   const url = getHibitIdUrl(env);
@@ -47,17 +48,32 @@ export const clamp = (value: number, min: number, max: number) => {
 };
 
 export const stringifyBalanceRequest = (request: GetBalanceRequest): string => {
-  return `${request.chainId ?? ''}|${request.assetType ?? ''}|${request.decimalPlaces ?? ''}|${request.contractAddress ?? ''}`;
+  const chainIdStr = request.chainId ? request.chainId.toString() : '';
+  return `${chainIdStr}|${request.assetType ?? ''}|${request.contractAddress ?? ''}`;
 };
 
 export const parseBalanceRequest = (request: string): GetBalanceRequest => {
-  const [chainId, assetType, decimalPlaces, contractAddress] =
-    request.split('|');
+  const [chainId, assetType, contractAddress] = request.split('|');
+
+  if (!chainId || chainId === '') {
+    throw new HibitIdError(
+      HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+      'Invalid balance request: chainId is required'
+    );
+  }
+
+  const parsedChainId = ChainId.fromString(chainId);
+  if (!parsedChainId) {
+    throw new HibitIdError(
+      HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+      `Invalid chainId: ${chainId}`
+    );
+  }
+
   return {
-    chainId: chainId !== '' ? (chainId as HibitIdChainId) : undefined,
+    chainId: parsedChainId,
     assetType:
-      assetType !== '' ? (Number(assetType) as HibitIdAssetType) : undefined,
-    decimalPlaces: decimalPlaces !== '' ? Number(decimalPlaces) : undefined,
+      assetType !== '' ? (Number(assetType) as ChainAssetType) : undefined,
     contractAddress: contractAddress || undefined
   };
 };

@@ -1,10 +1,20 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import typescript from '@rollup/plugin-typescript';
+import dts from 'vite-plugin-dts';
+import checker from 'vite-plugin-checker';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [],
+  plugins: [
+    dts({
+      insertTypesEntry: true,
+      rollupTypes: true,
+      tsconfigPath: './tsconfig.json'
+    }),
+    checker({
+      typescript: true,
+      enableBuild: true
+    })
+  ],
   resolve: {
     alias: {
       src: resolve(__dirname, 'src')
@@ -12,34 +22,23 @@ export default defineConfig({
   },
   build: {
     lib: {
-      // Could also be a dictionary or array of multiple entry points
-      entry: {
-        index: resolve(__dirname, 'src/index.ts'),
-        model: resolve(__dirname, 'src/model.ts')
-      },
+      entry: resolve(__dirname, 'src/index.ts'),
       name: 'CoinBase',
-      // the proper extensions will be added
-      fileName: (mod, entry) => {
-        const filename = entry.replace(/node_modules\//g, 'external/');
-        return mod === 'cjs' ? `${filename}.umd.cjs` : `${filename}.js`;
+      formats: ['es', 'cjs'],
+      fileName: (format) => {
+        if (format === 'es') return 'index.js';
+        if (format === 'cjs') return 'index.umd.cjs';
+        return `index.${format}.js`;
       }
     },
-    commonjsOptions: {
-      transformMixedEsModules: true,
-      include: [/node_modules/, /crypto-lib/]
-    },
     rollupOptions: {
-      external: ['bignumber.js'],
-      plugins: [
-        typescript({
-          target: 'es2020',
-          rootDir: resolve(__dirname, 'src'),
-          declaration: true,
-          declarationDir: resolve(__dirname, 'dist'),
-          exclude: [resolve(__dirname, 'node_modules/**'), resolve(__dirname, 'test/**')],
-          allowSyntheticDefaultImports: true
-        })
-      ]
-    }
+      external: ['bignumber.js', '@delandlabs/hibit-basic-types', '@delandlabs/crypto-lib'],
+      output: {
+        exports: 'named'
+      }
+    },
+    target: 'esnext',
+    minify: false,
+    sourcemap: true
   }
 });

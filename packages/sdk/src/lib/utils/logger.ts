@@ -66,7 +66,7 @@ class SecureLogger {
     return levels.indexOf(level) >= levels.indexOf(this.config.level);
   }
 
-  private sanitizeData(data: any): any {
+  private sanitizeData(data: unknown): unknown {
     if (typeof data !== 'object' || data === null) {
       return data;
     }
@@ -75,7 +75,7 @@ class SecureLogger {
       return data.map((item) => this.sanitizeData(item));
     }
 
-    const sanitized: any = {};
+    const sanitized: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(data)) {
       if (
         this.sensitiveKeys.some((sensitive) =>
@@ -92,7 +92,11 @@ class SecureLogger {
     return sanitized;
   }
 
-  private formatMessage(level: LogLevel, message: string, data?: any): string {
+  private formatMessage(
+    level: LogLevel,
+    message: string,
+    data?: unknown
+  ): string {
     const timestamp = new Date().toISOString();
     const prefix = `[${timestamp}] [${level.toUpperCase()}]`;
 
@@ -104,25 +108,25 @@ class SecureLogger {
     return `${prefix} ${message}`;
   }
 
-  debug(message: string, data?: any): void {
+  debug(message: string, data?: unknown): void {
     if (this.shouldLog('debug') && this.config.enableConsole) {
       console.debug(this.formatMessage('debug', message, data));
     }
   }
 
-  info(message: string, data?: any): void {
+  info(message: string, data?: unknown): void {
     if (this.shouldLog('info') && this.config.enableConsole) {
       console.info(this.formatMessage('info', message, data));
     }
   }
 
-  warn(message: string, data?: any): void {
+  warn(message: string, data?: unknown): void {
     if (this.shouldLog('warn') && this.config.enableConsole) {
       console.warn(this.formatMessage('warn', message, data));
     }
   }
 
-  error(message: string, error?: Error | any): void {
+  error(message: string, error?: Error | unknown): void {
     if (this.shouldLog('error') && this.config.enableConsole) {
       let errorData;
       if (error instanceof Error) {
@@ -138,8 +142,8 @@ class SecureLogger {
 
   // Public method for sanitizing error messages
   sanitizeErrorMessage(message: string): string {
-    const sanitized = this.sanitizeData({ message });
-    return sanitized.message || 'An error occurred';
+    const sanitized = this.sanitizeData({ message }) as Record<string, unknown>;
+    return (sanitized.message as string) || 'An error occurred';
   }
 }
 

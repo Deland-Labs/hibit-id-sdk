@@ -36,6 +36,7 @@
     "test": "vitest",
     "test:ci": "vitest run",
     "build": "vite build",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo tsconfig.test.tsbuildinfo",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write ."
   },
@@ -45,7 +46,9 @@
     "tweetnacl": "^1.0.3"
   },
   "peerDependencies": {
-    "@delandlabs/coin-base": "*"
+    "@delandlabs/coin-base": "workspace:*",
+    "@delandlabs/hibit-basic-types": "workspace:*",
+    "bignumber.js": "^9.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

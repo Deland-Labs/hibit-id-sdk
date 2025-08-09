@@ -1,4 +1,4 @@
-import { validateHexString } from '../src/base';
+import { validateHexString } from '../src/base/helper';
 import { describe, it, expect } from 'vitest';
 
 describe('validateHexString', () => {
@@ -27,13 +27,13 @@ describe('validateHexString', () => {
     expect(validateHexString('0X')).toBe(false);
   });
   it('returns false for hex string with Chinese characters', () => {
-    expect(validateHexString('0x1a2b3c中文')).toBe(false);
+    expect(validateHexString('0x1a2b3cnon-hex')).toBe(false);
   });
   it('returns false for hex string that contains spaces', () => {
     expect(validateHexString('0x1a2b3c abcdef')).toBe(false);
   });
-  it('returns false for hex string containing Chinese and space', () => {
-    expect(validateHexString('0x1a2b3c 中文')).toBe(false);
+  it('returns false for hex string containing non-hex characters and space', () => {
+    expect(validateHexString('0x1a2b3c non-hex')).toBe(false);
   });
 
   it('returns false for valid hex string with odd length', () => {

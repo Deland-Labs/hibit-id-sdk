@@ -1,28 +1,24 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import typescript from '@rollup/plugin-typescript';
+import { sharedPlugins } from '../../vite.shared.config';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [],
+  plugins: sharedPlugins,
   resolve: {
     alias: {
       src: resolve(__dirname, 'src')
     }
   },
   build: {
+    sourcemap: true, // Enable source maps
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: {
-        index: resolve(__dirname, 'src/index.ts'),
-        chains: resolve(__dirname, 'src/chains.ts')
-      },
+      entry: resolve(__dirname, 'src/index.ts'),
       name: 'CoinKaspa',
       // the proper extensions will be added
-      fileName: (mod, entry) => {
-        const filename = entry.replace(/node_modules\//g, 'external/');
-        return mod === 'cjs' ? `${filename}.umd.cjs` : `${filename}.js`;
-      }
+      fileName: 'index'
     },
     commonjsOptions: {
       transformMixedEsModules: true,
@@ -37,7 +33,8 @@ export default defineConfig({
           declaration: true,
           declarationDir: resolve(__dirname, 'dist'),
           exclude: [resolve(__dirname, 'node_modules/**'), resolve(__dirname, 'test/**')],
-          allowSyntheticDefaultImports: true
+          allowSyntheticDefaultImports: true,
+          outputToFilesystem: true
         })
       ]
     }

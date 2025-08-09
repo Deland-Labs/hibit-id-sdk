@@ -8,15 +8,15 @@
   ],
   "main": "./dist/hibit-id-sdk.umd.cjs",
   "module": "./dist/hibit-id-sdk.js",
-  "types": "dist/lib/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/lib/index.d.ts",
+        "types": "./dist/index.d.ts",
         "default": "./dist/hibit-id-sdk.js"
       },
       "require": {
-        "types": "./dist/lib/index.d.ts",
+        "types": "./dist/index.d.ts",
         "default": "./dist/hibit-id-sdk.umd.cjs"
       }
     },
@@ -28,38 +28,48 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo tsconfig.test.tsbuildinfo",
+    "test": "vitest",
+    "test:ci": "tsc --noEmit && vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "peerDependencies": {
+    "@delandlabs/hibit-basic-types": "workspace:*"
+  },
   "dependencies": {
-    "@delandlabs/coin-base": "*",
-    "@delandlabs/coin-ton": "*",
+    "@delandlabs/coin-base": "workspace:*",
     "@mixer/postmessage-rpc": "^1.1.4",
-    "@ton/core": "^0.59.0",
-    "@ton/crypto": "^3.3.0",
-    "@ton/ton": "^15.0.0",
-    "@tonconnect/protocol": "^2.2.6",
-    "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",
     "ethers": "^6.13.1"
   },
   "devDependencies": {
-    "tailwind-merge": "^2.3.0",
     "@rollup/plugin-typescript": "^12.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "@vitejs/plugin-basic-ssl": "^2.1.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/coverage-v8": "^3.2.4",
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.12.10",
     "eslint": "^9.0.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.7",
+    "jsdom": "^25.0.1",
     "postcss": "^8.4.38",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.0.2",
-    "tailwindcss": "^3.4.4"
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss": "^3.4.4",
+    "vite-plugin-checker": "^0.10.1",
+    "vite-plugin-dts": "^4.4.2",
+    "vite-plugin-node-polyfills": "^0.24.0",
+    "vitest": "^3.2.4"
   }
 }

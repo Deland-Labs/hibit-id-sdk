@@ -12,22 +12,33 @@ npm install @delandlabs/hibit-id-sdk
 ## Usage
 
 ```javascript
-import { HibitIdWallet, HibitIdChainId, HibitIdAssetType } from '@delandlabs/hibit-id-sdk';
+import { HibitIdWallet } from '@delandlabs/hibit-id-sdk';
+import {
+  ChainAssetType,
+  ChainId,
+  ChainType,
+  ChainNetwork
+} from '@delandlabs/hibit-basic-types';
 import '@delandlabs/hibit-id-sdk/dist/style.css'; // Required for wallet UI
 
 // Initialize
 const wallet = new HibitIdWallet({
-  env: 'prod',  // 'prod' | 'test'
-  chains: [HibitIdChainId.Ethereum, HibitIdChainId.BSC],
-  defaultChain: HibitIdChainId.Ethereum
+  env: 'test', // 'prod' | 'test'
+  chains: [
+    new ChainId(ChainType.Ethereum, ChainNetwork.EthereumSepolia),
+    new ChainId(ChainType.Ethereum, ChainNetwork.EvmBscTestNet)
+  ],
+  defaultChain: new ChainId(ChainType.Ethereum, ChainNetwork.EthereumSepolia)
 });
 
 // Connect
-const account = await wallet.connect(HibitIdChainId.Ethereum);
+const account = await wallet.connect(
+  new ChainId(ChainType.Ethereum, ChainNetwork.EthereumSepolia)
+);
 
 // Basic operations
 const signature = await wallet.signMessage('Hello Web3!');
-const balance = await wallet.getBalance({ assetType: HibitIdAssetType.Native });
+const balance = await wallet.getBalance({ assetType: ChainAssetType.Native });
 const txId = await wallet.transfer({ toAddress: '0x...', amount: '0.1' });
 ```
 
@@ -37,21 +48,21 @@ const txId = await wallet.transfer({ toAddress: '0x...', amount: '0.1' });
 
 ```typescript
 interface HibitIdWalletOptions {
-  env: 'prod' | 'test';           // Network environment
-  chains: HibitIdChainId[];       // Supported chains
-  defaultChain: HibitIdChainId;   // Initial chain
-  embedMode?: 'floating' | 'background';  // UI mode
+  env: 'prod' | 'test'; // Network environment
+  chains: ChainId[]; // Supported chains
+  defaultChain: ChainId; // Initial chain
+  embedMode?: 'floating' | 'background'; // UI mode
 }
 ```
 
 ### Core Methods
 
-- `connect(chainId: HibitIdChainId): Promise<WalletAccount>`
+- `connect(chainId: ChainId): Promise<WalletAccount>`
 - `disconnect(): Promise<void>`
 - `signMessage(message: string): Promise<string>`
 - `getBalance(params: BalanceParams): Promise<string>`
 - `transfer(params: TransferParams): Promise<string>`
-- `switchToChain(chainId: HibitIdChainId): Promise<void>`
+- `switchToChain(chainId: ChainId): Promise<void>`
 - `addEventListener(event: string, handler: Function): void`
 - `removeEventListener(event: string, handler: Function): void`
 
@@ -70,8 +81,7 @@ import type {
   TransferParams,
   BalanceParams,
   HibitIdError,
-  HibitIdChainId,
-  HibitIdAssetType
+  HibitIdError
 } from '@delandlabs/hibit-id-sdk';
 ```
 
@@ -85,9 +95,11 @@ For TON blockchain integration with TonConnect protocol, see our [examples repos
 
 ```javascript
 try {
-  const account = await wallet.connect(HibitIdChainId.Ethereum);
+  const account = await wallet.connect(
+    new ChainId(ChainType.Ethereum, ChainNetwork.EthereumSepolia)
+  );
 } catch (error) {
-  if (error.code === HibitIdErrorCode.UserRejected) {
+  if (error.code === HibitIdSdkErrorCode.UserRejected) {
     console.log('User rejected the connection');
   } else {
     console.error('Connection error:', error.message);
@@ -102,9 +114,8 @@ try {
 export class HibitIdWallet { ... }
 
 // Enums
-export enum HibitIdChainId { ... }
-export enum HibitIdAssetType { ... }
-export enum HibitIdErrorCode { ... }
+// ChainId and ChainAssetType are now imported from @delandlabs/hibit-basic-types
+export enum HibitIdSdkErrorCode { ... }
 export enum AuthenticatorType { ... }
 
 // Types
@@ -126,34 +137,35 @@ export function getSupportedAuthParties(): AuthParty[]
 const txId = await wallet.transfer({
   toAddress: '0x...',
   amount: '0.1',
-  assetType: HibitIdAssetType.Native,
+  assetType: ChainAssetType.Native,
   gasPrice: '20000000000', // wei
   gasLimit: '21000'
 });
 
-// Token transfers with approval
+// Token transfers (amount in smallest unit, e.g., wei for ETH)
 const tokenTxId = await wallet.transfer({
   toAddress: '0x...',
-  amount: '100',
-  assetType: HibitIdAssetType.ERC20,
-  contractAddress: '0x...',
-  decimalPlaces: 18
+  amount: '100000000000000000000', // 100 tokens with 18 decimals
+  assetType: ChainAssetType.ERC20,
+  contractAddress: '0x...'
 });
 ```
 
 ### Error Handling
 
 ```javascript
-import { HibitIdErrorCode } from '@delandlabs/hibit-id-sdk';
+import { HibitIdSdkErrorCode } from '@delandlabs/hibit-id-sdk';
 
 try {
-  await wallet.connect(HibitIdChainId.Ethereum);
+  await wallet.connect(
+    new ChainId(ChainType.Ethereum, ChainNetwork.EthereumSepolia)
+  );
 } catch (error) {
   switch (error.code) {
-    case HibitIdErrorCode.UserRejected:
+    case HibitIdSdkErrorCode.UserRejected:
       console.log('User cancelled connection');
       break;
-    case HibitIdErrorCode.ChainNotSupported:
+    case HibitIdSdkErrorCode.ChainNotSupported:
       console.log('Chain not supported');
       break;
     default:
@@ -165,6 +177,7 @@ try {
 ### Chain-Specific Features
 
 For chain-specific implementations and features, this SDK uses the following internal packages:
+
 - `@delandlabs/coin-ethereum` - EVM chains support
 - `@delandlabs/coin-solana` - Solana integration
 - `@delandlabs/coin-ton` - TON blockchain support
@@ -179,17 +192,17 @@ For chain-specific implementations and features, this SDK uses the following int
 
 ```bash
 # From monorepo root
-yarn build:sdk
+pnpm build:sdk
 
 # Watch mode
-yarn dev
+pnpm dev
 ```
 
 ### Testing
 
 ```bash
 # Run SDK tests
-yarn test:sdk
+pnpm test:sdk
 ```
 
 ## Links

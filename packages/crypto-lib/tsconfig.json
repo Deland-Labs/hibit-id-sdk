@@ -1,12 +1,12 @@
 {
   "extends": "./tsconfig-base.json",
   "compilerOptions": {
-    "module": "CommonJS",
+    "module": "ESNext",
     "allowJs": true,
     "resolveJsonModule": true,
     "outDir": "./dist",
     "rootDir": "./src"
   },
   "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.json"],
-  "exclude": ["**/node_modules"]
+  "exclude": ["**/node_modules", "dist"]
 }

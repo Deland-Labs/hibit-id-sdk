@@ -36,24 +36,27 @@
     "test": "vitest",
     "test:ci": "vitest run",
     "build": "vite build",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo tsconfig.test.tsbuildinfo",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@delandlabs/crypto-lib": "*",
+    "@delandlabs/crypto-lib": "workspace:*",
     "@dfinity/agent": "^2.4.1",
     "@dfinity/candid": "^2.4.1",
     "@dfinity/identity-secp256k1": "^2.4.1",
-    "@dfinity/ledger-icp": "^2.6.0",
-    "@dfinity/ledger-icrc": "^2.5.0",
+    "@dfinity/ledger-icp": "^2.6.13",
+    "@dfinity/ledger-icrc": "^2.9.1",
     "@dfinity/principal": "^2.4.1",
-    "@dfinity/utils": "^2.5.0",
+    "@dfinity/utils": "^2.13.2",
     "@noble/secp256k1": "^2.0.0",
     "cborg": "^4.2.4",
     "ic0": "^0.3.0"
   },
   "peerDependencies": {
-    "@delandlabs/coin-base": "*"
+    "@delandlabs/coin-base": "workspace:*",
+    "@delandlabs/hibit-basic-types": "workspace:*",
+    "bignumber.js": "^9.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

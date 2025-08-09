@@ -33,25 +33,27 @@
   },
   "scripts": {
     "dev": "vite",
-    "test": "vitest",
-    "test:ci": "vitest run",
+    "test": "tsc --noEmit --project ./tsconfig.test.json && vitest",
+    "test:ci": "tsc --noEmit --project ./tsconfig.test.json && vitest run",
     "build": "vite build",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo tsconfig.test.tsbuildinfo",
     "format": "prettier --write ."
   },
+  "peerDependencies": {
+    "@delandlabs/coin-base": "workspace:*",
+    "@delandlabs/hibit-basic-types": "workspace:*",
+    "bignumber.js": "^9.3.1",
+    "@ton/core": "^0.61.0"
+  },
   "dependencies": {
-    "@delandlabs/crypto-lib": "*",
-    "@openproduct/web-sdk": "^0.23.0",
-    "@orbs-network/ton-access": "^2.3.3",
-    "@ton/core": "^0.59.0",
+    "@delandlabs/crypto-lib": "workspace:*",
+    "@ton/core": "^0.61.0",
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.0.0",
-    "tonweb": "^0.0.66",
-    "tonweb-mnemonic": "^1.0.1",
+    "lru-cache": "^11.1.0",
     "tweetnacl": "^1.0.3"
-  },
-  "peerDependencies": {
-    "@delandlabs/coin-base": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

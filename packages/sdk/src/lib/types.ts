@@ -1,19 +1,39 @@
-import { WalletAccount } from '@delandlabs/coin-base/model';
-import { MnemonicError } from '@delandlabs/coin-base';
 import {
-  AuthenticatorType,
-  HibitIdAssetType,
-  HibitIdChainId,
-  HibitIdErrorCode
-} from './enums';
+  MnemonicError,
+  ChainInfo,
+  HibitIdSdkErrorCode
+} from '@delandlabs/coin-base';
 import {
-  TonConnectSignDataPayload,
-  TonConnectSignDataResult,
-  TonConnectTransactionPayload
-} from './tonconnect/types';
+  ChainAccount,
+  ChainId,
+  ChainAssetType
+} from '@delandlabs/hibit-basic-types';
+import { AuthenticatorType } from './enums';
 
 // Re-export MnemonicError from coin-base for consistency
 export { MnemonicError };
+
+/**
+ * Describes a ChainAccount with additional state provided by the wallet.
+ */
+export interface ChainAccountInfo {
+  /**
+   * Core account information (includes address, publicKey, and chainId).
+   */
+  account: ChainAccount;
+
+  /**
+   * Whether this is the user's primary account set in the wallet.
+   * Only one account in the returned list will have this as true.
+   */
+  isPrimary: boolean;
+
+  /**
+   * Whether the wallet functionality for this chain is currently available.
+   * dApps should only interact with accounts where isActive is true.
+   */
+  isActive: boolean;
+}
 
 export type HibitEnv = 'dev' | 'test' | 'prod';
 
@@ -27,8 +47,8 @@ export type EmbedMode = 'float' | 'background';
 
 export interface HibitIdWalletOptions {
   env: HibitEnv;
-  chains: HibitIdChainId[];
-  defaultChain: HibitIdChainId;
+  chains: ChainId[];
+  defaultChain: ChainId;
   lang?: Language;
   fixDevMode?: FixDevMode;
   iframeUrlAppendix?: string;
@@ -47,10 +67,8 @@ export interface BalanceChangeData {
   lastBalance: string | null;
 }
 
-export interface HibitIdEventHandlerMap {
-  chainChanged: (chainId: HibitIdChainId) => void;
-  accountsChanged: (account: WalletAccount | null) => void;
-}
+// Note: In SDK V2, chainChanged and accountsChanged events are removed
+// as the SDK becomes stateless. dApps should call getAccounts() or getAccount() as needed.
 
 export class BridgePromise<T> {
   public promise: Promise<T>;
@@ -67,24 +85,11 @@ export class BridgePromise<T> {
 
 export class HibitIdError extends Error {
   constructor(
-    public code: HibitIdErrorCode,
+    public code: HibitIdSdkErrorCode,
     message: string
   ) {
     super(message);
   }
-}
-
-export interface ChainInfo {
-  chainId: {
-    type: number;
-    network: number;
-  };
-  name: string;
-  fullName: string;
-  nativeAssetSymbol: string;
-  nativeAssetDecimals: number;
-  explorer: string;
-  rpcUrls: string[];
 }
 
 export interface AuthParty {
@@ -104,15 +109,12 @@ export type RpcBaseResponse<T> =
     };
 
 export interface ConnectRequest {
-  chainId: HibitIdChainId;
   authType?: AuthenticatorType;
 }
 
-export interface ConnectedRequest extends WalletAccount {}
-
 export interface SignMessageRequest {
   message: string;
-  chainId?: HibitIdChainId;
+  chainId: ChainId;
 }
 
 export type SignMessageResponse = RpcBaseResponse<{
@@ -120,23 +122,34 @@ export type SignMessageResponse = RpcBaseResponse<{
 }>;
 
 export interface GetBalanceRequest {
-  assetType?: HibitIdAssetType;
-  chainId?: HibitIdChainId;
+  assetType?: ChainAssetType;
+  chainId: ChainId;
   contractAddress?: string;
-  decimalPlaces?: number;
 }
 
 export type GetBalanceResponse = RpcBaseResponse<{
   balance: string; // in minimal unit (like wei for eth)
 }>;
 
+export interface GetAssetDecimalsRequest {
+  chainId: ChainId;
+  token: {
+    assetType: ChainAssetType;
+    tokenAddress?: string;
+    symbol?: string;
+  };
+}
+
+export type GetAssetDecimalsResponse = RpcBaseResponse<{
+  decimals: number;
+}>;
+
 export interface TransferRequest {
-  toAddress: string;
+  recipientAddress: string;
   amount: string; // in minimal unit (like wei for eth)
-  assetType?: HibitIdAssetType;
-  chainId?: HibitIdChainId;
+  assetType?: ChainAssetType;
+  chainId: ChainId;
   contractAddress?: string;
-  decimalPlaces?: number;
   payload?: string;
 }
 
@@ -156,52 +169,32 @@ export interface VerifyPasswordRequest {
 
 export type VerifyPasswordResponse = RpcBaseResponse<null>;
 
-export type TonConnectGetStateInitResponse = RpcBaseResponse<{
-  stateInitBase64: string;
-}>;
-
-export type TonConnectTransferRequest = TonConnectTransactionPayload;
-
-export type TonConnectTransferResponse = RpcBaseResponse<{
-  message: string;
-}>;
-
-export type TonConnectSignDataRequest = TonConnectSignDataPayload;
-
-export type TonConnectSignDataResponse =
-  RpcBaseResponse<TonConnectSignDataResult>;
-
 export type GetAccountRequest = {
-  chainId?: HibitIdChainId;
+  chainId: ChainId;
 };
 
-export type GetAccountResponse = RpcBaseResponse<WalletAccount>;
+export type GetAccountResponse = RpcBaseResponse<ChainAccount>;
+
+// New request/response types for getAccounts() method
+export interface GetAccountsRequest {}
+
+export type GetAccountsResponse = RpcBaseResponse<{
+  accounts: ChainAccountInfo[];
+}>;
 
 export type GetChainInfoResponse = RpcBaseResponse<{
   chainInfo: ChainInfo;
 }>;
 
-export interface ChainChangedRequest {
-  chainId: HibitIdChainId;
-}
-
-export interface AccountsChangedRequest {
-  account: WalletAccount | null;
-}
-
-export interface PasswordChangedRequest {
+export interface PasswordChangeNotification {
   success: boolean;
 }
 
-export interface SwitchChainRequest {
-  chainId: HibitIdChainId;
-}
-
-export interface LoginChangedRequest {
+export interface LoginStateChangeNotification {
   isLogin: boolean;
   sub?: string; // required if isLogin is true
 }
 
-export interface SetBackgroundEmbedRequest {
+export interface UpdateEmbedModeRequest {
   value: boolean;
 }

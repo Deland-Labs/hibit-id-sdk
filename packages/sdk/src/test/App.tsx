@@ -1,12 +1,17 @@
 import { FC, useEffect, useState } from 'react';
 import { HibitIdWallet } from '../lib/wallet';
-import { HibitIdAssetType, HibitIdChainId } from '../lib';
-import { WalletAccount } from '@delandlabs/coin-base/model';
+import {
+  ChainAccount,
+  ChainAssetType,
+  ChainId,
+  ChainType,
+  ChainNetwork
+} from '@delandlabs/hibit-basic-types';
 import { BalanceChangeData } from '../lib/types';
 
 const App: FC = () => {
   const [wallet, setWallet] = useState<HibitIdWallet | null>(null);
-  const [account, setAccount] = useState<WalletAccount | null>(null);
+  const [account, setAccount] = useState<ChainAccount | null>(null);
   const [connecting, setConnecting] = useState(false);
   const [sig, setSig] = useState('');
   const [balance, setBalance] = useState('');
@@ -16,35 +21,38 @@ const App: FC = () => {
   useEffect(() => {
     const wallet = new HibitIdWallet({
       env: 'dev',
-      chains: [],
-      defaultChain: HibitIdChainId.EthereumSepolia,
+      chains: [
+        new ChainId(ChainType.Ethereum, ChainNetwork.EthereumSepolia),
+        new ChainId(ChainType.Ton, ChainNetwork.TonTestNet)
+      ],
+      defaultChain: new ChainId(
+        ChainType.Ethereum,
+        ChainNetwork.EthereumSepolia
+      ),
       embedMode: 'float',
       controllerDefaultPosition: { right: 100, bottom: 100 }
     });
     setWallet(wallet);
-    const handleChainChanged = (chainId: HibitIdChainId) => setChainId(chainId);
-    wallet.addEventListener('chainChanged', handleChainChanged);
+    // V2: Event listeners are deprecated - use getAccount(chainId) to check current state
     const handleBalanceChanged = (data: BalanceChangeData) => {
       console.log(data);
     };
     wallet.subscribeBalanceChange(
       {
-        assetType: HibitIdAssetType.ERC20,
-        chainId: HibitIdChainId.EthereumBscTestnet,
-        contractAddress: '0x4becfca57c5728536fc4746645f7b4410d1cc5f7',
-        decimalPlaces: 18
+        assetType: ChainAssetType.ERC20,
+        chainId: new ChainId(ChainType.Ethereum, ChainNetwork.EvmBscTestNet),
+        contractAddress: '0x4becfca57c5728536fc4746645f7b4410d1cc5f7'
       },
       handleBalanceChanged
     );
 
     return () => {
-      wallet.removeEventListener('chainChanged', handleChainChanged);
+      // V2: Event listeners removed
       wallet.unsubscribeBalanceChange(
         {
-          assetType: HibitIdAssetType.ERC20,
-          chainId: HibitIdChainId.EthereumBscTestnet,
-          contractAddress: '0x4becfca57c5728536fc4746645f7b4410d1cc5f7',
-          decimalPlaces: 18
+          assetType: ChainAssetType.ERC20,
+          chainId: new ChainId(ChainType.Ethereum, ChainNetwork.EvmBscTestNet),
+          contractAddress: '0x4becfca57c5728536fc4746645f7b4410d1cc5f7'
         },
         handleBalanceChanged
       );
@@ -58,8 +66,9 @@ const App: FC = () => {
           className="btn btn-sm"
           onClick={async () => {
             setConnecting(true);
-            const account = await wallet?.connect(
-              HibitIdChainId.EthereumSepolia
+            await wallet?.connect();
+            const account = await wallet?.getAccount(
+              new ChainId(ChainType.Ethereum, ChainNetwork.EthereumSepolia)
             );
             setAccount(account ?? null);
             setConnecting(false);
@@ -76,7 +85,7 @@ const App: FC = () => {
         <button
           className="btn btn-sm"
           onClick={async () => {
-            await wallet?.showResetPassword();
+            await wallet?.showChangePassword();
           }}
         >
           reset password
@@ -89,8 +98,8 @@ const App: FC = () => {
             try {
               await wallet?.verifyPassword({ password: '123456' });
               alert('password verified');
-            } catch (e: any) {
-              alert(e.message || e);
+            } catch (e) {
+              alert(e instanceof Error ? e.message : String(e));
             }
           }}
         >
@@ -112,7 +121,13 @@ const App: FC = () => {
         <button
           className="btn btn-sm"
           onClick={async () => {
-            const balance = await wallet?.getBalance();
+            const balance = await wallet?.getBalance({
+              chainId: new ChainId(
+                ChainType.Ethereum,
+                ChainNetwork.EthereumSepolia
+              ),
+              assetType: ChainAssetType.Native
+            });
             setBalance(balance ?? '');
             setTimeout(() => {
               setBalance('');
@@ -127,7 +142,13 @@ const App: FC = () => {
         <button
           className="btn btn-sm"
           onClick={async () => {
-            const sig = await wallet?.signMessage('hello hibit');
+            const sig = await wallet?.signMessage({
+              chainId: new ChainId(
+                ChainType.Ethereum,
+                ChainNetwork.EthereumSepolia
+              ),
+              message: 'hello hibit'
+            });
             setSig(sig ?? '');
             setTimeout(() => {
               setSig('');
@@ -141,15 +162,34 @@ const App: FC = () => {
       <div>
         <p>switch chain: {chainId}</p>
         <button
-          onClick={() => {
-            wallet?.switchToChain(HibitIdChainId.EthereumSepolia);
+          onClick={async () => {
+            // V2: switchToChain is deprecated
+            // Use chainId parameter in method calls instead
+            const account = await wallet?.getAccount(
+              new ChainId(ChainType.Ethereum, ChainNetwork.EthereumSepolia)
+            );
+            setAccount(account ?? null);
+            setChainId(
+              new ChainId(
+                ChainType.Ethereum,
+                ChainNetwork.EthereumSepolia
+              ).toString()
+            );
           }}
         >
           evm sepolia
         </button>
         <button
-          onClick={() => {
-            wallet?.switchToChain(HibitIdChainId.TonTestnet);
+          onClick={async () => {
+            // V2: switchToChain is deprecated
+            // Use chainId parameter in method calls instead
+            const account = await wallet?.getAccount(
+              new ChainId(ChainType.Ton, ChainNetwork.TonTestNet)
+            );
+            setAccount(account ?? null);
+            setChainId(
+              new ChainId(ChainType.Ton, ChainNetwork.TonTestNet).toString()
+            );
           }}
         >
           ton testnet

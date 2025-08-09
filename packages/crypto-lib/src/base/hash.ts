@@ -1,9 +1,9 @@
-import { sha256 } from '@noble/hashes/sha256';
-import { sha512 } from '@noble/hashes/sha512';
-import { ripemd160 } from '@noble/hashes/ripemd160';
+import { sha256, sha512 } from '@noble/hashes/sha2';
+import { ripemd160 } from '@noble/hashes/legacy';
 import { keccak_224, keccak_256, keccak_384, keccak_512, sha3_256, sha3_512 } from '@noble/hashes/sha3';
-import { blake2b } from '@noble/hashes/blake2b';
+import { blake2b } from '@noble/hashes/blake2';
 import { Input } from '@noble/hashes/utils';
+import { HashError } from '../errors';
 
 export function doubleSha256(data: Input): Uint8Array {
   const t = sha256(data);
@@ -15,8 +15,8 @@ export function hash160(data: Input): Uint8Array {
   return ripemd160(t);
 }
 
-export const keccak = function (a: Buffer | Uint8Array | number[], bits: number = 256): Uint8Array {
-  const b = Buffer.from(a);
+export const keccak = function (a: Uint8Array | number[], bits: number = 256): Uint8Array {
+  const b = a instanceof Uint8Array ? a : new Uint8Array(a);
   switch (bits) {
     case 224: {
       return keccak_224(b);
@@ -31,17 +31,17 @@ export const keccak = function (a: Buffer | Uint8Array | number[], bits: number 
       return keccak_512(b);
     }
     default: {
-      throw new Error(`Invald algorithm: keccak${bits}`);
+      throw new HashError(`Invalid algorithm: keccak${bits}`);
     }
   }
 };
 
 /**
  * Creates Keccak-256 hash of the input, alias for keccak(a, 256).
- * @param a The input data (Buffer)
+ * @param a The input data
  */
-export const keccak256 = function (a: Buffer | Uint8Array | number[]): Uint8Array {
-  return Uint8Array.from(keccak(a));
+export const keccak256 = function (a: Uint8Array | number[]): Uint8Array {
+  return keccak(a);
 };
 
 export function blake2(data: Uint8Array, bitLength: number, key: Uint8Array | undefined): Uint8Array {

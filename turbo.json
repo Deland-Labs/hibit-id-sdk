@@ -1,57 +1,63 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
-    "@delandlabs/crypto-lib#build:esm": {
-      "outputs": ["dist/**"],
-      "cache": false
+    "@delandlabs/hibit-basic-types#build": {
+      "outputs": ["dist/**"]
     },
-    "@delandlabs/crypto-lib#build:common": {
-      "outputs": ["dist/**"],
-      "cache": false
+    "@delandlabs/crypto-lib#build": {
+      "outputs": ["dist/**"]
     },
     "@delandlabs/coin-base#build": {
       "outputs": ["dist/**"],
-      "dependsOn": ["@delandlabs/crypto-lib#build:esm"]
+      "dependsOn": ["@delandlabs/crypto-lib#build", "@delandlabs/hibit-basic-types#build"]
     },
     "@delandlabs/coin-base#test": {
       "env": ["VITE_*"],
-      "dependsOn": ["@delandlabs/crypto-lib#build:common"],
+      "dependsOn": ["@delandlabs/crypto-lib#build", "@delandlabs/hibit-basic-types#build"],
       "persistent": true
     },
     "@delandlabs/coin-ethereum#build": {
       "env": ["VITE_*"],
-      "dependsOn": ["@delandlabs/coin-base#build"],
+      "dependsOn": ["@delandlabs/coin-base#build", "@delandlabs/hibit-basic-types#build"],
       "outputs": ["dist/**"]
     },
     "@delandlabs/coin-ton#build": {
       "env": ["VITE_*"],
-      "dependsOn": ["@delandlabs/coin-base#build"],
+      "dependsOn": ["@delandlabs/coin-base#build", "@delandlabs/hibit-basic-types#build"],
       "outputs": ["dist/**"]
     },
     "@delandlabs/coin-dfinity#build": {
       "env": ["VITE_*"],
-      "dependsOn": ["@delandlabs/coin-base#build"],
+      "dependsOn": ["@delandlabs/coin-base#build", "@delandlabs/hibit-basic-types#build"],
       "outputs": ["dist/**"]
     },
     "@delandlabs/coin-kaspa#build": {
       "env": ["VITE_*"],
-      "dependsOn": ["@delandlabs/coin-base#build", "@delandlabs/crypto-lib#build:esm"],
+      "dependsOn": [
+        "@delandlabs/coin-base#build",
+        "@delandlabs/crypto-lib#build",
+        "@delandlabs/hibit-basic-types#build"
+      ],
       "outputs": ["dist/**"]
     },
     "@delandlabs/coin-solana#build": {
       "env": ["VITE_*"],
-      "dependsOn": ["@delandlabs/coin-base#build"],
+      "dependsOn": ["@delandlabs/coin-base#build", "@delandlabs/hibit-basic-types#build"],
       "outputs": ["dist/**"]
     },
     "@delandlabs/coin-tron#build": {
       "env": ["VITE_*"],
-      "dependsOn": ["@delandlabs/coin-base#build"],
+      "dependsOn": ["@delandlabs/coin-base#build", "@delandlabs/hibit-basic-types#build"],
       "outputs": ["dist/**"]
     },
     "@delandlabs/hibit-id-sdk#build": {
       "env": ["VITE_*"],
-      "dependsOn": ["@delandlabs/coin-base#build", "@delandlabs/coin-ton#build"],
+      "dependsOn": ["@delandlabs/coin-base#build"],
       "outputs": ["dist/**"]
+    },
+    "@delandlabs/hibit-id-sdk#test": {
+      "env": ["VITE_*"],
+      "dependsOn": ["@delandlabs/coin-base#build"]
     },
     "lint": {},
     "format": {},
@@ -60,7 +66,20 @@
       "persistent": true
     },
     "test": {},
-    "test:ci": {},
-    "test:watch": {}
+    "test:ci": {
+      "dependsOn": ["^build"]
+    },
+    "test:watch": {},
+    "build": {
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "outputs": [],
+      "cache": false,
+      "dependsOn": ["^build"]
+    },
+    "clean": {
+      "cache": false
+    }
   }
 }

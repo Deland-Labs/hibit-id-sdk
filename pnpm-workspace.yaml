@@ -1,0 +1,3 @@
+packages:
+  - 'packages/*'
+  - '../hibit-ts-libs/packages/basic-types'

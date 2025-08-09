@@ -24,12 +24,22 @@ Hibit ID SDK is a non-custodial multi-chain wallet SDK that enables seamless Web
 # Using npm
 npm install @delandlabs/hibit-id-sdk
 
-# Using yarn
-yarn add @delandlabs/hibit-id-sdk
-
 # Using pnpm
 pnpm add @delandlabs/hibit-id-sdk
+
+# Using yarn
+yarn add @delandlabs/hibit-id-sdk
 ```
+
+## ⚠️ Important: Breaking Changes in v2.0
+
+**The SDK now uses smallest unit values (wei, lamports, etc.) for all operations.** This ensures precision and follows low-level library best practices.
+
+- **Balances**: Returned in smallest units (e.g., wei for ETH, lamports for SOL)
+- **Transfers**: Amounts must be provided in smallest units
+- **New Method**: `getAssetDecimals()` to query decimal places for display conversion
+
+For migration details, see [INTERFACE_CHANGES.md](./INTERFACE_CHANGES.md).
 
 ## Quick Start
 
@@ -41,11 +51,7 @@ import '@delandlabs/hibit-id-sdk/dist/style.css';
 // Initialize wallet
 const wallet = new HibitIdWallet({
   env: 'prod', // or 'test' for testnet
-  chains: [
-    HibitIdChainId.Ethereum,
-    HibitIdChainId.BSC,
-    HibitIdChainId.Solana
-  ],
+  chains: [HibitIdChainId.Ethereum, HibitIdChainId.BSC, HibitIdChainId.Solana],
   defaultChain: HibitIdChainId.Ethereum
 });
 
@@ -56,16 +62,26 @@ console.log('Connected:', account.address);
 // Sign message
 const signature = await wallet.signMessage('Hello Web3!');
 
-// Get balance
+// Get balance (returns smallest unit - wei for ETH)
 const balance = await wallet.getBalance({
   assetType: HibitIdAssetType.Native,
   chainId: HibitIdChainId.Ethereum
 });
+console.log('Balance in wei:', balance); // e.g., '1500000000000000000' for 1.5 ETH
 
-// Transfer tokens
+// Get decimals for display conversion
+const decimals = await wallet.getAssetDecimals({
+  assetType: HibitIdAssetType.Native,
+  chainId: HibitIdChainId.Ethereum
+});
+const humanReadableBalance = balance.dividedBy(10 ** decimals);
+console.log('Balance in ETH:', humanReadableBalance.toString()); // '1.5'
+
+// Transfer tokens (amount in smallest unit - wei for ETH)
+const amountInWei = new BigNumber('0.1').multipliedBy(10 ** decimals); // Convert 0.1 ETH to wei
 const txId = await wallet.transfer({
   toAddress: '0x...',
-  amount: '0.1',
+  amount: amountInWei, // Amount in wei
   assetType: HibitIdAssetType.Native
 });
 ```
@@ -77,6 +93,7 @@ For complete integration examples with various frameworks and use cases, check o
 ## Supported Blockchains
 
 ### EVM Compatible Chains
+
 - **Ethereum** (Mainnet, Sepolia Testnet)
 - **BNB Smart Chain** (Mainnet, Testnet)
 - **Base** (Mainnet, Sepolia Testnet)
@@ -88,6 +105,7 @@ For complete integration examples with various frameworks and use cases, check o
 - **Kasplex L2** (Testnet)
 
 ### Non-EVM Chains
+
 - **Bitcoin** (Mainnet, Testnet)
 - **Solana** (Mainnet, Testnet)
 - **TON** (Mainnet, Testnet)
@@ -104,15 +122,15 @@ For complete integration examples with various frameworks and use cases, check o
 
 ## Supported Asset Types
 
-| Chain | Native | Tokens | NFTs |
-|-------|--------|--------|------|
-| Ethereum/EVM | ✅ | ERC20, ERC721 | ✅ |
-| Solana | ✅ | SPL | ✅ |
-| TON | ✅ | Jetton | - |
-| Tron | ✅ | TRC20 | - |
-| Kaspa | ✅ | KRC20 | - |
-| ICP | ✅ | ICRC1, DFT | - |
-| Bitcoin | ✅ | BRC20 | - |
+| Chain        | Native | Tokens        | NFTs |
+| ------------ | ------ | ------------- | ---- |
+| Ethereum/EVM | ✅     | ERC20, ERC721 | ✅   |
+| Solana       | ✅     | SPL           | ✅   |
+| TON          | ✅     | Jetton        | -    |
+| Tron         | ✅     | TRC20         | -    |
+| Kaspa        | ✅     | KRC20         | -    |
+| ICP          | ✅     | ICRC1, DFT    | -    |
+| Bitcoin      | ✅     | BRC20         | -    |
 
 ## Advanced Features
 
@@ -145,7 +163,7 @@ await wallet.switchToChain(HibitIdChainId.BSC);
 ```javascript
 // ERC20 token balance
 const tokenBalance = await wallet.getBalance({
-  assetType: HibitIdAssetType.ERC20,
+  assetType: HibitIdAssetType.FT,
   chainId: HibitIdChainId.Ethereum,
   contractAddress: '0x...', // Token contract address
   decimalPlaces: 18
@@ -155,7 +173,7 @@ const tokenBalance = await wallet.getBalance({
 const txId = await wallet.transfer({
   toAddress: '0x...',
   amount: '100',
-  assetType: HibitIdAssetType.ERC20,
+  assetType: HibitIdAssetType.FT,
   contractAddress: '0x...',
   decimalPlaces: 18
 });
@@ -202,7 +220,7 @@ packages/
 ### Prerequisites
 
 - Node.js >= 18
-- Yarn >= 1.22
+- pnpm >= 9.15
 
 ### Setup
 
@@ -212,29 +230,71 @@ git clone https://github.com/deland-labs/hibit-id-sdk.git
 cd hibit-id-sdk
 
 # Install dependencies
-yarn install
+pnpm install
 
 # Build all packages
-yarn build:all
+pnpm build:all
 ```
 
 ### Development Commands
 
 ```bash
-# Build specific package
-yarn build:sdk
-yarn build:coin-ethereum
+# Build specific packages
+pnpm build:sdk              # Main SDK package
+pnpm build:coin-base         # Base functionality
+pnpm build:coin-ethereum     # Ethereum integration
+pnpm build:coin-ton          # TON integration
+pnpm build:coin-solana       # Solana integration
+pnpm build:coin-tron         # Tron integration
+pnpm build:coin-dfinity      # ICP integration
+pnpm build:coin-kaspa        # Kaspa integration
+pnpm build:all               # All packages
 
 # Run tests
-yarn test:all
-yarn test:coin-kaspa
+pnpm test:all                # All tests with type checking
+pnpm test:coin-kaspa         # Specific package tests
+pnpm typecheck               # TypeScript type checking
 
-# Lint code
-yarn lint
+# Code quality
+pnpm lint                    # ESLint with custom security rules
+pnpm lint:fix                # Auto-fix linting issues
+pnpm format                  # Prettier formatting
 
 # Development mode
-yarn dev
+pnpm dev:sdk                 # SDK development with hot reload
+
+# Release management
+pnpm release:dry             # Dry run release
+pnpm release                 # Create release
 ```
+
+### Project Architecture
+
+This monorepo uses **Turbo** for build orchestration and **pnpm workspaces** for dependency management. Key architectural decisions:
+
+#### 🏗️ **Build System**
+
+- **Vite** for fast builds with TypeScript support
+- **Turbo** for optimized task execution and caching
+- **TypeScript** for type safety across all packages
+
+#### 🔒 **Security Features**
+
+- **Custom ESLint Rules**: Automatically detect sensitive data leaks
+- **@cleanSensitiveData Decorator**: Prevents mnemonic/key exposure in logs
+- **Sensitive Parameter Detection**: Build-time security validation
+
+#### 📦 **Package Dependencies**
+
+```
+crypto-lib (base) ← coin-base ← coin-* packages ← sdk
+```
+
+#### 🛠️ **Configuration Architecture**
+
+- **TypeScript Configs**: Type-safe for tools that support it (Vite, PostCSS, Tailwind)
+- **JavaScript Configs**: Runtime compatibility for CLI tools (ESLint, Release-it)
+- **ESM Modules**: Modern ES module format throughout
 
 ## Configuration
 
@@ -242,7 +302,7 @@ yarn dev
 
 ```javascript
 const wallet = new HibitIdWallet({
-  env: 'prod', // 'prod' for mainnet, 'test' for testnets
+  env: 'prod' // 'prod' for mainnet, 'test' for testnets
   // ... other options
 });
 ```
@@ -253,10 +313,34 @@ You can configure custom RPC endpoints for specific chains through the wallet in
 
 ## Security Considerations
 
+### 🛡️ **Runtime Security**
+
 1. **Private Key Storage**: Private keys are stored encrypted and never exposed to the host application
 2. **Iframe Isolation**: Wallet operates in an isolated iframe environment
 3. **Message Validation**: All cross-frame messages are validated
 4. **HTTPS Only**: The SDK requires HTTPS in production environments
+
+### 🔒 **Development Security**
+
+1. **Sensitive Data Protection**: Custom ESLint rules prevent mnemonic/private key leaks
+2. **Automatic Cleanup**: `@cleanSensitiveData` decorator sanitizes error messages
+3. **Build-time Validation**: Security checks during development and CI/CD
+4. **No Mnemonic Storage**: Instance variables never store seed phrases
+
+### 🧪 **Security Testing**
+
+```bash
+# Run security-focused linting
+pnpm lint
+
+# Check for sensitive data leaks
+pnpm lint --rule local/sensitive-logging-protection
+
+# The ESLint rule automatically detects patterns like:
+# - Methods with mnemonic parameters
+# - Missing @cleanSensitiveData decorators
+# - Potential data leaks in error handling
+```
 
 ## Browser Support
 
@@ -301,6 +385,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ### Reporting Issues
 
 Found a bug? Please [open an issue](https://github.com/deland-labs/hibit-id-sdk/issues) with:
+
 - SDK version
 - Browser and OS information
 - Steps to reproduce

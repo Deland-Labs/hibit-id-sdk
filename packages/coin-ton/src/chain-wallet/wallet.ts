@@ -1,400 +1,448 @@
 import BigNumber from 'bignumber.js';
-import { Buffer } from 'buffer/';
-import { getHttpEndpoint } from '@orbs-network/ton-access';
-import { bytesToHex, hexToBytes } from '@openproduct/web-sdk';
-import {
-  Address,
-  beginCell,
-  Cell,
-  fromNano,
-  internal,
-  JettonMaster,
-  JettonWallet,
-  OpenedContract,
-  SendMode,
-  StateInit,
-  storeMessage,
-  toNano,
-  TonClient,
-  WalletContractV4
-} from '@ton/ton';
-import { KeyPair, mnemonicToPrivateKey } from '@ton/crypto';
-import { external, storeStateInit } from '@ton/core';
+import { deriveEd25519PrivateKey, base } from '@delandlabs/crypto-lib';
+import { TonClient, WalletContractV4 } from '@ton/ton';
+import { mnemonicToPrivateKey } from '@ton/crypto';
 import nacl from 'tweetnacl';
-import { AssetInfo, ChainInfo, ChainNetwork, WalletAccount } from '@delandlabs/coin-base/model';
-import { BaseChainWallet, MnemonicError, HibitIdErrorCode } from '@delandlabs/coin-base';
-import { TonConnectSignDataPayload, TonConnectSignDataResult, TonConnectTransactionPayload } from '../ton-connect';
+import { ChainAccount, ChainNetwork, ChainType, ChainAssetType } from '@delandlabs/hibit-basic-types';
+import {
+  BaseChainWallet,
+  WalletConfig,
+  ChainInfo,
+  NetworkError,
+  MessageSigningError,
+  GeneralWalletError,
+  ArgumentError,
+  HibitIdSdkErrorCode,
+  BalanceQueryParams,
+  TransferParams,
+  SignMessageParams,
+  TokenIdentifier,
+  ILogger,
+  createReadyPromise,
+  cleanupReferences,
+  assertValidAddressForBalance,
+  assertValidAddressForTransaction,
+  assertValidTransferAmount,
+  assertValidAddressForFeeEstimation,
+  assertValidAmountForFeeEstimation,
+  assertValidTokenAddressForBalance,
+  assertValidTokenAddressForTransaction,
+  assertValidTokenAddressForFeeEstimation,
+  assertValidTokenAddressForDecimals,
+  TransactionConfirmationParams,
+  TransactionConfirmationResult,
+  withLogging,
+  clearAllCaches,
+  Cacheable,
+  cleanSensitiveData,
+  getAssetTypeName
+} from '@delandlabs/coin-base';
+import type { KeyPair } from '@ton/crypto';
+
+export interface TonWalletOptions {
+  keyDerivationMethod?: 'ton-native' | 'ed25519';
+}
+import { TON_CONFIG, TON_CACHE_CONFIG } from './config';
+import { BaseAssetHandler, TonNativeHandler, JettonHandler } from './asset-handlers';
 import { sleep } from './utils';
-import { CHAIN, CHAIN_NAME, FT_ASSET, NATIVE_ASSET, MAGIC_BYTES } from './defaults';
 
-const JETTON_TRANSFER_AMOUNT = new BigNumber(0.1);
-const JETTON_FORWARD_AMOUNT = new BigNumber(0.0001);
+// Register TON validators
 
+// Note: TON validator is now registered in the index.ts file using ChainValidation
+
+/**
+ * TON blockchain wallet implementation supporting native TON and Jetton tokens.
+ *
+ * This refactored implementation uses the Strategy Pattern to handle different
+ * asset types (Native TON and Jetton tokens). Each asset type has its own
+ * handler that encapsulates the specific logic for that asset type.
+ *
+ * Key features:
+ * - Supports both TON native and Ed25519 key derivation
+ * - TON Connect protocol integration
+ * - Comprehensive caching strategy with decorators
+ * - Retry mechanism for network operations
+ * - Asset-specific handlers for clean separation of concerns
+ *
+ * Architecture improvements:
+ * - Separation of concerns: Each asset handler manages its own operations
+ * - Shared services: Connection and key management are centralized
+ * - Better testability: Each component can be tested independently
+ * - Easier extensibility: New asset types can be added without modifying core logic
+ *
+ * @example
+ * ```typescript
+ * const wallet = new TonChainWallet(chainInfo, mnemonic, { logger });
+ * const balance = await wallet.balanceOf({ address, token: { assetType: NATIVE_ASSET } });
+ * ```
+ */
 export class TonChainWallet extends BaseChainWallet {
+  // Private fields
   private keyPair: KeyPair | null = null;
   private client: TonClient | null = null;
-  private wallet: OpenedContract<WalletContractV4> | null = null;
-  private readyPromise: Promise<void>;
+  private wallet: WalletContractV4 | null = null;
+  private readonly readyPromise: Promise<void>;
 
-  constructor(chainInfo: ChainInfo, phrase: string) {
-    if (!chainInfo.chainId.type.equals(CHAIN)) {
-      throw new Error(`${CHAIN_NAME}: invalid chain type`);
+  // Asset handlers
+  private readonly assetHandlers: Map<ChainAssetType, BaseAssetHandler> = new Map();
+
+  // Key derivation method
+  private keyDerivationMethod: 'ton-native' | 'ed25519' = 'ton-native';
+
+  constructor(chainInfo: ChainInfo, mnemonic: string, options?: TonWalletOptions & { logger?: ILogger }) {
+    if (chainInfo.chainId.chain !== ChainType.Ton) {
+      throw new NetworkError(
+        HibitIdSdkErrorCode.INVALID_CONFIGURATION,
+        `${TON_CONFIG.CHAIN_NAME}: Invalid chain configuration`
+      );
     }
-    super(chainInfo, phrase);
-    this.readyPromise = new Promise((resolve) => {
-      this.initWallet(phrase).then(resolve);
+
+    const config: WalletConfig = {
+      chainInfo,
+      logger: options?.logger
+    };
+    super(config, mnemonic);
+
+    // Set key derivation method
+    if (options?.keyDerivationMethod) {
+      this.keyDerivationMethod = options.keyDerivationMethod === 'ed25519' ? 'ed25519' : 'ton-native';
+    }
+
+    // Create ready promise
+    this.readyPromise = createReadyPromise(async () => {
+      await this.initializeWallet(mnemonic);
+      this.initializeAssetHandlers();
     });
   }
 
-  public override getAccount: () => Promise<WalletAccount> = async () => {
+  // ============================================
+  // Public methods
+  // ============================================
+
+  // ============================================
+  // Protected methods (BaseChainWallet implementation)
+  // ============================================
+
+  /**
+   * Get wallet account information
+   */
+  protected async getAccountImpl(): Promise<ChainAccount> {
     await this.readyPromise;
     const address = this.wallet!.address;
-    return {
-      address: address.toString({
-        urlSafe: true,
-        bounceable: false,
-        testOnly: this.getIsTestNet()
-      }),
-      publicKey: this.wallet!.publicKey.toString('hex')
-    };
-  };
+    return new ChainAccount(this.chainInfo.chainId, address.toRawString(), this.keyPair!.publicKey.toString('hex'));
+  }
 
-  // ref: OpenMask extension
-  public override signMessage: (message: string) => Promise<string> = async (message) => {
-    if (!message) {
-      throw new Error(`${CHAIN_NAME}: Missing sign data`);
-    }
+  /**
+   * Sign message - implemented directly in wallet (TON native signing)
+   */
+  protected async signMessageImpl(params: SignMessageParams): Promise<Uint8Array> {
     await this.readyPromise;
-    const valueHash = nacl.hash(Buffer.from(message, 'utf8'));
-    /**
-     * According: https://github.com/ton-foundation/specs/blob/main/specs/wtf-0002.md
-     */
-    if (valueHash.length + MAGIC_BYTES >= 127) {
-      throw new Error(`${CHAIN_NAME}: Too large personal message`);
-    }
-    const hex = Buffer.concat([Buffer.from([0xff, 0xff]), Buffer.from('ton-safe-sign-magic'), valueHash]).toString(
-      'hex'
-    );
-    const signature = nacl.sign.detached(hexToBytes(hex), this.keyPair!.secretKey);
-    return bytesToHex(signature);
-  };
+    const { message } = params;
 
-  public override balanceOf = async (address: string, assetInfo: AssetInfo) => {
-    try {
-      Address.parse(address);
-    } catch (e) {
-      throw new Error(`${CHAIN_NAME}: invalid wallet address`);
-    }
-    if (!assetInfo.chain.equals(CHAIN)) {
-      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
-    }
-    await this.readyPromise;
-
-    // native
-    if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
-      const addr = Address.parse(address);
-      const balance = await this.client!.getBalance(addr);
-      return new BigNumber(fromNano(balance));
-    }
-    // jetton
-    if (assetInfo.chainAssetType.equals(FT_ASSET)) {
-      const jettonWallet = await this.getJettonWallet(address, assetInfo.contractAddress);
-      const balance = await jettonWallet.getBalance();
-      return new BigNumber(String(balance)).shiftedBy(-assetInfo.decimalPlaces.value);
-    }
-
-    throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
-  };
-
-  public override transfer = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo) => {
-    if (!assetInfo.chain.equals(CHAIN)) {
-      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
-    }
-    await this.readyPromise;
-
-    const MAX_RETRIES = 10;
-    let retries = 0;
-
-    // native
-    if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
-      const seqno = (await this.wallet!.getSeqno()) || 0;
-      const transfer = await this.wallet!.createTransfer({
-        seqno: seqno,
-        secretKey: this.keyPair!.secretKey,
-        messages: [
-          internal({
-            value: toNano(amount.toString()),
-            to: Address.parse(toAddress),
-            bounce: this.getAddressBounceable(toAddress)
-          })
-        ],
-        sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS
-      });
-
-      // Send transaction
-      await this.wallet!.send(transfer);
-
-      // Get transaction hash
-      const msgHash = transfer.hash().toString('hex');
-
-      // Wait for confirmation
-      let currentSeqno = seqno;
-      while (currentSeqno == seqno) {
-        if (retries >= MAX_RETRIES) {
-          throw new Error(`${CHAIN_NAME}: transaction confirmation timeout`);
-        }
-        await sleep(3000);
-        currentSeqno = (await this.wallet!.getSeqno()) || 0;
-        retries++;
-      }
-      return msgHash;
-    }
-    // jetton
-    if (assetInfo.chainAssetType.equals(FT_ASSET)) {
-      const ownerAddress = (await this.getAccount()).address;
-
-      // gas check
-      const gasBalance = await this.client!.getBalance(Address.parse(ownerAddress));
-      const gasBn = new BigNumber(fromNano(gasBalance));
-      const minGas = JETTON_TRANSFER_AMOUNT.plus(JETTON_FORWARD_AMOUNT);
-      if (gasBn.lt(minGas)) {
-        throw new Error(`${CHAIN_NAME}: insufficient gas balance (at least ${minGas.toString()} Ton)`);
-      }
-
-      const jettonWallet = await this.getJettonWallet(ownerAddress, assetInfo.contractAddress);
-
-      const forwardPayload = beginCell()
-        .storeUint(0, 32) // 0 opcode means we have a comment
-        .storeStringTail('Jetton')
-        .endCell();
-
-      const messageBody = beginCell()
-        .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
-        .storeUint(0, 64) // query id
-        .storeCoins(BigInt(amount.shiftedBy(assetInfo.decimalPlaces.value).toFixed(0, BigNumber.ROUND_FLOOR))) // jetton amount
-        .storeAddress(Address.parse(toAddress))
-        .storeAddress(Address.parse(ownerAddress)) // response destination
-        .storeBit(0) // no custom payload
-        .storeCoins(toNano(JETTON_FORWARD_AMOUNT.toString())) // forward amount - if >0, will send notification message
-        .storeBit(1) // we store forwardPayload as a reference
-        .storeRef(forwardPayload)
-        .endCell();
-
-      const internalMessage = internal({
-        to: jettonWallet.address,
-        value: toNano(JETTON_TRANSFER_AMOUNT.toString()),
-        bounce: true,
-        body: messageBody
-      });
-
-      // send jetton
-      const seqno = (await this.wallet!.getSeqno()) || 0;
-      try {
-        const transfer = await this.wallet!.createTransfer({
-          seqno: seqno,
-          secretKey: this.keyPair!.secretKey,
-          messages: [internalMessage],
-          sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS
-        });
-
-        await this.wallet!.send(transfer);
-        const msgHash = transfer.hash().toString('hex');
-
-        // wait until confirmed
-        let currentSeqno = seqno;
-        while (currentSeqno == seqno) {
-          if (retries >= MAX_RETRIES) {
-            throw new Error(`${CHAIN_NAME}: transaction confirmation timeout`);
-          }
-          await sleep(3000);
-          currentSeqno = (await this.wallet!.getSeqno()) || 0;
-          retries++;
-        }
-        return msgHash;
-      } catch (e: any) {
-        const errMsg = e.response?.data?.error || e.message || 'Unknown error';
-        if (e.response?.status === 500) {
-          if (/^LITE_SERVER_UNKNOWN:[.\s\S]*inbound external message rejected by transaction[.\s\S]*$/i.test(errMsg)) {
-            throw new Error(`${CHAIN_NAME}: insufficient gas balance (at least ${minGas} Ton)`);
-          }
-          throw new Error(`${CHAIN_NAME}: transaction failed - ${errMsg}`);
-        }
-        throw e;
-      }
-    }
-
-    throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
-  };
-
-  public override getEstimatedFee = async (
-    toAddress: string,
-    amount: BigNumber,
-    assetInfo: AssetInfo
-  ): Promise<BigNumber> => {
-    if (!toAddress || !amount || !assetInfo) {
-      throw new Error(`${CHAIN_NAME}: Invalid parameters for fee estimation`);
-    }
-    if (amount.isNaN() || amount.isNegative()) {
-      throw new Error(`${CHAIN_NAME}: Invalid amount for fee estimation`);
-    }
-    if (!assetInfo.chain.equals(CHAIN)) {
-      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
-    }
-    await this.readyPromise;
-    const ownerAddress = (await this.getAccount()).address;
-
-    // native
-    if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
-      const body = internal({
-        value: toNano(amount.toString()),
-        to: Address.parse(toAddress),
-        bounce: this.getAddressBounceable(toAddress)
-      }).body;
-      const feeData = await this.client?.estimateExternalMessageFee(Address.parse(ownerAddress), {
-        body,
-        initCode: null,
-        initData: null,
-        ignoreSignature: true
-      });
-      if (!feeData) {
-        throw new Error(`${CHAIN_NAME}: failed to estimate fee`);
-      }
-      const fee = fromNano(
-        String(
-          feeData.source_fees.fwd_fee +
-            feeData.source_fees.in_fwd_fee +
-            feeData.source_fees.storage_fee +
-            feeData.source_fees.gas_fee
-        )
+    if (!message || message.length === 0) {
+      throw new MessageSigningError(
+        HibitIdSdkErrorCode.INVALID_MESSAGE_FORMAT,
+        `${TON_CONFIG.CHAIN_NAME}: Message is empty`
       );
-      return new BigNumber(fee);
     }
 
-    // jetton
-    if (assetInfo.chainAssetType.equals(FT_ASSET)) {
-      return JETTON_TRANSFER_AMOUNT.plus(JETTON_FORWARD_AMOUNT);
-    }
+    const messageBytes = typeof message === 'string' ? new TextEncoder().encode(message) : message;
 
-    throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
-  };
+    const signature = nacl.sign.detached(messageBytes, this.keyPair!.secretKey);
+    return signature;
+  }
 
-  public tonConnectGetStateInit = (): string => {
-    const stateInit = beginCell().storeWritable(storeStateInit(this.wallet!.init)).endCell();
-    const base64 = stateInit.toBoc({ idx: true, crc32: true }).toString('base64');
-    return base64;
-  };
-
-  public tonConnectTransfer = async (payload: TonConnectTransactionPayload): Promise<string> => {
-    const seqno = (await this.wallet!.getSeqno()) || 0;
-    const transfer = await this.createTonConnectTransfer(seqno, payload);
-    await this.wallet!.send(transfer);
-    const externalMessage = beginCell()
-      .storeWritable(
-        storeMessage(
-          external({
-            to: this.wallet!.address,
-            init: seqno === 0 ? this.wallet!.init : undefined,
-            body: transfer
-          })
-        )
-      )
-      .endCell()
-      .toBoc({ idx: false })
-      .toString('base64');
-    return externalMessage;
-  };
-
-  public tonConnectSignData = async (payload: TonConnectSignDataPayload): Promise<TonConnectSignDataResult> => {
-    if (!payload?.cell || !payload?.schema_crc) {
-      throw new Error(`${CHAIN_NAME}: invalid TonConnect payload`);
-    }
-    // Validate cell data
-    try {
-      Cell.fromBase64(payload.cell);
-    } catch (e) {
-      throw new Error(`${CHAIN_NAME}: Invalid cell data`);
-    }
-    const timestamp = Date.now() / 1000;
-    const X: Cell = Cell.fromBase64(payload.cell); // Payload cell
-    const prefix = Buffer.alloc(4 + 8); // version + timestamp
-    prefix.writeUInt32BE(payload.schema_crc, 0);
-    prefix.writeBigUInt64BE(timestamp, 4);
-    const signature = nacl.sign.detached(Buffer.concat([prefix, X.hash()]), this.keyPair!.secretKey);
-    return {
-      signature: bytesToHex(signature),
-      timestamp: timestamp.toString()
-    };
-  };
-
-  private initWallet = async (phrase: string) => {
-    try {
-      const endpoint = await getHttpEndpoint({
-        network: this.getIsTestNet() ? 'testnet' : 'mainnet'
-      });
-      this.client = new TonClient({ endpoint });
-      const mnemonic = phrase; // your 24 secret words (replace ... with the rest of the words)
-      this.keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
-      this.wallet = this.client.open(
-        WalletContractV4.create({
-          workchain: 0,
-          publicKey: this.keyPair.publicKey
-        })
-      );
-    } catch (e: any) {
-      if (e instanceof MnemonicError) {
-        throw e; // Pass through mnemonic errors
-      }
-      // Check if it's a mnemonic-related error from TON crypto
-      if (e.message?.includes('mnemonic') || e.message?.includes('Invalid seed phrase')) {
-        throw new MnemonicError(HibitIdErrorCode.INVALID_MNEMONIC, `${CHAIN_NAME}: Invalid mnemonic format`);
-      }
-      throw new Error(`${CHAIN_NAME}: Failed to initialize wallet: ${e.message || e}`);
-    }
-  };
-
-  private getIsTestNet = () => {
-    return this.chainInfo.chainId.network.equals(ChainNetwork.TonTestNet);
-  };
-
-  private getAddressBounceable = (address: string) => {
-    return Address.isFriendly(address) ? Address.parseFriendly(address).isBounceable : false;
-  };
-
-  private toStateInit = (stateInit?: string): StateInit | undefined => {
-    if (!stateInit) {
-      return undefined;
-    }
-    const initSlice = Cell.fromBase64(stateInit).asSlice();
-    return {
-      code: initSlice.loadRef(),
-      data: initSlice.loadRef()
-    };
-  };
-
-  private getJettonWallet = async (ownerAddress: string, contractAddress: string) => {
+  /**
+   * Query balance - delegates to appropriate handler
+   */
+  protected async balanceOfImpl(params: BalanceQueryParams): Promise<BigNumber> {
     await this.readyPromise;
-    const jettonMaster = this.client!.open(JettonMaster.create(Address.parse(contractAddress)));
-    const jettonWalletAddress = await jettonMaster.getWalletAddress(Address.parse(ownerAddress));
-    const jettonWallet = this.client!.open(JettonWallet.create(jettonWalletAddress));
-    return jettonWallet;
-  };
 
-  private createTonConnectTransfer = async (seqno: number, payload: TonConnectTransactionPayload) => {
+    // Validate address using coin-base validators
+    assertValidAddressForBalance(params.address, ChainType.Ton, TON_CONFIG.CHAIN_NAME);
+
+    // Validate token address for Jetton
+    if (params.token?.assetType === ChainAssetType.Jetton) {
+      await assertValidTokenAddressForBalance(params.token.tokenAddress, ChainType.Ton, TON_CONFIG.CHAIN_NAME);
+    }
+
+    const handler = this.getAssetHandler(params.token?.assetType);
+    return handler.balanceOf(params);
+  }
+
+  /**
+   * Transfer assets - delegates to appropriate handler
+   */
+  protected async transferImpl(params: TransferParams): Promise<string> {
     await this.readyPromise;
-    const transfer = this.wallet!.createTransfer({
-      secretKey: this.keyPair!.secretKey,
-      seqno,
-      sendMode: SendMode.PAY_GAS_SEPARATELY + SendMode.IGNORE_ERRORS,
-      messages: payload.messages.map((item) => {
-        return internal({
-          to: item.address,
-          value: toNano(fromNano(item.amount)),
-          bounce: this.getAddressBounceable(item.address),
-          init: this.toStateInit(item.stateInit),
-          body: item.payload ? Cell.fromBase64(item.payload) : undefined
-        });
-      })
+
+    // Validate address and amount using coin-base validators
+    assertValidAddressForTransaction(params.recipientAddress, ChainType.Ton, TON_CONFIG.CHAIN_NAME);
+    assertValidTransferAmount(params.amount, TON_CONFIG.CHAIN_NAME);
+
+    // Validate token address for Jetton
+    if (params.token?.assetType === ChainAssetType.Jetton) {
+      await assertValidTokenAddressForTransaction(params.token.tokenAddress, ChainType.Ton, TON_CONFIG.CHAIN_NAME);
+    }
+
+    const handler = this.getAssetHandler(params.token?.assetType);
+    return handler.transfer(params);
+  }
+
+  /**
+   * Estimate transfer fee - delegates to appropriate handler
+   */
+  protected async estimateFeeImpl(params: TransferParams): Promise<BigNumber> {
+    await this.readyPromise;
+
+    // Validate address and amount for fee estimation
+    assertValidAddressForFeeEstimation(params.recipientAddress, ChainType.Ton, TON_CONFIG.CHAIN_NAME);
+    assertValidAmountForFeeEstimation(params.amount, TON_CONFIG.CHAIN_NAME);
+
+    // Validate token address for Jetton
+    if (params.token?.assetType === ChainAssetType.Jetton) {
+      await assertValidTokenAddressForFeeEstimation(params.token.tokenAddress, ChainType.Ton, TON_CONFIG.CHAIN_NAME);
+    }
+
+    const handler = this.getAssetHandler(params.token?.assetType);
+    return handler.estimateFee(params);
+  }
+
+  /**
+   * Clean up wallet resources
+   */
+  protected destroyImpl(): void {
+    // Clear references to prevent memory leaks
+    cleanupReferences(this, ['keyPair', 'client', 'wallet']);
+
+    // Clear all caches
+    clearAllCaches();
+  }
+
+  // ============================================
+  // Private methods
+  // ============================================
+
+  /**
+   * Initialize the wallet from mnemonic
+   * @private
+   */
+  @withLogging('Initialize wallet')
+  @cleanSensitiveData()
+  private async initializeWallet(mnemonic: string): Promise<void> {
+    // Get RPC endpoint
+    const endpoint = await this.getRpcEndpoint();
+
+    // Initialize TON client
+    this.client = new TonClient({ endpoint });
+
+    // Derive key pair using configured method (strict mode - no fallback)
+    if (this.keyDerivationMethod === 'ed25519') {
+      await this.deriveEd25519KeyPair(mnemonic);
+    } else {
+      // Use TON native derivation without fallback
+      const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
+      this.keyPair = keyPair;
+    }
+
+    // Create wallet contract
+    const walletContract = WalletContractV4.create({
+      workchain: 0,
+      publicKey: this.keyPair!.publicKey
     });
-    return transfer;
-  };
+    this.wallet = walletContract;
+
+    // Logging handled by decorator
+  }
+
+  /**
+   * Derive Ed25519 key pair from mnemonic
+   * @private
+   */
+  @withLogging('Derive Ed25519 key pair')
+  @cleanSensitiveData()
+  private async deriveEd25519KeyPair(mnemonic: string): Promise<void> {
+    const privateKeyHex = await deriveEd25519PrivateKey(mnemonic, TON_CONFIG.DERIVING_PATH, false, 'hex' as any);
+    const privateKeyBytes = base.fromHex(privateKeyHex);
+    const keyPair = nacl.sign.keyPair.fromSeed(privateKeyBytes.slice(0, 32));
+    const combinedKey = base.concatBytes(keyPair.secretKey.slice(0, 32), keyPair.publicKey);
+    this.keyPair = {
+      publicKey: Buffer.from(keyPair.publicKey),
+      secretKey: Buffer.from(combinedKey)
+    };
+  }
+
+  /**
+   * Initialize asset handlers after wallet is ready
+   * @private
+   */
+  @withLogging('Initialize asset handlers')
+  private initializeAssetHandlers(): void {
+    if (!this.client || !this.wallet || !this.keyPair) {
+      throw new Error('Wallet not initialized');
+    }
+
+    // Create and register Native handler
+    const nativeHandler = new TonNativeHandler(this.client, this.wallet, this.keyPair, this.logger);
+    this.assetHandlers.set(ChainAssetType.Native, nativeHandler);
+
+    // Create and register Jetton handler
+    const jettonHandler = new JettonHandler(this.client, this.wallet, this.keyPair, this.logger);
+    this.assetHandlers.set(ChainAssetType.Jetton, jettonHandler);
+
+    // Logging handled by decorator
+  }
+
+  /**
+   * Get the appropriate asset handler for the given asset type
+   * @private
+   */
+  private getAssetHandler(assetType: ChainAssetType | undefined): BaseAssetHandler {
+    if (assetType === undefined) {
+      throw new ArgumentError(
+        HibitIdSdkErrorCode.INVALID_ARGUMENT,
+        `${TON_CONFIG.CHAIN_NAME}: Missing asset type in token parameter`,
+        { argumentName: 'assetType', expectedType: 'ChainAssetType' }
+      );
+    }
+
+    const handler = this.assetHandlers.get(assetType);
+
+    if (!handler) {
+      throw new GeneralWalletError(
+        HibitIdSdkErrorCode.UNSUPPORTED_ASSET_TYPE,
+        `${TON_CONFIG.CHAIN_NAME}: Asset type ${getAssetTypeName(assetType)} is not supported`
+      );
+    }
+
+    return handler;
+  }
+
+  /**
+   * Get RPC endpoint with caching
+   * @private
+   */
+  @Cacheable({
+    ttl: TON_CACHE_CONFIG.RPC_ENDPOINT.ttl,
+    max: TON_CACHE_CONFIG.RPC_ENDPOINT.max,
+    key: function (this: TonChainWallet) {
+      const networkType = this.chainInfo?.chainId?.network === ChainNetwork.TonTestNet ? 'testnet' : 'mainnet';
+      return TON_CACHE_CONFIG.RPC_ENDPOINT.key(networkType);
+    },
+    logger: function (this: TonChainWallet) {
+      return this.logger;
+    }
+  })
+  @withLogging('Get RPC endpoint', undefined, (result: any) => ({ endpoint: result }))
+  private async getRpcEndpoint(): Promise<string> {
+    // Use RPC URL from chainInfo if available
+    if (this.chainInfo.rpc && this.chainInfo.rpc.primary) {
+      // Logging handled by decorator
+      return this.chainInfo.rpc.primary;
+    }
+
+    // Fallback to default endpoints
+    const endpoint = this.isTestNetwork()
+      ? 'https://testnet.toncenter.com/api/v2/jsonRPC'
+      : 'https://toncenter.com/api/v2/jsonRPC';
+
+    // Logging handled by decorator
+
+    return endpoint;
+  }
+
+  /**
+   * Check if using testnet
+   * @private
+   */
+  private isTestNetwork(): boolean {
+    return this.chainInfo.chainId.network === ChainNetwork.TonTestNet;
+  }
+
+  /**
+   * Get current sequence number
+   * @private
+   */
+  private async getCurrentSeqno(): Promise<number> {
+    const openedWallet = this.client!.open(this.wallet!);
+    return (await openedWallet.getSeqno()) || 0;
+  }
+
+
+  /**
+   * Wait for transaction confirmation
+   * TON uses sequence number increment as confirmation mechanism
+   */
+  protected async waitForConfirmationImpl(
+    params: TransactionConfirmationParams
+  ): Promise<TransactionConfirmationResult> {
+    await this.readyPromise;
+
+    const startTime = Date.now();
+    const timeout = params.timeoutMs || TON_CONFIG.CONFIRMATION_TIMEOUT_MS;
+    const requiredConfirmations = params.requiredConfirmations || 1;
+
+    // For TON, we use sequence number increment to confirm transaction
+    // This is the standard approach as TON doesn't have traditional block confirmations
+    const initialSeqno = await this.getCurrentSeqno();
+    let currentConfirmations = 0;
+
+    while (Date.now() - startTime < timeout) {
+      const currentSeqno = await this.getCurrentSeqno();
+
+      if (currentSeqno > initialSeqno) {
+        currentConfirmations = currentSeqno - initialSeqno;
+
+        if (params.onConfirmationUpdate) {
+          params.onConfirmationUpdate(currentConfirmations, requiredConfirmations);
+        }
+
+        if (currentConfirmations >= requiredConfirmations) {
+          return {
+            isConfirmed: true,
+            confirmations: currentConfirmations,
+            requiredConfirmations,
+            status: 'confirmed'
+          };
+        }
+      }
+
+      await sleep(TON_CONFIG.CONFIRMATION_CHECK_INTERVAL_MS);
+    }
+
+    return {
+      isConfirmed: false,
+      confirmations: currentConfirmations,
+      requiredConfirmations,
+      status: 'timeout'
+    };
+  }
+
+  /**
+   * Implementation of getAssetDecimals
+   * Returns the number of decimals for the specified asset
+   */
+  protected async getAssetDecimalsImpl(token: TokenIdentifier): Promise<number> {
+    await this.readyPromise;
+
+    if (token.assetType === ChainAssetType.Native) {
+      // TON always has 9 decimals
+      return 9;
+    }
+
+    // For Jetton tokens, validate token address first
+    if (token.assetType === ChainAssetType.Jetton) {
+      await assertValidTokenAddressForDecimals(token.tokenAddress, ChainType.Ton, TON_CONFIG.CHAIN_NAME);
+
+      const handler = this.getAssetHandler(token.assetType);
+      if ('getDecimals' in handler && typeof handler.getDecimals === 'function') {
+        return await handler.getDecimals(token.tokenAddress);
+      }
+    }
+
+    throw new Error(`Cannot get decimals for asset type: ${token.assetType}`);
+  }
 }
+
+// Export TonConnect types for convenience
+// export type { TonConnect } from '../ton-connect';

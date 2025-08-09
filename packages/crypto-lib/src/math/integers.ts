@@ -1,3 +1,4 @@
+import { MathError } from '../errors';
 /* eslint-disable no-bitwise */
 import BN from 'bn.js';
 
@@ -23,11 +24,6 @@ interface FixedLengthIntegerStatic<T> {
 }
 
 export class Uint32 implements Integer, WithByteConverters {
-  /** @deprecated use Uint32.fromBytes */
-  public static fromBigEndianBytes(bytes: ArrayLike<number>): Uint32 {
-    return Uint32.fromBytes(bytes);
-  }
-
   /**
    * Creates a Uint32 from a fixed length byte array.
    *
@@ -36,12 +32,12 @@ export class Uint32 implements Integer, WithByteConverters {
    */
   public static fromBytes(bytes: ArrayLike<number>, endianess: 'be' | 'le' = 'be'): Uint32 {
     if (bytes.length !== 4) {
-      throw new Error('Invalid input length. Expected 4 bytes.');
+      throw new MathError('Invalid input length. Expected 4 bytes.');
     }
 
     for (let i = 0; i < bytes.length; ++i) {
       if (!Number.isInteger(bytes[i]) || bytes[i] > 255 || bytes[i] < 0) {
-        throw new Error('Invalid value in byte. Found: ' + bytes[i]);
+        throw new MathError('Invalid value in byte. Found: ' + bytes[i]);
       }
     }
 
@@ -54,7 +50,7 @@ export class Uint32 implements Integer, WithByteConverters {
 
   public static fromString(str: string): Uint32 {
     if (!str.match(/^[0-9]+$/)) {
-      throw new Error('Invalid string format');
+      throw new MathError('Invalid string format');
     }
     return new Uint32(Number.parseInt(str, 10));
   }
@@ -63,15 +59,15 @@ export class Uint32 implements Integer, WithByteConverters {
 
   public constructor(input: number) {
     if (Number.isNaN(input)) {
-      throw new Error('Input is not a number');
+      throw new MathError('Input is not a number');
     }
 
     if (!Number.isInteger(input)) {
-      throw new Error('Input is not an integer');
+      throw new MathError('Input is not an integer');
     }
 
     if (input < 0 || input > 4294967295) {
-      throw new Error('Input not in uint32 range: ' + input.toString());
+      throw new MathError('Input not in uint32 range: ' + input.toString());
     }
 
     this.data = input;
@@ -111,7 +107,7 @@ export class Uint32 implements Integer, WithByteConverters {
 export class Int53 implements Integer {
   public static fromString(str: string): Int53 {
     if (!str.match(/^-?[0-9]+$/)) {
-      throw new Error('Invalid string format');
+      throw new MathError('Invalid string format');
     }
 
     return new Int53(Number.parseInt(str, 10));
@@ -121,15 +117,15 @@ export class Int53 implements Integer {
 
   public constructor(input: number) {
     if (Number.isNaN(input)) {
-      throw new Error('Input is not a number');
+      throw new MathError('Input is not a number');
     }
 
     if (!Number.isInteger(input)) {
-      throw new Error('Input is not an integer');
+      throw new MathError('Input is not an integer');
     }
 
     if (input < Number.MIN_SAFE_INTEGER || input > Number.MAX_SAFE_INTEGER) {
-      throw new Error('Input not in int53 range: ' + input.toString());
+      throw new MathError('Input not in int53 range: ' + input.toString());
     }
 
     this.data = input;
@@ -155,7 +151,7 @@ export class Uint53 implements Integer {
   public constructor(input: number) {
     const signed = new Int53(input);
     if (signed.toNumber() < 0) {
-      throw new Error('Input is negative');
+      throw new MathError('Input is negative');
     }
     this.data = signed;
   }
@@ -170,11 +166,6 @@ export class Uint53 implements Integer {
 }
 
 export class Uint64 implements Integer, WithByteConverters {
-  /** @deprecated use Uint64.fromBytes */
-  public static fromBytesBigEndian(bytes: ArrayLike<number>): Uint64 {
-    return Uint64.fromBytes(bytes);
-  }
-
   /**
    * Creates a Uint64 from a fixed length byte array.
    *
@@ -183,12 +174,12 @@ export class Uint64 implements Integer, WithByteConverters {
    */
   public static fromBytes(bytes: ArrayLike<number>, endianess: 'be' | 'le' = 'be'): Uint64 {
     if (bytes.length !== 8) {
-      throw new Error('Invalid input length. Expected 8 bytes.');
+      throw new MathError('Invalid input length. Expected 8 bytes.');
     }
 
     for (let i = 0; i < bytes.length; ++i) {
       if (!Number.isInteger(bytes[i]) || bytes[i] > 255 || bytes[i] < 0) {
-        throw new Error('Invalid value in byte. Found: ' + bytes[i]);
+        throw new MathError('Invalid value in byte. Found: ' + bytes[i]);
       }
     }
 
@@ -198,25 +189,25 @@ export class Uint64 implements Integer, WithByteConverters {
 
   public static fromString(str: string): Uint64 {
     if (!str.match(/^[0-9]+$/)) {
-      throw new Error('Invalid string format');
+      throw new MathError('Invalid string format');
     }
     return new Uint64(new BN(str, 10, 'be'));
   }
 
   public static fromNumber(input: number): Uint64 {
     if (Number.isNaN(input)) {
-      throw new Error('Input is not a number');
+      throw new MathError('Input is not a number');
     }
 
     if (!Number.isInteger(input)) {
-      throw new Error('Input is not an integer');
+      throw new MathError('Input is not an integer');
     }
 
     let bigint: BN;
     try {
       bigint = new BN(input);
     } catch (e) {
-      throw new Error('Input is not a safe integer');
+      throw new MathError('Input is not a safe integer');
     }
     return new Uint64(bigint);
   }
@@ -225,10 +216,10 @@ export class Uint64 implements Integer, WithByteConverters {
 
   private constructor(data: BN) {
     if (data.isNeg()) {
-      throw new Error('Input is negative');
+      throw new MathError('Input is negative');
     }
     if (data.gt(uint64MaxValue)) {
-      throw new Error('Input exceeds uint64 range');
+      throw new MathError('Input exceeds uint64 range');
     }
     this.data = data;
   }

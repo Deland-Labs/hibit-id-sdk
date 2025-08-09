@@ -1,3 +1,12 @@
+/**
+ * ICRC method names for JSON-RPC calls.
+ *
+ * These methods correspond to various ICRC standards:
+ * - ICRC-25: Permission management
+ * - ICRC-27: Account listing
+ * - ICRC-32: Message signing
+ * - ICRC-49: Canister calls
+ */
 export enum IcrcMethods {
   // ICRC-25
   ICRC25_REQUEST_PERMISSIONS = 'icrc25_request_permissions',
@@ -5,20 +14,29 @@ export enum IcrcMethods {
   ICRC25_SUPPORTED_STANDARDS = 'icrc25_supported_standards',
   // ICRC-27
   ICRC27_ACCOUNTS = 'icrc27_accounts',
-  // ICRC-29
-  ICRC29_STATUS = 'icrc29_status',
   // ICRC-32
   ICRC32_SIGN_CHALLENGE = 'icrc32_sign_challenge',
   // ICRC-49
   ICRC49_CALL_CANISTER = 'icrc49_call_canister'
 }
 
+/**
+ * Permission states for ICRC-25 standard.
+ *
+ * Defines the possible states for permissions in the ICRC-25 permission system.
+ */
 export enum IcrcPermissionState {
   GRANTED = 'granted',
   DENIED = 'denied',
   ASK_ON_USE = 'ask_on_use'
 }
 
+/**
+ * Standard error codes for ICRC JSON-RPC responses.
+ *
+ * These error codes are defined by the ICRC standards and should be used
+ * consistently across all ICRC-compliant implementations.
+ */
 export enum IcrcErrorCode {
   GenericError = 1000,
   NotSupported = 2000,
@@ -37,6 +55,11 @@ export const IcrcErrorCodeMessages: Record<IcrcErrorCode, string> = {
   [IcrcErrorCode.TransportChannelClosed]: 'Transport channel closed'
 };
 
+/**
+ * JSON-RPC 2.0 request format for ICRC methods.
+ *
+ * @see https://www.jsonrpc.org/specification
+ */
 export type JsonRpcRequest = {
   id: number;
   jsonrpc: '2.0';
@@ -44,6 +67,11 @@ export type JsonRpcRequest = {
   params?: unknown[];
 };
 
+/**
+ * JSON-RPC 2.0 success response format.
+ *
+ * @template TResult - The type of the result data
+ */
 export type JsonRpcResponseSuccess<TResult> = {
   id: number;
   jsonrpc: '2.0';
@@ -106,13 +134,6 @@ export type Icrc27AccountsResult = {
     subaccount?: string;
   }>;
 };
-
-export type Icrc29StatusRequest = JsonRpcRequest & {
-  method: IcrcMethods.ICRC29_STATUS;
-  params: undefined;
-};
-
-export type Icrc29StatusResult = 'ready';
 
 export type Icrc32SignChallengeRequest = JsonRpcRequest & {
   method: IcrcMethods.ICRC32_SIGN_CHALLENGE;
