@@ -5,7 +5,10 @@
     "paths": {
       "src/*": ["src/*"]
     },
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "composite": true
   },
   "include": ["src"],
   "exclude": ["**/node_modules"]

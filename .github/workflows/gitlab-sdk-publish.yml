@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history and tags
+          fetch-depth: 0 # Fetch all history and tags
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -26,7 +26,7 @@ jobs:
           # Get the latest tag and increment patch version
           LatestTag=$(git tag -l | sort -V | tail -1)
           echo "Latest Tag: $LatestTag"
-          
+
           # For release events, use the tag version
           if [[ "${{ github.event_name }}" == "release" ]]; then
             Version=${{ github.event.release.tag_name }}
@@ -41,7 +41,7 @@ jobs:
             Timestamp=$(date -u +%Y%m%d%H%M%S)
             Version="${BaseVersion}-alpha.${Timestamp}"
           fi
-          
+
           echo "Publishing Version: $Version"
           export VITE_RELEASE_VERSION=$Version
 

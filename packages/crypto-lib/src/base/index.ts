@@ -6,43 +6,28 @@ export * from './base64';
 export * from './hash';
 export * from './hmac';
 export * from './utf8';
-export * from './bignumber-plus';
 export * from './precondtion';
 export * from './helper';
 
 export * from '@scure/base';
-export * from '@noble/hashes/sha256';
+export * from '@noble/hashes/sha2';
 export * from '@noble/hashes/hmac';
-export * from '@noble/hashes/ripemd160';
-export * from '@noble/hashes/sha512';
 export * from '@noble/hashes/sha3';
-export * from '@noble/hashes/blake2b';
-export * from '@noble/hashes/blake2s';
 export * from '@noble/hashes/pbkdf2';
 export * from '@noble/hashes/scrypt';
 export * from '@noble/hashes/blake3';
+export { concatBytes } from '@noble/hashes/utils';
 
-import * as utils from '@noble/hashes/utils';
-
-const _randomBytes = require('randombytes');
-
-export function reverseBuffer(buffer: Buffer): Buffer {
-  if (buffer.length < 1) return buffer;
-  let j = buffer.length - 1;
-  let tmp = 0;
-  for (let i = 0; i < buffer.length / 2; i++) {
-    tmp = buffer[i];
-    buffer[i] = buffer[j];
-    buffer[j] = tmp;
-    j--;
+export function randomBytes(length: number): Uint8Array {
+  const array = new Uint8Array(length);
+  if (typeof globalThis !== 'undefined' && globalThis.crypto) {
+    globalThis.crypto.getRandomValues(array);
+  } else if (typeof global !== 'undefined' && global.crypto) {
+    global.crypto.getRandomValues(array);
+  } else if (typeof window !== 'undefined' && window.crypto) {
+    window.crypto.getRandomValues(array);
+  } else {
+    throw new Error('No secure random number generator available');
   }
-  return buffer;
-}
-
-export function concatBytes(b1: Uint8Array | Buffer, b2: Uint8Array | Buffer): Uint8Array {
-  return utils.concatBytes(Uint8Array.from(b1), Uint8Array.from(b2));
-}
-
-export function randomBytes(length: number): Buffer {
-  return _randomBytes(length);
+  return array;
 }

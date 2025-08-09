@@ -1,6 +1,4 @@
-import { ChainId, ChainInfo } from '@delandlabs/coin-base/model';
-import * as EthereumChains from '../chains';
-
+// Standard ERC20 token ABI for Ethereum-compatible chains
 export const erc20Abi = [
   'function name() view returns (string)',
   'function symbol() view returns (string)',
@@ -16,9 +14,3 @@ export const erc20Abi = [
   'event Transfer(address indexed from, address indexed to, uint256 value)',
   'event Approval(address indexed owner, address indexed spender, uint256 value)'
 ];
-
-export function getChain(chainId: ChainId | null): ChainInfo | null {
-  if (!chainId) return null;
-  const chains = Object.values(EthereumChains);
-  return chains.find((c) => c.chainId.equals(chainId)) ?? null;
-}

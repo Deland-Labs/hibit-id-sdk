@@ -4,17 +4,9 @@ export { RPC_SERVICE_NAME } from './constants';
 export {
   SdkExposeRPCMethod,
   WalletExposeRPCMethod,
-  AuthenticatorType,
-  HibitIdAssetType,
-  HibitIdChainId,
-  HibitIdErrorCode
+  AuthenticatorType
 } from './enums';
-export { BridgePromise, MnemonicError } from './types';
+export { BridgePromise } from './types';
+export type { ChainAccountInfo } from './types';
+export { MnemonicError, HibitIdSdkErrorCode } from '@delandlabs/coin-base';
 export type * from './types';
-export type {
-  TonConnectTransactionPayload,
-  TonConnectTransactionPayloadMessage,
-  TonConnectSignDataPayload,
-  TonConnectSignDataResult
-} from './tonconnect/types';
-export { injectHibitIdTonConnect } from './tonconnect/inject';

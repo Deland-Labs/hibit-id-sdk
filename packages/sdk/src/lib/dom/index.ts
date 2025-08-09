@@ -3,7 +3,7 @@ import {
   IFRAME_BACKDROP_ID,
   IFRAME_CONTAINER_ID
 } from '../constants';
-import { HibitIdChainId } from '../enums';
+import { ChainId } from '@delandlabs/hibit-basic-types';
 import { FixDevMode, HibitEnv, Language } from '../types';
 import { clamp, getHibitIdUrl } from '../utils';
 import './index.css';
@@ -183,7 +183,7 @@ export class HibitIdIframe {
 
   constructor(
     env: HibitEnv,
-    chains: HibitIdChainId[] = [],
+    chains: ChainId[] = [],
     urlAppendix: string = '',
     lang: Language | '' = '',
     fixDevMode: FixDevMode = 'unset'
@@ -216,9 +216,7 @@ export class HibitIdIframe {
 
   public updateStyle = (style: Record<string, string>) => {
     Object.keys(style).forEach((key) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      this._container.style[key] = style[key];
+      (this._container.style as any)[key] = style[key];
     });
   };
 

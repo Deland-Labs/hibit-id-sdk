@@ -1,248 +1,465 @@
-import { getChain } from './utils';
-import { AssetInfo, ChainId, ChainInfo, WalletAccount } from '@delandlabs/coin-base/model';
-import { BaseChainWallet } from '@delandlabs/coin-base';
-import { TronWeb } from 'tronweb';
 import BigNumber from 'bignumber.js';
-import { ADDRESS_PREFIX_BYTE, NATIVE_ASSET, FT_ASSET, CHAIN, CHAIN_NAME, DERIVING_PATH } from './defaults';
-import { base } from '@delandlabs/crypto-lib';
 import * as secp256k1 from '@noble/secp256k1';
-import { TRC20_DEFAULT_ABI } from './trc20-default-abi';
+import {
+  BaseChainWallet,
+  ILogger,
+  WalletConfig,
+  ChainInfo,
+  BalanceQueryParams,
+  TransferParams,
+  SignMessageParams,
+  TransactionConfirmationParams,
+  TransactionConfirmationResult,
+  TokenIdentifier,
+  NetworkError,
+  MnemonicError,
+  MessageSigningError,
+  GeneralWalletError,
+  ArgumentError,
+  HibitIdSdkErrorCode,
+  createReadyPromise,
+  cleanupReferences,
+  assertValidAddressForBalance,
+  assertValidAddressForTransaction,
+  assertValidTransferAmount,
+  assertValidAmountForFeeEstimation,
+  assertValidTokenAddressForBalance,
+  assertValidTokenAddressForTransaction,
+  assertValidTokenAddressForFeeEstimation,
+  assertValidTokenAddressForDecimals,
+  withLogging,
+  withErrorHandling,
+  cleanSensitiveData,
+  getAssetTypeName
+} from '@delandlabs/coin-base';
+import { ChainAccount, ChainId, ChainAssetType } from '@delandlabs/hibit-basic-types';
+import { deriveEcdsaPrivateKey, base } from '@delandlabs/crypto-lib';
+import { CHAIN_CONFIG, ERROR_MESSAGES } from './config';
+import { BaseAssetHandler } from './asset-handlers/base-asset-handler';
+import { TrxNativeHandler } from './asset-handlers/trx-native-handler';
+import { Trc20TokenHandler } from './asset-handlers/trc20-token-handler';
+import { ConnectionManager, TronWalletInfo } from './shared/connection-manager';
 
-class TronChainWallet extends BaseChainWallet {
-  private readonly readyPromise: Promise<void>;
-  private tronWeb: TronWeb | null = null;
+// Register TRON validators
+// Validator is now registered in the index.ts file using ChainValidation
+// Note: TRON validator is now registered in the index.ts file using ChainValidation
 
-  constructor(chainInfo: ChainInfo, phrase: string) {
-    if (!chainInfo.chainId.type.equals(CHAIN)) {
-      throw new Error(`${CHAIN_NAME}: invalid chain type`);
-    }
-    super(chainInfo, phrase);
-    this.readyPromise = this.initWallet();
-  }
+// TRON address prefix byte
+const ADDRESS_PREFIX_BYTE = 0x41;
 
-  public override getAccount: () => Promise<WalletAccount> = async () => {
-    const address = await this.getAddress();
-    const publicKey = await this.getPubKey(true);
-    return {
-      address,
-      publicKey: base.toHex(publicKey)
-    };
-  };
-
-  public override signMessage: (message: string) => Promise<string> = async (message) => {
-    await this.readyPromise;
-    if (!message || typeof message !== 'string') {
-      throw new Error(`${CHAIN_NAME}: Invalid message format`);
-    }
-    try {
-      return this.tronWeb!.trx.signMessageV2(message, await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
-    } catch (error: any) {
-      throw new Error(`${CHAIN_NAME}: Message signing failed: ${error.message}`);
-    }
-  };
-
-  public override balanceOf = async (address: string, assetInfo: AssetInfo) => {
-    await this.readyPromise;
-    if (!this.tronWeb!.isAddress(address)) {
-      throw new Error(`${CHAIN_NAME}: invalid wallet address`);
-    }
-    if (!assetInfo.chain.equals(CHAIN)) {
-      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
-    }
-    // native
-    if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
-      const balance = await this.tronWeb!.trx.getBalance(address);
-      return new BigNumber(this.tronWeb!.fromSun(balance));
-    }
-    // trc20
-    if (assetInfo.chainAssetType.equals(FT_ASSET)) {
-      const chainInfo = getChain(new ChainId(assetInfo.chain, assetInfo.chainNetwork));
-      if (!chainInfo) {
-        throw new Error(
-          `${CHAIN_NAME}: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`
-        );
-      }
-      try {
-        const trc20 = await this.tronWeb!.contract().at(assetInfo.contractAddress);
-        this.tronWeb!.setAddress(assetInfo.contractAddress);
-        if (!trc20.decimals || !trc20.balanceOf) {
-          trc20.loadAbi(TRC20_DEFAULT_ABI as any);
-        }
-        const getDecimals = trc20.decimals().call();
-        const getBalance = trc20.balanceOf(address).call();
-        const [decimals, balance] = await Promise.all([getDecimals, getBalance]);
-        if (typeof decimals !== 'bigint' || decimals < 0 || decimals > 77) {
-          throw new Error(`${CHAIN_NAME}: Invalid token decimals`);
-        }
-        return this.tronWeb!.toBigNumber(balance).shiftedBy(Number(-decimals));
-      } catch (e) {
-        console.error(e);
-        throw new Error(`${CHAIN_NAME}: Failed to get balance`);
-      }
-    }
-
-    throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
-  };
-
-  public override transfer = async (toAddress: string, amount: BigNumber, assetInfo: AssetInfo) => {
-    await this.readyPromise;
-    if (!amount || amount.isNaN() || amount.isZero() || amount.isNegative()) {
-      throw new Error(`${CHAIN_NAME}: invalid transfer amount`);
-    }
-    if (!this.tronWeb!.isAddress(toAddress)) {
-      throw new Error(`${CHAIN_NAME}: invalid wallet address`);
-    }
-    if (!assetInfo.chain.equals(CHAIN)) {
-      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
-    }
-    try {
-      // native
-      if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
-        const from = await this.getAddress();
-        const privateKey = await this.getEcdsaDerivedPrivateKey(DERIVING_PATH);
-        const realAmount = amount.shiftedBy(assetInfo.decimalPlaces.value).dp(0, BigNumber.ROUND_FLOOR).toNumber();
-        const tx = await this.tronWeb!.trx.send(toAddress, realAmount, {
-          address: from,
-          privateKey
-        });
-        return tx.transaction.txID;
-      }
-      // trc20
-      if (assetInfo.chainAssetType.equals(FT_ASSET)) {
-        const trc20 = await this.tronWeb!.contract().at(assetInfo.contractAddress);
-        this.tronWeb!.setPrivateKey(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
-        if (!trc20.decimals || !trc20.transfer) {
-          trc20.loadAbi(TRC20_DEFAULT_ABI as any);
-        }
-        const decimals = await trc20.decimals().call();
-        if (typeof decimals !== 'bigint' || decimals < 0 || decimals > 77) {
-          throw new Error(`${CHAIN_NAME}: Invalid token decimals`);
-        }
-        const realAmount = BigInt(amount.shiftedBy(Number(decimals)).toFixed(0, BigNumber.ROUND_FLOOR));
-        const tx = await trc20.transfer(toAddress, realAmount).send();
-        return tx;
-      }
-    } catch (e) {
-      console.error(e);
-      if ((e as any).code === 'INSUFFICIENT_FUNDS') {
-        throw new Error('Insufficient gas balance');
-      }
-      throw e;
-    }
-
-    throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
-  };
-
-  public override getEstimatedFee = async (
-    toAddress: string,
-    amount: BigNumber,
-    assetInfo: AssetInfo
-  ): Promise<BigNumber> => {
-    await this.readyPromise;
-    if (!this.tronWeb!.isAddress(toAddress)) {
-      throw new Error(`${CHAIN_NAME}: invalid wallet address`);
-    }
-    if (!assetInfo.chain.equals(CHAIN)) {
-      throw new Error(`${CHAIN_NAME}: invalid asset chain`);
-    }
-    const from = await this.getAddress();
-    const privateKey = await this.getEcdsaDerivedPrivateKey(DERIVING_PATH);
-    // native
-    if (assetInfo.chainAssetType.equals(NATIVE_ASSET)) {
-      const realAmount = amount.shiftedBy(assetInfo.decimalPlaces.value).toNumber();
-      const tx = await this.tronWeb!.transactionBuilder.sendTrx(toAddress, realAmount, from);
-      // sign tx, because we need to estimate the bandwidth
-      const signedTx = await this.tronWeb!.trx.sign(tx, privateKey);
-      const bandwidthPrice = (await this.getBandwidthPrice())!;
-      const accountResources = await this.tronWeb!.trx.getAccountResources(from);
-      const freeNetLimit = accountResources.freeNetLimit ?? 0;
-      const freeNetUsage = accountResources.freeNetUsed ?? 0;
-      const remainingFreeBandwidth = Math.max(0, freeNetLimit - freeNetUsage);
-      const bandwidthCost = signedTx.raw_data_hex.length / 2;
-
-      const estimatedBandwidth = Math.max(0, bandwidthCost - remainingFreeBandwidth);
-      return new BigNumber(estimatedBandwidth).times(bandwidthPrice);
-    }
-
-    // trc20
-    if (assetInfo.chainAssetType.equals(FT_ASSET)) {
-      const chainInfo = getChain(new ChainId(assetInfo.chain, assetInfo.chainNetwork));
-      if (!chainInfo) {
-        throw new Error(
-          `${CHAIN_NAME}: unsupported asset chain ${assetInfo.chain.toString()}_${assetInfo.chainNetwork.toString()}`
-        );
-      }
-      const parameter = [
-        {
-          type: 'address',
-          value: await this.getHexAddress()
-        },
-        {
-          type: 'uint256',
-          value: 100
-        }
-      ];
-      const energyEstimate = await this.tronWeb!.transactionBuilder.estimateEnergy(
-        assetInfo.contractAddress,
-        'transfer(address,uint256)',
-        {},
-        parameter,
-        from
-      );
-      const chainParams = await this.tronWeb!.trx.getChainParameters();
-      const energyFeeParam = chainParams.find((item) => item.key === 'getEnergyFee');
-      if (!energyFeeParam || energyFeeParam.value <= 0) {
-        throw new Error(`${CHAIN_NAME}: Invalid energy fee parameter`);
-      }
-      const energyFee = energyFeeParam.value;
-      const feeLimit = this.tronWeb!.fromSun(energyEstimate.energy_required * energyFee);
-      return new BigNumber(feeLimit);
-    }
-
-    throw new Error(`${CHAIN_NAME}: unsupported chain asset type ${assetInfo.chainAssetType.toString()}`);
-  };
-
-  private async initWallet(): Promise<void> {
-    this.tronWeb = new TronWeb({
-      fullNode: this.chainInfo.rpcUrls[0],
-      solidityNode: this.chainInfo.rpcUrls[0]
-    });
-    this.tronWeb.setPrivateKey(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
-  }
-
-  private async getPubKey(compressed: boolean) {
-    const priKeyBytes = base.fromHex(await this.getEcdsaDerivedPrivateKey(DERIVING_PATH));
-    return secp256k1.getPublicKey(priKeyBytes, compressed);
-  }
-
-  private async getAddress() {
-    const addressBytes = base.fromHex(await this.getHexAddress());
-    return base.toBase58Check(addressBytes);
-  }
-
-  private async getHexAddress() {
-    let pubKey = await this.getPubKey(false);
-    if (pubKey.length === 65) {
-      pubKey = pubKey.slice(1);
-    }
-    // hash takes last 20 bits
-    const hash = base.keccak256(pubKey);
-    const addressBytes = [];
-    addressBytes.push(ADDRESS_PREFIX_BYTE);
-    addressBytes.push(...hash.slice(12));
-    return base.toHex(addressBytes);
-  }
-
-  async getBandwidthPrice() {
-    await this.readyPromise;
-    const pricePairs = await this.tronWeb!.trx.getBandwidthPrices();
-    const latestPair = pricePairs.split(',').pop() ?? '0:1000';
-    const price = latestPair.split(':')[1];
-    if (!price) {
-      throw new Error(`${CHAIN_NAME}: invalid bandwidth price`);
-    }
-    return new BigNumber(price).div(1_000_000).toNumber();
-  }
+/**
+ * TRON wallet options interface
+ */
+export interface TronWalletOptions {
+  /**
+   * Key derivation method
+   * - 'secp256k1': Use standard secp256k1 derivation (default)
+   */
+  keyDerivationMethod?: 'secp256k1';
 }
 
-export { TronChainWallet };
+/**
+ * TRON blockchain wallet implementation supporting TRX and TRC20 tokens.
+ *
+ * This refactored implementation uses the Strategy Pattern to handle different
+ * asset types (Native TRX and TRC20 tokens). Each asset type has its own
+ * handler that encapsulates the specific logic for that asset type.
+ *
+ * Key improvements:
+ * - Separation of concerns: Each asset handler manages its own operations
+ * - Shared services: Connection management is centralized
+ * - Better testability: Each component can be tested independently
+ * - Easier extensibility: New asset types can be added without modifying core logic
+ *
+ * @example
+ * ```typescript
+ * const wallet = new TronChainWallet(tronMainnet, mnemonic);
+ * const account = await wallet.getAccount();
+ * const balance = await wallet.balanceOf({
+ *   address: account.address,
+ *   token: { assetType: ChainAssetType.Native }
+ * });
+ * ```
+ */
+export class TronChainWallet extends BaseChainWallet {
+  // Private fields
+  private walletInfo: TronWalletInfo | null = null;
+  private readonly readyPromise: Promise<void>;
+
+  // Shared services
+  private readonly connectionManager: ConnectionManager;
+
+  // Asset handlers
+  private readonly assetHandlers: Map<ChainAssetType, BaseAssetHandler>;
+
+  constructor(chainInfo: ChainInfo, mnemonic: string, options?: TronWalletOptions & { logger?: ILogger }) {
+    if (chainInfo.chainId.chain !== CHAIN_CONFIG.CHAIN) {
+      throw new NetworkError(HibitIdSdkErrorCode.INVALID_CONFIGURATION, ERROR_MESSAGES.INVALID_CHAIN);
+    }
+
+    const config: WalletConfig = {
+      chainInfo,
+      logger: options?.logger
+    };
+    super(config, mnemonic);
+
+    // Initialize shared services
+    this.connectionManager = new ConnectionManager(chainInfo, this.logger);
+
+    // Initialize asset handlers map
+    this.assetHandlers = new Map();
+
+    // Create ready promise
+    this.readyPromise = createReadyPromise(async () => {
+      await this.initializeWallet(mnemonic);
+      this.initializeAssetHandlers();
+    });
+  }
+
+  // ============================================================
+  // Public Methods
+  // ============================================================
+
+  // ============================================================
+  // Protected Methods (BaseChainWallet implementations)
+  // ============================================================
+
+  /**
+   * Implementation of getAccount
+   */
+  protected async getAccountImpl(): Promise<ChainAccount> {
+    await this.readyPromise;
+
+    if (!this.walletInfo) {
+      throw new Error(ERROR_MESSAGES.NOT_INITIALIZED);
+    }
+
+    const chainId = new ChainId(this.chainInfo.chainId.chain, this.chainInfo.chainId.network);
+    const publicKeyHex = base.hex.encode(this.walletInfo.publicKey);
+
+    return new ChainAccount(chainId, this.walletInfo.address, publicKeyHex);
+  }
+
+  /**
+   * Implementation of balance query using strategy pattern
+   */
+  protected async balanceOfImpl(params: BalanceQueryParams): Promise<BigNumber> {
+    await this.readyPromise;
+
+    // Validate address at wallet level
+    assertValidAddressForBalance(params.address, CHAIN_CONFIG.CHAIN, CHAIN_CONFIG.CHAIN_NAME);
+
+    // Validate token address for TRC20
+    if (params.token?.assetType === ChainAssetType.TRC20) {
+      await assertValidTokenAddressForBalance(params.token.tokenAddress, CHAIN_CONFIG.CHAIN, CHAIN_CONFIG.CHAIN_NAME);
+    }
+
+    const handler = this.getAssetHandler(params.token?.assetType);
+    return await handler.balanceOf(params);
+  }
+
+  /**
+   * Implementation of transfer using strategy pattern
+   */
+  protected async transferImpl(params: TransferParams): Promise<string> {
+    await this.readyPromise;
+
+    // Common validation at wallet level
+    assertValidAddressForTransaction(params.recipientAddress, CHAIN_CONFIG.CHAIN, CHAIN_CONFIG.CHAIN_NAME);
+    assertValidTransferAmount(params.amount, CHAIN_CONFIG.CHAIN_NAME);
+
+    // Validate token address for TRC20
+    if (params.token?.assetType === ChainAssetType.TRC20) {
+      await assertValidTokenAddressForTransaction(
+        params.token.tokenAddress,
+        CHAIN_CONFIG.CHAIN,
+        CHAIN_CONFIG.CHAIN_NAME
+      );
+    }
+
+    const handler = this.getAssetHandler(params.token?.assetType);
+    return await handler.transfer(params);
+  }
+
+  /**
+   * Implementation of fee estimation using strategy pattern
+   */
+  protected async estimateFeeImpl(params: TransferParams): Promise<BigNumber> {
+    await this.readyPromise;
+
+    // Common validation at wallet level
+    assertValidAddressForTransaction(params.recipientAddress, CHAIN_CONFIG.CHAIN, CHAIN_CONFIG.CHAIN_NAME);
+    assertValidAmountForFeeEstimation(params.amount, CHAIN_CONFIG.CHAIN_NAME);
+
+    // Validate token address for TRC20
+    if (params.token?.assetType === ChainAssetType.TRC20) {
+      await assertValidTokenAddressForFeeEstimation(
+        params.token.tokenAddress,
+        CHAIN_CONFIG.CHAIN,
+        CHAIN_CONFIG.CHAIN_NAME
+      );
+    }
+
+    const handler = this.getAssetHandler(params.token?.assetType);
+    return await handler.estimateFee(params);
+  }
+
+  /**
+   * Implementation of message signing
+   * Note: Only supported by native asset handler
+   */
+  protected async signMessageImpl(params: SignMessageParams): Promise<Uint8Array> {
+    await this.readyPromise;
+
+    // Validate message is not empty
+    if (!params.message || params.message.trim() === '') {
+      throw new MessageSigningError(
+        HibitIdSdkErrorCode.INVALID_MESSAGE_FORMAT,
+        `${CHAIN_CONFIG.CHAIN_NAME}: Message cannot be empty`
+      );
+    }
+
+    // Sign message using TronWeb directly since only native supports it
+    const tronWeb = this.connectionManager.getTronWeb();
+
+    const signature = await tronWeb.trx.signMessageV2(params.message);
+
+    // Convert signature to Uint8Array using unified hex utilities
+    return base.fromHex(signature);
+  }
+
+  /**
+   * Implementation of transaction confirmation waiting
+   */
+  protected async waitForConfirmationImpl(
+    params: TransactionConfirmationParams
+  ): Promise<TransactionConfirmationResult> {
+    await this.readyPromise;
+
+    const tronWeb = this.connectionManager.getTronWeb();
+    const { txHash, requiredConfirmations = 1, timeoutMs = 60000, onConfirmationUpdate } = params;
+
+    const startTime = Date.now();
+    let lastConfirmations = 0;
+
+    while (Date.now() - startTime < timeoutMs) {
+      try {
+        // Get transaction info using TronWeb
+        const txInfo = await tronWeb.trx.getTransactionInfo(txHash);
+        const transaction = await tronWeb.trx.getTransaction(txHash);
+
+        if (!transaction) {
+          // Transaction not found, continue polling
+          await this.sleep(1000);
+          continue;
+        }
+
+        if (txInfo.result === 'FAILED') {
+          return {
+            isConfirmed: false,
+            confirmations: 0,
+            requiredConfirmations,
+            status: 'failed',
+            blockNumber: txInfo.blockNumber,
+            transactionFee: txInfo.fee ? new BigNumber(txInfo.fee).dividedBy(1_000_000) : undefined
+          };
+        }
+
+        if (txInfo.blockNumber) {
+          // Transaction is in a block, calculate confirmations
+          const currentBlockInfo = await tronWeb.trx.getCurrentBlock();
+          const currentBlockNumber = currentBlockInfo.block_header.raw_data.number;
+          const confirmations = Math.max(0, currentBlockNumber - txInfo.blockNumber + 1);
+
+          // Call confirmation update callback if provided
+          if (onConfirmationUpdate && confirmations !== lastConfirmations) {
+            onConfirmationUpdate(confirmations, requiredConfirmations);
+            lastConfirmations = confirmations;
+          }
+
+          const isConfirmed = confirmations >= requiredConfirmations;
+
+          return {
+            isConfirmed,
+            confirmations,
+            requiredConfirmations,
+            status: isConfirmed ? 'confirmed' : 'pending',
+            blockNumber: txInfo.blockNumber,
+            transactionFee: txInfo.fee ? new BigNumber(txInfo.fee).dividedBy(1_000_000) : undefined
+          };
+        }
+
+        // Transaction exists but not yet in a block
+        if (onConfirmationUpdate && lastConfirmations !== 0) {
+          onConfirmationUpdate(0, requiredConfirmations);
+          lastConfirmations = 0;
+        }
+      } catch (error) {
+        // Transaction might not exist yet or network error, continue polling
+      }
+
+      // Wait before next poll
+      await this.sleep(1000);
+    }
+
+    // Timeout reached
+    return {
+      isConfirmed: false,
+      confirmations: lastConfirmations,
+      requiredConfirmations,
+      status: 'timeout'
+    };
+  }
+
+  /**
+   * Implementation of getAssetDecimals
+   * Returns the number of decimals for the specified asset
+   */
+  protected async getAssetDecimalsImpl(token: TokenIdentifier): Promise<number> {
+    await this.readyPromise;
+
+    if (token.assetType === ChainAssetType.Native) {
+      // TRX always has 6 decimals
+      return 6;
+    }
+
+    // For TRC20 tokens, validate token address first
+    if (token.assetType === ChainAssetType.TRC20) {
+      await assertValidTokenAddressForDecimals(token.tokenAddress, CHAIN_CONFIG.CHAIN, CHAIN_CONFIG.CHAIN_NAME);
+
+      const handler = this.getAssetHandler(token.assetType);
+      if ('getDecimals' in handler && typeof handler.getDecimals === 'function') {
+        return await handler.getDecimals(token.tokenAddress);
+      }
+    }
+
+    throw new Error(`Cannot get decimals for asset type: ${token.assetType}`);
+  }
+
+  /**
+   * Clean up resources when wallet is no longer needed
+   */
+  protected destroyImpl(): void {
+    // Clean up shared services
+    this.connectionManager.cleanup();
+
+    // Clean up asset handlers
+    this.assetHandlers.clear();
+
+    // Clean up wallet information (contains private key!)
+    this.walletInfo = null;
+
+    // Clean up any remaining references
+    cleanupReferences(this, ['readyPromise']);
+  }
+
+  // ============================================================
+  // Private Methods
+  // ============================================================
+
+  /**
+   * Initialize the wallet from mnemonic
+   * @private
+   */
+  @withErrorHandling({ errorType: 'general' }, 'Failed to initialize TRON wallet')
+  @withLogging('Initialize TRON wallet')
+  @cleanSensitiveData()
+  private async initializeWallet(mnemonic: string): Promise<void> {
+    if (!mnemonic || mnemonic.trim() === '') {
+      throw new MnemonicError(HibitIdSdkErrorCode.INVALID_MNEMONIC, `${CHAIN_CONFIG.CHAIN_NAME}: Empty mnemonic`);
+    }
+
+    // Generate keypair using secp256k1 derivation
+    const privateKeyHex = await deriveEcdsaPrivateKey(mnemonic, CHAIN_CONFIG.DERIVING_PATH);
+    const privateKeyBytes = base.hex.decode(privateKeyHex);
+
+    // Convert to hex string for TronWeb
+    const privateKey = base.hex.encode(privateKeyBytes);
+
+    // Get public key using secp256k1
+    const publicKey = secp256k1.getPublicKey(privateKeyBytes, false);
+
+    // Generate Tron address from public key
+    const address = this.generateAddress(publicKey);
+
+    // Store wallet information
+    this.walletInfo = {
+      address,
+      privateKey,
+      publicKey
+    };
+
+    // Initialize connection manager with wallet info
+    this.connectionManager.initialize(this.walletInfo);
+  }
+
+  /**
+   * Initialize asset handlers after wallet is ready
+   * @private
+   */
+  @withLogging('Initialize TRON asset handlers')
+  private initializeAssetHandlers(): void {
+    // Create and register Native TRX handler
+    const nativeHandler = new TrxNativeHandler(this.connectionManager, this.logger);
+    this.assetHandlers.set(ChainAssetType.Native, nativeHandler);
+
+    // Create and register TRC20 handler
+    const trc20Handler = new Trc20TokenHandler(this.connectionManager, this.logger);
+    this.assetHandlers.set(ChainAssetType.TRC20, trc20Handler);
+  }
+
+  /**
+   * Get the appropriate asset handler for the given asset type
+   * @private
+   */
+  private getAssetHandler(assetType: ChainAssetType | undefined): BaseAssetHandler {
+    if (assetType === undefined) {
+      throw new ArgumentError(
+        HibitIdSdkErrorCode.INVALID_ARGUMENT,
+        `${CHAIN_CONFIG.CHAIN_NAME}: Missing asset type`,
+        { argumentName: 'assetType', expectedType: 'ChainAssetType' }
+      );
+    }
+    const handler = this.assetHandlers.get(assetType);
+    if (!handler) {
+      throw new GeneralWalletError(
+        HibitIdSdkErrorCode.UNSUPPORTED_ASSET_TYPE,
+        `${CHAIN_CONFIG.CHAIN_NAME}: Asset type ${getAssetTypeName(assetType)} is not supported`
+      );
+    }
+    return handler;
+  }
+
+  /**
+   * Generate TRON address from public key
+   * @private
+   */
+  private generateAddress(publicKey: Uint8Array): string {
+    // Remove the first byte (0x04) from uncompressed public key
+    const publicKeyWithoutPrefix = publicKey.slice(1);
+
+    // Hash the public key using Keccak256
+    const hash = base.keccak_256(publicKeyWithoutPrefix);
+
+    // Take the last 20 bytes
+    const addressBytes = hash.slice(-20);
+
+    // Add Tron address prefix
+    const addressWithPrefix = new Uint8Array(21);
+    addressWithPrefix[0] = ADDRESS_PREFIX_BYTE;
+    addressWithPrefix.set(addressBytes, 1);
+
+    // Encode to base58check
+    const address = base.toBase58Check(addressWithPrefix);
+
+    return address;
+  }
+
+  /**
+   * Sleep utility for polling delays
+   * @private
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+}

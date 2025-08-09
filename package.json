@@ -1,10 +1,13 @@
 {
   "name": "hibit-id-sdk-monorepo",
   "private": true,
+  "type": "module",
   "scripts": {
     "build:coin-base": "turbo run @delandlabs/coin-base#build",
+    "test:coin-base": "turbo run @delandlabs/coin-base#test",
     "dev:sdk": "turbo run dev --filter=@delandlabs/hibit-id-sdk",
     "build:sdk": "turbo run @delandlabs/hibit-id-sdk#build",
+    "test:sdk": "turbo run @delandlabs/hibit-id-sdk#test",
     "test:coin-kaspa": "turbo run @delandlabs/coin-kaspa#test",
     "build:coin-kaspa": "turbo run @delandlabs/coin-kaspa#build",
     "build:coin-ethereum": "turbo run @delandlabs/coin-ethereum#build",
@@ -13,28 +16,48 @@
     "build:coin-solana": "turbo run @delandlabs/coin-solana#build",
     "build:coin-tron": "turbo run @delandlabs/coin-tron#build",
     "build:all": "turbo run build",
-    "test:all": "turbo run test:ci",
+    "typecheck": "turbo run typecheck",
+    "test:all": "pnpm run typecheck && turbo run test:ci",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
-    "prepare": "husky install"
-  },
-  "workspaces": [
-    "packages/*"
-  ],
-  "peerDependencies": {
-    "bignumber.js": ">=9.0.0"
+    "lint": "eslint --config eslint.config.js \"packages/*/src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --config eslint.config.js \"packages/*/src/**/*.{ts,tsx}\" --fix",
+    "release": "release-it",
+    "release:dry": "release-it --dry-run",
+    "release:ci": "release-it --ci",
+    "release:patch": "release-it patch",
+    "release:minor": "release-it minor",
+    "release:major": "release-it major",
+    "release:beta": "release-it --preRelease=beta",
+    "prepare": "husky install",
+    "clean:all": "turbo run clean --filter='!@delandlabs/hibit-basic-types' && rm -rf node_modules/.cache .turbo"
   },
   "devDependencies": {
-    "dotenv": "^16.4.5",
+    "@release-it-plugins/workspaces": "^5.0.3",
+    "@release-it/conventional-changelog": "^10.0.1",
+    "@types/eslint": "^9.6.1",
+    "@types/node": "^22.16.5",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "dotenv": "^17.2.0",
+    "eslint": "^9.32.0",
     "husky": "^9.0.0",
-    "lint-staged": "^15.2.2",
+    "lint-staged": "^16.1.0",
     "prettier": "^3.2.5",
+    "punycode": "^2.3.1",
+    "release-it": "^19.0.4",
+    "tsx": "^4.20.3",
     "turbo": "^2.5.0",
-    "typescript": "^5.4.5",
-    "vite": "^6.2.6",
-    "vite-bundle-analyzer": "^0.15.0",
-    "vite-plugin-node-polyfills": "^0.22.0",
-    "vitest": "^3.1.1"
+    "typescript": "5.8.3",
+    "vite": "^6.3.5",
+    "vite-bundle-analyzer": "^1.1.0",
+    "vite-plugin-checker": "^0.10.0",
+    "vite-plugin-node-polyfills": "^0.24.0",
+    "vitest": "^3.2.4"
   },
   "version": "1.0.0",
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "pnpm@10.13.1",
+  "peerDependencies": {
+    "bignumber.js": "^9.3.1"
+  }
 }

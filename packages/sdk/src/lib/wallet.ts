@@ -2,32 +2,26 @@ import { RPC } from '@mixer/postmessage-rpc';
 import { RPC_SERVICE_NAME } from './constants';
 import { HibitIdController, HibitIdIframe } from './dom';
 import {
-  AccountsChangedRequest,
   BalanceChangeData,
   BridgePromise,
-  ChainChangedRequest,
-  ChainInfo,
-  ConnectedRequest,
+  ChainAccountInfo,
   GetAccountRequest,
   GetAccountResponse,
+  GetAccountsRequest,
+  GetAccountsResponse,
   GetBalanceRequest,
   GetBalanceResponse,
-  GetChainInfoResponse,
+  GetAssetDecimalsRequest,
+  GetAssetDecimalsResponse,
   GetEstimatedFeeRequest,
   GetEstimatedFeeResponse,
   HibitIdError,
-  HibitIdEventHandlerMap,
   HibitIdWalletOptions,
-  LoginChangedRequest,
-  PasswordChangedRequest,
-  SetBackgroundEmbedRequest,
+  LoginStateChangeNotification,
+  PasswordChangeNotification,
+  UpdateEmbedModeRequest,
   SignMessageRequest,
   SignMessageResponse,
-  TonConnectGetStateInitResponse,
-  TonConnectSignDataRequest,
-  TonConnectSignDataResponse,
-  TonConnectTransferRequest,
-  TonConnectTransferResponse,
   TransferRequest,
   TransferResponse,
   VerifyPasswordRequest,
@@ -35,20 +29,19 @@ import {
 } from './types';
 import {
   SdkExposeRPCMethod,
-  HibitIdChainId,
-  HibitIdErrorCode,
   WalletExposeRPCMethod,
   AuthenticatorType
 } from './enums';
+import { HibitIdSdkErrorCode } from '@delandlabs/coin-base';
 import { clamp, parseBalanceRequest, stringifyBalanceRequest } from './utils';
-import { TonConnectSignDataResult } from '@delandlabs/coin-ton';
-import { WalletAccount } from '@delandlabs/coin-base/model';
+import { ChainAccount, ChainId } from '@delandlabs/hibit-basic-types';
 import { logger } from './utils/logger';
 
 const LOGIN_SESSION_KEY = 'hibit-id-session';
 const BALANCE_POLL_INTERVAL = 5000;
 
 export class HibitIdWallet {
+  // Private fields
   private _options: HibitIdWalletOptions;
   private _hasSession = false;
   private _connected = false;
@@ -56,15 +49,10 @@ export class HibitIdWallet {
   private _controller: HibitIdController | null = null;
   private _iframe: HibitIdIframe | null = null;
   private _iframeReadyPromise = new BridgePromise<boolean>();
-  private _connectPromise: BridgePromise<WalletAccount | null> | null = null;
+  private _connectPromise: BridgePromise<void> | null = null;
   private _disconnectedPromise: BridgePromise<boolean> | null = null;
-  private _eventHandlers: {
-    accountsChanged: Array<HibitIdEventHandlerMap['accountsChanged']>;
-    chainChanged: Array<HibitIdEventHandlerMap['chainChanged']>;
-  } = {
-    accountsChanged: [],
-    chainChanged: []
-  };
+  // Note: In SDK V2, event handlers for activeChainChanged are removed
+  // as the SDK becomes stateless
   private _balanceSubscribes: Record<
     string,
     {
@@ -72,7 +60,7 @@ export class HibitIdWallet {
       handlers: Array<(data: BalanceChangeData) => void>;
     }
   > = {};
-  private _balancePollIntervalId: any = null;
+  private _balancePollIntervalId: NodeJS.Timeout | null = null;
 
   constructor(options: HibitIdWalletOptions) {
     this._options = options;
@@ -92,60 +80,83 @@ export class HibitIdWallet {
     });
   }
 
+  // Public getter
   get isConnected() {
     return this._connected;
   }
 
-  public connect = async (
-    chainId: HibitIdChainId,
-    authType?: AuthenticatorType
-  ) => {
-    logger.debug('[sdk call Connect]', { chainId });
+  // Public methods
+  public connect = async (authType?: AuthenticatorType) => {
+    logger.debug('[sdk call Connect]', { authType });
     await this._iframeReadyPromise.promise;
 
     if (this._connected) {
-      const currentChain = await this.getChainInfo();
-      if (
-        `${currentChain.chainId.type}_${currentChain.chainId.network}` !==
-        chainId
-      ) {
-        await this.switchToChain(chainId);
-      }
-      return await this.getAccount();
+      logger.debug('[sdk already connected]');
+      return;
     }
 
     try {
       this.showIframe(!this._hasSession);
-      this._connectPromise = new BridgePromise<WalletAccount | null>();
+      this._connectPromise = new BridgePromise<void>();
       this._rpc!.call(WalletExposeRPCMethod.CONNECT, {
-        chainId,
         authType
       });
-      const res = await this._connectPromise?.promise;
-      // this._iframe!.hide()
-      // this._controller?.setOpen(false)
-      if (res?.address) {
+      
+      try {
+        await this._connectPromise?.promise;
         this._connected = true;
         logger.debug('[sdk connected]');
-
-        return {
-          address: res.address,
-          publicKey: res.publicKey
-        };
+      } catch (error: any) {
+        throw new HibitIdError(
+          HibitIdSdkErrorCode.USER_CANCEL_CONNECTION,
+          error?.message || 'User manually canceled'
+        );
       }
+    } catch (e) {
       throw new HibitIdError(
-        HibitIdErrorCode.USER_CANCEL_CONNECTION,
-        'User manually canceled'
+        HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+        `Connect failed: ${this.getRpcErrorMessage(e)}`
       );
-    } catch (e: any) {
-      throw new Error(`Connect failed: ${this.getRpcErrorMessage(e)}`);
     }
   };
 
-  public getAccount = async (
-    chainId?: HibitIdChainId
-  ): Promise<WalletAccount> => {
-    logger.debug('[sdk call GetAccount]');
+  /**
+   * Gets account information for all supported chains.
+   *
+   * @returns Array of ChainAccountInfo with account info and status
+   */
+  public getAccounts = async (): Promise<ChainAccountInfo[]> => {
+    logger.debug('[sdk call GetAccounts]');
+    await this._iframeReadyPromise.promise;
+    this.assertConnected();
+    try {
+      const res = await this._rpc?.call<GetAccountsResponse>(
+        WalletExposeRPCMethod.GET_ACCOUNTS,
+        {} as GetAccountsRequest
+      );
+      if (!res?.success) {
+        throw new HibitIdError(
+          HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+          (res as any)?.errMsg || 'Failed to get accounts'
+        );
+      }
+      return res.data.accounts;
+    } catch (e) {
+      throw new HibitIdError(
+        HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+        `Get accounts failed: ${this.getRpcErrorMessage(e)}`
+      );
+    }
+  };
+
+  /**
+   * Gets account information for a specific chain.
+   *
+   * @param chainId The chain ID to get account for (required in V2)
+   * @returns ChainAccount for the specified chain
+   */
+  public getAccount = async (chainId: ChainId): Promise<ChainAccount> => {
+    logger.debug('[sdk call GetAccount]', { chainId });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -156,37 +167,26 @@ export class HibitIdWallet {
         } as GetAccountRequest
       );
       if (!res?.success) {
-        throw new Error(res?.errMsg);
+        throw new HibitIdError(
+          HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+          (res as any)?.errMsg || 'Failed to get account'
+        );
       }
       return res.data;
-    } catch (e: any) {
-      throw new Error(`Get account failed: ${this.getRpcErrorMessage(e)}`);
-    }
-  };
-
-  public getChainInfo = async (): Promise<ChainInfo> => {
-    logger.debug('[sdk call GetChainInfo]');
-    await this._iframeReadyPromise.promise;
-    this.assertConnected();
-    try {
-      const res = await this._rpc?.call<GetChainInfoResponse>(
-        WalletExposeRPCMethod.GET_CHAIN_INFO,
-        {}
+    } catch (e) {
+      throw new HibitIdError(
+        HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+        `Get account failed: ${this.getRpcErrorMessage(e)}`
       );
-      if (!res?.success) {
-        throw new Error(res?.errMsg);
-      }
-      return res.data.chainInfo;
-    } catch (e: any) {
-      throw new Error(`Get chainInfo failed: ${this.getRpcErrorMessage(e)}`);
     }
   };
 
-  public signMessage = async (
-    message: string,
-    chainId?: HibitIdChainId
-  ): Promise<string> => {
-    logger.debug('[sdk call SignMessage]', { message });
+  public signMessage = async (request: {
+    chainId: ChainId;
+    message: string;
+  }): Promise<string> => {
+    const { chainId, message } = request;
+    logger.debug('[sdk call SignMessage]', { chainId, message });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
@@ -198,16 +198,21 @@ export class HibitIdWallet {
         } as SignMessageRequest
       );
       if (!res?.success) {
-        throw new Error(res?.errMsg);
+        throw new HibitIdError(
+          HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+          (res as any)?.errMsg || 'Failed to sign message'
+        );
       }
       return res.data.signature ?? null;
-    } catch (e: any) {
-      throw new Error(`Sign message failed: ${this.getRpcErrorMessage(e)}`);
+    } catch (e) {
+      throw new HibitIdError(
+        HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+        `Sign message failed: ${this.getRpcErrorMessage(e)}`
+      );
     }
   };
 
-  public getBalance = async (option?: GetBalanceRequest): Promise<string> => {
-    const request: GetBalanceRequest = option || {};
+  public getBalance = async (request: GetBalanceRequest): Promise<string> => {
     logger.debug('[sdk call GetBalance]', { request });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
@@ -217,37 +222,74 @@ export class HibitIdWallet {
         request
       );
       if (!res?.success) {
-        throw new Error(res?.errMsg);
+        throw new HibitIdError(
+          HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+          (res as any)?.errMsg || 'Failed to get balance'
+        );
       }
       return res.data.balance ?? null;
-    } catch (e: any) {
-      throw new Error(`Get balance failed: ${this.getRpcErrorMessage(e)}`);
+    } catch (e) {
+      throw new HibitIdError(
+        HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+        `Get balance failed: ${this.getRpcErrorMessage(e)}`
+      );
     }
   };
 
-  public transfer = async (option: TransferRequest): Promise<string> => {
-    logger.debug('[sdk call Transfer]', { option });
+  public getAssetDecimals = async (
+    request: GetAssetDecimalsRequest
+  ): Promise<number> => {
+    logger.debug('[sdk call GetAssetDecimals]', { request });
+    await this._iframeReadyPromise.promise;
+    this.assertConnected();
+    try {
+      const res = await this._rpc?.call<GetAssetDecimalsResponse>(
+        WalletExposeRPCMethod.GET_ASSET_DECIMALS,
+        request
+      );
+      if (!res?.success) {
+        throw new HibitIdError(
+          HibitIdSdkErrorCode.UNKNOWN_ERROR,
+          res?.errMsg || 'Get asset decimals failed'
+        );
+      }
+      return res.data.decimals;
+    } catch (e) {
+      throw new HibitIdError(
+        HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+        `Get asset decimals failed: ${this.getRpcErrorMessage(e)}`
+      );
+    }
+  };
+
+  public transfer = async (request: TransferRequest): Promise<string> => {
+    logger.debug('[sdk call Transfer]', { request });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
     try {
       const res = await this._rpc?.call<TransferResponse>(
         WalletExposeRPCMethod.TRANSFER,
-        option
+        request
       );
       if (!res?.success) {
-        throw new Error(res?.errMsg);
+        throw new HibitIdError(
+          HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+          (res as any)?.errMsg || 'Failed to transfer'
+        );
       }
       return res.data.txHash ?? null;
-    } catch (e: any) {
+    } catch (e) {
       logger.error('Operation failed', JSON.stringify(e));
-      throw new Error(`Transfer failed: ${this.getRpcErrorMessage(e)}`);
+      throw new HibitIdError(
+        HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+        `Transfer failed: ${this.getRpcErrorMessage(e)}`
+      );
     }
   };
 
   public getEstimatedFee = async (
-    option: GetEstimatedFeeRequest
+    request: GetEstimatedFeeRequest
   ): Promise<string> => {
-    const request: GetEstimatedFeeRequest = option || {};
     logger.debug('[sdk call getEstimatedFee]', { request });
     await this._iframeReadyPromise.promise;
     this.assertConnected();
@@ -257,79 +299,16 @@ export class HibitIdWallet {
         request
       );
       if (!res?.success) {
-        throw new Error(res?.errMsg);
+        throw new HibitIdError(
+          HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+          (res as any)?.errMsg || 'Failed to get estimated fee'
+        );
       }
       return res.data.fee ?? null;
-    } catch (e: any) {
-      throw new Error(
+    } catch (e) {
+      throw new HibitIdError(
+        HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
         `Get estimated fee failed: ${this.getRpcErrorMessage(e)}`
-      );
-    }
-  };
-
-  public tonConnectGetStateInit = async (): Promise<string> => {
-    logger.debug('[sdk call TonConnectGetStateInit]');
-    await this._iframeReadyPromise.promise;
-    this.assertConnected();
-    try {
-      const res = await this._rpc?.call<TonConnectGetStateInitResponse>(
-        WalletExposeRPCMethod.TONCONNECT_GET_STATE_INIT,
-        {}
-      );
-      if (!res?.success) {
-        throw new Error(res?.errMsg);
-      }
-      return res.data.stateInitBase64 ?? null;
-    } catch (e: any) {
-      logger.error('Operation failed', e);
-      throw new Error(
-        `TonConnectGetStateInit failed: ${this.getRpcErrorMessage(e)}`
-      );
-    }
-  };
-
-  public tonConnectTransfer = async (
-    payload: TonConnectTransferRequest
-  ): Promise<string> => {
-    logger.debug('[sdk call TonConnectTransfer]', { option: payload });
-    await this._iframeReadyPromise.promise;
-    this.assertConnected();
-    try {
-      const res = await this._rpc?.call<TonConnectTransferResponse>(
-        WalletExposeRPCMethod.TONCONNECT_TRANSFER,
-        payload
-      );
-      if (!res?.success) {
-        throw new Error(res?.errMsg);
-      }
-      return res.data.message ?? null;
-    } catch (e: any) {
-      logger.error('Operation failed', JSON.stringify(e));
-      throw new Error(
-        `TonConnectTransfer failed: ${this.getRpcErrorMessage(e)}`
-      );
-    }
-  };
-
-  public tonConnectSignData = async (
-    payload: TonConnectSignDataRequest
-  ): Promise<TonConnectSignDataResult> => {
-    logger.debug('[sdk call TonConnectSignData]', { option: payload });
-    await this._iframeReadyPromise.promise;
-    this.assertConnected();
-    try {
-      const res = await this._rpc?.call<TonConnectSignDataResponse>(
-        WalletExposeRPCMethod.TONCONNECT_SIGN_DATA,
-        payload
-      );
-      if (!res?.success) {
-        throw new Error(res?.errMsg);
-      }
-      return res.data ?? null;
-    } catch (e: any) {
-      logger.error('Operation failed', JSON.stringify(e));
-      throw new Error(
-        `TonConnectSignData failed: ${this.getRpcErrorMessage(e)}`
       );
     }
   };
@@ -346,29 +325,44 @@ export class HibitIdWallet {
 
   public dispose = async () => {
     logger.debug('[sdk call Dispose]');
+
+    // Clear balance polling interval to prevent memory leaks
+    if (this._balancePollIntervalId) {
+      clearInterval(this._balancePollIntervalId);
+      this._balancePollIntervalId = null;
+    }
+
+    // Clear all balance subscriptions
+    this._balanceSubscribes = {};
+
+    // V2: Event handlers have been removed
+
+    // Clean up session storage
     sessionStorage.removeItem(LOGIN_SESSION_KEY);
+
+    // Clean up controller
     this._controller?.destroy();
     this._controller = null;
+
+    // Reset connection state
     this._connected = false;
+    this._hasSession = false;
+
+    // Clean up promises
     this._iframeReadyPromise = new BridgePromise<boolean>();
     this._connectPromise = null;
     this._disconnectedPromise = null;
+
+    // Clean up RPC connection
     this._rpc?.destroy();
     this._rpc = null;
+
+    // Clean up iframe
     this._iframe?.destroy();
     this._iframe = null;
   };
 
-  public switchToChain = async (chainId: HibitIdChainId) => {
-    logger.debug('[sdk call SwitchToChain]', { chainId });
-    await this._iframeReadyPromise.promise;
-    this.assertConnected();
-    const currentChain = await this.getChainInfo();
-    const currentChainId = `${currentChain.chainId.type}_${currentChain.chainId.network}`;
-    if (currentChainId === chainId) return;
-
-    await this._rpc?.call(WalletExposeRPCMethod.SWITCH_CHAIN, { chainId });
-  };
+  // Note: switchToChain is deprecated in V2 as the SDK is now stateless
 
   public setBackgroundEmbed = async (value: boolean) => {
     logger.debug('[sdk call SetBackgroundEmbed]', { value });
@@ -377,7 +371,7 @@ export class HibitIdWallet {
     await this._iframeReadyPromise.promise;
     await this._rpc?.call(WalletExposeRPCMethod.SET_BACKGROUND_EMBED, {
       value
-    } as SetBackgroundEmbedRequest);
+    } as UpdateEmbedModeRequest);
     this._options.embedMode = value ? 'background' : 'float';
 
     const iframeVisible = (value ? false : this._iframe?.visible) ?? false;
@@ -398,18 +392,18 @@ export class HibitIdWallet {
     }
   };
 
-  public showResetPassword = async () => {
-    logger.debug('[sdk call showResetPassword]');
+  public showChangePassword = async () => {
+    logger.debug('[sdk call showChangePassword]');
     await this._iframeReadyPromise.promise;
     this.assertConnected();
-    await this._rpc?.call(WalletExposeRPCMethod.SHOW_RESET_PASSWORD, {});
+    await this._rpc?.call(WalletExposeRPCMethod.SHOW_CHANGE_PASSWORD, {});
     this.showIframe();
   };
 
   public verifyPassword = async (
-    option: VerifyPasswordRequest
+    option: VerifyPasswordRequest = { password: '' }
   ): Promise<boolean> => {
-    const request: VerifyPasswordRequest = option || {};
+    const request: VerifyPasswordRequest = option;
     logger.debug('[sdk call verifyPassword]');
     await this._iframeReadyPromise.promise;
     this.assertConnected();
@@ -419,33 +413,23 @@ export class HibitIdWallet {
         request
       );
       if (!res?.success) {
-        throw new Error(res?.errMsg);
+        throw new HibitIdError(
+          HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+          (res as any)?.errMsg || 'Failed to verify password'
+        );
       }
       return true;
-    } catch (e: any) {
-      throw new Error(`Verify password failed: ${this.getRpcErrorMessage(e)}`);
+    } catch (e) {
+      throw new HibitIdError(
+        HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
+        `Verify password failed: ${this.getRpcErrorMessage(e)}`
+      );
     }
   };
 
-  public addEventListener = <K extends keyof HibitIdEventHandlerMap>(
-    event: K,
-    handler: HibitIdEventHandlerMap[K]
-  ) => {
-    // @ts-expect-error ts not support this check yet
-    this._eventHandlers[event].push(handler);
-  };
-
-  public removeEventListener = <K extends keyof HibitIdEventHandlerMap>(
-    event: K,
-    handler: HibitIdEventHandlerMap[K]
-  ) => {
-    const arr = this._eventHandlers[event];
-    // @ts-expect-error ts not support this check yet
-    const index = arr.indexOf(handler);
-    if (index > -1) {
-      arr.splice(index, 1);
-    }
-  };
+  // Note: addEventListener and removeEventListener are deprecated in V2
+  // The SDK no longer emits activeChainChanged events
+  // Use getAccounts() or getAccount(chainId) to get current state
 
   public subscribeBalanceChange = (
     request: GetBalanceRequest,
@@ -482,11 +466,14 @@ export class HibitIdWallet {
       delete this._balanceSubscribes[id];
     }
     if (Object.keys(this._balanceSubscribes).length === 0) {
-      clearInterval(this._balancePollIntervalId);
-      this._balancePollIntervalId = null;
+      if (this._balancePollIntervalId) {
+        clearInterval(this._balancePollIntervalId);
+        this._balancePollIntervalId = null;
+      }
     }
   };
 
+  // Private methods
   private doBalancePoll = async () => {
     if (!this._connected) return;
     await this._iframeReadyPromise.promise;
@@ -517,7 +504,7 @@ export class HibitIdWallet {
   private assertConnected = () => {
     if (!this._connected) {
       throw new HibitIdError(
-        HibitIdErrorCode.WALLET_NOT_CONNECTED,
+        HibitIdSdkErrorCode.WALLET_NOT_CONNECTED,
         'Wallet is not connected'
       );
     }
@@ -554,13 +541,11 @@ export class HibitIdWallet {
       // Optionally, allowlist the origin you want to talk to:
       // origin: 'example.com',
     });
-    rpc.expose(SdkExposeRPCMethod.CLOSE, this.onRpcClose);
+    rpc.expose(SdkExposeRPCMethod.IFRAME_CLOSE, this.onRpcClose);
     rpc.expose(SdkExposeRPCMethod.CONNECTED, this.onRpcConnected);
     rpc.expose(SdkExposeRPCMethod.DISCONNECTED, this.onRpcDisconnected);
     rpc.expose(SdkExposeRPCMethod.IFRAME_READY, this.onRpcIframeReady);
     rpc.expose(SdkExposeRPCMethod.LOGIN_CHANGED, this.onRpcLoginChanged);
-    rpc.expose(SdkExposeRPCMethod.CHAIN_CHANGED, this.onRpcChainChanged);
-    rpc.expose(SdkExposeRPCMethod.ACCOUNTS_CHANGED, this.onRpcAccountsChanged);
     rpc.expose(SdkExposeRPCMethod.PASSWORD_CHANGED, this.onRpcPasswordChanged);
     this._rpc = rpc;
 
@@ -571,13 +556,13 @@ export class HibitIdWallet {
     if (this._options.embedMode === 'background') {
       await this._rpc.call(WalletExposeRPCMethod.SET_BACKGROUND_EMBED, {
         value: true
-      } as SetBackgroundEmbedRequest);
+      } as UpdateEmbedModeRequest);
       logger.debug('[sdk request background embed]');
     }
     logger.debug('[sdk rpc ready]');
   };
 
-  private handleControllerMove = (x: number, y: number) => {
+  private handleControllerMove = (_x: number, _y: number) => {
     if (!this._iframe || !this._iframe.isDesktop) return;
     const controllerRect = this._controller?.getBoundingRect();
     const maxRight = window.innerWidth - (controllerRect?.width ?? 0);
@@ -623,7 +608,7 @@ export class HibitIdWallet {
     this._controller?.setOpen(false);
   };
 
-  private onRpcLoginChanged = (input: LoginChangedRequest) => {
+  private onRpcLoginChanged = (input: LoginStateChangeNotification) => {
     logger.debug('[sdk on LoginChanged]', { input });
     // only show iframe during connection
     this._hasSession = input.isLogin;
@@ -648,21 +633,7 @@ export class HibitIdWallet {
     }
   };
 
-  private onRpcChainChanged = (input: ChainChangedRequest) => {
-    logger.debug('[sdk on ChainChanged]', { input });
-    this._eventHandlers.chainChanged.forEach((handler) => {
-      handler(input.chainId);
-    });
-  };
-
-  private onRpcAccountsChanged = (input: AccountsChangedRequest) => {
-    logger.debug('[sdk on AccountsChanged]', { input });
-    this._eventHandlers.accountsChanged.forEach((handler) => {
-      handler(input.account);
-    });
-  };
-
-  private onRpcPasswordChanged = (input: PasswordChangedRequest) => {
+  private onRpcPasswordChanged = (input: PasswordChangeNotification) => {
     logger.debug('[sdk on PasswordChanged]', { input });
     if (this._options.embedMode === 'background') {
       this._iframe?.hide();
@@ -674,15 +645,20 @@ export class HibitIdWallet {
     this._iframeReadyPromise.resolve(true);
   };
 
-  private onRpcConnected = (input: ConnectedRequest | null) => {
-    logger.debug('[sdk on Connected]');
-    if (input) {
+  private onRpcConnected = (success: boolean) => {
+    logger.debug('[sdk on Connected]', { success });
+    
+    if (success) {
       this._connected = true;
+      this._connectPromise?.resolve();
+    } else {
+      this._connectPromise?.reject('Connection failed or cancelled');
     }
+    
     if (this._options.embedMode === 'background') {
       this._iframe?.hide();
     }
-    this._connectPromise?.resolve(input);
+    
     this._connectPromise = null;
   };
 
@@ -692,9 +668,11 @@ export class HibitIdWallet {
     this._disconnectedPromise?.resolve(true);
   };
 
-  private getRpcErrorMessage = (e: any) => {
+  private getRpcErrorMessage = (e: unknown) => {
     const rawMessage =
-      (e.message as string)?.split('\n')[0].replace('Error: ', '') || String(e);
+      (e instanceof Error ? e.message : String(e))
+        ?.split('\n')[0]
+        .replace('Error: ', '') || String(e);
 
     // Sanitize error message to remove sensitive data
     return logger.sanitizeErrorMessage(rawMessage);

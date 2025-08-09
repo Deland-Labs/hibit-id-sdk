@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["dist", "node_modules"],
+  "compilerOptions": {
+    "types": ["node", "vitest/globals"],
+    "noEmit": true,
+    "target": "ES2021",
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+
+    // Enhanced strict mode settings for better code quality and WebStorm compatibility
+    "noImplicitReturns": true, // Functions must return in all code paths
+    "strictFunctionTypes": true, // Enable strict checking of function types
+    "noImplicitThis": true, // Raise error on 'this' expressions with an implied 'any' type
+
+    // Decorator handling - keep experimental decorators enabled for compatibility
+    "experimentalDecorators": true, // Required for our current decorator implementation
+    "emitDecoratorMetadata": false, // We don't need runtime metadata
+
+    // Library checking
+    "skipLibCheck": true // Skip type checking of declaration files for performance
+  }
+}

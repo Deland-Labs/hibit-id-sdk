@@ -1,5 +1,5 @@
-import { ChainId, ChainInfo } from '@delandlabs/coin-base/model';
-import * as TronChains from '../chains';
+import { CHAIN_CONFIG } from './config';
+import { NetworkError, HibitIdSdkErrorCode } from '@delandlabs/coin-base';
 
 export const erc20Abi = [
   'function name() view returns (string)',
@@ -17,12 +17,6 @@ export const erc20Abi = [
   'event Approval(address indexed owner, address indexed spender, uint256 value)'
 ];
 
-export function getChain(chainId: ChainId | null): ChainInfo | null {
-  if (!chainId) return null;
-  const chains = Object.values(TronChains);
-  return chains.find((c) => c.chainId.equals(chainId)) ?? null;
-}
-
 /**
  * Pads the front of the given hex string with zeroes until it reaches the
  * target length. If the input string is already longer than or equal to the
@@ -38,11 +32,21 @@ export function getChain(chainId: ChainId | null): ChainInfo | null {
  */
 export function padWithZeroes(hexString: string, targetLength: number): string {
   if (hexString !== '' && !/^[a-f0-9]+$/iu.test(hexString)) {
-    throw new Error(`Expected an unprefixed hex string. Received: ${hexString}`);
+    throw new NetworkError(
+      HibitIdSdkErrorCode.INVALID_CONFIGURATION,
+      `${CHAIN_CONFIG.CHAIN_NAME}: Expected an unprefixed hex string. Received: ${hexString}`,
+      undefined,
+      { hexString }
+    );
   }
 
   if (targetLength < 0) {
-    throw new Error(`Expected a non-negative integer target length. Received: ${targetLength}`);
+    throw new NetworkError(
+      HibitIdSdkErrorCode.INVALID_CONFIGURATION,
+      `${CHAIN_CONFIG.CHAIN_NAME}: Expected a non-negative integer target length. Received: ${targetLength}`,
+      undefined,
+      { targetLength }
+    );
   }
 
   return String.prototype.padStart.call(hexString, targetLength, '0');

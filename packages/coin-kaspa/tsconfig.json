@@ -4,7 +4,12 @@
     "baseUrl": ".",
     "paths": {
       "src/*": ["src/*"]
-    }
+    },
+    "experimentalDecorators": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "composite": true,
+    "allowImportingTsExtensions": false
   },
   "include": ["src"],
   "exclude": ["**/node_modules"]

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["packages/*/src/**/*.ts", "packages/*/tests/**/*.ts"],
+  "exclude": ["**/dist", "**/node_modules"],
+  "compilerOptions": {
+    "target": "ES2021",
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+    "types": ["node", "vitest/globals"],
+    "noEmit": true
+  }
+}
