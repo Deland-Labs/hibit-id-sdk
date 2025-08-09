@@ -60,7 +60,7 @@
     "eslint": "^9.0.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.7",
-    "jsdom": "^25.0.1",
+    "jsdom": "^26.0.0",
     "postcss": "^8.4.38",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
