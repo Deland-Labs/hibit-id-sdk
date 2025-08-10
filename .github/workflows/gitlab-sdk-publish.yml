@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0 # Fetch all history and tags
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           registry-url: https://gitlab.com/api/v4/projects/37663507/packages/npm
           cache: yarn
       - run: |
