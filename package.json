@@ -56,7 +56,7 @@
     "vitest": "^3.2.4"
   },
   "version": "1.0.0",
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.15.0",
   "peerDependencies": {
     "bignumber.js": "^9.3.1"
   }
