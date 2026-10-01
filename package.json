@@ -53,7 +53,7 @@
     "vite-bundle-analyzer": "^1.1.0",
     "vite-plugin-checker": "^0.10.0",
     "vite-plugin-node-polyfills": "^0.24.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.11"
   },
   "version": "1.0.0",
   "packageManager": "pnpm@10.13.1",
